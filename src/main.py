@@ -32,26 +32,15 @@ while integrator.model_time < max_time:
 
 pos = tracker.get_positions()
 vel = tracker.get_velocities()
-mass = tracker.get_masses()
 cm_pos = tracker.get_center_of_mass_position()
+cm_vel = tracker.get_center_of_mass_velocity()
 
 params = tracker.get_common_parameters()
 pow = np.array([8, 0, 0])[np.newaxis, :] + cm_pos
-velocity_of_pow = np.array([400, 0, 0])
+pow_vel = np.array([200, 0, 0])[np.newaxis, :] + cm_vel
 
-# computing unit vector along vector from center of mass to each object
-r = pos - pow[..., None]
-r_len = np.sum(r ** 2, axis = 1) ** 0.5
-er = r / np.expand_dims(r_len, axis = 1)
-
-# computing radial velocity
-v = vel - velocity_of_pow[..., None]
-v_r_length = np.sum(v * er, axis = 1)
-v_r = np.expand_dims(v_r_length, axis = 1) * er
-
-#computing tangential velocity
-v_tau = v - v_r
-v_tau_length = np.sum(v_tau ** 2, axis = 1) ** 0.5
+v_r_length = tracker.get_radial_velocity(pow, pow_vel)
+v_tau_length = tracker.get_tangential_velocity(pow, pow_vel)
 
 visualizer = Visualizer((2, 5), [
     ((0, 0), 2, 2),

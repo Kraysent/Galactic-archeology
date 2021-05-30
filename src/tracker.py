@@ -38,6 +38,12 @@ class Tracker:
         }
         self.common_parameters = self.common_parameters.append(common_new, ignore_index = True)
 
+    def get_common_parameters(self):
+        return self.common_parameters
+
+    def get_number_of_timesteps(self):
+        return len(self.common_parameters['T'])
+
     def get_positions(self) -> np.ndarray:
         '''
         Returns positions of all particles over time: 
@@ -64,7 +70,7 @@ class Tracker:
 
     def get_center_of_mass_position(self) -> np.ndarray:
         '''
-        Return position of all particles over time
+        Returns position of all particles over time
 
         get_center_of_mass_position().shape = (number_of_timesteps, number_of_dimensions)
         '''
@@ -76,6 +82,64 @@ class Tracker:
 
         return cm_pos
 
+    def get_center_of_mass_velocity(self) -> np.ndarray:
+        '''
+        Returns velocity of center of mass over time
 
-    def get_common_parameters(self):
-        return self.common_parameters
+
+        get_center_of_mass_velocity().shape = (number_of_timesteps, number_of_dimensions)
+        '''
+        mass = self.get_masses()
+        total_mass = mass.sum(axis = 1)
+        vel = self.get_velocities()
+
+        cm_vel = (vel * mass[:, np.newaxis, :]).sum(axis = 2) / total_mass[:, np.newaxis]
+
+        return cm_vel
+
+    def get_radial_velocity(self, pow: np.ndarray, pow_vel: np.ndarray) -> np.ndarray:
+        '''
+        - pow - point of view radius vector, pow.shape = (number_of_timesteps, number_of_dimensions)
+        - pow_vel - velocity vector of point of view, pow_vel.shape = (number_of_timesteps, number_of_dimensions)
+        Returns signed absolute value of radial velocity of each particle from given point of view
+
+        get_radial_velocity().shape = (number_of_timesteps, number_of_particles)
+        '''
+        if (pow.shape != (self.get_number_of_timesteps(), 3)):
+            raise Exception("Point of view radius vector should have shape (number_of_timesteps, number_of_dimensions).")
+
+        if (pow_vel.shape != (self.get_number_of_timesteps(), 3)):
+            raise Exception("Point of view velocity vector should have shape (number_of_timesteps, number_of_dimensions).")
+
+        r = self.get_positions() - pow[:, :, np.newaxis]
+        v = self.get_velocities() - pow_vel[:, :, np.newaxis]
+
+        r_len = (r ** 2).sum(axis = 1) ** 0.5
+        e_r = r / r_len[:, np.newaxis, :]
+
+        return (v * e_r).sum(axis = 1)
+
+    def get_tangential_velocity(self, pow: np.ndarray, pow_vel: np.ndarray) -> np.ndarray:
+        '''
+        - pow - point of view radius vector, pow.shape = (number_of_timesteps, number_of_dimensions)
+        - pow_vel - velocity vector of point of view, pow_vel.shape = (number_of_timesteps, number_of_dimensions)
+        Returns tangential velocity of each particle from given point of view
+
+        get_tangential_velocity().shape = (number_of_timesteps, number_of_dimensions, number_of_particles)
+        '''
+
+        if (pow.shape != (self.get_number_of_timesteps(), 3)):
+            raise Exception("Point of view radius vector should have shape (number_of_timesteps, number_of_dimensions).")
+
+        if (pow_vel.shape != (self.get_number_of_timesteps(), 3)):
+            raise Exception("Point of view velocity vector should have shape (number_of_timesteps, number_of_dimensions).")
+
+        r = self.get_positions() - pow[:, :, np.newaxis]
+        v = self.get_velocities() - pow_vel[:, :, np.newaxis]
+
+        r_len = (r ** 2).sum(axis = 1) ** 0.5
+        e_r = r / r_len[:, np.newaxis, :]
+
+        v_r = (v * e_r).sum(axis = 1)[:, np.newaxis, :] * e_r
+
+        return ((v - v_r) ** 2).sum(axis = 1) ** 0.5
