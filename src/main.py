@@ -27,15 +27,17 @@ while integrator.model_time < max_time:
     tracker.track_parameters()
 
     if i % 10 == 0:
-        print('{} Myr'.format(np.round(integrator.model_time.value_in(units.Myr))), end = ' | ')
+        new_var = print('{} Myr'.format(np.round(integrator.model_time.value_in(units.Myr))), end = ' | ')
+        new_var
 
 pos = tracker.get_positions()
 vel = tracker.get_velocities()
+mass = tracker.get_masses()
+cm_pos = tracker.get_center_of_mass_position()
+
 params = tracker.get_common_parameters()
-cmpos = np.stack([params['cmx'], params['cmy'], params['cmz']]).transpose()
-pow = np.array([8, 0, 0])
-pow = np.expand_dims(pow, axis = 0) + cmpos
-velocity_of_pow = np.array([200, 0, 0])
+pow = np.array([8, 0, 0])[np.newaxis, :] + cm_pos
+velocity_of_pow = np.array([400, 0, 0])
 
 # computing unit vector along vector from center of mass to each object
 r = pos - pow[..., None]
