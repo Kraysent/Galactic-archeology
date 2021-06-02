@@ -1,4 +1,4 @@
-from logging import setLogRecordFactory
+from amuse.datamodel.particles import Particles
 from amuse.units import nbody_system
 from integrators.abstract_integrator import AbstractIntegrator
 from amuse.community.bhtree.interface import BHTree
@@ -14,12 +14,14 @@ class BHTreeAMUSEIntegrator(AbstractIntegrator):
             raise Exception('No rscale provided to BHTree integrator')
 
         converter = nbody_system.nbody_to_si(kwargs['mass'], kwargs['rscale'])
+        kwargs.pop('mass')
+        kwargs.pop('rscale')
 
         self._integrator = BHTree(converter, channel_type = 'sockets')
 
-        for (key, value) in kwargs:
+        for (key, value) in kwargs.items():
             if hasattr(self._integrator.parameters, key):
-                setattr(self._integrator.parameters, value)
+                setattr(self._integrator.parameters, key, value)
 
     def evolve_model(self, time: ScalarQuantity):
         self._integrator.evolve_model(time)
@@ -29,10 +31,19 @@ class BHTreeAMUSEIntegrator(AbstractIntegrator):
         return self._integrator.model_time
 
     @property
+    def particles(self) -> Particles:
+        return self._integrator.particles
+
+    @particles.setter
+    def particles(self, value: Particles):
+        self._integrator.setup_particles(value)
+
+    @property
     def timestep(self):
         return self._integrator.parameters.timestep
 
     @timestep.setter
-    def timestep(self, value):
+    def timestep(self, value: ScalarQuantity):
         self._integrator.parameters.timestep = value
 
+    

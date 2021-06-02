@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from amuse.datamodel.particles import Particles
 from amuse.lab import ScalarQuantity
 
 class AbstractIntegrator:
@@ -13,4 +14,14 @@ class AbstractIntegrator:
     @property
     @abstractmethod
     def model_time(self) -> ScalarQuantity:
+        pass
+
+    @property
+    @abstractmethod
+    def particles(self) -> Particles:
+        pass
+
+    @particles.setter
+    @abstractmethod
+    def particles(self, value: Particles):
         pass

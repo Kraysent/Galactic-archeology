@@ -12,12 +12,13 @@ This is abstract class that defines general properties of integrators. All other
 ### ```evolve_model(self, time: ScalarQuantity)```
 * ```time``` - time until which integration is performed
 
-### Attributes:
-* ```particles``` - use to get/set set of particles from/to integrator
-
 ### Properties:
+* ```particles``` - used to get/set set of particles from/to integrator
 * ```model_time``` - used to get current time of the system (either ```time``` parameter provided to last call of ```evolve_model``` or zero)
 
 ## BHTreeAMUSEIntegrator(AbstractIntegrator) class
 This class implements ```AbstractIntegrator``` for Barnes-Hut tree code in AMUSE (```amuse.community.bhtree.interface.BHTree``` class)
+
+### Properties:
+* ```timestep``` - used to get/set timestep of integrator
 
