@@ -34,6 +34,7 @@ class BHTreeAMUSEIntegrator(AbstractIntegrator):
 
     def evolve_model(self, time: ScalarQuantity):
         self._integrator.evolve_model(time)
+        self._raise_subscribers()
 
     @property
     def model_time(self):

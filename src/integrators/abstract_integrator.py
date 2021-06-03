@@ -11,6 +11,16 @@ class AbstractIntegrator:
     def evolve_model(self, time: ScalarQuantity):
         pass
 
+    def subscribe(self, reciever):
+        if not hasattr(self, '_subscribers'):
+            self._subscribers = []
+
+        self._subscribers.append(reciever)
+
+    def _raise_subscribers(self):
+        for f in self._subscribers:
+            f()
+
     @property
     @abstractmethod
     def model_time(self) -> ScalarQuantity:

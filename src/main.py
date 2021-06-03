@@ -22,15 +22,17 @@ tracker = Tracker(integrator)
 
 i = 0
 
-while integrator.model_time < max_time:
-    integrator.evolve_model(integrator.timestep * i)
-    i += 1
+def subscriber():
+    if i % 10 == 0:
+        print('{} Myr'.format(np.round(integrator.model_time.value_in(units.Myr))), end = ' | ')
 
     tracker.track_parameters()
 
-    if i % 10 == 0:
-        new_var = print('{} Myr'.format(np.round(integrator.model_time.value_in(units.Myr))), end = ' | ')
-        new_var
+integrator.subscribe(subscriber)
+
+while integrator.model_time < max_time:
+    integrator.evolve_model(integrator.timestep * i)
+    i += 1
 
 pos = tracker.get_positions()
 vel = tracker.get_velocities()
