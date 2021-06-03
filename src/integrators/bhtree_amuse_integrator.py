@@ -7,6 +7,15 @@ from amuse.lab import ScalarQuantity
 
 class BHTreeAMUSEIntegrator(AbstractIntegrator):
     def __init__(self, **kwargs):
+        '''
+        Essential keyword arguments:
+        * mass: ScalarQuantity - total mass of the system
+        * rscale: ScalarQuantity - length scale of the system (usually virial radius)
+
+        Not essential keyword arguments:
+        * timestep - timestep provided to integrator
+        * epsilon_squared - epsilon provided to integrator
+        '''
         if not 'mass' in kwargs:
             raise Exception('No mass provided to BHTree integrator')
 

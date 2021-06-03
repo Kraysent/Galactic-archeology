@@ -2,9 +2,11 @@ import numpy as np
 from amuse.lab import units
 from pandas import DataFrame
 
+from integrators.abstract_integrator import AbstractIntegrator
+
 
 class Tracker:
-    def __init__(self, integrator):
+    def __init__(self, integrator: AbstractIntegrator):
         self.integrator = integrator
         # this probably should be a multiindex pandas dataframe
         # but it is quite a complex thing to do right now;
@@ -86,7 +88,6 @@ class Tracker:
         '''
         Returns velocity of center of mass over time
 
-
         get_center_of_mass_velocity().shape = (number_of_timesteps, number_of_dimensions)
         '''
         mass = self.get_masses()
@@ -101,6 +102,7 @@ class Tracker:
         '''
         - pow - point of view radius vector, pow.shape = (number_of_timesteps, number_of_dimensions)
         - pow_vel - velocity vector of point of view, pow_vel.shape = (number_of_timesteps, number_of_dimensions)
+        
         Returns signed absolute value of radial velocity of each particle from given point of view
 
         get_radial_velocity().shape = (number_of_timesteps, number_of_particles)
@@ -123,6 +125,7 @@ class Tracker:
         '''
         - pow - point of view radius vector, pow.shape = (number_of_timesteps, number_of_dimensions)
         - pow_vel - velocity vector of point of view, pow_vel.shape = (number_of_timesteps, number_of_dimensions)
+        
         Returns tangential velocity of each particle from given point of view
 
         get_tangential_velocity().shape = (number_of_timesteps, number_of_dimensions, number_of_particles)

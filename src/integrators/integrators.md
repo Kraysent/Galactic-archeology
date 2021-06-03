@@ -13,8 +13,8 @@ This is abstract class that defines general properties of integrators. All other
 * ```time``` - time until which integration is performed
 
 ### Properties:
-* ```particles``` - used to get/set set of particles from/to integrator
-* ```model_time``` - used to get current time of the system (either ```time``` parameter provided to last call of ```evolve_model``` or zero)
+* ```particles``` - get/set; used to specify set of particles from/to integrator
+* ```model_time``` - get; used to receive current time of the system (either ```time``` parameter provided to last call of ```evolve_model``` or zero)
 
 ## BHTreeAMUSEIntegrator(AbstractIntegrator) class
 This class implements ```AbstractIntegrator``` for Barnes-Hut tree code in AMUSE (```amuse.community.bhtree.interface.BHTree``` class)
@@ -22,3 +22,5 @@ This class implements ```AbstractIntegrator``` for Barnes-Hut tree code in AMUSE
 ### Properties:
 * ```timestep``` - used to get/set timestep of integrator
 
+## NEMOhackcode1Integrator
+This class implements ```AbstractIntegrator``` for Barnes-Hut tree code in NEMO (```hackcode1```)
