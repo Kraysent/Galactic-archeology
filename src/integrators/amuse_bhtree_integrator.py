@@ -5,7 +5,7 @@ from amuse.community.bhtree.interface import BHTree
 from amuse.lab import ScalarQuantity
 
 
-class BHTreeAMUSEIntegrator(AbstractIntegrator):
+class AMUSEBHTreeIntegrator(AbstractIntegrator):
     def __init__(self, **kwargs):
         '''
         Essential keyword arguments:

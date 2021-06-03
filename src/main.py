@@ -1,7 +1,7 @@
 import numpy as np
 from amuse.lab import units
 
-from integrators.bhtree_amuse_integrator import BHTreeAMUSEIntegrator
+from integrators.amuse_bhtree_integrator import AMUSEBHTreeIntegrator
 from system_factory import *
 from tracker import Tracker
 from visualizer import Visualizer
@@ -16,7 +16,7 @@ factory.add_system(SystemType.KING, 1e11 | units.MSun, 10. | units.kpc, N1)
 factory.add_system(SystemType.KING, 5e10 | units.MSun, 5. | units.kpc, N2, vector_from_spherical(30 | units.kpc, 30 / 57.7, np.pi), [210, 0, 0] | units.kms)
 particles = factory.get_system()
 
-integrator = BHTreeAMUSEIntegrator(mass = particles.total_mass(), rscale = particles.virial_radius(), timestep = 3 | units.Myr, epsilon_squared = (0.05 | units.kpc) ** 2)
+integrator = AMUSEBHTreeIntegrator(mass = particles.total_mass(), rscale = particles.virial_radius(), timestep = 3 | units.Myr, epsilon_squared = (0.05 | units.kpc) ** 2)
 integrator.particles = particles
 tracker = Tracker(integrator)
 
