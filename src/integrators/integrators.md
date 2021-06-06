@@ -1,8 +1,5 @@
 This is general description of classes in this submodule.
 
-## ```IntegratorFactory``` class
-It is used for creation of different AMUSE and NEMO integrators. 
-
 ## ```AbstractIntegrator``` class
 This is abstract class that defines general properties of integrators. All other integrator classes should inherit from this one.
 
@@ -16,11 +13,11 @@ This is abstract class that defines general properties of integrators. All other
 * ```particles``` - get/set; used to specify set of particles from/to integrator
 * ```model_time``` - get; used to receive current time of the system (either ```time``` parameter provided to last call of ```evolve_model``` or zero)
 
-## BHTreeAMUSEIntegrator(AbstractIntegrator) class
+## ```AMUSEBHTreeIntegrator(AbstractIntegrator)``` class
 This class implements ```AbstractIntegrator``` for Barnes-Hut tree code in AMUSE (```amuse.community.bhtree.interface.BHTree``` class)
 
 ### Properties:
 * ```timestep``` - used to get/set timestep of integrator
 
-## NEMOhackcode1Integrator
-This class implements ```AbstractIntegrator``` for Barnes-Hut tree code in NEMO (```hackcode1```)
+## ```NEMOhackcode1Integrator```
+This class implements ```AbstractIntegrator``` for Barnes-Hut tree code in NEMO (```hackcode1```).
