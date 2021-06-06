@@ -6,8 +6,9 @@ This is abstract class that defines general properties of integrators. All other
 ### ```__init__(self, **kwargs)```
 * ```**kwargs``` - arguments specific to each integrator. For example, timestep can be used to specify timestep for all AMUSE integrators.
 
-### ```evolve_model(self, time: ScalarQuantity)```
-* ```time``` - time until which integration is performed
+### ```evolve_model(self, end_time: ScalarQuantity, raise_number: int)```
+* ```end_time``` - system will be integrated until this time
+* ```raise_number``` - subscribers will be raised this number of times
 
 ### Properties:
 * ```particles``` - get/set; used to specify set of particles from/to integrator

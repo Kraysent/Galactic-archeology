@@ -1,5 +1,6 @@
 from amuse.datamodel.particles import Particles
 from amuse.units import nbody_system
+import numpy as np
 from integrators.abstract_integrator import AbstractIntegrator
 from amuse.community.bhtree.interface import BHTree
 from amuse.lab import ScalarQuantity
@@ -32,9 +33,15 @@ class AMUSEBHTreeIntegrator(AbstractIntegrator):
             if hasattr(self._integrator.parameters, key):
                 setattr(self._integrator.parameters, key, value)
 
-    def evolve_model(self, time: ScalarQuantity):
-        self._integrator.evolve_model(time)
-        self._raise_subscribers()
+    def evolve_model(self, end_time: ScalarQuantity):
+        i = 0
+        start_time = self.model_time
+
+        while self.model_time < end_time:
+            self._integrator.evolve_model(start_time + self.timestep * i)
+            self._raise_subscribers()
+
+            i += 1
 
     @property
     def model_time(self):

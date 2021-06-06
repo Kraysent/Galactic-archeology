@@ -20,19 +20,19 @@ integrator = AMUSEBHTreeIntegrator(mass = particles.total_mass(), rscale = parti
 integrator.particles = particles
 tracker = Tracker(integrator)
 
-i = 0
+counter = 0
 
 def subscriber():
-    if i % 10 == 0:
+    global counter
+
+    if counter % 10 == 0:
         print('{} Myr'.format(np.round(integrator.model_time.value_in(units.Myr))), end = ' | ')
 
     tracker.track_parameters()
+    counter += 1
 
 integrator.subscribe(subscriber)
-
-while integrator.model_time < max_time:
-    integrator.evolve_model(integrator.timestep * i)
-    i += 1
+integrator.evolve_model(max_time)
 
 pos = tracker.get_positions()
 vel = tracker.get_velocities()

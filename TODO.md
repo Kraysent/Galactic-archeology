@@ -1,7 +1,6 @@
 ## Nearest future:
 * Add integrator for NEMO integration.
 * Add console progress bar during integration.
-* Move integration ```while``` loop to specific method of ```AbstractIntegrator```.  
 * Add several colors for ```Visualizer``` class. ```animate``` method should take arguments that define separation between them.
 * Add an option to plot only particles within some region of observation point.
 

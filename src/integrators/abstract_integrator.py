@@ -8,7 +8,7 @@ class AbstractIntegrator:
         pass
 
     @abstractmethod
-    def evolve_model(self, time: ScalarQuantity):
+    def evolve_model(self, end_time: ScalarQuantity):
         pass
 
     def subscribe(self, reciever):
