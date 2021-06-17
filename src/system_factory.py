@@ -37,7 +37,7 @@ class SystemFactory:
     def add_system(self, system: SystemType, mass: ScalarQuantity, size: ScalarQuantity, N: int, r: VectorQuantity = VectorQuantity([0., 0., 0.,], units.kpc), v: VectorQuantity = VectorQuantity([0., 0., 0.,], units.kms)):
         '''
         - system - type of the system to create,
-        - mass, size - its mass and size (obviously)
+        - mass, size - its mass and virial radius
         - N - number of particles
         - r - initial offset of the system
         - v - initial velocity of the system
