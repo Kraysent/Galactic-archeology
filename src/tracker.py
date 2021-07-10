@@ -1,148 +1,170 @@
+from amuse.units.core import named_unit
+from amuse.units.quantities import ScalarQuantity
 import numpy as np
 from amuse.lab import units
 from pandas import DataFrame
+from amuse.io import read_set_from_file, write_set_to_file
+import os
 
 from integrators.abstract_integrator import AbstractIntegrator
 
 
 class Tracker:
-    def __init__(self, integrator: AbstractIntegrator):
+    def __init__(self, integrator: AbstractIntegrator, output_directory_name: str):
         self.integrator = integrator
-        # this probably should be a multiindex pandas dataframe
-        # but it is quite a complex thing to do right now;
-        # also i am not sure about its efficiency during append.
-        # Though ndarray is not efficient either
-        self.data = np.zeros(shape = (0, 7, len(integrator.particles)))
+        self.directory_name = output_directory_name
         self.common_parameters = DataFrame.from_dict({
             'T': []
         })
 
     def track_parameters(self):
-        new = np.zeros(shape = (1, 7, len(self.integrator.particles)))
+        directory = self.directory_name
+        filename = '{}.dat'.format(np.round(self.integrator.model_time.value_in(units.Myr), 2))
+        write_set_to_file(self.integrator.particles, '{}/{}'.format(directory, filename))
 
-        # Positions
-        new[0][0] = self.integrator.particles.x.value_in(units.kpc)
-        new[0][1] = self.integrator.particles.y.value_in(units.kpc)
-        new[0][2] = self.integrator.particles.z.value_in(units.kpc)
+    def _get_time_from_filename(filename: str, unit: named_unit) -> ScalarQuantity:
+        filename = os.path.basename(filename)
+        time = os.path.splitext(filename)[0]
+        result = time | unit
 
-        # Velocities
-        new[0][3] = self.integrator.particles.vx.value_in(units.kms)
-        new[0][4] = self.integrator.particles.vy.value_in(units.kms)
-        new[0][5] = self.integrator.particles.vz.value_in(units.kms)
+        return result
 
-        # Masses
-        new[0][6] = self.integrator.particles.mass.value_in(units.MSun)
-
-        self.data = np.append(self.data, new, axis = 0)
-
-        common_new = {
-            'T': self.integrator.model_time.value_in(units.Myr)
-        }
-        self.common_parameters = self.common_parameters.append(common_new, ignore_index = True)
-
-    def get_common_parameters(self):
-        return self.common_parameters
-
-    def get_number_of_timesteps(self):
-        return len(self.common_parameters['T'])
-
-    def get_positions(self) -> np.ndarray:
-        '''
-        Returns positions of all particles over time: 
+    def _setup_datastruct_to_read(list_of_files: list, fields: list) -> dict:
+        output = {}
         
-        get_positions().shape = (number_of_timesteps, number_of_dimensions, number_of_particles)
-        '''
-        return self.data[:, 0:3]
+        for filename in list_of_files: 
+            curr_time = Tracker._get_time_from_filename(filename, units.Myr)
+            output[curr_time] = {}
 
-    def get_velocities(self) -> np.ndarray:
-        '''
-        Returns velocities of all particles over time
+            for field in fields:
+                output[curr_time][field] = []
 
-        get_velocities().shape = (number_of_timesteps, number_of_dimensions, number_of_particles)
-        '''
-        return self.data[:, 3:6]
-
-    def get_masses(self) -> np.ndarray:
-        '''
-        Returns masses of all particles over time
-
-        get_masses().shape = (number_of_timesteps, number_of_particles)
-        '''
-        return self.data[:, 6]
-
-    def get_center_of_mass_position(self) -> np.ndarray:
-        '''
-        Returns position of all particles over time
-
-        get_center_of_mass_position().shape = (number_of_timesteps, number_of_dimensions)
-        '''
-        mass = self.get_masses()
-        total_mass = mass.sum(axis = 1)
-        pos = self.get_positions()
-
-        cm_pos = (pos * mass[:, np.newaxis, :]).sum(axis = 2) / total_mass[:, np.newaxis]
-
-        return cm_pos
-
-    def get_center_of_mass_velocity(self) -> np.ndarray:
-        '''
-        Returns velocity of center of mass over time
-
-        get_center_of_mass_velocity().shape = (number_of_timesteps, number_of_dimensions)
-        '''
-        mass = self.get_masses()
-        total_mass = mass.sum(axis = 1)
-        vel = self.get_velocities()
-
-        cm_vel = (vel * mass[:, np.newaxis, :]).sum(axis = 2) / total_mass[:, np.newaxis]
-
-        return cm_vel
-
-    def get_radial_velocity(self, pow: np.ndarray, pow_vel: np.ndarray) -> np.ndarray:
-        '''
-        - pow - point of view radius vector, pow.shape = (number_of_timesteps, number_of_dimensions)
-        - pow_vel - velocity vector of point of view, pow_vel.shape = (number_of_timesteps, number_of_dimensions)
+        return output
         
-        Returns signed absolute value of radial velocity of each particle from given point of view
+    def read_fields(directory_name: str, fields: list, extension: str = 'dat') -> dict:
+        # this method reads all the files with all the snapshots and take out fields 
+        # it returns sorted dictionary, where keys are times and values 
+        # are dicts {field_name: list_of_particles}
+        filenames = []
+        for root, _, files in os.walk('{}/'.format(directory_name)):
+            for file in files:
+                filenames.append(os.path.join(root, file))
 
-        get_radial_velocity().shape = (number_of_timesteps, number_of_particles)
-        '''
-        if (pow.shape != (self.get_number_of_timesteps(), 3)):
-            raise Exception("Point of view radius vector should have shape (number_of_timesteps, number_of_dimensions).")
+        output = Tracker._setup_datastruct_to_read(files, fields)
 
-        if (pow_vel.shape != (self.get_number_of_timesteps(), 3)):
-            raise Exception("Point of view velocity vector should have shape (number_of_timesteps, number_of_dimensions).")
+        for filename in filenames:
+            curr_particles = read_set_from_file(filename)
+            curr_time = Tracker._get_time_from_filename(filename, units.Myr)
 
-        r = self.get_positions() - pow[:, :, np.newaxis]
-        v = self.get_velocities() - pow_vel[:, :, np.newaxis]
+            for field in fields:
+                output[curr_time][field] = getattr(curr_particles, field)
 
-        r_len = (r ** 2).sum(axis = 1) ** 0.5
-        e_r = r / r_len[:, np.newaxis, :]
+        return output
 
-        return (v * e_r).sum(axis = 1)
+    # def get_common_parameters(self):
+    #     return self.common_parameters
 
-    def get_tangential_velocity(self, pow: np.ndarray, pow_vel: np.ndarray) -> np.ndarray:
-        '''
-        - pow - point of view radius vector, pow.shape = (number_of_timesteps, number_of_dimensions)
-        - pow_vel - velocity vector of point of view, pow_vel.shape = (number_of_timesteps, number_of_dimensions)
+    # def get_number_of_timestamps(self):
+    #     return len(self.common_parameters['T'])
+
+    # def get_positions(self) -> np.ndarray:
+    #     '''
+    #     Returns positions of all particles over time: 
         
-        Returns tangential velocity of each particle from given point of view
+    #     get_positions().shape = (number_of_timesteps, number_of_dimensions, number_of_particles)
+    #     '''
+    #     return self.data[:, 0:3]
 
-        get_tangential_velocity().shape = (number_of_timesteps, number_of_dimensions, number_of_particles)
-        '''
+    # def get_velocities(self) -> np.ndarray:
+    #     '''
+    #     Returns velocities of all particles over time
 
-        if (pow.shape != (self.get_number_of_timesteps(), 3)):
-            raise Exception("Point of view radius vector should have shape (number_of_timesteps, number_of_dimensions).")
+    #     get_velocities().shape = (number_of_timesteps, number_of_dimensions, number_of_particles)
+    #     '''
+    #     return self.data[:, 3:6]
 
-        if (pow_vel.shape != (self.get_number_of_timesteps(), 3)):
-            raise Exception("Point of view velocity vector should have shape (number_of_timesteps, number_of_dimensions).")
+    # def get_masses(self) -> np.ndarray:
+    #     '''
+    #     Returns masses of all particles over time
 
-        r = self.get_positions() - pow[:, :, np.newaxis]
-        v = self.get_velocities() - pow_vel[:, :, np.newaxis]
+    #     get_masses().shape = (number_of_timesteps, number_of_particles)
+    #     '''
+    #     return self.data[:, 6]
 
-        r_len = (r ** 2).sum(axis = 1) ** 0.5
-        e_r = r / r_len[:, np.newaxis, :]
+    # def get_center_of_mass_position(self) -> np.ndarray:
+    #     '''
+    #     Returns position of all particles over time
 
-        v_r = (v * e_r).sum(axis = 1)[:, np.newaxis, :] * e_r
+    #     get_center_of_mass_position().shape = (number_of_timesteps, number_of_dimensions)
+    #     '''
+    #     mass = self.get_masses()
+    #     total_mass = mass.sum(axis = 1)
+    #     pos = self.get_positions()
 
-        return ((v - v_r) ** 2).sum(axis = 1) ** 0.5
+    #     cm_pos = (pos * mass[:, np.newaxis, :]).sum(axis = 2) / total_mass[:, np.newaxis]
+
+    #     return cm_pos
+
+    # def get_center_of_mass_velocity(self) -> np.ndarray:
+    #     '''
+    #     Returns velocity of center of mass over time
+
+    #     get_center_of_mass_velocity().shape = (number_of_timesteps, number_of_dimensions)
+    #     '''
+    #     mass = self.get_masses()
+    #     total_mass = mass.sum(axis = 1)
+    #     vel = self.get_velocities()
+
+    #     cm_vel = (vel * mass[:, np.newaxis, :]).sum(axis = 2) / total_mass[:, np.newaxis]
+
+    #     return cm_vel
+
+    # def get_radial_velocity(self, pow: np.ndarray, pow_vel: np.ndarray) -> np.ndarray:
+    #     '''
+    #     - pow - point of view radius vector, pow.shape = (number_of_timesteps, number_of_dimensions)
+    #     - pow_vel - velocity vector of point of view, pow_vel.shape = (number_of_timesteps, number_of_dimensions)
+        
+    #     Returns signed absolute value of radial velocity of each particle from given point of view
+
+    #     get_radial_velocity().shape = (number_of_timesteps, number_of_particles)
+    #     '''
+    #     if (pow.shape != (self.get_number_of_timesteps(), 3)):
+    #         raise Exception("Point of view radius vector should have shape (number_of_timesteps, number_of_dimensions).")
+
+    #     if (pow_vel.shape != (self.get_number_of_timesteps(), 3)):
+    #         raise Exception("Point of view velocity vector should have shape (number_of_timesteps, number_of_dimensions).")
+
+    #     r = self.get_positions() - pow[:, :, np.newaxis]
+    #     v = self.get_velocities() - pow_vel[:, :, np.newaxis]
+
+    #     r_len = (r ** 2).sum(axis = 1) ** 0.5
+    #     e_r = r / r_len[:, np.newaxis, :]
+
+    #     return (v * e_r).sum(axis = 1)
+
+    # def get_tangential_velocity(self, pow: np.ndarray, pow_vel: np.ndarray) -> np.ndarray:
+    #     '''
+    #     - pow - point of view radius vector, pow.shape = (number_of_timesteps, number_of_dimensions)
+    #     - pow_vel - velocity vector of point of view, pow_vel.shape = (number_of_timesteps, number_of_dimensions)
+        
+    #     Returns tangential velocity of each particle from given point of view
+
+    #     get_tangential_velocity().shape = (number_of_timesteps, number_of_dimensions, number_of_particles)
+    #     '''
+
+    #     if (pow.shape != (self.get_number_of_timesteps(), 3)):
+    #         raise Exception("Point of view radius vector should have shape (number_of_timesteps, number_of_dimensions).")
+
+    #     if (pow_vel.shape != (self.get_number_of_timesteps(), 3)):
+    #         raise Exception("Point of view velocity vector should have shape (number_of_timesteps, number_of_dimensions).")
+
+    #     r = self.get_positions() - pow[:, :, np.newaxis]
+    #     v = self.get_velocities() - pow_vel[:, :, np.newaxis]
+
+    #     r_len = (r ** 2).sum(axis = 1) ** 0.5
+    #     e_r = r / r_len[:, np.newaxis, :]
+
+    #     v_r = (v * e_r).sum(axis = 1)[:, np.newaxis, :] * e_r
+
+    #     return ((v - v_r) ** 2).sum(axis = 1) ** 0.5
+
