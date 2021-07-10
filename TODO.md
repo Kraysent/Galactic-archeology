@@ -12,3 +12,4 @@
 ## More distant future:
 * Create abstract class for creation of the systems. Probably it should be separate from ```SystemFactory``` and just provide sets of particles for it.
 * Add integrator for NEMO integration.
+* Potentially change parameters like x, y, z, vx, vy, vz, m to single PhaseSpace parameter (probably some interface or class at least)

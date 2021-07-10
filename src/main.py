@@ -18,7 +18,7 @@ particles = factory.get_system()
 
 integrator = AMUSEBHTreeIntegrator(mass = particles.total_mass(), rscale = particles.virial_radius(), timestep = 3 | units.Myr, epsilon_squared = (0.05 | units.kpc) ** 2)
 integrator.particles = particles
-tracker = Tracker(integrator)
+tracker = Tracker(integrator, 'output/1/')
 
 counter = 0
 
@@ -34,43 +34,43 @@ def subscriber():
 integrator.subscribe(subscriber)
 integrator.evolve_model(max_time)
 
-pos = tracker.get_positions()
-vel = tracker.get_velocities()
-cm_pos = tracker.get_center_of_mass_position()
-cm_vel = tracker.get_center_of_mass_velocity()
+# pos = tracker.get_positions()
+# vel = tracker.get_velocities()
+# cm_pos = tracker.get_center_of_mass_position()
+# cm_vel = tracker.get_center_of_mass_velocity()
 
-params = tracker.get_common_parameters()
-pow = np.array([8, 0, 0])[np.newaxis, :] + cm_pos
-pow_vel = np.array([200, 0, 0])[np.newaxis, :] + cm_vel
+# params = tracker.get_common_parameters()
+# pow = np.array([8, 0, 0])[np.newaxis, :] + cm_pos
+# pow_vel = np.array([200, 0, 0])[np.newaxis, :] + cm_vel
 
-v_r_length = tracker.get_radial_velocity(pow, pow_vel)
-v_tau_length = tracker.get_tangential_velocity(pow, pow_vel)
+# v_r_length = tracker.get_radial_velocity(pow, pow_vel)
+# v_tau_length = tracker.get_tangential_velocity(pow, pow_vel)
 
-visualizer = Visualizer((2, 5), [
-    ((0, 0), 2, 2),
-    ((0, 2), 2, 2),
-    ((0, 4), 1, 1),
-    ((1, 4), 1, 1)
-])
+# visualizer = Visualizer((2, 5), [
+#     ((0, 0), 2, 2),
+#     ((0, 2), 2, 2),
+#     ((0, 4), 1, 1),
+#     ((1, 4), 1, 1)
+# ])
 
-visualizer.set_axs_lims([
-    (-150, 150, -200, 200),
-    (-150, 150, -200, 200),
-    (0, 500, -250, 250),
-    (-600, 500, 0, 500)
-])
-visualizer.set_axs_labels([
-    ('x, kpc', 'y, kpc'),
-    ('x, kpc', 'z, kpc'),
-    ('v_xy, km/s', 'v_z, km/s'),
-    ('v_r, km/s', 'v_tau, kms')
-])
+# visualizer.set_axs_lims([
+#     (-150, 150, -200, 200),
+#     (-150, 150, -200, 200),
+#     (0, 500, -250, 250),
+#     (-600, 500, 0, 500)
+# ])
+# visualizer.set_axs_labels([
+#     ('x, kpc', 'y, kpc'),
+#     ('x, kpc', 'z, kpc'),
+#     ('v_xy, km/s', 'v_z, km/s'),
+#     ('v_r, km/s', 'v_tau, kms')
+# ])
 
-visualizer.set_data([
-    (pos[:, 0], pos[:, 1]),
-    (pos[:, 0], pos[:, 2]),
-    ((vel[:, 0] ** 2 + vel[:, 1] ** 2) ** 0.5, vel[:, 2]),
-    (v_r_length, v_tau_length)
-], titles = ['Time: {} Myr'.format(np.round(t, 2)) for t in params['T']])
+# visualizer.set_data([
+#     (pos[:, 0], pos[:, 1]),
+#     (pos[:, 0], pos[:, 2]),
+#     ((vel[:, 0] ** 2 + vel[:, 1] ** 2) ** 0.5, vel[:, 2]),
+#     (v_r_length, v_tau_length)
+# ], titles = ['Time: {} Myr'.format(np.round(t, 2)) for t in params['T']])
 
-visualizer.animate(sep = N1, width = 1500, height = 900, dpi = 90, filename = 'output/animation.mp4')
+# visualizer.animate(sep = N1, width = 1500, height = 900, dpi = 90, filename = 'output/animation.mp4')
