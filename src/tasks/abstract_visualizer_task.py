@@ -40,6 +40,27 @@ class XYTask(AbstractVisualizerTask):
 
         return params
 
+class XYSliceCMTrackTask(AbstractVisualizerTask):
+    def __init__(self, slice: Tuple[int, int]) -> None:
+        self.cmx = np.empty((0,))
+        self.cmy = np.empty((0,))
+        self.slice = slice
+
+    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
+        cm = snapshot.particles[self.slice[0]: self.slice[1]].center_of_mass()
+        self.cmx = np.append(self.cmx, cm.x.value_in(units.kpc))
+        self.cmy = np.append(self.cmy, cm.y.value_in(units.kpc))
+
+        return (self.cmx, self.cmy)
+
+    def get_draw_params(self) -> DrawParameters:
+        params = DrawParameters()
+        params.linestyle = 'solid'
+        params.color = 'g'
+        params.marker = 'None'
+
+        return params
+
 class ZYTask(AbstractVisualizerTask):
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         particles = snapshot.particles

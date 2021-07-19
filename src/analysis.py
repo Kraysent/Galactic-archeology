@@ -5,7 +5,7 @@ from amuse.lab import units
 
 from iotools.abstractiomanager import AbstractIOManager, NEMOIOManager
 from tasks.abstract_visualizer_task import (AbstractVisualizerTask, EnergyTask,
-                                            NormalVelocityTask, VxVyTask,
+                                            NormalVelocityTask, VxVyTask, XYSliceCMTrackTask,
                                             XYTask, ZYTask)
 from utils.plot_parameters import PlotParameters
 from utils.snapshot import Snapshot
@@ -47,6 +47,11 @@ class TaskHolder:
             xlabel = 'x, kpc', ylabel = 'y, kpc' 
         )
 
+        self.hostxytracktask = XYSliceCMTrackTask((0, 200000))
+        self.hostxytracktask.plot_params = self.xytask.plot_params
+        self.satxytracktask = XYSliceCMTrackTask((200000, -1))
+        self.satxytracktask.plot_params = self.xytask.plot_params
+
         self.zytask = ZYTask()
         self.zytask.plot_params = PlotParameters(
             axes_id = 1,
@@ -73,7 +78,14 @@ class TaskHolder:
             xlabel = '$V_x$, km/s', ylabel = '$V_y$, km/s'
         )
 
-        return [self.xytask, self.zytask, self.norm_vel_task, self.vxvytask]
+        return [
+            self.xytask, 
+            self.hostxytracktask, 
+            self.satxytracktask,
+            self.zytask, 
+            self.norm_vel_task, 
+            self.vxvytask
+        ]
 
     def update_tasks(self, snapshot: Snapshot):
         sun_pos = snapshot.particles[0:200000].center_of_mass() + ([8, 0, 0] | units.kpc)
