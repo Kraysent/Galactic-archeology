@@ -2,15 +2,9 @@ from typing import Tuple
 
 
 class PlotParameters:
-    def __init__(self, axes_id: int, **kwargs):
-        self._axes_id = axes_id
-
+    def __init__(self, **kwargs):
         for (key, val) in kwargs.items():
             setattr(self, key, val)
-
-    @property
-    def axes_id(self) -> int:
-        return self._axes_id 
 
     grid: bool = False
     xlim: Tuple[int, int] = (None, None)

@@ -41,8 +41,8 @@ class Visualizer:
 
         return results
 
-    def set_plot_parameters(self, params: PlotParameters):
-        axes: Axes = self._axes[params.axes_id]
+    def set_plot_parameters(self, axes_id: int, params: PlotParameters):
+        axes: Axes = self._axes[axes_id]
 
         axes.grid(params.grid)
 

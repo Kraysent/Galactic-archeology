@@ -26,10 +26,10 @@ def run(
         snapshot.particles = snapshot.particles[0: 200000] + snapshot.particles[1000000:1100000]
 
         task: AbstractVisualizerTask
-        for task in tasks:
-            visualizer.set_plot_parameters(task.plot_params)
+        for (axes_id, task) in tasks:
+            visualizer.set_plot_parameters(axes_id, task.plot_params)
             (x_data, y_data) = task.run(snapshot)
-            visualizer.plot_points(task.plot_params.axes_id, x_data, y_data, task.get_draw_params())
+            visualizer.plot_points(axes_id, x_data, y_data, task.get_draw_params())
 
         visualizer.set_title('Time: {:.02f} Myr'.format(time))
         visualizer.save('output/{:.02f}.png'.format(time))
@@ -42,7 +42,6 @@ class TaskHolder:
     def get_tasks(self) -> list:
         self.xytask = XYTask()
         self.xytask.plot_params = PlotParameters(
-            axes_id = 0,
             xlim = (-150, 150), ylim = (-190, 190),
             xlabel = 'x, kpc', ylabel = 'y, kpc' 
         )
@@ -54,7 +53,6 @@ class TaskHolder:
 
         self.zytask = ZYTask()
         self.zytask.plot_params = PlotParameters(
-            axes_id = 1,
             xlim = (-150, 150), ylim = (-190, 190),
             xlabel = 'z, kpc', yticks = []
         )    
@@ -66,25 +64,23 @@ class TaskHolder:
             emph = (200000, -1)
         )
         self.norm_vel_task.plot_params = PlotParameters(
-            axes_id = 2, 
             xlim = (-600, 600), ylim = (0, 400),
             xlabel = '$v_r$, km/s', ylabel = '$v_{\\tau}$, km/s'
         )
 
         self.vxvytask = VxVyTask()
         self.vxvytask.plot_params = PlotParameters(
-            axes_id = 3,
             xlim = (-400, 400), ylim = (-400, 400),
             xlabel = '$V_x$, km/s', ylabel = '$V_y$, km/s'
         )
 
         return [
-            self.xytask, 
-            self.hostxytracktask, 
-            self.satxytracktask,
-            self.zytask, 
-            self.norm_vel_task, 
-            self.vxvytask
+            (0, self.xytask), 
+            (0, self.hostxytracktask), 
+            (0, self.satxytracktask),
+            (1, self.zytask), 
+            (2, self.norm_vel_task), 
+            (3, self.vxvytask)
         ]
 
     def update_tasks(self, snapshot: Snapshot):
