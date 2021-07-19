@@ -25,14 +25,11 @@ def run(
         update_tasks(snapshot)
         snapshot.particles = snapshot.particles[0: 200000] + snapshot.particles[1000000:1100000]
 
-        for i in range(len(tasks)):
-            task: AbstractVisualizerTask = tasks[i]
-
+        task: AbstractVisualizerTask
+        for task in tasks:
             visualizer.set_plot_parameters(task.plot_params)
-
             (x_data, y_data) = task.run(snapshot)
-            
-            visualizer.plot_points(i, x_data, y_data, task.get_draw_params())
+            visualizer.plot_points(task.plot_params.axes_id, x_data, y_data, task.get_draw_params())
 
         visualizer.set_title('Time: {:.02f} Myr'.format(time))
         visualizer.save('output/{:.02f}.png'.format(time))
