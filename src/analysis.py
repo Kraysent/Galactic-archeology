@@ -4,7 +4,7 @@ import numpy as np
 from amuse.lab import units
 
 from iotools.abstractiomanager import AbstractIOManager, NEMOIOManager
-from utils.abstract_visualizer_task import (AbstractVisualizerTask, EnergyTask,
+from tasks.abstract_visualizer_task import (AbstractVisualizerTask, EnergyTask,
                                             NormalVelocityTask, VxVyTask,
                                             XYTask, ZYTask)
 from utils.plot_parameters import PlotParameters

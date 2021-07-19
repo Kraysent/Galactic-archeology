@@ -126,7 +126,7 @@ class NormalVelocityTask(AbstractVisualizerTask):
         
     def get_draw_params(self) -> DrawParameters:
         params = DrawParameters()
-        params.markersize = 0.5
+        params.markersize = 0.1
         params.emph = self.new_emph
 
         return params
