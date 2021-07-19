@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, Union
 
 
 class PlotParameters:
@@ -21,5 +21,7 @@ class DrawParameters:
     linestyle: str = 'None'
     color: str = 'b'
     marker: str = 'o'
+    blocks: Tuple[Tuple[int, int], ...] = None
+    blocks_color: Union[Tuple[str, ...], str] = 'r'
     emph: Tuple[int, int] = (0, 0)
     emph_color = 'r'

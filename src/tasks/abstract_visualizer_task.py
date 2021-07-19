@@ -36,7 +36,8 @@ class XYTask(AbstractVisualizerTask):
 
     def get_draw_params(self) -> DrawParameters:
         params = DrawParameters()
-        params.emph = (200000, -1)
+        params.blocks = ((0, 200000), (200000, -1))
+        params.blocks_color = ('b', 'r')
 
         return params
 
@@ -56,7 +57,7 @@ class XYSliceCMTrackTask(AbstractVisualizerTask):
     def get_draw_params(self) -> DrawParameters:
         params = DrawParameters()
         params.linestyle = 'solid'
-        params.color = 'g'
+        params.blocks_color = 'g'
         params.marker = 'None'
 
         return params
@@ -68,7 +69,8 @@ class ZYTask(AbstractVisualizerTask):
 
     def get_draw_params(self) -> DrawParameters:
         params = DrawParameters()
-        params.emph = (200000, -1)
+        params.blocks = ((0, 200000), (200000, -1))
+        params.blocks_color = ('b', 'r')
 
         return params
 
@@ -97,19 +99,20 @@ class VxVyTask(AbstractVisualizerTask):
     def get_draw_params(self) -> DrawParameters:
         params = DrawParameters()
         params.markersize = 0.02
-        params.emph = (200000, -1)
+        params.blocks = ((0, 200000), (200000, -1))
+        params.blocks_color = ('b', 'r')
 
         return params
 
 class NormalVelocityTask(AbstractVisualizerTask):
     def __init__(self, 
         pov: VectorQuantity, pov_velocity: VectorQuantity, 
-        radius: VectorQuantity, emph: Tuple[int, int] = (0, 0)
+        radius: VectorQuantity, blocks: Tuple[Tuple[int, int], ...]
     ):
         self.pov = pov.value_in(units.kpc)
         self.pov_vel = pov_velocity.value_in(units.kms)
         self.radius = radius.value_in(units.kpc)
-        self.emph = emph
+        self.blocks = blocks
     
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         x = snapshot.particles.x.value_in(units.kpc) - self.pov[0]
@@ -123,7 +126,7 @@ class NormalVelocityTask(AbstractVisualizerTask):
         v_rs = []
         v_ts = []
 
-        for (start, end) in [(0, self.emph[0]), (self.emph[0], self.emph[1]), (self.emph[1], -1)]:
+        for (start, end) in self.blocks:
             curr_r = r[start:end]
             filter = curr_r < self.radius
 
@@ -141,14 +144,25 @@ class NormalVelocityTask(AbstractVisualizerTask):
             v_rs.append(v_r)
             v_ts.append(v_t)
 
-        self.new_emph = (len(v_rs[0]), len(v_rs[0]) + len(v_rs[1]))
+        self.new_blocks = []
+        ind = len(v_rs[0])
+        self.new_blocks.append((0, ind))
+
+        for i in range(len(v_rs) - 2):
+            
+            self.new_blocks.append((ind, ind + len(v_rs[i + 1])))
+            ind = ind + len(v_rs[i + 1])
+    
+        self.new_blocks.append((ind, -1))
+        self.new_blocks = tuple(self.new_blocks)
 
         return (np.concatenate(v_rs), np.concatenate(v_ts))
         
     def get_draw_params(self) -> DrawParameters:
         params = DrawParameters()
         params.markersize = 0.1
-        params.emph = self.new_emph
+        params.blocks = self.new_blocks
+        params.blocks_color = ('b', 'r')
 
         return params
 

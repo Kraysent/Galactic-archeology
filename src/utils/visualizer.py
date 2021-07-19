@@ -69,24 +69,37 @@ class Visualizer:
     ):
         axes = self._axes[axes_id]
 
-        axes.plot(
-            x[: params.emph[0]], y[: params.emph[0]], 
-            marker = params.marker, color = params.color,
-            markersize = params.markersize, linestyle = params.linestyle
-        )
+        if params.blocks is None:
+            axes.plot(x, y, 
+                marker = params.marker, color = params.blocks_color,
+                markersize = params.markersize, linestyle = params.linestyle
+            )
+        else:
+            for i in range(len(params.blocks)):
+                (start, end) = params.blocks[i]
 
-        axes.plot(
-            x[params.emph[0]: params.emph[1]], 
-            y[params.emph[0]: params.emph[1]],
-            marker = params.marker, color = params.emph_color,
-            markersize = params.markersize, linestyle = params.linestyle
-        )
+                axes.plot(x[start: end], y[start: end],
+                    marker = params.marker, color = params.blocks_color[i],
+                    markersize = params.markersize, linestyle = params.linestyle
+                )
+        # axes.plot(
+        #     x[: params.emph[0]], y[: params.emph[0]], 
+        #     marker = params.marker, color = params.color,
+        #     markersize = params.markersize, linestyle = params.linestyle
+        # )
 
-        axes.plot(
-            x[params.emph[1]: ], y[params.emph[1]: ], 
-            marker = params.marker, color = params.color,
-            markersize = params.markersize, linestyle = params.linestyle
-        )
+        # axes.plot(
+        #     x[params.emph[0]: params.emph[1]], 
+        #     y[params.emph[0]: params.emph[1]],
+        #     marker = params.marker, color = params.emph_color,
+        #     markersize = params.markersize, linestyle = params.linestyle
+        # )
+
+        # axes.plot(
+        #     x[params.emph[1]: ], y[params.emph[1]: ], 
+        #     marker = params.marker, color = params.color,
+        #     markersize = params.markersize, linestyle = params.linestyle
+        # )
 
     def set_title(self, title: str):
         self._figure.suptitle(title)

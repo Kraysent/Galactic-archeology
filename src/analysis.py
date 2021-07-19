@@ -55,13 +55,16 @@ class TaskHolder:
         self.zytask.plot_params = PlotParameters(
             xlim = (-150, 150), ylim = (-190, 190),
             xlabel = 'z, kpc', yticks = []
-        )    
+        )
 
         self.norm_vel_task = NormalVelocityTask(
             pov = [8, 0, 0] | units.kpc, 
             pov_velocity = [0, 200, 0] | units.kms,
-            radius = 15 | units.kpc,
-            emph = (200000, -1)
+            radius = 5 | units.kpc,
+            blocks = (
+                (0, 200000),
+                (200000, -1)
+            )
         )
         self.norm_vel_task.plot_params = PlotParameters(
             xlim = (-600, 600), ylim = (0, 400),
@@ -78,7 +81,7 @@ class TaskHolder:
             (0, self.xytask), 
             (0, self.hostxytracktask), 
             (0, self.satxytracktask),
-            (1, self.zytask), 
+            (1, self.zytask),
             (2, self.norm_vel_task), 
             (3, self.vxvytask)
         ]
