@@ -25,6 +25,17 @@ class AbstractVisualizerTask(ABC):
     def plot_params(self, value: PlotParameters):
         self._plot_params = value
 
+    @property
+    def blocks(self) -> Tuple[Tuple[int, int], ...]:
+        if hasattr(self, '_blocks'):
+            return getattr(self, '_blocks')
+        else:
+            return ((0, -1), )
+
+    @blocks.setter
+    def blocks(self, value: Tuple[Tuple[int, int], ...]):
+        self._blocks = value
+
     @abstractmethod
     def get_draw_params(self) -> DrawParameters:
         pass
@@ -36,7 +47,6 @@ class XYTask(AbstractVisualizerTask):
 
     def get_draw_params(self) -> DrawParameters:
         params = DrawParameters()
-        params.blocks = ((0, 200000), (200000, -1))
         params.blocks_color = ('b', 'r')
 
         return params
@@ -69,7 +79,6 @@ class ZYTask(AbstractVisualizerTask):
 
     def get_draw_params(self) -> DrawParameters:
         params = DrawParameters()
-        params.blocks = ((0, 200000), (200000, -1))
         params.blocks_color = ('b', 'r')
 
         return params
@@ -81,7 +90,10 @@ class EnergyTask(AbstractVisualizerTask):
 
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         self.times = np.append(self.times, snapshot.timestamp.value_in(units.Myr))
-        self.energies = np.append(self.energies, snapshot.particles.kinetic_energy().value_in(units.J))
+        self.energies = np.append(
+            self.energies,
+            snapshot.particles.kinetic_energy().value_in(units.J)
+        )
 
         return (self.times, self.energies)
 
@@ -94,25 +106,25 @@ class EnergyTask(AbstractVisualizerTask):
 
 class VxVyTask(AbstractVisualizerTask):
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
-        return (snapshot.particles.vx.value_in(units.kms), snapshot.particles.vy.value_in(units.kms))
+        return (
+            snapshot.particles.vx.value_in(units.kms), 
+            snapshot.particles.vy.value_in(units.kms)
+        )
 
     def get_draw_params(self) -> DrawParameters:
         params = DrawParameters()
         params.markersize = 0.02
-        params.blocks = ((0, 200000), (200000, -1))
         params.blocks_color = ('b', 'r')
 
         return params
 
 class NormalVelocityTask(AbstractVisualizerTask):
     def __init__(self, 
-        pov: VectorQuantity, pov_velocity: VectorQuantity, 
-        radius: VectorQuantity, blocks: Tuple[Tuple[int, int], ...]
+        pov: VectorQuantity, pov_velocity: VectorQuantity, radius: VectorQuantity
     ):
         self.pov = pov.value_in(units.kpc)
         self.pov_vel = pov_velocity.value_in(units.kms)
         self.radius = radius.value_in(units.kpc)
-        self.blocks = blocks
     
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         x = snapshot.particles.x.value_in(units.kpc) - self.pov[0]
@@ -144,23 +156,29 @@ class NormalVelocityTask(AbstractVisualizerTask):
             v_rs.append(v_r)
             v_ts.append(v_t)
 
-        self.new_blocks = []
+        self._new_blocks = []
         ind = len(v_rs[0])
-        self.new_blocks.append((0, ind))
+        self._new_blocks.append((0, ind))
 
         for i in range(len(v_rs) - 2):
-            self.new_blocks.append((ind, ind + len(v_rs[i + 1])))
+            self._new_blocks.append((ind, ind + len(v_rs[i + 1])))
             ind = ind + len(v_rs[i + 1])
     
-        self.new_blocks.append((ind, -1))
-        self.new_blocks = tuple(self.new_blocks)
+        self._new_blocks.append((ind, -1))
+        self._new_blocks = tuple(self._new_blocks)
 
         return (np.concatenate(v_rs), np.concatenate(v_ts))
         
+    @AbstractVisualizerTask.blocks.getter
+    def blocks(self) -> Tuple[Tuple[int, int], ...]:
+        try:
+            return self._new_blocks
+        except AttributeError:
+            return self._blocks
+
     def get_draw_params(self) -> DrawParameters:
         params = DrawParameters()
         params.markersize = 0.1
-        params.blocks = self.new_blocks
         params.blocks_color = ('b', 'r')
 
         return params
