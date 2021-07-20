@@ -95,7 +95,7 @@ class TaskHolder:
 task_holder = TaskHolder()
 
 run(
-    NEMOIOManager('output/sum_out.nemo'),
+    NEMOIOManager('output/new_out.nemo'),
     task_holder.get_tasks(),
     visualizer,
     task_holder.update_tasks

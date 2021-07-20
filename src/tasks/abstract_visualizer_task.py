@@ -149,7 +149,6 @@ class NormalVelocityTask(AbstractVisualizerTask):
         self.new_blocks.append((0, ind))
 
         for i in range(len(v_rs) - 2):
-            
             self.new_blocks.append((ind, ind + len(v_rs[i + 1])))
             ind = ind + len(v_rs[i + 1])
     

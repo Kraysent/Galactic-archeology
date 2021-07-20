@@ -1,5 +1,5 @@
 import unsio
-from snapshot import Snapshot
+from utils.snapshot import Snapshot
 from amuse.datamodel.particles import Particles
 from amuse.lab import units
 

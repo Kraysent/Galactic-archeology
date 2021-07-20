@@ -1,6 +1,6 @@
 from amuse.datamodel.particles import Particles
 from amuse.lab import units, ScalarQuantity
-from snapshot import Snapshot
+from utils.snapshot import Snapshot
 import numpy as np
 
 class TsvToSnapshotReader:

@@ -1,9 +1,8 @@
 from amuse.units.quantities import ScalarQuantity
 from nemo_to_snapshot_reader import NEMOToSnapshotReader
-from snapshot import Snapshot
+from utils.snapshot import Snapshot
 from tsv_to_snapshot_reader import TsvToSnapshotReader
 from snapshot_to_nemo_writer import SnapshotToNEMOWriter
-from falcon_integrator import FalconIntegrator
 import matplotlib.pyplot as plt
 import numpy as np
 from amuse.lab import units
@@ -14,7 +13,9 @@ def get_snapshot() -> Snapshot:
     host_snapshot = reader.convert('input/host.txt')
     sat_snapshot = reader.convert('input/sat.txt')
     sat_snapshot.particles.x += 125 | units.kpc
-    sat_snapshot.particles.vy += 130 | units.kms
+    sat_snapshot.particles.vx -= 75 | units.kms
+    sat_snapshot.particles.vy += 75 | units.kms
+    sat_snapshot.particles.vz += 75 | units.kms
     sum_particles = Particles()
     sum_particles.add_particles(host_snapshot.particles)
     sum_particles.add_particles(sat_snapshot.particles)
@@ -23,12 +24,7 @@ def get_snapshot() -> Snapshot:
 
 def write_snapshot(snapshot: Snapshot):
     writer = SnapshotToNEMOWriter()
-    writer.write(snapshot, 'output/sum.nemo')
-
-def integrate(input_filename: str, output_filename: str):
-    integrator = FalconIntegrator()
-    integrator.set_params(eps = 0.1, kmax = 4, tstop = 1, step = 0.125)
-    integrator.integrate(input_filename, output_filename)
+    writer.write(snapshot, 'output/new.nemo')
 
 def read(filename: str):
     reader = NEMOToSnapshotReader(filename)
@@ -59,9 +55,6 @@ print('TSV read')
 
 write_snapshot(snapshot)
 print('NEMO wrote')
-
-# integrate('input/sum.nemo', 'output/result.nemo')
-# print('gyrfalcON integrated')
 
 # read('output/sum_out.nemo')
 # print('NEMO read')
