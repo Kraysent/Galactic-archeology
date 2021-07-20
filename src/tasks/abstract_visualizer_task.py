@@ -16,14 +16,25 @@ class AbstractVisualizerTask(ABC):
 
     @property
     def plot_params(self) -> PlotParameters:
-        if self._plot_params is not None:
+        try:
             return self._plot_params
-        else:
-            raise RuntimeError('No plot parameters specified for the task.')
+        except AttributeError:
+            return PlotParameters()
 
     @plot_params.setter
     def plot_params(self, value: PlotParameters):
         self._plot_params = value
+
+    @property
+    def draw_params(self) -> DrawParameters:
+        try:
+            return self._draw_params
+        except AttributeError:
+            return DrawParameters()
+
+    @draw_params.setter
+    def draw_params(self, value: DrawParameters):
+        self._draw_params = value
 
     @property
     def blocks(self) -> Tuple[Tuple[int, int], ...]:
@@ -36,20 +47,10 @@ class AbstractVisualizerTask(ABC):
     def blocks(self, value: Tuple[Tuple[int, int], ...]):
         self._blocks = value
 
-    @abstractmethod
-    def get_draw_params(self) -> DrawParameters:
-        pass
-
 class XYTask(AbstractVisualizerTask):
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         particles = snapshot.particles
         return (particles.x.value_in(units.kpc), particles.y.value_in(units.kpc))
-
-    def get_draw_params(self) -> DrawParameters:
-        params = DrawParameters()
-        params.blocks_color = ('b', 'r')
-
-        return params
 
 class XYSliceCMTrackTask(AbstractVisualizerTask):
     def __init__(self, slice: Tuple[int, int]) -> None:
@@ -64,24 +65,10 @@ class XYSliceCMTrackTask(AbstractVisualizerTask):
 
         return (self.cmx, self.cmy)
 
-    def get_draw_params(self) -> DrawParameters:
-        params = DrawParameters()
-        params.linestyle = 'solid'
-        params.blocks_color = 'g'
-        params.marker = 'None'
-
-        return params
-
 class ZYTask(AbstractVisualizerTask):
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         particles = snapshot.particles
         return (particles.z.value_in(units.kpc), particles.y.value_in(units.kpc))
-
-    def get_draw_params(self) -> DrawParameters:
-        params = DrawParameters()
-        params.blocks_color = ('b', 'r')
-
-        return params
 
 class EnergyTask(AbstractVisualizerTask):
     def __init__(self) -> None:
@@ -97,26 +84,12 @@ class EnergyTask(AbstractVisualizerTask):
 
         return (self.times, self.energies)
 
-    def get_draw_params(self) -> DrawParameters:
-        params = DrawParameters()
-        params.markersize = 1
-        params.linestyle = 'solid'
-
-        return params
-
 class VxVyTask(AbstractVisualizerTask):
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         return (
             snapshot.particles.vx.value_in(units.kms), 
             snapshot.particles.vy.value_in(units.kms)
         )
-
-    def get_draw_params(self) -> DrawParameters:
-        params = DrawParameters()
-        params.markersize = 0.02
-        params.blocks_color = ('b', 'r')
-
-        return params
 
 class NormalVelocityTask(AbstractVisualizerTask):
     def __init__(self, 
@@ -138,7 +111,7 @@ class NormalVelocityTask(AbstractVisualizerTask):
         v_rs = []
         v_ts = []
 
-        for (start, end) in self.blocks:
+        for (start, end) in self._blocks:
             curr_r = r[start:end]
             filter = curr_r < self.radius
 
@@ -175,13 +148,6 @@ class NormalVelocityTask(AbstractVisualizerTask):
             return self._new_blocks
         except AttributeError:
             return self._blocks
-
-    def get_draw_params(self) -> DrawParameters:
-        params = DrawParameters()
-        params.markersize = 0.1
-        params.blocks_color = ('b', 'r')
-
-        return params
 
     def set_pov(self, pov: VectorQuantity, pov_vel: VectorQuantity):
         self.pov = pov.value_in(units.kpc)

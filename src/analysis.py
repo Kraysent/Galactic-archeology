@@ -7,7 +7,7 @@ from iotools.abstractiomanager import AbstractIOManager, NEMOIOManager
 from tasks.abstract_visualizer_task import (AbstractVisualizerTask, EnergyTask,
                                             NormalVelocityTask, VxVyTask, XYSliceCMTrackTask,
                                             XYTask, ZYTask)
-from utils.plot_parameters import PlotParameters
+from utils.plot_parameters import DrawParameters, PlotParameters
 from utils.snapshot import Snapshot
 from utils.visualizer import Visualizer
 
@@ -19,6 +19,7 @@ def run(
     visualizer: Visualizer,
     update_tasks: Callable[[Snapshot], None]  
 ):
+    i = 0
     while (iomanager.next_frame()):
         snapshot = iomanager.get_data()
         time = snapshot.timestamp.value_in(units.Myr)
@@ -29,10 +30,12 @@ def run(
         for (axes_id, task) in tasks:
             visualizer.set_plot_parameters(axes_id, task.plot_params)
             (x_data, y_data) = task.run(snapshot)
-            visualizer.plot_points(axes_id, x_data, y_data, task.get_draw_params(), task.blocks)
+            visualizer.plot_points(axes_id, x_data, y_data, task.draw_params, task.blocks)
 
         visualizer.set_title('Time: {:.02f} Myr'.format(time))
-        visualizer.save('output/{:.02f}.png'.format(time))
+        visualizer.save('output/img-{:03d}.png'.format(i))
+        
+        i += 1
 
 visualizer = Visualizer()
 visualizer.setup_grid(2)
@@ -42,20 +45,38 @@ class TaskHolder:
     def get_tasks(self) -> list:
         self.xytask = XYTask()
         self.xytask.plot_params = PlotParameters(
-            xlim = (-150, 150), ylim = (-190, 190),
+            xlim = (-100, 100), ylim = (-120, 120),
             xlabel = 'x, kpc', ylabel = 'y, kpc' 
+        )
+        self.xytask.draw_params = DrawParameters(
+            blocks_color = ('b', 'r'),
+            markersize = 0.05
         )
         self.xytask.blocks = ((0, 200000), (200000, -1))
 
         self.hostxytracktask = XYSliceCMTrackTask((0, 200000))
         self.hostxytracktask.plot_params = self.xytask.plot_params
+        self.hostxytracktask.draw_params = DrawParameters(
+            linestyle = 'solid',
+            blocks_color = ('g', ),
+            marker = 'None'
+        )
         self.satxytracktask = XYSliceCMTrackTask((200000, -1))
         self.satxytracktask.plot_params = self.xytask.plot_params
+        self.satxytracktask.draw_params = DrawParameters(
+            linestyle = 'solid',
+            blocks_color = ('y', ),
+            marker = 'None'
+        )
 
         self.zytask = ZYTask()
         self.zytask.plot_params = PlotParameters(
-            xlim = (-150, 150), ylim = (-190, 190),
+            xlim = (-100, 100), ylim = (-120, 120),
             xlabel = 'z, kpc', yticks = []
+        )
+        self.zytask.draw_params = DrawParameters(
+            blocks_color = ('b', 'r'),
+            markersize = 0.05
         )
         self.zytask.blocks = ((0, 200000), (200000, -1))
 
@@ -68,6 +89,10 @@ class TaskHolder:
             xlim = (-600, 600), ylim = (0, 400),
             xlabel = '$v_r$, km/s', ylabel = '$v_{\\tau}$, km/s'
         )
+        self.norm_vel_task.draw_params = DrawParameters(
+            markersize = 0.1,
+            blocks_color = ('b', 'r')
+        )
         self.norm_vel_task.blocks = ((0, 200000), (200000, -1))
 
         self.vxvytask = VxVyTask()
@@ -75,12 +100,15 @@ class TaskHolder:
             xlim = (-400, 400), ylim = (-400, 400),
             xlabel = '$V_x$, km/s', ylabel = '$V_y$, km/s'
         )
-        self.norm_vel_task.blocks = ((0, 200000), (200000, -1))
+        self.vxvytask.draw_params = DrawParameters(
+            markersize = 0.02, blocks_color = ('b', 'r')
+        )
+        self.vxvytask.blocks = ((0, 200000), (200000, -1))
 
         return [
             (0, self.xytask), 
-            (0, self.hostxytracktask), 
-            (0, self.satxytracktask),
+            # (0, self.hostxytracktask), 
+            # (0, self.satxytracktask),
             (1, self.zytask),
             (2, self.norm_vel_task), 
             (3, self.vxvytask)
