@@ -26,7 +26,7 @@ def run(
         snapshot = iomanager.get_data()
         time = snapshot.timestamp.value_in(units.Myr)
         update_tasks(snapshot)
-        snapshot.particles = snapshot.particles[0: 200000] + snapshot.particles[1000000:1100000]
+        snapshot = snapshot[0: 200000] + snapshot[1000000:1100000]
 
         task: AbstractVisualizerTask
         for (axes_id, task) in tasks:
