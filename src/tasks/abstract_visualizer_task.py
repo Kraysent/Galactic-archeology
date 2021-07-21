@@ -63,18 +63,24 @@ class PlaneScatterTask(AbstractVisualizerTask):
 
         return x1, x2
 
-class XYSliceCMTrackTask(AbstractVisualizerTask):
-    def __init__(self, slice: Tuple[int, int]):
-        self.cmx = np.empty((0,))
-        self.cmy = np.empty((0,))
+class SlicedCMTrackTask(AbstractVisualizerTask):
+    def __init__(self, axes: Tuple[str, str], slice: Tuple[int, int]) -> None:
+        self.x1, self.x2 = axes
+        self.cmx1, self.cmx2 = np.empty((0,)), np.empty((0,))
         self.slice = slice
-
+    
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         cm = snapshot.particles[self.slice[0]: self.slice[1]].center_of_mass()
-        self.cmx = np.append(self.cmx, cm.x.value_in(units.kpc))
-        self.cmy = np.append(self.cmy, cm.y.value_in(units.kpc))
+        axes = {
+            'x': cm.x, 
+            'y': cm.y, 
+            'z': cm.z
+        }
 
-        return (self.cmx, self.cmy)
+        self.cmx1 = np.append(self.cmx1, axes[self.x1].value_in(units.kpc))
+        self.cmx2 = np.append(self.cmx2, axes[self.x2].value_in(units.kpc))
+
+        return (self.cmx1, self.cmx2)
 
 class EnergyTask(AbstractVisualizerTask):
     def __init__(self):
@@ -90,12 +96,18 @@ class EnergyTask(AbstractVisualizerTask):
 
         return (self.times, self.energies)
 
-class VxVyTask(AbstractVisualizerTask):
+class VProjectionTask(AbstractVisualizerTask):
+    def __init__(self, axes: Tuple[str, str]) -> None:
+        self.x1, self.x2 = axes
+
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
-        return (
-            snapshot.particles.vx.value_in(units.kms), 
-            snapshot.particles.vy.value_in(units.kms)
-        )
+        axes = {
+            'x': snapshot.particles.vx, 
+            'y': snapshot.particles.vy, 
+            'z': snapshot.particles.vz
+        }
+
+        return (axes[self.x1].value_in(units.kms), axes[self.x2].value_in(units.kms))
 
 class NormalVelocityTask(AbstractVisualizerTask):
     def __init__(self, 

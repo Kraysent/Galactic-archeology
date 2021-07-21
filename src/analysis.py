@@ -8,7 +8,7 @@ from iotools.abstractiomanager import AbstractIOManager, NEMOIOManager
 from tasks.abstract_visualizer_task import (AbstractVisualizerTask, EnergyTask,
                                             NormalVelocityTask,
                                             PlaneDensityTask, PlaneScatterTask,
-                                            VxVyTask, XYSliceCMTrackTask)
+                                            SlicedCMTrackTask, VProjectionTask)
 from utils.plot_parameters import DrawParameters, PlotParameters
 from utils.snapshot import Snapshot
 from utils.visualizer import Visualizer
@@ -67,21 +67,6 @@ class TaskHolder:
         )
         self.zytask.blocks = ((0, 200000), (200000, -1))
 
-        self.hostxytracktask = XYSliceCMTrackTask((0, 200000))
-        self.hostxytracktask.plot_params = self.xytask.plot_params
-        self.hostxytracktask.draw_params = DrawParameters(
-            linestyle = 'solid',
-            blocks_color = ('g', ),
-            marker = 'None'
-        )
-        self.satxytracktask = XYSliceCMTrackTask((200000, -1))
-        self.satxytracktask.plot_params = self.xytask.plot_params
-        self.satxytracktask.draw_params = DrawParameters(
-            linestyle = 'solid',
-            blocks_color = ('y', ),
-            marker = 'None'
-        )
-
         self.xydensitytask = PlaneDensityTask(('x', 'y'), (-100, 100, -120, 120), 1000)
         self.xydensitytask.plot_params = PlotParameters(
             xlabel = 'x, kpc', ylabel = 'y, kpc' 
@@ -96,6 +81,21 @@ class TaskHolder:
         )
         self.zydensitytask.draw_params = DrawParameters(
             extent = [-100, 100, -120, 120]
+        )
+
+        self.hostxytracktask = SlicedCMTrackTask(('x', 'y'), (0, 200000))
+        self.hostxytracktask.plot_params = self.xydensitytask.plot_params
+        self.hostxytracktask.draw_params = DrawParameters(
+            linestyle = 'solid',
+            blocks_color = ('g', ),
+            marker = 'None'
+        )
+        self.satxytracktask = SlicedCMTrackTask(('x', 'y'), (200000, -1))
+        self.satxytracktask.plot_params = self.xydensitytask.plot_params
+        self.satxytracktask.draw_params = DrawParameters(
+            linestyle = 'solid',
+            blocks_color = ('y', ),
+            marker = 'None'
         )
 
         self.norm_vel_task = NormalVelocityTask(
@@ -113,7 +113,7 @@ class TaskHolder:
         )
         self.norm_vel_task.blocks = ((0, 200000), (200000, -1))
 
-        self.vxvytask = VxVyTask()
+        self.vxvytask = VProjectionTask(('x', 'y'))
         self.vxvytask.plot_params = PlotParameters(
             xlim = (-400, 400), ylim = (-400, 400),
             xlabel = '$V_x$, km/s', ylabel = '$V_y$, km/s'
@@ -125,10 +125,10 @@ class TaskHolder:
 
         return [
             # (0, self.xytask), 
-            # (0, self.hostxytracktask), 
-            # (0, self.satxytracktask),
             (0, self.xydensitytask),
             (1, self.zydensitytask),
+            (0, self.hostxytracktask), 
+            (0, self.satxytracktask),
             # (1, self.zytask),
             (2, self.norm_vel_task), 
             (3, self.vxvytask)
