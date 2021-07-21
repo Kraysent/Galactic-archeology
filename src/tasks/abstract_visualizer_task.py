@@ -47,13 +47,24 @@ class AbstractVisualizerTask(ABC):
     def blocks(self, value: Tuple[Tuple[int, int], ...]):
         self._blocks = value
 
-class XYTask(AbstractVisualizerTask):
+class PlaneScatterTask(AbstractVisualizerTask):
+    def __init__(self, axes: Tuple[str, str]):
+        self.x1, self.x2 = axes
+
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
-        particles = snapshot.particles
-        return (particles.x.value_in(units.kpc), particles.y.value_in(units.kpc))
+        axes = {
+            'x': snapshot.particles.x, 
+            'y': snapshot.particles.y, 
+            'z': snapshot.particles.z
+        }
+
+        x1 = axes[self.x1].value_in(units.kpc)
+        x2 = axes[self.x2].value_in(units.kpc)
+
+        return x1, x2
 
 class XYSliceCMTrackTask(AbstractVisualizerTask):
-    def __init__(self, slice: Tuple[int, int]) -> None:
+    def __init__(self, slice: Tuple[int, int]):
         self.cmx = np.empty((0,))
         self.cmy = np.empty((0,))
         self.slice = slice
@@ -65,13 +76,8 @@ class XYSliceCMTrackTask(AbstractVisualizerTask):
 
         return (self.cmx, self.cmy)
 
-class ZYTask(AbstractVisualizerTask):
-    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
-        particles = snapshot.particles
-        return (particles.z.value_in(units.kpc), particles.y.value_in(units.kpc))
-
 class EnergyTask(AbstractVisualizerTask):
-    def __init__(self) -> None:
+    def __init__(self):
         self.times = np.empty((0,))
         self.energies = np.empty((0,))
 
@@ -158,7 +164,7 @@ class PlaneDensityTask(AbstractVisualizerTask):
         axes: Tuple[str, str],
         edges: Tuple[float, float, float, float], 
         resolution: int
-    ) -> None:
+    ):
         (self.x1, self.x2) = axes
         self.edges = edges
         self.resolution = resolution
