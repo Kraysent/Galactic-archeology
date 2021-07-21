@@ -1,8 +1,9 @@
-from typing import Any, Callable, Tuple
+from typing import Any, Callable, Tuple, Union
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
 import matplotlib.gridspec as gridspec
+import matplotlib as mpl
 import numpy as np
 from utils.plot_parameters import PlotParameters, DrawParameters
 
@@ -65,18 +66,23 @@ class Visualizer:
         axes.tick_params(axis = 'y', direction = params.ticks_direction)
 
     def plot_points(
-        self, axes_id: int, x: np.ndarray, y: np.ndarray, params: DrawParameters,
-        blocks: Tuple[Tuple[int, int], ...]
+        self, axes_id: int, data: Union[Tuple[np.ndarray, np.ndarray], np.ndarray], 
+        params: DrawParameters, blocks: Tuple[Tuple[int, int], ...]
     ):
         axes = self._axes[axes_id]
 
-        for i in range(len(blocks)):
-            (start, end) = blocks[i]
+        if type(data) is tuple:
+            (x, y) = data
 
-            axes.plot(x[start: end], y[start: end],
-                marker = params.marker, color = params.blocks_color[i],
-                markersize = params.markersize, linestyle = params.linestyle
-            )
+            for i in range(len(blocks)):
+                (start, end) = blocks[i]
+
+                axes.plot(x[start: end], y[start: end],
+                    marker = params.marker, color = params.blocks_color[i],
+                    markersize = params.markersize, linestyle = params.linestyle
+                )
+        else:
+            axes.imshow(data, extent = params.extent, cmap = 'ocean_r', norm=mpl.colors.LogNorm())
 
     def set_title(self, title: str):
         self._figure.suptitle(title)

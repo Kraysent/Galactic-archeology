@@ -5,8 +5,8 @@ from amuse.lab import units
 
 from iotools.abstractiomanager import AbstractIOManager, NEMOIOManager
 from tasks.abstract_visualizer_task import (AbstractVisualizerTask, EnergyTask,
-                                            NormalVelocityTask, VxVyTask, XYSliceCMTrackTask,
-                                            XYTask, ZYTask)
+                                            NormalVelocityTask, PlaneDensityTask, VxVyTask, XYDensityTask, XYSliceCMTrackTask,
+                                            XYTask, ZYDensityTask, ZYTask)
 from utils.plot_parameters import DrawParameters, PlotParameters
 from utils.snapshot import Snapshot
 from utils.visualizer import Visualizer
@@ -29,8 +29,8 @@ def run(
         task: AbstractVisualizerTask
         for (axes_id, task) in tasks:
             visualizer.set_plot_parameters(axes_id, task.plot_params)
-            (x_data, y_data) = task.run(snapshot)
-            visualizer.plot_points(axes_id, x_data, y_data, task.draw_params, task.blocks)
+            data = task.run(snapshot)
+            visualizer.plot_points(axes_id, data, task.draw_params, task.blocks)
 
         visualizer.set_title('Time: {:.02f} Myr'.format(time))
         visualizer.save('output/img-{:03d}.png'.format(i))
@@ -67,6 +67,22 @@ class TaskHolder:
             linestyle = 'solid',
             blocks_color = ('y', ),
             marker = 'None'
+        )
+
+        self.xydensitytask = PlaneDensityTask(('x', 'y'), (-100, 100, -120, 120), 1000)
+        self.xydensitytask.plot_params = PlotParameters(
+            xlabel = 'x, kpc', ylabel = 'y, kpc' 
+        )
+        self.xydensitytask.draw_params = DrawParameters(
+            extent = [-100, 100, -120, 120]
+        )
+
+        self.zydensitytask = PlaneDensityTask(('z', 'y'), (-100, 100, -120, 120), 1000)
+        self.zydensitytask.plot_params = PlotParameters(
+            xlabel = 'z, kpc', ylabel = 'y, kpc' 
+        )
+        self.zydensitytask.draw_params = DrawParameters(
+            extent = [-100, 100, -120, 120]
         )
 
         self.zytask = ZYTask()
@@ -106,10 +122,12 @@ class TaskHolder:
         self.vxvytask.blocks = ((0, 200000), (200000, -1))
 
         return [
-            (0, self.xytask), 
+            # (0, self.xytask), 
             # (0, self.hostxytracktask), 
             # (0, self.satxytracktask),
-            (1, self.zytask),
+            (0, self.xydensitytask),
+            (1, self.zydensitytask),
+            # (1, self.zytask),
             (2, self.norm_vel_task), 
             (3, self.vxvytask)
         ]

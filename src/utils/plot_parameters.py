@@ -1,5 +1,5 @@
 from typing import Tuple, Union
-
+import numpy as np
 
 class PlotParameters:
     def __init__(self, **kwargs):
@@ -28,3 +28,4 @@ class DrawParameters:
     blocks_color: Union[Tuple[str, ...], str] = 'r'
     emph: Tuple[int, int] = (0, 0)
     emph_color = 'r'
+    extent: list = [0, 100, 0, 100]

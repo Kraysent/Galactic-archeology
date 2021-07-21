@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Tuple
+from typing import Tuple, Union
 from amuse.units.quantities import VectorQuantity
 
 import numpy as np
@@ -11,7 +11,7 @@ from utils.snapshot import Snapshot
 
 class AbstractVisualizerTask(ABC):    
     @abstractmethod
-    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
+    def run(self, snapshot: Snapshot) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
         pass
 
     @property
@@ -153,3 +153,28 @@ class NormalVelocityTask(AbstractVisualizerTask):
         self.pov = pov.value_in(units.kpc)
         self.pov_vel = pov_vel.value_in(units.kms)
 
+class PlaneDensityTask(AbstractVisualizerTask):
+    def __init__(self,
+        axes: Tuple[str, str],
+        edges: Tuple[float, float, float, float], 
+        resolution: int
+    ) -> None:
+        (self.x1, self.x2) = axes
+        self.edges = edges
+        self.resolution = resolution
+
+    def run(self, snapshot: Snapshot) -> np.ndarray:
+        axes = {
+            'x': snapshot.particles.x, 
+            'y': snapshot.particles.y, 
+            'z': snapshot.particles.z
+        }
+
+        x1 = axes[self.x1].value_in(units.kpc)
+        x2 = axes[self.x2].value_in(units.kpc)
+        
+        dist, _, _ = np.histogram2d(x1, x2, self.resolution, range = [
+            self.edges[:2], self.edges[2:]
+        ])
+
+        return np.flip(dist.T, axis = 0)
