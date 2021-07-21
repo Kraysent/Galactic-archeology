@@ -5,7 +5,7 @@ import numpy as np
 from amuse.lab import units
 
 from iotools.abstractiomanager import AbstractIOManager, NEMOIOManager
-from tasks.abstract_visualizer_task import (AbstractVisualizerTask, EnergyTask,
+from tasks.abstract_visualizer_task import (AbstractVisualizerTask,
                                             NormalVelocityTask,
                                             PlaneDensityTask, PlaneScatterTask,
                                             SlicedCMTrackTask, VProjectionTask)
@@ -77,7 +77,7 @@ class TaskHolder:
 
         self.zydensitytask = PlaneDensityTask(('z', 'y'), (-100, 100, -120, 120), 1000)
         self.zydensitytask.plot_params = PlotParameters(
-            xlabel = 'z, kpc', ylabel = 'y, kpc' 
+            xlabel = 'z, kpc', yticks = [] 
         )
         self.zydensitytask.draw_params = DrawParameters(
             extent = [-100, 100, -120, 120]

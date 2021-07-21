@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Tuple, Union
+from amuse.units.core import named_unit
 from amuse.units.quantities import VectorQuantity
 
 import numpy as np
@@ -47,67 +48,69 @@ class AbstractVisualizerTask(ABC):
     def blocks(self, value: Tuple[Tuple[int, int], ...]):
         self._blocks = value
 
-class PlaneScatterTask(AbstractVisualizerTask):
-    def __init__(self, axes: Tuple[str, str]):
-        self.x1, self.x2 = axes
-
-    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
-        axes = {
-            'x': snapshot.particles.x, 
-            'y': snapshot.particles.y, 
-            'z': snapshot.particles.z
-        }
-
-        x1 = axes[self.x1].value_in(units.kpc)
-        x2 = axes[self.x2].value_in(units.kpc)
-
-        return x1, x2
-
-class SlicedCMTrackTask(AbstractVisualizerTask):
-    def __init__(self, axes: Tuple[str, str], slice: Tuple[int, int]) -> None:
-        self.x1, self.x2 = axes
-        self.cmx1, self.cmx2 = np.empty((0,)), np.empty((0,))
-        self.slice = slice
-    
-    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
-        cm = snapshot.particles[self.slice[0]: self.slice[1]].center_of_mass()
-        axes = {
-            'x': cm.x, 
-            'y': cm.y, 
-            'z': cm.z
-        }
-
-        self.cmx1 = np.append(self.cmx1, axes[self.x1].value_in(units.kpc))
-        self.cmx2 = np.append(self.cmx2, axes[self.x2].value_in(units.kpc))
-
-        return (self.cmx1, self.cmx2)
-
-class EnergyTask(AbstractVisualizerTask):
-    def __init__(self):
-        self.times = np.empty((0,))
-        self.energies = np.empty((0,))
-
-    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
-        self.times = np.append(self.times, snapshot.timestamp.value_in(units.Myr))
-        self.energies = np.append(
-            self.energies,
-            snapshot.particles.kinetic_energy().value_in(units.J)
-        )
-
-        return (self.times, self.energies)
-
-class VProjectionTask(AbstractVisualizerTask):
+class AbstractXYZTask(AbstractVisualizerTask):
     def __init__(self, axes: Tuple[str, str]) -> None:
         self.x1, self.x2 = axes
 
-    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
+    def get_axes(self, vector, unit: named_unit = None) -> Tuple[np.ndarray, np.ndarray]:
         axes = {
-            'x': snapshot.particles.vx, 
-            'y': snapshot.particles.vy, 
-            'z': snapshot.particles.vz
+            'x': vector.x,
+            'y': vector.y,
+            'z': vector.z
         }
 
-        return (axes[self.x1].value_in(units.kms), axes[self.x2].value_in(units.kms))
+        if unit is None:
+            return (axes[self.x1], axes[self.x2])
+        else: 
+            return (axes[self.x1].value_in(unit), axes[self.x2].value_in(unit))
+
+class PlaneScatterTask(AbstractXYZTask):
+    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
+        (x1, x2) = self.get_axes(snapshot.particles.position)
+
+        return x1, x2
+
+class SlicedCMTrackTask(AbstractXYZTask):
+    def __init__(self, axes: Tuple[str, str], slice: Tuple[int, int]) -> None:
+        self.cmx1, self.cmx2 = np.empty((0,)), np.empty((0,))
+        self.slice = slice
+
+        super().__init__(axes)
+    
+    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
+        cm = snapshot.particles[self.slice[0]: self.slice[1]].center_of_mass()
+        (x1, x2) = self.get_axes(cm, units.kpc)
+
+        self.cmx1 = np.append(self.cmx1, x1)
+        self.cmx2 = np.append(self.cmx2, x2)
+
+        return (self.cmx1, self.cmx2)
+
+class PlaneDensityTask(AbstractXYZTask):
+    def __init__(self,
+        axes: Tuple[str, str],
+        edges: Tuple[float, float, float, float], 
+        resolution: int
+    ):
+        self.edges = edges
+        self.resolution = resolution
+
+        super().__init__(axes)
+
+    def run(self, snapshot: Snapshot) -> np.ndarray:
+        (x1, x2) = self.get_axes(snapshot.particles.position, units.kpc)
+        
+        dist, _, _ = np.histogram2d(x1, x2, self.resolution, range = [
+            self.edges[:2], self.edges[2:]
+        ])
+
+        return np.flip(dist.T, axis = 0)
+
+class VProjectionTask(AbstractXYZTask):
+    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
+        (vx1, vx2) = self.get_axes(snapshot.particles.velocity, units.kms)
+
+        return (vx1, vx2)
 
 class NormalVelocityTask(AbstractVisualizerTask):
     def __init__(self, 
@@ -171,28 +174,17 @@ class NormalVelocityTask(AbstractVisualizerTask):
         self.pov = pov.value_in(units.kpc)
         self.pov_vel = pov_vel.value_in(units.kms)
 
-class PlaneDensityTask(AbstractVisualizerTask):
-    def __init__(self,
-        axes: Tuple[str, str],
-        edges: Tuple[float, float, float, float], 
-        resolution: int
-    ):
-        (self.x1, self.x2) = axes
-        self.edges = edges
-        self.resolution = resolution
+class KineticEnergyTask(AbstractVisualizerTask):
+    def __init__(self):
+        self.times = np.empty((0,))
+        self.energies = np.empty((0,))
 
-    def run(self, snapshot: Snapshot) -> np.ndarray:
-        axes = {
-            'x': snapshot.particles.x, 
-            'y': snapshot.particles.y, 
-            'z': snapshot.particles.z
-        }
+    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
+        self.times = np.append(self.times, snapshot.timestamp.value_in(units.Myr))
+        self.energies = np.append(
+            self.energies,
+            snapshot.particles.kinetic_energy().value_in(units.J)
+        )
 
-        x1 = axes[self.x1].value_in(units.kpc)
-        x2 = axes[self.x2].value_in(units.kpc)
-        
-        dist, _, _ = np.histogram2d(x1, x2, self.resolution, range = [
-            self.edges[:2], self.edges[2:]
-        ])
+        return (self.times, self.energies)
 
-        return np.flip(dist.T, axis = 0)
