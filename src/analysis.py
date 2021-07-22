@@ -5,11 +5,8 @@ import numpy as np
 from amuse.lab import units
 
 from iotools.abstractiomanager import AbstractIOManager, NEMOIOManager
-from tasks.abstract_visualizer_task import (AbstractVisualizerTask,
-                                            NormalVelocityTask,
-                                            PlaneDensityTask, PlaneScatterTask, SliceAngularMomentumTask,
-                                            SlicedCMTrackTask, TestLineTask, VProjectionTask)
-from utils.plot_parameters import DrawParameters, PlotParameters
+from tasks.abstract_visualizer_task import AbstractVisualizerTask
+from tasks.task_manager import TaskManager
 from utils.snapshot import Snapshot
 from utils.visualizer import Visualizer
 
@@ -22,6 +19,7 @@ def run(
     update_tasks: Callable[[Snapshot], None]  
 ):
     i = 0
+
     while (iomanager.next_frame()):
         snapshot = iomanager.get_data()
         time = snapshot.timestamp.value_in(units.Myr)
@@ -43,93 +41,15 @@ visualizer = Visualizer()
 visualizer.setup_grid(2)
 visualizer.set_figsize(22, 10)
 
-class TaskHolder:
-    def get_tasks(self) -> list:
-        self.xydensitytask = PlaneDensityTask(('x', 'y'), (-100, 100, -120, 120), 700)
-        self.xydensitytask.plot_params = PlotParameters(
-            xlim = (-100, 100), ylim = (-120, 120),
-            xlabel = 'x, kpc', ylabel = 'y, kpc' 
-        )
-        self.xydensitytask.draw_params = DrawParameters(
-            extent = [-100, 100, -120, 120]
-        )
-
-        self.zydensitytask = PlaneDensityTask(('z', 'y'), (-100, 100, -120, 120), 700)
-        self.zydensitytask.plot_params = PlotParameters(
-            xlim = (-100, 100), ylim = (-120, 120),
-            xlabel = 'z, kpc', yticks = [] 
-        )
-        self.zydensitytask.draw_params = DrawParameters(
-            extent = [-100, 100, -120, 120]
-        )
-
-        self.ang_momentum_task = SliceAngularMomentumTask(('z', 'y'), (0, 200000), 1000)
-        self.ang_momentum_task.plot_params = self.zydensitytask.plot_params
-        self.ang_momentum_task.draw_params = DrawParameters(
-            linestyle = 'solid', marker = 'None'
-        )
-
-        self.hostxytracktask = SlicedCMTrackTask(('x', 'y'), (0, 200000))
-        self.hostxytracktask.plot_params = self.xydensitytask.plot_params
-        self.hostxytracktask.draw_params = DrawParameters(
-            linestyle = 'solid',
-            blocks_color = ('g', ),
-            marker = 'None'
-        )
-        self.satxytracktask = SlicedCMTrackTask(('x', 'y'), (200000, -1))
-        self.satxytracktask.plot_params = self.xydensitytask.plot_params
-        self.satxytracktask.draw_params = DrawParameters(
-            linestyle = 'solid',
-            blocks_color = ('y', ),
-            marker = 'None'
-        )
-
-        self.norm_vel_task = NormalVelocityTask(
-            pov = [8, 0, 0] | units.kpc, 
-            pov_velocity = [0, 200, 0] | units.kms,
-            radius = 5 | units.kpc
-        )
-        self.norm_vel_task.plot_params = PlotParameters(
-            xlim = (-600, 600), ylim = (0, 400),
-            xlabel = '$v_r$, km/s', ylabel = '$v_{\\tau}$, km/s'
-        )
-        self.norm_vel_task.draw_params = DrawParameters(
-            markersize = 0.1,
-            blocks_color = ('b', 'r')
-        )
-        self.norm_vel_task.blocks = ((0, 200000), (200000, -1))
-
-        self.vxvytask = VProjectionTask(('x', 'y'))
-        self.vxvytask.plot_params = PlotParameters(
-            xlim = (-400, 400), ylim = (-400, 400),
-            xlabel = '$V_x$, km/s', ylabel = '$V_y$, km/s'
-        )
-        self.vxvytask.draw_params = DrawParameters(
-            markersize = 0.02, blocks_color = ('b', 'r')
-        )
-        self.vxvytask.blocks = ((0, 200000), (200000, -1))
-
-        return [
-            (0, self.xydensitytask),
-            (1, self.zydensitytask),
-            (1, self.ang_momentum_task),
-            (0, self.hostxytracktask), 
-            (0, self.satxytracktask),
-            (2, self.norm_vel_task), 
-            (3, self.vxvytask)
-        ]
-
-    def update_tasks(self, snapshot: Snapshot):
-        sun_pos = snapshot.particles[0:200000].center_of_mass() + ([8, 0, 0] | units.kpc)
-        sun_vel = snapshot.particles[0:200000].center_of_mass_velocity() + ([0, 200, 0] | units.kms)
-
-        self.norm_vel_task.set_pov(sun_pos, sun_vel)
-
-task_holder = TaskHolder()
+task_manager = TaskManager(4)
+task_manager.add_density_tasks()
+task_manager.add_tracking_tasks()
+task_manager.add_angular_momentum_task()
+task_manager.add_velocity_tasks()
 
 run(
     NEMOIOManager('output/new_out.nemo'),
-    task_holder.get_tasks(),
+    task_manager.get_tasks(),
     visualizer,
-    task_holder.update_tasks
+    task_manager.update_tasks
 )
