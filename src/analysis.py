@@ -14,21 +14,22 @@ plt.style.use('ggplot')
 
 def run(
     iomanager: AbstractIOManager,
-    tasks: list,
+    task_manager: TaskManager,
     visualizer: Visualizer,
-    update_tasks: Callable[[Snapshot], None]  
 ):
     i = 0
 
     while (iomanager.next_frame()):
         snapshot = iomanager.get_data()
         time = snapshot.timestamp.value_in(units.Myr)
-        update_tasks(snapshot)
+        task_manager.update_tasks(snapshot)
         snapshot = snapshot[0: 200000] + snapshot[1000000:1100000]
 
+        for j in range(visualizer.number_of_axes):
+            visualizer.set_plot_parameters(j, task_manager.get_axes_style(j))
+
         task: AbstractVisualizerTask
-        for (axes_id, task) in tasks:
-            visualizer.set_plot_parameters(axes_id, task.plot_params)
+        for (axes_id, task) in task_manager.get_tasks():
             data = task.run(snapshot)
             visualizer.plot_points(axes_id, data, task.draw_params, task.blocks)
 
@@ -49,7 +50,6 @@ task_manager.add_velocity_tasks()
 
 run(
     NEMOIOManager('output/new_out.nemo'),
-    task_manager.get_tasks(),
-    visualizer,
-    task_manager.update_tasks
+    task_manager,
+    visualizer
 )

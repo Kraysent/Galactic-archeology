@@ -27,6 +27,10 @@ class Visualizer:
         self._axes.append(ax3)
         self._axes.append(ax4)
 
+    @property
+    def number_of_axes(self):
+        return len(self._axes)
+
     def add_subplot(self, row_span: Tuple[int, int], col_span: Tuple[int, int]):
         self._axes.append(plt.subplot(self._gridspec[col_span[0]: col_span[1], row_span[0]: row_span[1]]))
 

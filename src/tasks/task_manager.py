@@ -14,10 +14,12 @@ from tasks.abstract_visualizer_task import (AbstractVisualizerTask,
 class TaskManager:
     def __init__(self, number_of_axes: int) -> None:
         self.axes = {}
+        self.axes_styles = {}
         self.updates = []
 
         for i in range(number_of_axes):
             self.axes[i] = []
+            self.axes_styles[i] = PlotParameters()
 
     def get_tasks(self) -> Tuple[Tuple[int, AbstractVisualizerTask], ...]:
         res = []
@@ -35,6 +37,12 @@ class TaskManager:
     def add_update(self, update: Callable[[Snapshot], Any]):
         self.updates.append(update)
 
+    def set_axes_style(self, axes_id: int, params: PlotParameters):
+        self.axes_styles[axes_id] = params
+
+    def get_axes_style(self, axes_id: int):
+        return self.axes_styles[axes_id]
+
     def add_task(self, axes_id: int,
         task: AbstractVisualizerTask, 
         plot_params: PlotParameters, 
@@ -48,15 +56,6 @@ class TaskManager:
         xy_task = PlaneDensityTask(('x', 'y'), (-100, 100, -120, 120), 700)
         zy_task = PlaneDensityTask(('z', 'y'), (-100, 100, -120, 120), 700)
 
-        xy_task.plot_params = PlotParameters(
-            xlim = (-100, 100), ylim = (-120, 120),
-            xlabel = 'x, kpc', ylabel = 'y, kpc'
-        )
-        zy_task.plot_params = PlotParameters(
-            xlim = (-100, 100), ylim = (-120, 120),
-            xlabel = 'z, kpc', yticks = [] 
-        )
-
         xy_task.draw_params = DrawParameters(
             extent = [-100, 100, -120, 120]
         )
@@ -67,12 +66,20 @@ class TaskManager:
         self.axes[0].append(xy_task)
         self.axes[1].append(zy_task)
 
-    def add_tracking_tasks(self):
-        hostxytracktask = SlicedCMTrackTask(('x', 'y'), (0, 200000))
-        hostxytracktask.plot_params = PlotParameters(
+        xy_style = PlotParameters(
             xlim = (-100, 100), ylim = (-120, 120),
             xlabel = 'x, kpc', ylabel = 'y, kpc'
         )
+        zy_style = PlotParameters(
+            xlim = (-100, 100), ylim = (-120, 120),
+            xlabel = 'z, kpc', yticks = [] 
+        )
+
+        self.set_axes_style(0, xy_style)
+        self.set_axes_style(1, zy_style)
+
+    def add_tracking_tasks(self):
+        hostxytracktask = SlicedCMTrackTask(('x', 'y'), (0, 200000))
         hostxytracktask.draw_params = DrawParameters(
             linestyle = 'solid',
             blocks_color = ('g', ),
@@ -80,10 +87,6 @@ class TaskManager:
         )
 
         satxytracktask = SlicedCMTrackTask(('x', 'y'), (200000, -1))
-        satxytracktask.plot_params = PlotParameters(
-            xlim = (-100, 100), ylim = (-120, 120),
-            xlabel = 'x, kpc', ylabel = 'y, kpc'
-        )
         satxytracktask.draw_params = DrawParameters(
             linestyle = 'solid',
             blocks_color = ('y', ),
@@ -93,17 +96,27 @@ class TaskManager:
         self.axes[0].append(hostxytracktask)
         self.axes[0].append(satxytracktask)
 
+        axes_style = PlotParameters(
+            xlim = (-100, 100), ylim = (-120, 120),
+            xlabel = 'x, kpc', ylabel = 'y, kpc'
+        )
+
+        self.set_axes_style(0, axes_style)
+
     def add_angular_momentum_task(self):
         ang_momentum_task = SliceAngularMomentumTask(('z', 'y'), (0, 200000), 1000)
-        ang_momentum_task.plot_params = PlotParameters(
-            xlim = (-100, 100), ylim = (-120, 120),
-            xlabel = 'z, kpc', yticks = [] 
-        )
         ang_momentum_task.draw_params = DrawParameters(
             linestyle = 'solid', marker = 'None'
         )
 
         self.axes[1].append(ang_momentum_task)
+
+        axes_style = PlotParameters(
+            xlim = (-100, 100), ylim = (-120, 120),
+            xlabel = 'z, kpc', yticks = [] 
+        )
+
+        self.set_axes_style(1, axes_style)
 
     def add_velocity_tasks(self):
         norm_vel_task = NormalVelocityTask(
@@ -112,15 +125,6 @@ class TaskManager:
             radius = 5 | units.kpc
         )
         vxvy_task = VProjectionTask(('x', 'y'))
-
-        norm_vel_task.plot_params = PlotParameters(
-            xlim = (-600, 600), ylim = (0, 400),
-            xlabel = '$v_r$, km/s', ylabel = '$v_{\\tau}$, km/s'
-        )
-        vxvy_task.plot_params = PlotParameters(
-            xlim = (-400, 400), ylim = (-400, 400),
-            xlabel = '$V_x$, km/s', ylabel = '$V_y$, km/s'
-        )
 
         norm_vel_task.draw_params = DrawParameters(
             markersize = 0.1,
@@ -142,3 +146,16 @@ class TaskManager:
 
         self.axes[2].append(norm_vel_task)
         self.axes[3].append(vxvy_task)
+
+        norm_vel_style = PlotParameters(
+            xlim = (-600, 600), ylim = (0, 400),
+            xlabel = '$v_r$, km/s', ylabel = '$v_{\\tau}$, km/s'
+        )
+        vxvy_style = PlotParameters(
+            xlim = (-400, 400), ylim = (-400, 400),
+            xlabel = '$V_x$, km/s', ylabel = '$V_y$, km/s'
+        )
+
+        self.set_axes_style(2, norm_vel_style)
+        self.set_axes_style(3, vxvy_style)
+

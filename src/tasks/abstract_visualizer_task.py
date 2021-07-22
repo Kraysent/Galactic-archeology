@@ -16,17 +16,6 @@ class AbstractVisualizerTask(ABC):
         pass
 
     @property
-    def plot_params(self) -> PlotParameters:
-        try:
-            return self._plot_params
-        except AttributeError:
-            return PlotParameters()
-
-    @plot_params.setter
-    def plot_params(self, value: PlotParameters):
-        self._plot_params = value
-
-    @property
     def draw_params(self) -> DrawParameters:
         try:
             return self._draw_params
