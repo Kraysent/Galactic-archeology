@@ -110,13 +110,11 @@ class TaskHolder:
         self.vxvytask.blocks = ((0, 200000), (200000, -1))
 
         return [
-            # (0, self.xytask), 
             (0, self.xydensitytask),
             (1, self.zydensitytask),
             (1, self.ang_momentum_task),
             (0, self.hostxytracktask), 
             (0, self.satxytracktask),
-            # (1, self.zytask),
             (2, self.norm_vel_task), 
             (3, self.vxvytask)
         ]

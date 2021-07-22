@@ -123,10 +123,10 @@ class NormalVelocityTask(AbstractVisualizerTask):
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         r_vec = snapshot.particles.position.value_in(units.kpc) - self.pov
         v_vec = snapshot.particles.velocity.value_in(units.kms) - self.pov_vel
-        x, y, z = r_vec[0], r_vec[1], r_vec[2]
-        vx, vy, vz = v_vec[0], v_vec[1], v_vec[2]
+        x, y, z = r_vec[:, 0], r_vec[:, 1], r_vec[:, 2]
+        vx, vy, vz = v_vec[:, 0], v_vec[:, 1], v_vec[:, 2]
         
-        r = np.sum(r_vec ** 2, axis = 0) ** 0.5
+        r = np.sum(r_vec ** 2, axis = 1) ** 0.5
         v_rs = []
         v_ts = []
 
