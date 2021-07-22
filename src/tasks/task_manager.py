@@ -5,10 +5,9 @@ from utils.plot_parameters import DrawParameters, PlotParameters
 from utils.snapshot import Snapshot
 
 from tasks.abstract_visualizer_task import (AbstractVisualizerTask,
+                                            AngularMomentumTask, CMTrackTask,
                                             NormalVelocityTask,
-                                            PlaneDensityTask,
-                                            SliceAngularMomentumTask,
-                                            SlicedCMTrackTask, VProjectionTask)
+                                            PlaneDensityTask, VProjectionTask)
 
 
 class TaskManager:
@@ -60,7 +59,7 @@ class TaskManager:
             extent = [-100, 100, -120, 120], cmap = 'ocean_r'
         )
         zy_task.draw_params = DrawParameters(
-            extent = [-100, 100, -120, 120], cmap = 'grey_r'
+            extent = [-100, 100, -120, 120], cmap = 'gray_r'
         )
 
         self.axes[0].append(xy_task)
@@ -79,14 +78,14 @@ class TaskManager:
         self.set_axes_style(1, zy_style)
 
     def add_tracking_tasks(self):
-        host_xy_track_task = SlicedCMTrackTask(('x', 'y'), (0, 200000))
+        host_xy_track_task = CMTrackTask(('x', 'y'), (0, 200000))
         host_xy_track_task.draw_params = DrawParameters(
             linestyle = 'solid',
             blocks_color = ('g', ),
             marker = 'None'
         )
 
-        sat_xy_track_task = SlicedCMTrackTask(('x', 'y'), (200000, -1))
+        sat_xy_track_task = CMTrackTask(('x', 'y'), (200000, -1))
         sat_xy_track_task.draw_params = DrawParameters(
             linestyle = 'solid',
             blocks_color = ('y', ),
@@ -104,7 +103,7 @@ class TaskManager:
         self.set_axes_style(0, axes_style)
 
     def add_angular_momentum_task(self):
-        ang_momentum_task = SliceAngularMomentumTask(('z', 'y'), (0, 200000), 1000)
+        ang_momentum_task = AngularMomentumTask(('z', 'y'), (0, 200000), 1000)
         ang_momentum_task.draw_params = DrawParameters(
             linestyle = 'solid', marker = 'None'
         )

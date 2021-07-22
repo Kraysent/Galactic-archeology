@@ -1,5 +1,3 @@
-from typing import Callable
-
 import matplotlib.pyplot as plt
 import numpy as np
 from amuse.lab import units
@@ -7,7 +5,6 @@ from amuse.lab import units
 from iotools.abstractiomanager import AbstractIOManager, NEMOIOManager
 from tasks.abstract_visualizer_task import AbstractVisualizerTask
 from tasks.task_manager import TaskManager
-from utils.snapshot import Snapshot
 from utils.visualizer import Visualizer
 
 plt.style.use('ggplot')
