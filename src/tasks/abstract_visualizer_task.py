@@ -42,14 +42,14 @@ class AbstractVisualizerTask(ABC):
         if hasattr(self, '_blocks'):
             return getattr(self, '_blocks')
         else:
-            return ((0, -1), )
+            return ((0, None), )
 
     @blocks.setter
     def blocks(self, value: Tuple[Tuple[int, int], ...]):
         self._blocks = value
 
 class AbstractXYZTask(AbstractVisualizerTask):
-    def __init__(self, axes: Tuple[str, str]) -> None:
+    def __init__(self, axes: Tuple[str, str]):
         self.x1, self.x2 = axes
 
     def get_axes(self, vector, unit: named_unit = None) -> Tuple[np.ndarray, np.ndarray]:
@@ -71,7 +71,7 @@ class PlaneScatterTask(AbstractXYZTask):
         return x1, x2
 
 class SlicedCMTrackTask(AbstractXYZTask):
-    def __init__(self, axes: Tuple[str, str], slice: Tuple[int, int]) -> None:
+    def __init__(self, axes: Tuple[str, str], slice: Tuple[int, int]):
         self.cmx1, self.cmx2 = np.empty((0,)), np.empty((0,))
         self.slice = slice
 
@@ -121,14 +121,12 @@ class NormalVelocityTask(AbstractVisualizerTask):
         self.radius = radius.value_in(units.kpc)
     
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
-        x = snapshot.particles.x.value_in(units.kpc) - self.pov[0]
-        y = snapshot.particles.y.value_in(units.kpc) - self.pov[1]
-        z = snapshot.particles.z.value_in(units.kpc) - self.pov[2]
-        vx = snapshot.particles.vx.value_in(units.kms) - self.pov_vel[0]
-        vy = snapshot.particles.vy.value_in(units.kms) - self.pov_vel[1]
-        vz = snapshot.particles.vz.value_in(units.kms) - self.pov_vel[2]
+        r_vec = snapshot.particles.position.value_in(units.kpc) - self.pov
+        v_vec = snapshot.particles.velocity.value_in(units.kms) - self.pov_vel
+        x, y, z = r_vec[0], r_vec[1], r_vec[2]
+        vx, vy, vz = v_vec[0], v_vec[1], v_vec[2]
         
-        r = (x ** 2 + y ** 2 + z ** 2) ** 0.5
+        r = np.sum(r_vec ** 2, axis = 0) ** 0.5
         v_rs = []
         v_ts = []
 
@@ -187,4 +185,32 @@ class KineticEnergyTask(AbstractVisualizerTask):
         )
 
         return (self.times, self.energies)
+
+class SliceAngularMomentumTask(AbstractXYZTask):
+    def __init__(self, axes: Tuple[int, int], slice: Tuple[int, int], norm: float):
+        self.slice = slice
+        self.norm = norm
+
+        super().__init__(axes)
+
+    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
+        snapshot = snapshot[self.slice[0]: self.slice[1]]
+        cm = snapshot.particles.center_of_mass()
+        ang_momentum = snapshot.particles.total_angular_momentum()
+        length = ang_momentum.length().value_in(units.m ** 2 * units.kg * units.s ** -1)
+        (x1, x2) = self.get_axes(
+            ang_momentum, units.m ** 2 * units.kg * units.s ** -1
+        )
+        (cmx1, cmx2) = self.get_axes(
+            cm, units.kpc
+        )
+        x1 = x1 / length * self.norm + cmx1
+        x2 = x2 / length * self.norm + cmx2
+
+        return (np.array([cmx1, x1]), np.array([cmx2, x2]))
+
+class TestLineTask(AbstractVisualizerTask):
+    def run(self, snapshot: Snapshot) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
+        return (np.array([0, 100]), np.array([0, 100]))
+
 

@@ -7,8 +7,8 @@ from amuse.lab import units
 from iotools.abstractiomanager import AbstractIOManager, NEMOIOManager
 from tasks.abstract_visualizer_task import (AbstractVisualizerTask,
                                             NormalVelocityTask,
-                                            PlaneDensityTask, PlaneScatterTask,
-                                            SlicedCMTrackTask, VProjectionTask)
+                                            PlaneDensityTask, PlaneScatterTask, SliceAngularMomentumTask,
+                                            SlicedCMTrackTask, TestLineTask, VProjectionTask)
 from utils.plot_parameters import DrawParameters, PlotParameters
 from utils.snapshot import Snapshot
 from utils.visualizer import Visualizer
@@ -45,42 +45,28 @@ visualizer.set_figsize(22, 10)
 
 class TaskHolder:
     def get_tasks(self) -> list:
-        self.xytask = PlaneScatterTask(('x', 'y'))
-        self.xytask.plot_params = PlotParameters(
-            xlim = (-100, 100), ylim = (-120, 120),
-            xlabel = 'x, kpc', ylabel = 'y, kpc' 
-        )
-        self.xytask.draw_params = DrawParameters(
-            blocks_color = ('b', 'r'),
-            markersize = 0.05
-        )
-        self.xytask.blocks = ((0, 200000), (200000, -1))
-
-        self.zytask = PlaneScatterTask(('z', 'y'))
-        self.zytask.plot_params = PlotParameters(
-            xlim = (-100, 100), ylim = (-120, 120),
-            xlabel = 'z, kpc', yticks = []
-        )
-        self.zytask.draw_params = DrawParameters(
-            blocks_color = ('b', 'r'),
-            markersize = 0.05
-        )
-        self.zytask.blocks = ((0, 200000), (200000, -1))
-
-        self.xydensitytask = PlaneDensityTask(('x', 'y'), (-100, 100, -120, 120), 1000)
+        self.xydensitytask = PlaneDensityTask(('x', 'y'), (-100, 100, -120, 120), 700)
         self.xydensitytask.plot_params = PlotParameters(
+            xlim = (-100, 100), ylim = (-120, 120),
             xlabel = 'x, kpc', ylabel = 'y, kpc' 
         )
         self.xydensitytask.draw_params = DrawParameters(
             extent = [-100, 100, -120, 120]
         )
 
-        self.zydensitytask = PlaneDensityTask(('z', 'y'), (-100, 100, -120, 120), 1000)
+        self.zydensitytask = PlaneDensityTask(('z', 'y'), (-100, 100, -120, 120), 700)
         self.zydensitytask.plot_params = PlotParameters(
+            xlim = (-100, 100), ylim = (-120, 120),
             xlabel = 'z, kpc', yticks = [] 
         )
         self.zydensitytask.draw_params = DrawParameters(
             extent = [-100, 100, -120, 120]
+        )
+
+        self.ang_momentum_task = SliceAngularMomentumTask(('z', 'y'), (0, 200000), 1000)
+        self.ang_momentum_task.plot_params = self.zydensitytask.plot_params
+        self.ang_momentum_task.draw_params = DrawParameters(
+            linestyle = 'solid', marker = 'None'
         )
 
         self.hostxytracktask = SlicedCMTrackTask(('x', 'y'), (0, 200000))
@@ -127,6 +113,7 @@ class TaskHolder:
             # (0, self.xytask), 
             (0, self.xydensitytask),
             (1, self.zydensitytask),
+            (1, self.ang_momentum_task),
             (0, self.hostxytracktask), 
             (0, self.satxytracktask),
             # (1, self.zytask),
