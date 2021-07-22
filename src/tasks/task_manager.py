@@ -57,10 +57,10 @@ class TaskManager:
         zy_task = PlaneDensityTask(('z', 'y'), (-100, 100, -120, 120), 700)
 
         xy_task.draw_params = DrawParameters(
-            extent = [-100, 100, -120, 120]
+            extent = [-100, 100, -120, 120], cmap = 'ocean_r'
         )
         zy_task.draw_params = DrawParameters(
-            extent = [-100, 100, -120, 120]
+            extent = [-100, 100, -120, 120], cmap = 'grey_r'
         )
 
         self.axes[0].append(xy_task)
@@ -79,22 +79,22 @@ class TaskManager:
         self.set_axes_style(1, zy_style)
 
     def add_tracking_tasks(self):
-        hostxytracktask = SlicedCMTrackTask(('x', 'y'), (0, 200000))
-        hostxytracktask.draw_params = DrawParameters(
+        host_xy_track_task = SlicedCMTrackTask(('x', 'y'), (0, 200000))
+        host_xy_track_task.draw_params = DrawParameters(
             linestyle = 'solid',
             blocks_color = ('g', ),
             marker = 'None'
         )
 
-        satxytracktask = SlicedCMTrackTask(('x', 'y'), (200000, -1))
-        satxytracktask.draw_params = DrawParameters(
+        sat_xy_track_task = SlicedCMTrackTask(('x', 'y'), (200000, -1))
+        sat_xy_track_task.draw_params = DrawParameters(
             linestyle = 'solid',
             blocks_color = ('y', ),
             marker = 'None'
         )
 
-        self.axes[0].append(hostxytracktask)
-        self.axes[0].append(satxytracktask)
+        self.axes[0].append(host_xy_track_task)
+        self.axes[0].append(sat_xy_track_task)
 
         axes_style = PlotParameters(
             xlim = (-100, 100), ylim = (-120, 120),

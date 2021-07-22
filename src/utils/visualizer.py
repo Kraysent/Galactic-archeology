@@ -86,7 +86,11 @@ class Visualizer:
                     markersize = params.markersize, linestyle = params.linestyle
                 )
         else:
-            axes.imshow(data, extent = params.extent, cmap = 'ocean_r', norm=mpl.colors.LogNorm())
+            axes.imshow(data, 
+                extent = params.extent, 
+                cmap = params.cmap, 
+                norm=mpl.colors.LogNorm()
+            )
 
     def set_title(self, title: str):
         self._figure.suptitle(title)

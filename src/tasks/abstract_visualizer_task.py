@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Tuple, Union
+from amuse.datamodel.particles import Particles
 from amuse.units.core import named_unit
 from amuse.units.quantities import VectorQuantity
 
@@ -41,17 +42,25 @@ class AbstractXYZTask(AbstractVisualizerTask):
     def __init__(self, axes: Tuple[str, str]):
         self.x1, self.x2 = axes
 
-    def get_axes(self, vector, unit: named_unit = None) -> Tuple[np.ndarray, np.ndarray]:
-        axes = {
-            'x': vector.x,
-            'y': vector.y,
-            'z': vector.z
-        }
+    def get_axes(self, vector, unit: named_unit = None, flat: bool = False) -> Tuple[np.ndarray, np.ndarray]:
+        if not flat:
+            axes = {
+                'x': vector.x,
+                'y': vector.y,
+                'z': vector.z
+            }
+        else:
+            axes = {
+                'x': vector[0],
+                'y': vector[1],
+                'z': vector[2]
+            }
 
         if unit is None:
             return (axes[self.x1], axes[self.x2])
         else: 
             return (axes[self.x1].value_in(unit), axes[self.x2].value_in(unit))
+
 
 class PlaneScatterTask(AbstractXYZTask):
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
@@ -60,9 +69,12 @@ class PlaneScatterTask(AbstractXYZTask):
         return x1, x2
 
 class SlicedCMTrackTask(AbstractXYZTask):
-    def __init__(self, axes: Tuple[str, str], slice: Tuple[int, int]):
+    def __init__(self, axes: Tuple[str, str], 
+        slice: Tuple[int, int], only_last: bool = False
+    ):
         self.cmx1, self.cmx2 = np.empty((0,)), np.empty((0,))
         self.slice = slice
+        self.last = only_last
 
         super().__init__(axes)
     
@@ -73,7 +85,10 @@ class SlicedCMTrackTask(AbstractXYZTask):
         self.cmx1 = np.append(self.cmx1, x1)
         self.cmx2 = np.append(self.cmx2, x2)
 
-        return (self.cmx1, self.cmx2)
+        if self.last:
+            return (self.cmx1[-1:], self.cmx2[-1:])
+        else:
+            return (self.cmx1, self.cmx2)
 
 class PlaneDensityTask(AbstractXYZTask):
     def __init__(self,
@@ -182,17 +197,32 @@ class SliceAngularMomentumTask(AbstractXYZTask):
 
         super().__init__(axes)
 
+    def _get_angular_momentum(self, particles: Particles) -> np.ndarray:
+        r = particles.position.value_in(units.kpc)
+        v = particles.velocity.value_in(units.kms)
+        cm = particles.center_of_mass().value_in(units.kpc)
+        cm_vel = particles.center_of_mass_velocity().value_in(units.kms)
+        m = particles.mass.value_in(units.MSun)
+
+        r = r - cm
+        v = v - cm_vel
+        ang_momentum = m[:, np.newaxis] * np.cross(v, r)
+        total_ang_momentum = np.sum(ang_momentum, axis = 0)
+        return total_ang_momentum
+
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         snapshot = snapshot[self.slice[0]: self.slice[1]]
         cm = snapshot.particles.center_of_mass()
-        ang_momentum = snapshot.particles.total_angular_momentum()
-        length = ang_momentum.length().value_in(units.m ** 2 * units.kg * units.s ** -1)
+        ang_momentum = self._get_angular_momentum(snapshot.particles)
+        length = (ang_momentum ** 2).sum() ** 0.5
+
         (x1, x2) = self.get_axes(
-            ang_momentum, units.m ** 2 * units.kg * units.s ** -1
+            ang_momentum, flat = True
         )
         (cmx1, cmx2) = self.get_axes(
             cm, units.kpc
         )
+
         x1 = x1 / length * self.norm + cmx1
         x2 = x2 / length * self.norm + cmx2
 
