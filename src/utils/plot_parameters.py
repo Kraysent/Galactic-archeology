@@ -25,8 +25,5 @@ class DrawParameters:
     linestyle: str = 'None'
     color: str = 'b'
     marker: str = 'o'
-    blocks_color: Union[Tuple[str, ...], str] = 'r'
-    emph: Tuple[int, int] = (0, 0)
-    emph_color = 'r'
     extent: list = [0, 100, 0, 100],
     cmap: str = 'ocean_r'

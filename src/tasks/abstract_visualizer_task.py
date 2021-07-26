@@ -35,17 +35,6 @@ class AbstractVisualizerTask(ABC):
     def draw_params(self, value: DrawParameters):
         self._draw_params = value
 
-    @property
-    def blocks(self) -> Tuple[Tuple[int, int], ...]:
-        if hasattr(self, '_blocks'):
-            return getattr(self, '_blocks')
-        else:
-            return ((0, None), )
-
-    @blocks.setter
-    def blocks(self, value: Tuple[Tuple[int, int], ...]):
-        self._blocks = value
-
 class AbstractXYZTask(AbstractVisualizerTask):
     def __init__(self, axes: Tuple[str, str], slice: Tuple[int, int] = (0, None)):
         self.x1, self.x2 = axes
@@ -142,43 +131,23 @@ class NormalVelocityTask(AbstractVisualizerTask):
         v_rs = []
         v_ts = []
 
-        for (start, end) in self._blocks:
-            curr_r = r[start:end]
-            filter = curr_r < self.radius
+        filter = r < self.radius
 
-            curr_x, curr_y, curr_z = x[start:end][filter], y[start:end][filter], z[start:end][filter]
-            curr_vx, curr_vy, curr_vz = vx[start:end][filter], vy[start:end][filter], vz[start:end][filter]
-            curr_r = curr_r[filter]
+        x, y, z = x[filter], y[filter], z[filter]
+        vx, vy, vz = vx[filter], vy[filter], vz[filter]
+        r = r[filter]
 
-            ex, ey, ez = curr_x / curr_r, curr_y / curr_r, curr_z / curr_r
+        ex, ey, ez = x / r, y / r, z / r
 
-            v_r = ex * curr_vx + ey * curr_vy + ez * curr_vz
+        v_r = ex * vx + ey * vy + ez * vz
 
-            v_rx, v_ry, v_rz = v_r * ex, v_r * ey, v_r * ez
-            v_t = ((curr_vx - v_rx) ** 2 + (curr_vy - v_ry) ** 2 + (curr_vz - v_rz) ** 2) ** 0.5
+        v_rx, v_ry, v_rz = v_r * ex, v_r * ey, v_r * ez
+        v_t = ((vx - v_rx) ** 2 + (vy - v_ry) ** 2 + (vz - v_rz) ** 2) ** 0.5
 
-            v_rs.append(v_r)
-            v_ts.append(v_t)
-
-        self._new_blocks = []
-        ind = len(v_rs[0])
-        self._new_blocks.append((0, ind))
-
-        for i in range(len(v_rs) - 2):
-            self._new_blocks.append((ind, ind + len(v_rs[i + 1])))
-            ind = ind + len(v_rs[i + 1])
-    
-        self._new_blocks.append((ind, -1))
-        self._new_blocks = tuple(self._new_blocks)
+        v_rs.append(v_r)
+        v_ts.append(v_t)
 
         return (np.concatenate(v_rs), np.concatenate(v_ts))
-        
-    @AbstractVisualizerTask.blocks.getter
-    def blocks(self) -> Tuple[Tuple[int, int], ...]:
-        try:
-            return self._new_blocks
-        except AttributeError:
-            return self._blocks
 
     def set_pov(self, pov: VectorQuantity, pov_vel: VectorQuantity):
         self.pov = pov.value_in(units.kpc)

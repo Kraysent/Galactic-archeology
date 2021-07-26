@@ -81,28 +81,28 @@ class TaskManager:
         host_xy_track_task = CMTrackTask(('x', 'y'), (0, 200000))
         host_xy_track_task.draw_params = DrawParameters(
             linestyle = 'solid',
-            blocks_color = ('g', ),
+            color = 'g',
             marker = 'None'
         )
 
         sat_xy_track_task = CMTrackTask(('x', 'y'), (200000, -1))
         sat_xy_track_task.draw_params = DrawParameters(
             linestyle = 'solid',
-            blocks_color = ('y', ),
+            color = 'y',
             marker = 'None'
         )
 
         host_zy_track_task = CMTrackTask(('z', 'y'), (0, 200000))
         host_zy_track_task.draw_params = DrawParameters(
             linestyle = 'solid',
-            blocks_color = ('g', ),
+            color = 'g',
             marker = 'None'
         )
 
         sat_zy_track_task = CMTrackTask(('z', 'y'), (200000, -1))
         sat_zy_track_task.draw_params = DrawParameters(
             linestyle = 'solid',
-            blocks_color = ('y', ),
+            color = 'y',
             marker = 'None'
         )
 
@@ -137,44 +137,65 @@ class TaskManager:
 
         self.set_axes_style(1, axes_style)
 
-    def add_velocity_tasks(self):
-        norm_vel_task = NormalVelocityTask(
+    def add_norm_velocity_tasks(self):
+        host_norm_vel_task = NormalVelocityTask(
             pov = [8, 0, 0] | units.kpc, 
             pov_velocity = [0, 200, 0] | units.kms,
-            radius = 5 | units.kpc
+            radius = 5 | units.kpc,
+            slice = (0, 200000)
         )
-        vxvy_task = VProjectionTask(('x', 'y'))
+        sat_norm_vel_task = NormalVelocityTask(
+            pov = [8, 0, 0] | units.kpc, 
+            pov_velocity = [0, 200, 0] | units.kms,
+            radius = 5 | units.kpc,
+            slice = (200000, None)
+        )
 
-        norm_vel_task.draw_params = DrawParameters(
+        host_norm_vel_task.draw_params = DrawParameters(
             markersize = 0.1,
-            blocks_color = ('b', 'r')
+            color = 'b'
         )
-        vxvy_task.draw_params = DrawParameters(
-            markersize = 0.02, blocks_color = ('b', 'r')
+        sat_norm_vel_task.draw_params = DrawParameters(
+            markersize = 0.1,
+            color = 'r'
         )
-
-        norm_vel_task.blocks = ((0, 200000), (200000, -1))
-        vxvy_task.blocks = ((0, 200000), (200000, -1))
 
         def update_norm_velocity(snapshot: Snapshot):
             sun_pos = snapshot.particles[0:200000].center_of_mass() + ([8, 0, 0] | units.kpc)
             sun_vel = snapshot.particles[0:200000].center_of_mass_velocity() + ([0, 200, 0] | units.kms)
-            norm_vel_task.set_pov(sun_pos, sun_vel)
+            host_norm_vel_task.set_pov(sun_pos, sun_vel)
+            sat_norm_vel_task.set_pov(sun_pos, sun_vel)
 
         self.add_update(update_norm_velocity)
 
-        self.axes[2].append(norm_vel_task)
-        self.axes[3].append(vxvy_task)
+        self.axes[2].append(host_norm_vel_task)
+        self.axes[2].append(sat_norm_vel_task)
 
         norm_vel_style = PlotParameters(
             xlim = (-600, 600), ylim = (0, 400),
             xlabel = '$v_r$, km/s', ylabel = '$v_{\\tau}$, km/s'
         )
+
+        self.set_axes_style(2, norm_vel_style)
+
+    def add_velocity_tasks(self):
+        vxvy_host_task = VProjectionTask(('x', 'y'), (0, 200000))
+        vxvy_sat_task = VProjectionTask(('x', 'y'), (200000, None))
+
+        vxvy_host_task.draw_params = DrawParameters(
+            markersize = 0.02, color = 'b'
+        )
+        vxvy_sat_task.draw_params = DrawParameters(
+            markersize = 0.02, color = 'r'
+        )
+
+        self.axes[3].append(vxvy_host_task)
+        self.axes[3].append(vxvy_sat_task)
+
         vxvy_style = PlotParameters(
             xlim = (-400, 400), ylim = (-400, 400),
             xlabel = '$V_x$, km/s', ylabel = '$V_y$, km/s'
         )
 
-        self.set_axes_style(2, norm_vel_style)
         self.set_axes_style(3, vxvy_style)
 

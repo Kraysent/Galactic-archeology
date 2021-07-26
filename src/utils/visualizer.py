@@ -71,20 +71,17 @@ class Visualizer:
 
     def plot_points(
         self, axes_id: int, data: Union[Tuple[np.ndarray, np.ndarray], np.ndarray], 
-        params: DrawParameters, blocks: Tuple[Tuple[int, int], ...]
+        params: DrawParameters
     ):
         axes = self._axes[axes_id]
 
         if type(data) is tuple:
             (x, y) = data
 
-            for i in range(len(blocks)):
-                (start, end) = blocks[i]
-
-                axes.plot(x[start: end], y[start: end],
-                    marker = params.marker, color = params.blocks_color[i],
-                    markersize = params.markersize, linestyle = params.linestyle
-                )
+            axes.plot(x, y,
+                marker = params.marker, color = params.color,
+                markersize = params.markersize, linestyle = params.linestyle
+            )
         else:
             axes.imshow(data, 
                 extent = params.extent, 
