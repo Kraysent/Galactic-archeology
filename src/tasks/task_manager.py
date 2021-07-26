@@ -59,7 +59,7 @@ class TaskManager:
             extent = [-100, 100, -120, 120], cmap = 'ocean_r'
         )
         zy_task.draw_params = DrawParameters(
-            extent = [-100, 100, -120, 120], cmap = 'gray_r'
+            extent = [-100, 100, -120, 120], cmap = 'ocean_r'
         )
 
         self.axes[0].append(xy_task)
@@ -92,15 +92,35 @@ class TaskManager:
             marker = 'None'
         )
 
+        host_zy_track_task = CMTrackTask(('z', 'y'), (0, 200000))
+        host_zy_track_task.draw_params = DrawParameters(
+            linestyle = 'solid',
+            blocks_color = ('g', ),
+            marker = 'None'
+        )
+
+        sat_zy_track_task = CMTrackTask(('z', 'y'), (200000, -1))
+        sat_zy_track_task.draw_params = DrawParameters(
+            linestyle = 'solid',
+            blocks_color = ('y', ),
+            marker = 'None'
+        )
+
         self.axes[0].append(host_xy_track_task)
         self.axes[0].append(sat_xy_track_task)
+        self.axes[1].append(host_zy_track_task)
+        self.axes[1].append(sat_zy_track_task)
 
-        axes_style = PlotParameters(
+        xy_axes_style = PlotParameters(
             xlim = (-100, 100), ylim = (-120, 120),
             xlabel = 'x, kpc', ylabel = 'y, kpc'
         )
+        zy_axes_style = PlotParameters(
+            xlim = (-100, 100), ylim = (-120, 120),
+            xlabel = 'z, kpc', yticks = []
+        )
 
-        self.set_axes_style(0, axes_style)
+        self.set_axes_style(0, xy_axes_style)
 
     def add_angular_momentum_task(self):
         ang_momentum_task = AngularMomentumTask(('z', 'y'), (0, 200000), 1000)

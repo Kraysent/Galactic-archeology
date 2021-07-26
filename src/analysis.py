@@ -27,7 +27,7 @@ def run(
 
         task: AbstractVisualizerTask
         for (axes_id, task) in task_manager.get_tasks():
-            data = task.run(snapshot)
+            data = task.execute(snapshot)
             visualizer.plot_points(axes_id, data, task.draw_params, task.blocks)
 
         visualizer.set_title('Time: {:.02f} Myr'.format(time))
@@ -42,7 +42,7 @@ visualizer.set_figsize(22, 10)
 task_manager = TaskManager(4)
 task_manager.add_density_tasks()
 task_manager.add_tracking_tasks()
-task_manager.add_angular_momentum_task()
+# task_manager.add_angular_momentum_task()
 task_manager.add_velocity_tasks()
 
 run(
