@@ -1,5 +1,6 @@
 from typing import Tuple, Union
 import numpy as np
+import matplotlib as mpl
 
 class PlotParameters:
     def __init__(self, **kwargs):
@@ -27,3 +28,4 @@ class DrawParameters:
     marker: str = 'o'
     extent: list = [0, 100, 0, 100],
     cmap: str = 'ocean_r'
+    cmapnorm = mpl.colors.LogNorm()

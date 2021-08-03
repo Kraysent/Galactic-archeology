@@ -8,7 +8,8 @@ import numpy as np
 from utils.plot_parameters import PlotParameters, DrawParameters
 
 class Visualizer:
-    def __init__(self):
+    def __init__(self, style: str = 'ggplot'):
+        plt.style.use(style)
         self._axes = []
 
     def setup_grid(self, hratio: float):
@@ -34,6 +35,9 @@ class Visualizer:
     def add_subplot(self, row_span: Tuple[int, int], col_span: Tuple[int, int]):
         self._axes.append(plt.subplot(self._gridspec[col_span[0]: col_span[1], row_span[0]: row_span[1]]))
 
+    def get_axes(self, axes_id: int) -> Axes:
+        return self._axes[axes_id]
+
     @property
     def _figure(self) -> Figure:
         return plt.gcf()
@@ -47,7 +51,7 @@ class Visualizer:
         return results
 
     def set_plot_parameters(self, axes_id: int, params: PlotParameters):
-        axes: Axes = self._axes[axes_id]
+        axes = self.get_axes(axes_id)
 
         axes.grid(params.grid)
 
@@ -69,25 +73,28 @@ class Visualizer:
         axes.tick_params(axis = 'x', direction = params.ticks_direction)
         axes.tick_params(axis = 'y', direction = params.ticks_direction)
 
-    def plot_points(
-        self, axes_id: int, data: Union[Tuple[np.ndarray, np.ndarray], np.ndarray], 
+    def scatter_points(self, 
+        axes_id: int, 
+        data: Tuple[np.ndarray, np.ndarray], 
         params: DrawParameters
     ):
-        axes = self._axes[axes_id]
+        axes = self.get_axes(axes_id)
+        (x, y) = data
 
-        if type(data) is tuple:
-            (x, y) = data
+        axes.plot(x, y,
+            marker = params.marker, color = params.color,
+            markersize = params.markersize, linestyle = params.linestyle
+        )
 
-            axes.plot(x, y,
-                marker = params.marker, color = params.color,
-                markersize = params.markersize, linestyle = params.linestyle
-            )
-        else:
-            axes.imshow(data, 
-                extent = params.extent, 
-                cmap = params.cmap, 
-                norm=mpl.colors.LogNorm()
-            )
+    def plot_image(self, 
+        axes_id: int, data: np.ndarray, params: DrawParameters
+    ):
+        axes = self.get_axes(axes_id)
+        axes.imshow(data, 
+            extent = params.extent, 
+            cmap = params.cmap, 
+            norm = params.cmapnorm
+        )
 
     def set_title(self, title: str):
         self._figure.suptitle(title)

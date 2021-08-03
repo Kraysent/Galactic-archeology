@@ -42,15 +42,6 @@ class TaskManager:
     def get_axes_style(self, axes_id: int):
         return self.axes_styles[axes_id]
 
-    def add_task(self, axes_id: int,
-        task: AbstractVisualizerTask, 
-        plot_params: PlotParameters, 
-        draw_params: DrawParameters
-    ):
-        task.plot_params = plot_params
-        task.draw_params = draw_params
-        self.axes[axes_id].append(task)
-
     def add_density_tasks(self):
         xy_task = PlaneDensityTask(('x', 'y'), (-100, 100, -120, 120), 700)
         zy_task = PlaneDensityTask(('z', 'y'), (-100, 100, -120, 120), 700)
@@ -80,30 +71,22 @@ class TaskManager:
     def add_tracking_tasks(self):
         host_xy_track_task = CMTrackTask(('x', 'y'), (0, 200000))
         host_xy_track_task.draw_params = DrawParameters(
-            linestyle = 'solid',
-            color = 'g',
-            marker = 'None'
+            linestyle = 'solid', color = 'g', marker = 'None'
         )
 
-        sat_xy_track_task = CMTrackTask(('x', 'y'), (200000, -1))
+        sat_xy_track_task = CMTrackTask(('x', 'y'), (200000, None))
         sat_xy_track_task.draw_params = DrawParameters(
-            linestyle = 'solid',
-            color = 'y',
-            marker = 'None'
+            linestyle = 'solid', color = 'y', marker = 'None'
         )
 
         host_zy_track_task = CMTrackTask(('z', 'y'), (0, 200000))
         host_zy_track_task.draw_params = DrawParameters(
-            linestyle = 'solid',
-            color = 'g',
-            marker = 'None'
+            linestyle = 'solid', color = 'g', marker = 'None'
         )
 
-        sat_zy_track_task = CMTrackTask(('z', 'y'), (200000, -1))
+        sat_zy_track_task = CMTrackTask(('z', 'y'), (200000, None))
         sat_zy_track_task.draw_params = DrawParameters(
-            linestyle = 'solid',
-            color = 'y',
-            marker = 'None'
+            linestyle = 'solid', color = 'y', marker = 'None'
         )
 
         self.axes[0].append(host_xy_track_task)
@@ -198,4 +181,3 @@ class TaskManager:
         )
 
         self.set_axes_style(3, vxvy_style)
-

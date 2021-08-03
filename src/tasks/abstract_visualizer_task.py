@@ -42,18 +42,18 @@ class AbstractXYZTask(AbstractVisualizerTask):
         super().__init__(slice)
 
     def get_axes(self, vector, unit: named_unit = None, flat: bool = False) -> Tuple[np.ndarray, np.ndarray]:
-        if not flat:
-            axes = {
-                'x': vector.x,
-                'y': vector.y,
-                'z': vector.z
-            }
-        else:
-            axes = {
-                'x': vector[0],
-                'y': vector[1],
-                'z': vector[2]
-            }
+        axes = {
+            'x': vector[0],
+            'y': vector[1],
+            'z': vector[2]
+        }
+
+    def get_quantity_axes(self, vector, unit: named_unit = None) -> Tuple[np.ndarray, np.ndarray]:
+        axes = {
+            'x': vector.x,
+            'y': vector.y,
+            'z': vector.z
+        }
 
         if unit is None:
             return (axes[self.x1], axes[self.x2])
@@ -62,7 +62,7 @@ class AbstractXYZTask(AbstractVisualizerTask):
 
 class PlaneScatterTask(AbstractXYZTask):
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
-        (x1, x2) = self.get_axes(snapshot.particles.position)
+        (x1, x2) = self.get_quantity_axes(snapshot.particles.position)
 
         return x1, x2
 
@@ -74,7 +74,7 @@ class CMTrackTask(AbstractXYZTask):
     
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         cm = snapshot.particles.center_of_mass()
-        (x1, x2) = self.get_axes(cm, units.kpc)
+        (x1, x2) = self.get_quantity_axes(cm, units.kpc)
 
         self.cmx1 = np.append(self.cmx1, x1)
         self.cmx2 = np.append(self.cmx2, x2)
@@ -94,7 +94,7 @@ class PlaneDensityTask(AbstractXYZTask):
         super().__init__(axes, slice)
 
     def run(self, snapshot: Snapshot) -> np.ndarray:
-        (x1, x2) = self.get_axes(snapshot.particles.position, units.kpc)
+        (x1, x2) = self.get_quantity_axes(snapshot.particles.position, units.kpc)
         
         dist, _, _ = np.histogram2d(x1, x2, self.resolution, range = [
             self.edges[:2], self.edges[2:]
@@ -104,7 +104,7 @@ class PlaneDensityTask(AbstractXYZTask):
 
 class VProjectionTask(AbstractXYZTask):
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
-        (vx1, vx2) = self.get_axes(snapshot.particles.velocity, units.kms)
+        (vx1, vx2) = self.get_quantity_axes(snapshot.particles.velocity, units.kms)
 
         return (vx1, vx2)
 
@@ -128,14 +128,12 @@ class NormalVelocityTask(AbstractVisualizerTask):
         vx, vy, vz = v_vec[:, 0], v_vec[:, 1], v_vec[:, 2]
         
         r = np.sum(r_vec ** 2, axis = 1) ** 0.5
-        v_rs = []
-        v_ts = []
 
         filter = r < self.radius
 
+        r = r[filter]
         x, y, z = x[filter], y[filter], z[filter]
         vx, vy, vz = vx[filter], vy[filter], vz[filter]
-        r = r[filter]
 
         ex, ey, ez = x / r, y / r, z / r
 
@@ -144,10 +142,7 @@ class NormalVelocityTask(AbstractVisualizerTask):
         v_rx, v_ry, v_rz = v_r * ex, v_r * ey, v_r * ez
         v_t = ((vx - v_rx) ** 2 + (vy - v_ry) ** 2 + (vz - v_rz) ** 2) ** 0.5
 
-        v_rs.append(v_r)
-        v_ts.append(v_t)
-
-        return (np.concatenate(v_rs), np.concatenate(v_ts))
+        return (v_r, v_t)
 
     def set_pov(self, pov: VectorQuantity, pov_vel: VectorQuantity):
         self.pov = pov.value_in(units.kpc)
@@ -193,12 +188,8 @@ class AngularMomentumTask(AbstractXYZTask):
         ang_momentum = self._get_angular_momentum(snapshot.particles)
         length = (ang_momentum ** 2).sum() ** 0.5
 
-        (x1, x2) = self.get_axes(
-            ang_momentum, flat = True
-        )
-        (cmx1, cmx2) = self.get_axes(
-            cm, units.kpc
-        )
+        (x1, x2) = self.get_axes(ang_momentum)
+        (cmx1, cmx2) = self.get_quantity_axes(cm, units.kpc)
 
         x1 = x1 / length * self.norm + cmx1
         x2 = x2 / length * self.norm + cmx2
