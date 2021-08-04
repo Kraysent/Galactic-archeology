@@ -26,6 +26,6 @@ class DrawParameters:
     linestyle: str = 'None'
     color: str = 'b'
     marker: str = 'o'
-    extent: list = [0, 100, 0, 100],
+    extent: list = [0, 100, 0, 100]
     cmap: str = 'ocean_r'
     cmapnorm = mpl.colors.LogNorm()

@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Tuple, Union
+from enum import Enum
 
 import numpy as np
 from amuse.datamodel.particles import Particles
@@ -21,9 +22,6 @@ class AbstractVisualizerTask(ABC):
     def run(self, snapshot: Snapshot) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
         pass
 
-    def get_slice(self, snapshot: Snapshot) -> Snapshot:
-        return snapshot[self.start: self.end]
-
     @property
     def draw_params(self) -> DrawParameters:
         try:
@@ -37,16 +35,18 @@ class AbstractVisualizerTask(ABC):
 
 class AbstractXYZTask(AbstractVisualizerTask):
     def __init__(self, axes: Tuple[str, str], slice: Tuple[int, int] = (0, None)):
-        self.x1, self.x2 = axes
+        self.x1_name, self.x2_name = axes
 
         super().__init__(slice)
 
-    def get_axes(self, vector, unit: named_unit = None, flat: bool = False) -> Tuple[np.ndarray, np.ndarray]:
+    def get_axes(self, vector) -> Tuple[np.ndarray, np.ndarray]:
         axes = {
             'x': vector[0],
             'y': vector[1],
             'z': vector[2]
         }
+
+        return (axes[self.x1_name], axes[self.x2_name])
 
     def get_quantity_axes(self, vector, unit: named_unit = None) -> Tuple[np.ndarray, np.ndarray]:
         axes = {
@@ -56,15 +56,58 @@ class AbstractXYZTask(AbstractVisualizerTask):
         }
 
         if unit is None:
-            return (axes[self.x1], axes[self.x2])
+            return (axes[self.x1_name], axes[self.x2_name])
         else: 
-            return (axes[self.x1].value_in(unit), axes[self.x2].value_in(unit))
+            return (axes[self.x1_name].value_in(unit), axes[self.x2_name].value_in(unit))
 
-class PlaneScatterTask(AbstractXYZTask):
-    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
-        (x1, x2) = self.get_quantity_axes(snapshot.particles.position)
+class Mode(Enum):
+    PLAIN = 1
+    DENSITY = 2
 
-        return x1, x2
+class AbstractScatterTask(AbstractXYZTask):
+    def __init__(self, 
+        axes: Tuple[str, str], 
+        slice: Tuple[int, int] = (0, None)
+    ):
+        self.mode = Mode.PLAIN
+
+        super().__init__(axes = axes, slice = slice)
+
+    def get_data(self, 
+        x1: np.ndarray, x2: np.ndarray
+    ) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
+        if self.mode == Mode.PLAIN:
+            return x1, x2
+        elif self.mode == Mode.DENSITY:
+            dist, _, _ = np.histogram2d(x1, x2, self.resolution, range = [
+                self.edges[:2], self.edges[2:]
+            ])
+            dist = np.flip(dist.T, axis = 0)
+
+            return dist
+
+    def set_plain_mode(self):
+        self.mode = Mode.PLAIN
+
+    def set_density_mode(self, 
+        resolution: int, 
+        edges: Tuple[float, float, float, float]
+    ):
+        self.mode = Mode.DENSITY
+        self.resolution = resolution
+        self.edges = edges
+
+class SpatialScatterTask(AbstractScatterTask):
+    def run(self, snapshot: Snapshot) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
+        (x1, x2) = self.get_quantity_axes(snapshot.particles.position, units.kpc)
+        
+        return self.get_data(x1, x2)
+
+class VelocityScatterTask(AbstractScatterTask):
+    def run(self, snapshot: Snapshot) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
+        (vx1, vx2) = self.get_quantity_axes(snapshot.particles.velocity, units.kms)
+
+        return self.get_data(vx1, vx2)
 
 class CMTrackTask(AbstractXYZTask):
     def __init__(self, axes: Tuple[str, str], slice: Tuple[int, int] = (0, None)):
@@ -80,33 +123,6 @@ class CMTrackTask(AbstractXYZTask):
         self.cmx2 = np.append(self.cmx2, x2)
 
         return (self.cmx1, self.cmx2)
-
-class PlaneDensityTask(AbstractXYZTask):
-    def __init__(self,
-        axes: Tuple[str, str],
-        edges: Tuple[float, float, float, float], 
-        resolution: int,
-        slice: Tuple[int, int] = (0, None)
-    ):
-        self.edges = edges
-        self.resolution = resolution
-
-        super().__init__(axes, slice)
-
-    def run(self, snapshot: Snapshot) -> np.ndarray:
-        (x1, x2) = self.get_quantity_axes(snapshot.particles.position, units.kpc)
-        
-        dist, _, _ = np.histogram2d(x1, x2, self.resolution, range = [
-            self.edges[:2], self.edges[2:]
-        ])
-
-        return np.flip(dist.T, axis = 0)
-
-class VProjectionTask(AbstractXYZTask):
-    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
-        (vx1, vx2) = self.get_quantity_axes(snapshot.particles.velocity, units.kms)
-
-        return (vx1, vx2)
 
 class NormalVelocityTask(AbstractVisualizerTask):
     def __init__(self, 

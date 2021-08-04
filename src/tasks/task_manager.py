@@ -7,7 +7,8 @@ from utils.snapshot import Snapshot
 from tasks.abstract_visualizer_task import (AbstractVisualizerTask,
                                             AngularMomentumTask, CMTrackTask,
                                             NormalVelocityTask,
-                                            PlaneDensityTask, VProjectionTask)
+                                            SpatialScatterTask,
+                                            VelocityScatterTask)
 
 
 class TaskManager:
@@ -42,9 +43,11 @@ class TaskManager:
     def get_axes_style(self, axes_id: int):
         return self.axes_styles[axes_id]
 
-    def add_density_tasks(self):
-        xy_task = PlaneDensityTask(('x', 'y'), (-100, 100, -120, 120), 700)
-        zy_task = PlaneDensityTask(('z', 'y'), (-100, 100, -120, 120), 700)
+    def add_spatial_tasks(self):
+        xy_task = SpatialScatterTask(('x', 'y'))
+        zy_task = SpatialScatterTask(('z', 'y'))
+        xy_task.set_density_mode(700, (-100, 100, -120, 120))
+        zy_task.set_density_mode(700, (-100, 100, -120, 120))
 
         xy_task.draw_params = DrawParameters(
             extent = [-100, 100, -120, 120], cmap = 'ocean_r'
@@ -162,21 +165,22 @@ class TaskManager:
         self.set_axes_style(2, norm_vel_style)
 
     def add_velocity_tasks(self):
-        vxvy_host_task = VProjectionTask(('x', 'y'), (0, 200000))
-        vxvy_sat_task = VProjectionTask(('x', 'y'), (200000, None))
+        vxvy_host_task = VelocityScatterTask(('x', 'y'), (0, None))
+        # vxvy_sat_task = VelocityScatterTask(('x', 'y'), (200000, None))
 
+        vxvy_host_task.set_density_mode(700, (-400, 400, -400, 400))
         vxvy_host_task.draw_params = DrawParameters(
             markersize = 0.02, color = 'b'
         )
-        vxvy_sat_task.draw_params = DrawParameters(
-            markersize = 0.02, color = 'r'
-        )
+        # vxvy_sat_task.draw_params = DrawParameters(
+        #     markersize = 0.02, color = 'r'
+        # )
 
         self.axes[3].append(vxvy_host_task)
-        self.axes[3].append(vxvy_sat_task)
+        # self.axes[3].append(vxvy_sat_task)
 
         vxvy_style = PlotParameters(
-            xlim = (-400, 400), ylim = (-400, 400),
+            # xlim = (-400, 400), ylim = (-400, 400),
             xlabel = '$V_x$, km/s', ylabel = '$V_y$, km/s'
         )
 
