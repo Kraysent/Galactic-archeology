@@ -6,7 +6,7 @@ from utils.snapshot import Snapshot
 
 from tasks.abstract_visualizer_task import (AbstractVisualizerTask,
                                             AngularMomentumTask, CMTrackTask,
-                                            NormalVelocityTask,
+                                            NormalVelocityTask, PlaneDirectionTask,
                                             SpatialScatterTask,
                                             VelocityScatterTask)
 
@@ -113,8 +113,13 @@ class TaskManager:
         ang_momentum_task.draw_params = DrawParameters(
             linestyle = 'solid', marker = 'None'
         )
+        plane_direction_task = PlaneDirectionTask(('z', 'y'), (0, 200000), 1000)
+        plane_direction_task.draw_params = DrawParameters(
+            linestyle = 'solid', marker = 'None'
+        )
 
         self.axes[1].append(ang_momentum_task)
+        self.axes[1].append(plane_direction_task)
 
         axes_style = PlotParameters(
             xlim = (-100, 100), ylim = (-120, 120),
@@ -158,7 +163,7 @@ class TaskManager:
         self.axes[2].append(sat_norm_vel_task)
 
         norm_vel_style = PlotParameters(
-            xlim = (-600, 600), ylim = (0, 400),
+            xlim = (-600, 600), ylim = (0, 500),
             xlabel = '$v_r$, km/s', ylabel = '$v_{\\tau}$, km/s'
         )
 
@@ -166,21 +171,16 @@ class TaskManager:
 
     def add_velocity_tasks(self):
         vxvy_host_task = VelocityScatterTask(('x', 'y'), (0, None))
-        # vxvy_sat_task = VelocityScatterTask(('x', 'y'), (200000, None))
 
         vxvy_host_task.set_density_mode(700, (-400, 400, -400, 400))
         vxvy_host_task.draw_params = DrawParameters(
-            markersize = 0.02, color = 'b'
+            markersize = 0.02, color = 'b', extent = (-400, 400, -400, 400)
         )
-        # vxvy_sat_task.draw_params = DrawParameters(
-        #     markersize = 0.02, color = 'r'
-        # )
 
         self.axes[3].append(vxvy_host_task)
-        # self.axes[3].append(vxvy_sat_task)
 
         vxvy_style = PlotParameters(
-            # xlim = (-400, 400), ylim = (-400, 400),
+            xlim = (-400, 400), ylim = (-400, 400),
             xlabel = '$V_x$, km/s', ylabel = '$V_y$, km/s'
         )
 

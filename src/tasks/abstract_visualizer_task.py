@@ -180,6 +180,46 @@ class KineticEnergyTask(AbstractVisualizerTask):
 
         return (self.times, self.energies)
 
+class PlaneDirectionTask(AbstractXYZTask):
+    def __init__(self, axes: Tuple[int, int], slice: Tuple[int, int], norm: float):
+        self.norm = norm
+
+        super().__init__(axes, slice)
+
+    def _get_angular_momentum(self, particles: Particles) -> np.ndarray:
+        r = particles.position.value_in(units.kpc)
+        v = particles.velocity.value_in(units.kms)
+        cm = particles.center_of_mass().value_in(units.kpc)
+        cm_vel = particles.center_of_mass_velocity().value_in(units.kms)
+        m = particles.mass.value_in(units.MSun)
+
+        r = r - cm
+        v = v - cm_vel
+        ang_momentum = m[:, np.newaxis] * np.cross(v, r)
+        total_ang_momentum = np.sum(ang_momentum, axis = 0)
+        return total_ang_momentum
+
+    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
+        cm = snapshot.particles.center_of_mass()
+        ang_momentum = self._get_angular_momentum(snapshot.particles)
+
+        r = 8
+
+        plane_vector = np.empty(ang_momentum.shape)
+        plane_vector[0] = 1
+        plane_vector[1] = 1
+        plane_vector[2] = - plane_vector[0] * ang_momentum[0] / ang_momentum[2] - plane_vector[1] * ang_momentum[1] / ang_momentum[2] 
+
+        length = (plane_vector ** 2).sum() ** 0.5
+
+        (x1, x2) = self.get_axes(plane_vector)
+        (cmx1, cmx2) = self.get_quantity_axes(cm, units.kpc)
+
+        x1 = x1 / length * self.norm + cmx1
+        x2 = x2 / length * self.norm + cmx2
+
+        return (np.array([cmx1, x1]), np.array([cmx2, x2]))
+
 class AngularMomentumTask(AbstractXYZTask):
     def __init__(self, axes: Tuple[int, int], slice: Tuple[int, int], norm: float):
         self.norm = norm
@@ -203,6 +243,8 @@ class AngularMomentumTask(AbstractXYZTask):
         cm = snapshot.particles.center_of_mass()
         ang_momentum = self._get_angular_momentum(snapshot.particles)
         length = (ang_momentum ** 2).sum() ** 0.5
+
+        r = 8
 
         (x1, x2) = self.get_axes(ang_momentum)
         (cmx1, cmx2) = self.get_quantity_axes(cm, units.kpc)

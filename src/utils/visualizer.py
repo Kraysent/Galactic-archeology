@@ -55,11 +55,8 @@ class Visualizer:
 
         axes.grid(params.grid)
 
-        if all(params.xlim):
-            axes.set_xlim(params.xlim)
-
-        if all(params.ylim):
-            axes.set_ylim(params.ylim)
+        axes.set_xlim(params.xlim)
+        axes.set_ylim(params.ylim)
 
         axes.set_xlabel(params.xlabel)
         axes.set_ylabel(params.ylabel)
