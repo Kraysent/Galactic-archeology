@@ -12,11 +12,11 @@ from utils.snapshot import Snapshot
 
 
 class AbstractVisualizerTask(ABC):
-    def __init__(self, slice: Tuple[int, int] = (0, None)):
-        self.start, self.end = slice
+    def __init__(self, part: slice = slice(0, None, None)):
+        self.part = part
 
     def execute(self, snapshot: Snapshot) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
-        return self.run(snapshot[self.start: self.end])
+        return self.run(snapshot[self.part])
 
     @abstractmethod
     def run(self, snapshot: Snapshot) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
@@ -34,10 +34,10 @@ class AbstractVisualizerTask(ABC):
         self._draw_params = value
 
 class AbstractXYZTask(AbstractVisualizerTask):
-    def __init__(self, axes: Tuple[str, str], slice: Tuple[int, int] = (0, None)):
+    def __init__(self, axes: Tuple[str, str], part: slice = slice(0, None, None)):
         self.x1_name, self.x2_name = axes
 
-        super().__init__(slice)
+        super().__init__(part)
 
     def get_axes(self, vector) -> Tuple[np.ndarray, np.ndarray]:
         axes = {
@@ -67,11 +67,11 @@ class Mode(Enum):
 class AbstractScatterTask(AbstractXYZTask):
     def __init__(self, 
         axes: Tuple[str, str], 
-        slice: Tuple[int, int] = (0, None)
+        part: slice = slice(0, None, None)
     ):
         self.mode = Mode.PLAIN
 
-        super().__init__(axes = axes, slice = slice)
+        super().__init__(axes = axes, part = part)
 
     def get_data(self, 
         x1: np.ndarray, x2: np.ndarray
@@ -110,7 +110,7 @@ class VelocityScatterTask(AbstractScatterTask):
         return self.get_data(vx1, vx2)
 
 class CMTrackTask(AbstractXYZTask):
-    def __init__(self, axes: Tuple[str, str], slice: Tuple[int, int] = (0, None)):
+    def __init__(self, axes: Tuple[str, str], part: slice = slice(0, None, None)):
         self.cmx1, self.cmx2 = np.empty((0,)), np.empty((0,))
 
         super().__init__(axes, slice)
@@ -129,13 +129,13 @@ class NormalVelocityTask(AbstractVisualizerTask):
         pov: VectorQuantity, 
         pov_velocity: VectorQuantity, 
         radius: VectorQuantity,
-        slice: Tuple[int, int] = (0, None)
+        part: slice = slice(0, None, None)
     ):
         self.pov = pov.value_in(units.kpc)
         self.pov_vel = pov_velocity.value_in(units.kms)
         self.radius = radius.value_in(units.kpc)
 
-        super().__init__(slice)
+        super().__init__(part)
     
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         r_vec = snapshot.particles.position.value_in(units.kpc) - self.pov
@@ -165,11 +165,11 @@ class NormalVelocityTask(AbstractVisualizerTask):
         self.pov_vel = pov_vel.value_in(units.kms)
 
 class KineticEnergyTask(AbstractVisualizerTask):
-    def __init__(self, slice: Tuple[int, int] = (0, None)):
+    def __init__(self, part: slice = slice(0, None, None)):
         self.times = np.empty((0,))
         self.energies = np.empty((0,))
 
-        super().__init__(slice)
+        super().__init__(part)
 
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         self.times = np.append(self.times, snapshot.timestamp.value_in(units.Myr))
@@ -181,10 +181,10 @@ class KineticEnergyTask(AbstractVisualizerTask):
         return (self.times, self.energies)
 
 class PlaneDirectionTask(AbstractXYZTask):
-    def __init__(self, axes: Tuple[int, int], slice: Tuple[int, int], norm: float):
+    def __init__(self, axes: Tuple[int, int], norm: float, part: slice = slice(0, None, None)):
         self.norm = norm
 
-        super().__init__(axes, slice)
+        super().__init__(axes, part)
 
     def _get_angular_momentum(self, particles: Particles) -> np.ndarray:
         r = particles.position.value_in(units.kpc)
@@ -221,10 +221,10 @@ class PlaneDirectionTask(AbstractXYZTask):
         return (np.array([cmx1, x1]), np.array([cmx2, x2]))
 
 class AngularMomentumTask(AbstractXYZTask):
-    def __init__(self, axes: Tuple[int, int], slice: Tuple[int, int], norm: float):
+    def __init__(self, axes: Tuple[int, int], norm: float, part: slice = slice(0, None, None)):
         self.norm = norm
 
-        super().__init__(axes, slice)
+        super().__init__(axes, part)
 
     def _get_angular_momentum(self, particles: Particles) -> np.ndarray:
         r = particles.position.value_in(units.kpc)

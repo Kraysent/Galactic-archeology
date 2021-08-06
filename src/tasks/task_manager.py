@@ -36,7 +36,7 @@ class TaskManager:
 
     def add_update(self, update: Callable[[Snapshot], Any]):
         self.updates.append(update)
-        
+
     def update_tasks(self, snapshot: Snapshot):
         for update in self.updates:
             update(snapshot)
@@ -61,26 +61,26 @@ class TaskManager:
             extent = [-100, 100, -120, 120], cmap = 'ocean_r'
         )
 
-        self.add_task(0, xy_task)
-        self.add_task(1, zy_task)
+        self.add_tasks(1, zy_task)
+        self.add_tasks(0, xy_task)
         
     def add_tracking_tasks(self):
-        host_xy_track_task = CMTrackTask(('x', 'y'), (0, 200000))
+        host_xy_track_task = CMTrackTask(('x', 'y'), slice(0, 200000, None))
         host_xy_track_task.draw_params = DrawParameters(
             linestyle = 'solid', color = 'g', marker = 'None'
         )
 
-        sat_xy_track_task = CMTrackTask(('x', 'y'), (200000, None))
+        sat_xy_track_task = CMTrackTask(('x', 'y'), slice(200000, None, None))
         sat_xy_track_task.draw_params = DrawParameters(
             linestyle = 'solid', color = 'y', marker = 'None'
         )
 
-        host_zy_track_task = CMTrackTask(('z', 'y'), (0, 200000))
+        host_zy_track_task = CMTrackTask(('z', 'y'), slice(0, 200000, None))
         host_zy_track_task.draw_params = DrawParameters(
             linestyle = 'solid', color = 'g', marker = 'None'
         )
 
-        sat_zy_track_task = CMTrackTask(('z', 'y'), (200000, None))
+        sat_zy_track_task = CMTrackTask(('z', 'y'), slice(200000, None, None))
         sat_zy_track_task.draw_params = DrawParameters(
             linestyle = 'solid', color = 'y', marker = 'None'
         )
@@ -89,11 +89,11 @@ class TaskManager:
         self.add_tasks(1, host_zy_track_task, sat_zy_track_task)
 
     def add_angular_momentum_task(self):
-        ang_momentum_task = AngularMomentumTask(('z', 'y'), (0, 200000), 1000)
+        ang_momentum_task = AngularMomentumTask(('z', 'y'), 1000, slice(0, 200000, None))
         ang_momentum_task.draw_params = DrawParameters(
             linestyle = 'solid', marker = 'None'
         )
-        plane_direction_task = PlaneDirectionTask(('z', 'y'), (0, 200000), 1000)
+        plane_direction_task = PlaneDirectionTask(('z', 'y'), 1000, slice(0, 200000, None))
         plane_direction_task.draw_params = DrawParameters(
             linestyle = 'solid', marker = 'None'
         )
@@ -105,13 +105,13 @@ class TaskManager:
             pov = [8, 0, 0] | units.kpc, 
             pov_velocity = [0, 200, 0] | units.kms,
             radius = 5 | units.kpc,
-            slice = (0, 200000)
+            part = slice(0, 200000, None)
         )
         sat_norm_vel_task = NormalVelocityTask(
             pov = [8, 0, 0] | units.kpc, 
             pov_velocity = [0, 200, 0] | units.kms,
             radius = 5 | units.kpc,
-            slice = (200000, None)
+            part = slice(200000, None, None)
         )
 
         host_norm_vel_task.draw_params = DrawParameters(
@@ -133,7 +133,7 @@ class TaskManager:
         self.add_tasks(2, host_norm_vel_task, sat_norm_vel_task)
 
     def add_velocity_tasks(self):
-        vxvy_host_task = VelocityScatterTask(('x', 'y'), (0, None))
+        vxvy_host_task = VelocityScatterTask(('x', 'y'))
 
         vxvy_host_task.set_density_mode(700, (-400, 400, -400, 400))
         vxvy_host_task.draw_params = DrawParameters(
