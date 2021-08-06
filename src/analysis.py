@@ -1,5 +1,3 @@
-import matplotlib.pyplot as plt
-import numpy as np
 from amuse.lab import units
 
 from iotools.abstractiomanager import NEMOIOManager
@@ -14,6 +12,24 @@ visualizer.set_figsize(22, 10)
 iomanager = NEMOIOManager('output/new_out.nemo')
 
 task_manager = TaskManager(4)
+
+task_manager.set_axes_style(0,
+    xlim = (-100, 100), ylim = (-120, 120),
+    xlabel = 'x, kpc', ylabel = 'y, kpc'
+)
+task_manager.set_axes_style(1,
+    xlim = (-100, 100), ylim = (-120, 120),
+    xlabel = 'z, kpc', yticks = [] 
+)
+task_manager.set_axes_style(2,
+    xlim = (-600, 600), ylim = (0, 500),
+    xlabel = '$v_r$, km/s', ylabel = '$v_{\\tau}$, km/s'
+)
+task_manager.set_axes_style(3,
+    xlim = (-400, 400), ylim = (-400, 400),
+    xlabel = '$V_x$, km/s', ylabel = '$V_y$, km/s'
+)
+
 task_manager.add_spatial_tasks()
 # task_manager.add_tracking_tasks()
 task_manager.add_norm_velocity_tasks()

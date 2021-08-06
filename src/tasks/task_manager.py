@@ -21,6 +21,10 @@ class TaskManager:
             self.axes[i] = []
             self.axes_styles[i] = PlotParameters()
 
+    def add_tasks(self, axes_id: int, *tasks):
+        for task in tasks:
+            self.axes[axes_id].append(task)
+
     def get_tasks(self) -> Tuple[Tuple[int, AbstractVisualizerTask], ...]:
         res = []
 
@@ -28,17 +32,18 @@ class TaskManager:
             for task in lst:
                 res.append((ax, task))
 
-        return tuple(res)
+        return res
 
+    def add_update(self, update: Callable[[Snapshot], Any]):
+        self.updates.append(update)
+        
     def update_tasks(self, snapshot: Snapshot):
         for update in self.updates:
             update(snapshot)
 
-    def add_update(self, update: Callable[[Snapshot], Any]):
-        self.updates.append(update)
-
-    def set_axes_style(self, axes_id: int, params: PlotParameters):
-        self.axes_styles[axes_id] = params
+    def set_axes_style(self, axes_id: int, **kwargs):
+        for (key, value) in kwargs.items():
+            setattr(self.axes_styles[axes_id], key, value)
 
     def get_axes_style(self, axes_id: int):
         return self.axes_styles[axes_id]
@@ -56,21 +61,9 @@ class TaskManager:
             extent = [-100, 100, -120, 120], cmap = 'ocean_r'
         )
 
-        self.axes[0].append(xy_task)
-        self.axes[1].append(zy_task)
-
-        xy_style = PlotParameters(
-            xlim = (-100, 100), ylim = (-120, 120),
-            xlabel = 'x, kpc', ylabel = 'y, kpc'
-        )
-        zy_style = PlotParameters(
-            xlim = (-100, 100), ylim = (-120, 120),
-            xlabel = 'z, kpc', yticks = [] 
-        )
-
-        self.set_axes_style(0, xy_style)
-        self.set_axes_style(1, zy_style)
-
+        self.add_task(0, xy_task)
+        self.add_task(1, zy_task)
+        
     def add_tracking_tasks(self):
         host_xy_track_task = CMTrackTask(('x', 'y'), (0, 200000))
         host_xy_track_task.draw_params = DrawParameters(
@@ -92,21 +85,8 @@ class TaskManager:
             linestyle = 'solid', color = 'y', marker = 'None'
         )
 
-        self.axes[0].append(host_xy_track_task)
-        self.axes[0].append(sat_xy_track_task)
-        self.axes[1].append(host_zy_track_task)
-        self.axes[1].append(sat_zy_track_task)
-
-        xy_axes_style = PlotParameters(
-            xlim = (-100, 100), ylim = (-120, 120),
-            xlabel = 'x, kpc', ylabel = 'y, kpc'
-        )
-        zy_axes_style = PlotParameters(
-            xlim = (-100, 100), ylim = (-120, 120),
-            xlabel = 'z, kpc', yticks = []
-        )
-
-        self.set_axes_style(0, xy_axes_style)
+        self.add_tasks(0, host_xy_track_task, sat_xy_track_task)
+        self.add_tasks(1, host_zy_track_task, sat_zy_track_task)
 
     def add_angular_momentum_task(self):
         ang_momentum_task = AngularMomentumTask(('z', 'y'), (0, 200000), 1000)
@@ -118,15 +98,7 @@ class TaskManager:
             linestyle = 'solid', marker = 'None'
         )
 
-        self.axes[1].append(ang_momentum_task)
-        self.axes[1].append(plane_direction_task)
-
-        axes_style = PlotParameters(
-            xlim = (-100, 100), ylim = (-120, 120),
-            xlabel = 'z, kpc', yticks = [] 
-        )
-
-        self.set_axes_style(1, axes_style)
+        self.add_tasks(1, ang_momentum_task, plane_direction_task)
 
     def add_norm_velocity_tasks(self):
         host_norm_vel_task = NormalVelocityTask(
@@ -158,16 +130,7 @@ class TaskManager:
             sat_norm_vel_task.set_pov(sun_pos, sun_vel)
 
         self.add_update(update_norm_velocity)
-
-        self.axes[2].append(host_norm_vel_task)
-        self.axes[2].append(sat_norm_vel_task)
-
-        norm_vel_style = PlotParameters(
-            xlim = (-600, 600), ylim = (0, 500),
-            xlabel = '$v_r$, km/s', ylabel = '$v_{\\tau}$, km/s'
-        )
-
-        self.set_axes_style(2, norm_vel_style)
+        self.add_tasks(2, host_norm_vel_task, sat_norm_vel_task)
 
     def add_velocity_tasks(self):
         vxvy_host_task = VelocityScatterTask(('x', 'y'), (0, None))
@@ -177,11 +140,4 @@ class TaskManager:
             markersize = 0.02, color = 'b', extent = (-400, 400, -400, 400)
         )
 
-        self.axes[3].append(vxvy_host_task)
-
-        vxvy_style = PlotParameters(
-            xlim = (-400, 400), ylim = (-400, 400),
-            xlabel = '$V_x$, km/s', ylabel = '$V_y$, km/s'
-        )
-
-        self.set_axes_style(3, vxvy_style)
+        self.add_tasks(3, vxvy_host_task)
