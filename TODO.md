@@ -7,6 +7,9 @@
 - Play with direction and distance of the infall of the satellite
 
 # Program: 
+## Issues:
+- Normal velocity is drawn incorrectly
+
 ## Nearest future:
 - Plot velocities in the reference frame of the disc.
 - Move slicing out of tasks to task manager

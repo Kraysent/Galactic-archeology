@@ -58,8 +58,9 @@ while (iomanager.next_frame()):
     task_manager.update_tasks(snapshot)
 
     task: AbstractVisualizerTask
-    for (axes_id, task) in task_manager.get_tasks():
-        data = task.execute(snapshot)
+    for a in task_manager.get_tasks():
+        (axes_id, task, part) = a
+        data = task.run(snapshot[part])
 
         if type(data) is tuple:
             visualizer.scatter_points(axes_id, data, task.draw_params)

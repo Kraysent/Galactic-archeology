@@ -50,18 +50,18 @@ class TaskManager:
         for i in range(number_of_axes):
             self.axes[i] = []
 
-    def add_tasks(self, axes_id: int, *tasks):
-        for task in tasks:
-            self.axes[axes_id].append(task)
+    def add_tasks(self, axes_id: int, *sliced_tasks):
+        for sliced_task in sliced_tasks:
+            if type(sliced_task) is tuple:
+                task, part = sliced_task
+                self.axes[axes_id].append((task, part))
+            else:
+                self.axes[axes_id].append((sliced_task, slice(0, None)))
 
     def get_tasks(self) -> List[Tuple[int, AbstractVisualizerTask]]:
-        res = []
-
         for (ax, lst) in self.axes.items():
-            for task in lst:
-                res.append((ax, task))
-
-        return res
+            for (task, part) in lst:
+                yield ax, task, part
 
     def add_update(self, update: Callable[[Snapshot], Any]):
         self.updates.append(update)
@@ -87,63 +87,73 @@ class TaskManager:
         self.add_tasks(0, xy_task)
         
     def add_tracking_tasks(self):
-        host_xy_track_task = CMTrackTask(('x', 'y'), slice(0, 200000, None))
+        host_xy_track_task = CMTrackTask(('x', 'y'))
         host_xy_track_task.draw_params = DrawParameters(
             linestyle = 'solid', color = 'g', marker = 'None'
         )
 
-        sat_xy_track_task = CMTrackTask(('x', 'y'), slice(200000, None, None))
+        sat_xy_track_task = CMTrackTask(('x', 'y'))
         sat_xy_track_task.draw_params = DrawParameters(
             linestyle = 'solid', color = 'y', marker = 'None'
         )
 
-        host_zy_track_task = CMTrackTask(('z', 'y'), slice(0, 200000, None))
+        host_zy_track_task = CMTrackTask(('z', 'y'))
         host_zy_track_task.draw_params = DrawParameters(
             linestyle = 'solid', color = 'g', marker = 'None'
         )
 
-        sat_zy_track_task = CMTrackTask(('z', 'y'), slice(200000, None, None))
+        sat_zy_track_task = CMTrackTask(('z', 'y'))
         sat_zy_track_task.draw_params = DrawParameters(
             linestyle = 'solid', color = 'y', marker = 'None'
         )
 
-        self.add_tasks(0, host_xy_track_task, sat_xy_track_task)
-        self.add_tasks(1, host_zy_track_task, sat_zy_track_task)
+        self.add_tasks(0, 
+            (host_xy_track_task, slice(200000)), 
+            (sat_xy_track_task, slice(200000, None))
+        )
+        self.add_tasks(1, 
+            (host_zy_track_task, slice(200000)), 
+            (sat_zy_track_task, slice(200000, None))
+        )
 
     def add_angular_momentum_task(self):
-        xy_ang_momentum_task = AngularMomentumTask(('x', 'y'), 1000, slice(0, 200000, None))
+        xy_ang_momentum_task = AngularMomentumTask(('x', 'y'), 1000)
         xy_ang_momentum_task.draw_params = DrawParameters(
             linestyle = 'solid', marker = 'None'
         )
-        xy_plane_direction_task = PlaneDirectionTask(('x', 'y'), 1000, slice(0, 200000, None))
+        xy_plane_direction_task = PlaneDirectionTask(('x', 'y'), 1000)
         xy_plane_direction_task.draw_params = DrawParameters(
             linestyle = 'solid', marker = 'None'
         )
 
-        zy_ang_momentum_task = AngularMomentumTask(('z', 'y'), 1000, slice(0, 200000, None))
+        zy_ang_momentum_task = AngularMomentumTask(('z', 'y'), 1000)
         zy_ang_momentum_task.draw_params = DrawParameters(
             linestyle = 'solid', marker = 'None'
         )
-        zy_plane_direction_task = PlaneDirectionTask(('z', 'y'), 1000, slice(0, 200000, None))
+        zy_plane_direction_task = PlaneDirectionTask(('z', 'y'), 1000)
         zy_plane_direction_task.draw_params = DrawParameters(
             linestyle = 'solid', marker = 'None'
         )
 
-        self.add_tasks(0, xy_ang_momentum_task, xy_plane_direction_task)
-        self.add_tasks(1, zy_ang_momentum_task, zy_plane_direction_task)
+        self.add_tasks(0, 
+            (xy_ang_momentum_task, slice(200000)), 
+            (xy_plane_direction_task, slice(200000))
+        )
+        self.add_tasks(1, 
+            (zy_ang_momentum_task, slice(200000)), 
+            (zy_plane_direction_task, slice(200000))
+        )
 
     def add_norm_velocity_tasks(self):
         host_norm_vel_task = NormalVelocityTask(
             pov = [8, 0, 0] | units.kpc, 
             pov_velocity = [0, 200, 0] | units.kms,
-            radius = 5 | units.kpc,
-            part = slice(0, 200000, None)
+            radius = 5 | units.kpc
         )
         sat_norm_vel_task = NormalVelocityTask(
             pov = [8, 0, 0] | units.kpc, 
             pov_velocity = [0, 200, 0] | units.kms,
-            radius = 5 | units.kpc,
-            part = slice(200000, None, None)
+            radius = 5 | units.kpc
         )
 
         host_norm_vel_task.draw_params = DrawParameters(
@@ -161,7 +171,10 @@ class TaskManager:
             sat_norm_vel_task.set_pov(sun_pos, sun_vel)
 
         self.add_update(update_norm_velocity)
-        self.add_tasks(2, host_norm_vel_task, sat_norm_vel_task)
+        self.add_tasks(2, 
+            (host_norm_vel_task, slice(0, 200000)), 
+            (sat_norm_vel_task, slice(200000, None))
+        )
 
     def add_velocity_tasks(self):
         vxvy_host_task = VelocityScatterTask(('x', 'y'))
