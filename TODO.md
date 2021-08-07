@@ -12,7 +12,6 @@
 - Add integration to the primary program.
 - Implement pyfalcon integration to the integrator module of the program.
 - Create kind of time plot that has no options.
-- Draw visualizer plots with add_axes function and not with GridSpecs
 - Draw velocity profile graph
 - Draw distance of CMs over time
 

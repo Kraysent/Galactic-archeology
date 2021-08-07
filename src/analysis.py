@@ -6,12 +6,15 @@ from tasks.task_manager import TaskManager
 from utils.visualizer import Visualizer
 
 visualizer = Visualizer()
-visualizer.setup_grid(2)
+visualizer.add_axes(0, 0, 0.33, 1)
+visualizer.add_axes(0.33, 0, 0.33, 1)
+visualizer.add_axes(0.7, 0.5, 0.25, 0.45)
+visualizer.add_axes(0.68, 0, 0.3, 0.45)
 visualizer.set_figsize(22, 10)
 
 iomanager = NEMOIOManager('output/new_out.nemo')
 
-task_manager = TaskManager(4)
+task_manager = TaskManager(visualizer.number_of_axes)
 
 task_manager.set_axes_style(0,
     xlim = (-100, 100), ylim = (-120, 120),
