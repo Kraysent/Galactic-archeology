@@ -6,7 +6,7 @@ from utils.plot_parameters import DrawParameters, PlotParameters
 from utils.snapshot import Snapshot
 
 from tasks.abstract_visualizer_task import (AbstractVisualizerTask,
-                                            AngularMomentumTask, CMTrackTask,
+                                            AngularMomentumTask, CMDistanceTask, CMTrackTask,
                                             NormalVelocityTask,
                                             PlaneDirectionTask,
                                             SpatialScatterTask,
@@ -159,3 +159,11 @@ class TaskManager:
         )
 
         self.add_tasks(3, vxvy_host_task)
+
+    def add_distance_task(self):
+        dist_task = CMDistanceTask(slice(0, 200000, None), slice(200000, None, None))
+        dist_task.draw_params = DrawParameters(
+            linestyle = 'solid', color = 'r'
+        )
+
+        self.add_tasks(4, dist_task)

@@ -254,6 +254,25 @@ class AngularMomentumTask(AbstractXYZTask):
 
         return (np.array([cmx1, x1]), np.array([cmx2, x2]))
 
+class CMDistanceTask(AbstractVisualizerTask):
+    def __init__(self, part1: slice, part2: slice):
+        self.part1 = part1
+        self.part2 = part2
+        self.dist = []
+        self.time = []
+
+        super().__init__()
+
+    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
+        cm1 = snapshot.particles[self.part1].center_of_mass().value_in(units.kpc)
+        cm2 = snapshot.particles[self.part2].center_of_mass().value_in(units.kpc)
+
+        dist = ((cm1 - cm2) ** 2).sum() ** 0.5
+        self.dist.append(dist)
+        self.time.append(snapshot.timestamp.value_in(units.Myr))
+
+        return (np.array(self.time), np.array(self.dist))
+
 class TestLineTask(AbstractVisualizerTask):
     def run(self, snapshot: Snapshot) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
         return (np.array([0, 100]), np.array([0, 100]))
