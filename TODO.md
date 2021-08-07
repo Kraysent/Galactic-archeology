@@ -13,8 +13,9 @@
 - Add integration to the primary program.
 - Implement pyfalcon integration to the integrator module of the program.
 - Create kind of time plot abstract class that has no options.
-- Draw velocity profile graph
-- Zoom the central region on the latter stages of evolution
+- Draw velocity profile graph.
+- Zoom the central region on the latter stages of evolution.
+- Add projection of the coordinates onto the host plane.
 
 
 ## More distant future:

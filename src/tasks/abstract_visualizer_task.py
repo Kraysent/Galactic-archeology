@@ -209,16 +209,21 @@ class PlaneDirectionTask(AbstractXYZTask):
         plane_vector[0] = 1
         plane_vector[1] = 1
         plane_vector[2] = - plane_vector[0] * ang_momentum[0] / ang_momentum[2] - plane_vector[1] * ang_momentum[1] / ang_momentum[2] 
+        velocity_vector = np.cross(plane_vector, ang_momentum)
 
         length = (plane_vector ** 2).sum() ** 0.5
+        vel_length = (velocity_vector ** 2).sum() ** 0.5
 
         (x1, x2) = self.get_axes(plane_vector)
+        (x11, x22) = self.get_axes(velocity_vector)
         (cmx1, cmx2) = self.get_quantity_axes(cm, units.kpc)
 
-        x1 = x1 / length * self.norm + cmx1
-        x2 = x2 / length * self.norm + cmx2
+        x1 = x1 / length * r + cmx1
+        x2 = x2 / length * r + cmx2
+        x11 = x11 / vel_length * r + cmx1
+        x22 = x22 / vel_length * r + cmx2
 
-        return (np.array([cmx1, x1]), np.array([cmx2, x2]))
+        return (np.array([cmx1, x1, x11, cmx1]), np.array([cmx2, x2, x22, cmx2]))
 
 class AngularMomentumTask(AbstractXYZTask):
     def __init__(self, axes: Tuple[int, int], norm: float, part: slice = slice(0, None, None)):
@@ -249,8 +254,8 @@ class AngularMomentumTask(AbstractXYZTask):
         (x1, x2) = self.get_axes(ang_momentum)
         (cmx1, cmx2) = self.get_quantity_axes(cm, units.kpc)
 
-        x1 = x1 / length * self.norm + cmx1
-        x2 = x2 / length * self.norm + cmx2
+        x1 = x1 / length * r * 2 + cmx1
+        x2 = x2 / length * r * 2 + cmx2
 
         return (np.array([cmx1, x1]), np.array([cmx2, x2]))
 

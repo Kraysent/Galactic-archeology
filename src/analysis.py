@@ -8,13 +8,13 @@ from utils.visualizer import Visualizer
 visualizer = Visualizer()
 visualizer.add_axes(0, 0, 0.35, 1)
 visualizer.set_plot_parameters(0,
-    xlim = (-100, 100), ylim = (-120, 120),
+    xlim = (-70, 70), ylim = (-90, 90),
     xlabel = 'x, kpc', ylabel = 'y, kpc'
 )
 
 visualizer.add_axes(0.33, 0, 0.35, 1)
 visualizer.set_plot_parameters(1,
-    xlim = (-100, 100), ylim = (-120, 120),
+    xlim = (-70, 70), ylim = (-90, 90),
     xlabel = 'z, kpc', yticks = []
 )
 

@@ -2,11 +2,12 @@ from typing import Any, Callable, List, Tuple
 
 import numpy as np
 from amuse.lab import units
-from utils.plot_parameters import DrawParameters, PlotParameters
+from utils.plot_parameters import DrawParameters
 from utils.snapshot import Snapshot
 
 from tasks.abstract_visualizer_task import (AbstractVisualizerTask,
-                                            AngularMomentumTask, CMDistanceTask, CMTrackTask,
+                                            AngularMomentumTask,
+                                            CMDistanceTask, CMTrackTask,
                                             NormalVelocityTask,
                                             PlaneDirectionTask,
                                             SpatialScatterTask,
@@ -31,11 +32,13 @@ def get_sun_position_and_velocity(snapshot: Snapshot):
     plane_vector[0] = 1
     plane_vector[1] = 1
     plane_vector[2] = - plane_vector[0] * ang_momentum[0] / ang_momentum[2] - plane_vector[1] * ang_momentum[1] / ang_momentum[2] 
+    velocity_vector = np.cross(plane_vector, ang_momentum)
+    velocity_vector = velocity_vector / (velocity_vector ** 2).sum() ** 0.5
 
     length = (plane_vector ** 2).sum() ** 0.5
     plane_vector = plane_vector / length * r
     sun_pos = cm + plane_vector | units.kpc
-    sun_vel = cm_vel + [0, 200, 0] | units.kms
+    sun_vel = cm_vel + velocity_vector * 200 | units.kms
 
     return sun_pos, sun_vel
 
@@ -108,16 +111,26 @@ class TaskManager:
         self.add_tasks(1, host_zy_track_task, sat_zy_track_task)
 
     def add_angular_momentum_task(self):
-        ang_momentum_task = AngularMomentumTask(('z', 'y'), 1000, slice(0, 200000, None))
-        ang_momentum_task.draw_params = DrawParameters(
+        xy_ang_momentum_task = AngularMomentumTask(('x', 'y'), 1000, slice(0, 200000, None))
+        xy_ang_momentum_task.draw_params = DrawParameters(
             linestyle = 'solid', marker = 'None'
         )
-        plane_direction_task = PlaneDirectionTask(('z', 'y'), 1000, slice(0, 200000, None))
-        plane_direction_task.draw_params = DrawParameters(
+        xy_plane_direction_task = PlaneDirectionTask(('x', 'y'), 1000, slice(0, 200000, None))
+        xy_plane_direction_task.draw_params = DrawParameters(
             linestyle = 'solid', marker = 'None'
         )
 
-        self.add_tasks(1, ang_momentum_task, plane_direction_task)
+        zy_ang_momentum_task = AngularMomentumTask(('z', 'y'), 1000, slice(0, 200000, None))
+        zy_ang_momentum_task.draw_params = DrawParameters(
+            linestyle = 'solid', marker = 'None'
+        )
+        zy_plane_direction_task = PlaneDirectionTask(('z', 'y'), 1000, slice(0, 200000, None))
+        zy_plane_direction_task.draw_params = DrawParameters(
+            linestyle = 'solid', marker = 'None'
+        )
+
+        self.add_tasks(0, xy_ang_momentum_task, xy_plane_direction_task)
+        self.add_tasks(1, zy_ang_momentum_task, zy_plane_direction_task)
 
     def add_norm_velocity_tasks(self):
         host_norm_vel_task = NormalVelocityTask(
