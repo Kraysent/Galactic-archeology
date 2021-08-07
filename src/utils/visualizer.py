@@ -33,7 +33,12 @@ class Visualizer:
 
         return results
 
-    def set_plot_parameters(self, axes_id: int, params: PlotParameters):
+    def set_plot_parameters(self, axes_id: int, **kwargs):
+        params = PlotParameters()
+
+        for (key, value) in kwargs.items():
+            setattr(params, key, value)
+
         axes = self.get_axes(axes_id)
 
         axes.grid(params.grid)
@@ -87,4 +92,17 @@ class Visualizer:
     def save(self, filename: str, dpi: int = 120):
         self.figure.savefig(filename, dpi = dpi, bbox_inches='tight')
 
-        self._do_for_all_axes(lambda axes: axes.cla())
+        def delete_all(axes: Axes):
+            while axes.artists != []:
+                axes.artists[0].remove()
+
+            while axes.lines != []:
+                axes.lines[0].remove()
+            
+            while axes.images != []:
+                axes.images[0].remove()
+                
+        self._do_for_all_axes(delete_all)
+
+    def show(self):
+        plt.show()

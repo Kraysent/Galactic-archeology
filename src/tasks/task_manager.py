@@ -42,12 +42,10 @@ def get_sun_position_and_velocity(snapshot: Snapshot):
 class TaskManager:
     def __init__(self, number_of_axes: int) -> None:
         self.axes = {}
-        self.axes_styles = {}
         self.updates = []
 
         for i in range(number_of_axes):
             self.axes[i] = []
-            self.axes_styles[i] = PlotParameters()
 
     def add_tasks(self, axes_id: int, *tasks):
         for task in tasks:
@@ -68,13 +66,6 @@ class TaskManager:
     def update_tasks(self, snapshot: Snapshot):
         for update in self.updates:
             update(snapshot)
-
-    def set_axes_style(self, axes_id: int, **kwargs):
-        for (key, value) in kwargs.items():
-            setattr(self.axes_styles[axes_id], key, value)
-
-    def get_axes_style(self, axes_id: int):
-        return self.axes_styles[axes_id]
 
     def add_spatial_tasks(self):
         xy_task = SpatialScatterTask(('x', 'y'))
