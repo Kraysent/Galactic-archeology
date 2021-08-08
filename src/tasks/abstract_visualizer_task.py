@@ -64,7 +64,7 @@ class AbstractScatterTask(AbstractXYZTask):
 
         super().__init__(axes = axes)
 
-    def get_data(self, 
+    def apply_mode(self, 
         x1: np.ndarray, x2: np.ndarray
     ) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
         if self.mode == Mode.PLAIN:
@@ -92,13 +92,23 @@ class SpatialScatterTask(AbstractScatterTask):
     def run(self, snapshot: Snapshot) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
         (x1, x2) = self.get_quantity_axes(snapshot.particles.position, units.kpc)
         
-        return self.get_data(x1, x2)
+        return self.apply_mode(x1, x2)
 
 class VelocityScatterTask(AbstractScatterTask):
     def run(self, snapshot: Snapshot) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
         (vx1, vx2) = self.get_quantity_axes(snapshot.particles.velocity, units.kms)
 
-        return self.get_data(vx1, vx2)
+        return self.apply_mode(vx1, vx2)
+
+class PlaneVelocityScatterTask(AbstractScatterTask):
+    def run(self, snapshot: Snapshot) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
+        (e1, e2, e3) = get_galactic_basis(snapshot[0:200000])
+        transition_matrix = np.stack((e1, e2, e3))
+
+        vel = snapshot.particles.velocity.value_in(units.kms).T
+        new_vel = np.matmul(np.linalg.inv(transition_matrix), vel)
+
+        return self.apply_mode(new_vel[1], new_vel[2])
 
 class CMTrackTask(AbstractXYZTask):
     def __init__(self, axes: Tuple[str, str]):

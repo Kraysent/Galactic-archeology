@@ -11,13 +11,12 @@
 None yet
 
 ## Nearest future:
-- Deal with the tree of abstract classes: do we really need abstractxyztask? 
-- Plot velocities in the reference frame of the disc.
+- Deal with the tree of abstract classes: do we really need abstractxyztask and abstractscattertask as its heir? 
 - Add integration to the primary program.
 - Implement pyfalcon integration to the integrator module of the program (and than track several parameters more often then the output of gurfalcON).
 - Create kind of time plot abstract class that has no options.
 - Draw velocity profile graph.
-- Zoom the central region on the latter stages of evolution.
+- Zoom in the central region during late stages of evolution.
 - Add projection of the coordinates onto the host plane.
 
 ## More distant future:

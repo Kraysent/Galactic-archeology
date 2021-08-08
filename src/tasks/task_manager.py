@@ -9,7 +9,7 @@ from tasks.abstract_visualizer_task import (AbstractVisualizerTask,
                                             AngularMomentumTask,
                                             CMDistanceTask, CMTrackTask,
                                             NormalVelocityTask,
-                                            PlaneDirectionTask,
+                                            PlaneDirectionTask, PlaneVelocityScatterTask,
                                             SpatialScatterTask,
                                             VelocityScatterTask)
 
@@ -175,7 +175,7 @@ class TaskManager:
         )
 
     def add_velocity_tasks(self):
-        vxvy_host_task = VelocityScatterTask(('x', 'y'))
+        vxvy_host_task = PlaneVelocityScatterTask(('x', 'y'))
 
         vxvy_host_task.set_density_mode(700, (-400, 400, -400, 400))
         vxvy_host_task.draw_params = DrawParameters(
