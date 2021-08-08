@@ -6,37 +6,51 @@ from tasks.task_manager import TaskManager
 from utils.visualizer import Visualizer
 
 visualizer = Visualizer()
-visualizer.add_axes(0, 0, 0.35, 1)
+visualizer.add_axes(0, 0.35, 0.35, 0.6)
 visualizer.set_plot_parameters(0,
-    xlim = (-70, 70), ylim = (-90, 90),
-    xlabel = 'x, kpc', ylabel = 'y, kpc'
+    xlim = (-60, 60), ylim = (-55, 55),
+    xlabel = 'x, kpc', ylabel = 'y, kpc',
+    xticks = [0, 10], yticks = [0, 10]
 )
 
-visualizer.add_axes(0.33, 0, 0.35, 1)
+visualizer.add_axes(0.33, 0.35, 0.35, 0.6)
 visualizer.set_plot_parameters(1,
-    xlim = (-40, 40), ylim = (-55, 55),
-    xlabel = 'z, kpc', yticks = []
+    xlim = (-60, 60), ylim = (-55, 55),
+    yticks = [], xticks = [0, 10]
 )
 
-visualizer.add_axes(0.72, 0.66, 0.12, 0.3)
+visualizer.add_axes(0.72, 0.66, 0.14, 0.3)
 visualizer.set_plot_parameters(2,
     xlim = (-600, 600), ylim = (0, 500),
     xlabel = '$v_r$, km/s', ylabel = '$v_{\\tau}$, km/s'
 )
 
-visualizer.add_axes(0.72, 0.33, 0.12, 0.3)
+visualizer.add_axes(0.72, 0.33, 0.14, 0.3)
 visualizer.set_plot_parameters(3,
     xlim = (-400, 400), ylim = (-400, 400),
     xlabel = '$V_x$, km/s', ylabel = '$V_y$, km/s'
 )
 
-visualizer.add_axes(0.72, 0, 0.12, 0.3)
+visualizer.add_axes(0, 0, 0.14, 0.3)
 visualizer.set_plot_parameters(4,
     xlim = (0, 10000),  ylim = (0, 150),
-    xlabel = 'Time, Myr', ylabel = 'Separation, kpc'
+    xlabel = 'Time, Myr', ylabel = 'Separation, kpc',
+    grid = True
 )
 
-visualizer.set_figsize(22, 10)
+visualizer.add_axes(0.18, 0, 0.14, 0.3)
+visualizer.set_plot_parameters(5)
+
+visualizer.add_axes(0.36, 0, 0.14, 0.3)
+visualizer.set_plot_parameters(6)
+
+visualizer.add_axes(0.54, 0, 0.14, 0.3)
+visualizer.set_plot_parameters(7)
+
+visualizer.add_axes(0.72, 0, 0.14, 0.3)
+visualizer.set_plot_parameters(8)
+
+visualizer.set_figsize(20, 11)
 
 iomanager = NEMOIOManager('output/new_out.nemo')
 

@@ -60,14 +60,14 @@ class TaskManager:
     def add_spatial_tasks(self):
         xy_task = SpatialScatterTask(('z', 'y'))
         zy_task = PlaneSpatialScatterTask(('z', 'y'))
-        xy_task.set_density_mode(700, (-70, 70, -90, 90))
-        zy_task.set_density_mode(700, (-40, 40, -55, 55))
+        xy_task.set_density_mode(700, (-60, 60, -55, 55))
+        zy_task.set_density_mode(700, (-60, 60, -55, 55))
 
         xy_task.draw_params = DrawParameters(
-            extent = [-70, 70, -90, 90], cmap = 'ocean_r'
+            extent = [-60, 60, -55, 55], cmap = 'ocean_r'
         )
         zy_task.draw_params = DrawParameters(
-            extent = [-40, 40, -55, 55], cmap = 'ocean_r'
+            extent = [-60, 60, -55, 55], cmap = 'ocean_r'
         )
 
         self.add_tasks(0, xy_task)
