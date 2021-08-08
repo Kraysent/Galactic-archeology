@@ -94,6 +94,16 @@ class SpatialScatterTask(AbstractScatterTask):
         
         return self.apply_mode(x1, x2)
 
+class PlaneSpatialScatterTask(AbstractScatterTask):
+    def run(self, snapshot: Snapshot) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
+        (e1, e2, e3) = get_galactic_basis(snapshot)
+        transition_matrix = np.stack((e1, e2, e3))
+
+        pos = snapshot.particles.position.value_in(units.kpc).T
+        new_pos = np.matmul(np.linalg.inv(transition_matrix), pos)
+
+        return self.apply_mode(new_pos[1], new_pos[2])
+
 class VelocityScatterTask(AbstractScatterTask):
     def run(self, snapshot: Snapshot) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
         (vx1, vx2) = self.get_quantity_axes(snapshot.particles.velocity, units.kms)

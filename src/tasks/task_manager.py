@@ -9,7 +9,7 @@ from tasks.abstract_visualizer_task import (AbstractVisualizerTask,
                                             AngularMomentumTask,
                                             CMDistanceTask, CMTrackTask,
                                             NormalVelocityTask,
-                                            PlaneDirectionTask, PlaneVelocityScatterTask,
+                                            PlaneDirectionTask, PlaneSpatialScatterTask, PlaneVelocityScatterTask,
                                             SpatialScatterTask,
                                             VelocityScatterTask)
 
@@ -58,20 +58,20 @@ class TaskManager:
             update(snapshot)
 
     def add_spatial_tasks(self):
-        xy_task = SpatialScatterTask(('x', 'y'))
-        zy_task = SpatialScatterTask(('z', 'y'))
-        xy_task.set_density_mode(700, (-100, 100, -120, 120))
-        zy_task.set_density_mode(700, (-100, 100, -120, 120))
+        xy_task = SpatialScatterTask(('z', 'y'))
+        zy_task = PlaneSpatialScatterTask(('z', 'y'))
+        xy_task.set_density_mode(700, (-70, 70, -90, 90))
+        zy_task.set_density_mode(700, (-40, 40, -55, 55))
 
         xy_task.draw_params = DrawParameters(
-            extent = [-100, 100, -120, 120], cmap = 'ocean_r'
+            extent = [-70, 70, -90, 90], cmap = 'ocean_r'
         )
         zy_task.draw_params = DrawParameters(
-            extent = [-100, 100, -120, 120], cmap = 'ocean_r'
+            extent = [-40, 40, -55, 55], cmap = 'ocean_r'
         )
 
-        self.add_tasks(1, zy_task)
         self.add_tasks(0, xy_task)
+        self.add_tasks(1, zy_task)
         
     def add_tracking_tasks(self):
         host_xy_track_task = CMTrackTask(('x', 'y'))
@@ -104,11 +104,11 @@ class TaskManager:
         )
 
     def add_angular_momentum_task(self):
-        xy_ang_momentum_task = AngularMomentumTask(('x', 'y'), 1000)
+        xy_ang_momentum_task = AngularMomentumTask(('z', 'y'), 1000)
         xy_ang_momentum_task.draw_params = DrawParameters(
             linestyle = 'solid', marker = 'None'
         )
-        xy_plane_direction_task = PlaneDirectionTask(('x', 'y'), 1000)
+        xy_plane_direction_task = PlaneDirectionTask(('z', 'y'), 1000)
         xy_plane_direction_task.draw_params = DrawParameters(
             linestyle = 'solid', marker = 'None'
         )
@@ -126,10 +126,10 @@ class TaskManager:
             (xy_ang_momentum_task, slice(200000)), 
             (xy_plane_direction_task, slice(200000))
         )
-        self.add_tasks(1, 
-            (zy_ang_momentum_task, slice(200000)), 
-            (zy_plane_direction_task, slice(200000))
-        )
+        # self.add_tasks(1, 
+        #     (zy_ang_momentum_task, slice(200000)), 
+        #     (zy_plane_direction_task, slice(200000))
+        # )
 
     def add_norm_velocity_tasks(self):
         host_norm_vel_task = NormalVelocityTask(

@@ -14,7 +14,7 @@ visualizer.set_plot_parameters(0,
 
 visualizer.add_axes(0.33, 0, 0.35, 1)
 visualizer.set_plot_parameters(1,
-    xlim = (-70, 70), ylim = (-90, 90),
+    xlim = (-40, 40), ylim = (-55, 55),
     xlabel = 'z, kpc', yticks = []
 )
 
