@@ -120,6 +120,25 @@ class PlaneVelocityScatterTask(AbstractScatterTask):
 
         return self.apply_mode(new_vel[1], new_vel[2])
 
+class VelocityProfileTask(AbstractVisualizerTask):
+    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
+        particles = snapshot.particles
+        r = (particles.position - particles.center_of_mass()).value_in(units.kpc)
+        v = (particles.velocity - particles.center_of_mass_velocity()).value_in(units.kms)
+        r = (r ** 2).sum(axis = 1) ** 0.5
+        v = (v ** 2).sum(axis = 1) ** 0.5
+
+        perm = r.argsort()
+        r = r[perm]
+        v = v[perm]
+
+        resolution = 1000
+        r = r.reshape(-1, resolution).mean(axis = 1)
+        v = v.reshape(-1, resolution).mean(axis = 1)
+
+        return (r, v)
+
+
 class CMTrackTask(AbstractXYZTask):
     def __init__(self, axes: Tuple[str, str]):
         self.cmx1, self.cmx2 = np.empty((0,)), np.empty((0,))

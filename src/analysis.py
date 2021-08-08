@@ -1,4 +1,5 @@
 from amuse.lab import units
+from matplotlib.pyplot import ylabel
 
 from iotools.abstractiomanager import NEMOIOManager
 from tasks.abstract_visualizer_task import AbstractVisualizerTask
@@ -38,17 +39,21 @@ visualizer.set_plot_parameters(4,
     grid = True
 )
 
-visualizer.add_axes(0.18, 0, 0.14, 0.3)
-visualizer.set_plot_parameters(5)
+visualizer.add_axes(0.18, 0, 0.32, 0.3)
+visualizer.set_plot_parameters(5,
+    xlim = (0, 15), ylim = (0, 300),
+    xlabel = '$r$, kpc', ylabel = '$v$, km/s',
+    grid = True
+)
 
-visualizer.add_axes(0.36, 0, 0.14, 0.3)
-visualizer.set_plot_parameters(6)
+# visualizer.add_axes(0.36, 0, 0.14, 0.3)
+# visualizer.set_plot_parameters(6)
 
 visualizer.add_axes(0.54, 0, 0.14, 0.3)
-visualizer.set_plot_parameters(7)
+visualizer.set_plot_parameters(6)
 
 visualizer.add_axes(0.72, 0, 0.14, 0.3)
-visualizer.set_plot_parameters(8)
+visualizer.set_plot_parameters(7)
 
 visualizer.set_figsize(20, 11)
 
@@ -62,6 +67,7 @@ task_manager.add_norm_velocity_tasks()
 task_manager.add_angular_momentum_task()
 task_manager.add_velocity_tasks()
 task_manager.add_distance_task()
+task_manager.add_velocity_profile_task()
 
 i = 0
 

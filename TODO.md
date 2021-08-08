@@ -8,14 +8,13 @@
 
 # Program: 
 ## Issues:
-None yet
+- For some reason plane direction changes to opposite every once in a while
 
 ## Nearest future:
 - Deal with the tree of abstract classes: do we really need abstractxyztask and abstractscattertask as its heir? 
 - Add integration to the primary program.
 - Implement pyfalcon integration to the integrator module of the program (and than track several parameters more often then the output of gurfalcON).
 - Create kind of time plot abstract class that has no options.
-- Draw velocity profile graph.
 - Zoom in the central region during late stages of evolution.
 - Add projection of the coordinates onto the host plane.
 

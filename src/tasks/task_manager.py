@@ -10,7 +10,7 @@ from tasks.abstract_visualizer_task import (AbstractVisualizerTask,
                                             CMDistanceTask, CMTrackTask,
                                             NormalVelocityTask,
                                             PlaneDirectionTask, PlaneSpatialScatterTask, PlaneVelocityScatterTask,
-                                            SpatialScatterTask,
+                                            SpatialScatterTask, VelocityProfileTask,
                                             VelocityScatterTask)
 
 
@@ -191,3 +191,25 @@ class TaskManager:
         )
 
         self.add_tasks(4, dist_task)
+
+    def add_velocity_profile_task(self):
+        host_vel_profile_task = VelocityProfileTask()
+        host_vel_profile_task.draw_params = DrawParameters(
+            linestyle = 'solid', color = 'r', marker = 'None' 
+        )
+
+        sat_vel_profile_task = VelocityProfileTask()
+        sat_vel_profile_task.draw_params = DrawParameters(
+            linestyle = 'solid', color = 'g', marker = 'None' 
+        )
+
+        sum_vel_profile_task = VelocityProfileTask()
+        sum_vel_profile_task.draw_params = DrawParameters(
+            linestyle = 'solid', color = 'b', marker = 'None' 
+        )
+        
+        self.add_tasks(5, 
+            (host_vel_profile_task, slice(200000)),
+            (sat_vel_profile_task, slice(200000, None)),
+            (sum_vel_profile_task)
+        )
