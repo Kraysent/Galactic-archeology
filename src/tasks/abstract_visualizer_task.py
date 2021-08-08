@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
-from typing import Tuple, Union
 from enum import Enum
+from typing import Tuple, Union
 
 import numpy as np
-from amuse.datamodel.particles import Particles
 from amuse.lab import units
 from amuse.units.core import named_unit
 from amuse.units.quantities import VectorQuantity
+from utils.galactic_utils import get_galactic_basis
 from utils.plot_parameters import DrawParameters
 from utils.snapshot import Snapshot
 
@@ -154,17 +154,14 @@ class NormalVelocityTask(AbstractVisualizerTask):
 
 class KineticEnergyTask(AbstractVisualizerTask):
     def __init__(self):
-        self.times = np.empty((0,))
-        self.energies = np.empty((0,))
+        self.times = []
+        self.energies = []
 
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
-        self.times = np.append(self.times, snapshot.timestamp.value_in(units.Myr))
-        self.energies = np.append(
-            self.energies,
-            snapshot.particles.kinetic_energy().value_in(units.J)
-        )
+        self.times.append(snapshot.timestamp.value_in(units.Myr))
+        self.energies.append(snapshot.particles.kinetic_energy().value_in(units.J))
 
-        return (self.times, self.energies)
+        return (np.array(self.times), np.array(self.energies))
 
 class PlaneDirectionTask(AbstractXYZTask):
     def __init__(self, axes: Tuple[int, int], norm: float):
@@ -172,44 +169,25 @@ class PlaneDirectionTask(AbstractXYZTask):
 
         super().__init__(axes)
 
-    def _get_angular_momentum(self, particles: Particles) -> np.ndarray:
-        r = particles.position.value_in(units.kpc)
-        v = particles.velocity.value_in(units.kms)
-        cm = particles.center_of_mass().value_in(units.kpc)
-        cm_vel = particles.center_of_mass_velocity().value_in(units.kms)
-        m = particles.mass.value_in(units.MSun)
-
-        r = r - cm
-        v = v - cm_vel
-        ang_momentum = m[:, np.newaxis] * np.cross(v, r)
-        total_ang_momentum = np.sum(ang_momentum, axis = 0)
-        return total_ang_momentum
-
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
+        (e1, e2, e3) = get_galactic_basis(snapshot[0:200000])
         cm = snapshot.particles.center_of_mass()
-        ang_momentum = self._get_angular_momentum(snapshot.particles)
 
         r = 8
 
-        plane_vector = np.empty(ang_momentum.shape)
-        plane_vector[0] = 1
-        plane_vector[1] = 1
-        plane_vector[2] = - plane_vector[0] * ang_momentum[0] / ang_momentum[2] - plane_vector[1] * ang_momentum[1] / ang_momentum[2] 
-        velocity_vector = np.cross(plane_vector, ang_momentum)
-
-        length = (plane_vector ** 2).sum() ** 0.5
-        vel_length = (velocity_vector ** 2).sum() ** 0.5
-
-        (x1, x2) = self.get_axes(plane_vector)
-        (x11, x22) = self.get_axes(velocity_vector)
+        (x1, x2) = self.get_axes(e2)
+        (x11, x22) = self.get_axes(e3)
         (cmx1, cmx2) = self.get_quantity_axes(cm, units.kpc)
 
-        x1 = x1 / length * r + cmx1
-        x2 = x2 / length * r + cmx2
-        x11 = x11 / vel_length * r + cmx1
-        x22 = x22 / vel_length * r + cmx2
+        x1 = x1 * r + cmx1
+        x2 = x2 * r + cmx2
+        x11 = x11 * r + cmx1
+        x22 = x22 * r + cmx2
 
-        return (np.array([cmx1, x1, x11, cmx1]), np.array([cmx2, x2, x22, cmx2]))
+        return (
+            np.array([cmx1, x1, x11, cmx1]), 
+            np.array([cmx2, x2, x22, cmx2])
+        )
 
 class AngularMomentumTask(AbstractXYZTask):
     def __init__(self, axes: Tuple[int, int], norm: float):
@@ -217,31 +195,17 @@ class AngularMomentumTask(AbstractXYZTask):
 
         super().__init__(axes)
 
-    def _get_angular_momentum(self, particles: Particles) -> np.ndarray:
-        r = particles.position.value_in(units.kpc)
-        v = particles.velocity.value_in(units.kms)
-        cm = particles.center_of_mass().value_in(units.kpc)
-        cm_vel = particles.center_of_mass_velocity().value_in(units.kms)
-        m = particles.mass.value_in(units.MSun)
-
-        r = r - cm
-        v = v - cm_vel
-        ang_momentum = m[:, np.newaxis] * np.cross(v, r)
-        total_ang_momentum = np.sum(ang_momentum, axis = 0)
-        return total_ang_momentum
-
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
+        (e1, e2, e3) = get_galactic_basis(snapshot[0:200000])
         cm = snapshot.particles.center_of_mass()
-        ang_momentum = self._get_angular_momentum(snapshot.particles)
-        length = (ang_momentum ** 2).sum() ** 0.5
 
         r = 8
 
-        (x1, x2) = self.get_axes(ang_momentum)
+        (x1, x2) = self.get_axes(e1)
         (cmx1, cmx2) = self.get_quantity_axes(cm, units.kpc)
 
-        x1 = x1 / length * r * 2 + cmx1
-        x2 = x2 / length * r * 2 + cmx2
+        x1 = x1 * r * 3 + cmx1
+        x2 = x2 * r * 3 + cmx2
 
         return (np.array([cmx1, x1]), np.array([cmx2, x2]))
 
@@ -251,8 +215,6 @@ class CMDistanceTask(AbstractVisualizerTask):
         self.part2 = part2
         self.dist = []
         self.time = []
-
-        super().__init__()
 
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         cm1 = snapshot.particles[self.part1].center_of_mass().value_in(units.kpc)

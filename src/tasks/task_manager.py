@@ -1,7 +1,7 @@
 from typing import Any, Callable, List, Tuple
 
-import numpy as np
 from amuse.lab import units
+from utils.galactic_utils import get_galactic_basis
 from utils.plot_parameters import DrawParameters
 from utils.snapshot import Snapshot
 
@@ -16,29 +16,16 @@ from tasks.abstract_visualizer_task import (AbstractVisualizerTask,
 
 def get_sun_position_and_velocity(snapshot: Snapshot):
     particles = snapshot[0:200000].particles
-    r = particles.position.value_in(units.kpc)
-    v = particles.velocity.value_in(units.kms)
-    cm = particles.center_of_mass().value_in(units.kpc)
-    cm_vel = particles.center_of_mass_velocity().value_in(units.kms)
-    m = particles.mass.value_in(units.MSun)
+    cm = particles.center_of_mass()
+    cm_vel = particles.center_of_mass_velocity()
 
-    r = r - cm
-    v = v - cm_vel
-    specific_ang_momentum = m[:, np.newaxis] * np.cross(v, r)
-    ang_momentum = np.sum(specific_ang_momentum, axis = 0)
-    r = 8
+    (e1, e2, e3) = get_galactic_basis(snapshot[0:200000])
 
-    plane_vector = np.empty(ang_momentum.shape)
-    plane_vector[0] = 1
-    plane_vector[1] = 1
-    plane_vector[2] = - plane_vector[0] * ang_momentum[0] / ang_momentum[2] - plane_vector[1] * ang_momentum[1] / ang_momentum[2] 
-    velocity_vector = np.cross(plane_vector, ang_momentum)
-    velocity_vector = velocity_vector / (velocity_vector ** 2).sum() ** 0.5
+    r = 8 | units.kpc
+    v = 200 | units.kms
 
-    length = (plane_vector ** 2).sum() ** 0.5
-    plane_vector = plane_vector / length * r
-    sun_pos = cm + plane_vector | units.kpc
-    sun_vel = cm_vel + velocity_vector * 200 | units.kms
+    sun_pos = cm + e2 * r
+    sun_vel = cm_vel + e3 * v
 
     return sun_pos, sun_vel
 
@@ -148,31 +135,42 @@ class TaskManager:
         host_norm_vel_task = NormalVelocityTask(
             pov = [8, 0, 0] | units.kpc, 
             pov_velocity = [0, 200, 0] | units.kms,
-            radius = 5 | units.kpc
+            radius = 3 | units.kpc
         )
         sat_norm_vel_task = NormalVelocityTask(
             pov = [8, 0, 0] | units.kpc, 
             pov_velocity = [0, 200, 0] | units.kms,
-            radius = 5 | units.kpc
+            radius = 3 | units.kpc
         )
 
         host_norm_vel_task.draw_params = DrawParameters(
-            markersize = 0.3,
+            markersize = 0.2,
             color = 'b'
         )
         sat_norm_vel_task.draw_params = DrawParameters(
-            markersize = 0.3,
+            markersize = 0.2,
             color = 'r'
         )
 
         def update_norm_velocity(snapshot: Snapshot):
-            sun_pos, sun_vel = get_sun_position_and_velocity(snapshot)
+            particles = snapshot[0:200000].particles
+            cm = particles.center_of_mass()
+            cm_vel = particles.center_of_mass_velocity()
+
+            (e1, e2, e3) = get_galactic_basis(snapshot[0:200000])
+
+            r = 8 | units.kpc
+            v = 200 | units.kms
+
+            sun_pos = cm + e2 * r
+            sun_vel = cm_vel + e3 * v
+
             host_norm_vel_task.set_pov(sun_pos, sun_vel)
             sat_norm_vel_task.set_pov(sun_pos, sun_vel)
 
         self.add_update(update_norm_velocity)
         self.add_tasks(2, 
-            (host_norm_vel_task, slice(0, 200000)), 
+            (host_norm_vel_task, slice(200000)), 
             (sat_norm_vel_task, slice(200000, None))
         )
 
