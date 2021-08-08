@@ -1,9 +1,9 @@
 from amuse.lab import units
-from matplotlib.pyplot import ylabel
 
 from iotools.abstractiomanager import NEMOIOManager
 from tasks.abstract_visualizer_task import AbstractVisualizerTask
 from tasks.task_manager import TaskManager
+from utils.snapshot import Snapshot
 from utils.visualizer import Visualizer
 
 visualizer = Visualizer()
@@ -57,7 +57,7 @@ visualizer.set_plot_parameters(7)
 
 visualizer.set_figsize(20, 11)
 
-iomanager = NEMOIOManager('output/new_out.nemo')
+iomanager = NEMOIOManager('output/models/model_out.nemo')
 
 task_manager = TaskManager(visualizer.number_of_axes)
 
@@ -71,10 +71,12 @@ task_manager.add_velocity_profile_task()
 
 i = 0
 
+def extract_barion_matter(snapshot: Snapshot):
+    return snapshot[0: 200000] + snapshot[1000000:1100000]
+
 while (iomanager.next_frame()):
-    snapshot = iomanager.get_data()
-    snapshot = snapshot[0: 200000] + snapshot[1000000:1100000]
-    time = snapshot.timestamp.value_in(units.Myr)
+    snapshot = extract_barion_matter(iomanager.get_data())
+    
     task_manager.update_tasks(snapshot)
 
     task: AbstractVisualizerTask
@@ -87,6 +89,7 @@ while (iomanager.next_frame()):
         else:
             visualizer.plot_image(axes_id, data, task.draw_params)
 
+    time = snapshot.timestamp.value_in(units.Myr)
     visualizer.set_title('Time: {:.02f} Myr'.format(time))
     visualizer.save('output/img-{:03d}.png'.format(i))
     
