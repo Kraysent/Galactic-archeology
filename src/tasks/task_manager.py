@@ -126,10 +126,6 @@ class TaskManager:
             (xy_ang_momentum_task, slice(200000)), 
             (xy_plane_direction_task, slice(200000))
         )
-        # self.add_tasks(1, 
-        #     (zy_ang_momentum_task, slice(200000)), 
-        #     (zy_plane_direction_task, slice(200000))
-        # )
 
     def add_norm_velocity_tasks(self):
         host_norm_vel_task = NormalVelocityTask(
@@ -195,17 +191,17 @@ class TaskManager:
     def add_velocity_profile_task(self):
         host_vel_profile_task = VelocityProfileTask()
         host_vel_profile_task.draw_params = DrawParameters(
-            linestyle = 'solid', color = 'r', marker = 'None' 
+            linestyle = 'solid', color = 'r', marker = 'None', label = 'host'
         )
 
         sat_vel_profile_task = VelocityProfileTask()
         sat_vel_profile_task.draw_params = DrawParameters(
-            linestyle = 'solid', color = 'g', marker = 'None' 
+            linestyle = 'solid', color = 'g', marker = 'None', label = 'sat'
         )
 
         sum_vel_profile_task = VelocityProfileTask()
         sum_vel_profile_task.draw_params = DrawParameters(
-            linestyle = 'solid', color = 'b', marker = 'None' 
+            linestyle = 'solid', color = 'b', marker = 'None', label = 'all'
         )
         
         self.add_tasks(5, 

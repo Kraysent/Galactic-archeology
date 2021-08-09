@@ -29,7 +29,7 @@ visualizer.set_plot_parameters(2,
 visualizer.add_axes(0.72, 0.33, 0.14, 0.3)
 visualizer.set_plot_parameters(3,
     xlim = (-400, 400), ylim = (-400, 400),
-    xlabel = '$V_x$, km/s', ylabel = '$V_y$, km/s'
+    xlabel = '$v_x$, km/s', ylabel = '$v_y$, km/s'
 )
 
 visualizer.add_axes(0, 0, 0.14, 0.3)
@@ -91,6 +91,7 @@ while (iomanager.next_frame()):
 
     time = snapshot.timestamp.value_in(units.Myr)
     visualizer.set_title('Time: {:.02f} Myr'.format(time))
+    visualizer.set_legend()
     visualizer.save('output/img-{:03d}.png'.format(i))
     
     i += 1

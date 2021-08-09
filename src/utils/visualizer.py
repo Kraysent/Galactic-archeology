@@ -68,7 +68,8 @@ class Visualizer:
 
         axes.plot(x, y,
             marker = params.marker, color = params.color,
-            markersize = params.markersize, linestyle = params.linestyle
+            markersize = params.markersize, linestyle = params.linestyle,
+            label = params.label
         )
 
     def plot_image(self, 
@@ -85,6 +86,9 @@ class Visualizer:
 
     def set_title(self, title: str):
         self.figure.suptitle(title)
+
+    def set_legend(self):
+        self._do_for_all_axes(lambda axes: axes.legend())
 
     def set_figsize(self, width: float, height: float):
         self.figure.set_size_inches(width, height)

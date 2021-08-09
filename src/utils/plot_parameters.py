@@ -29,3 +29,4 @@ class DrawParameters:
     extent: list = [0, 100, 0, 100]
     cmap: str = 'ocean_r'
     cmapnorm = mpl.colors.LogNorm()
+    label = None
