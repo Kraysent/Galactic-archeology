@@ -1,3 +1,7 @@
+import time
+from matplotlib.pyplot import yticks
+
+import numpy as np
 from amuse.lab import units
 
 from iotools.abstractiomanager import NEMOIOManager
@@ -34,14 +38,14 @@ visualizer.set_plot_parameters(3,
 
 visualizer.add_axes(0, 0, 0.14, 0.3)
 visualizer.set_plot_parameters(4,
-    xlim = (0, 10000),  ylim = (0, 150),
+    xlim = (0, 10000), ylim = (0, 150),
     xlabel = 'Time, Myr', ylabel = 'Separation, kpc',
-    grid = True
+    grid = True, yscale = 'log'
 )
 
 visualizer.add_axes(0.18, 0, 0.32, 0.3)
 visualizer.set_plot_parameters(5,
-    xlim = (0, 15), ylim = (0, 300),
+    xlim = (0, 15), ylim = (0, 400),
     xlabel = '$r$, kpc', ylabel = '$v$, km/s',
     grid = True
 )
@@ -75,6 +79,7 @@ def extract_barion_matter(snapshot: Snapshot):
     return snapshot[0: 200000] + snapshot[1000000:1100000]
 
 while (iomanager.next_frame()):
+    start_comp = time.time()
     snapshot = extract_barion_matter(iomanager.get_data())
     
     task_manager.update_tasks(snapshot)
@@ -89,9 +94,16 @@ while (iomanager.next_frame()):
         else:
             visualizer.plot_image(axes_id, data, task.draw_params)
 
-    time = snapshot.timestamp.value_in(units.Myr)
-    visualizer.set_title('Time: {:.02f} Myr'.format(time))
+    timestamp = snapshot.timestamp.value_in(units.Myr)
+    visualizer.set_title('Time: {:.02f} Myr'.format(timestamp))
     visualizer.set_legend()
+
+    start_save = time.time()
     visualizer.save('output/img-{:03d}.png'.format(i))
+
+    end = time.time()
+    print(f'i: {i}; ' + 
+          f'C {np.round(start_save - start_comp, 2)}, ' + 
+          f'S {np.round(end - start_save, 2)}')
     
     i += 1

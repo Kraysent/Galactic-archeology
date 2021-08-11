@@ -41,6 +41,16 @@ class Visualizer:
 
         axes = self.get_axes(axes_id)
 
+        if params.xscale == 'log':
+            axes.set_xscale(params.xscale, basex = params.basex)
+        else: 
+            axes.set_xscale(params.xscale)
+
+        if params.yscale == 'log':
+            axes.set_yscale(params.yscale, basey = params.basey)
+        else:
+            axes.set_yscale(params.yscale)
+
         axes.grid(params.grid)
 
         axes.set_xlim(params.xlim)

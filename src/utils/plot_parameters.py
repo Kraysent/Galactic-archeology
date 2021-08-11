@@ -16,6 +16,10 @@ class PlotParameters:
     yticks: list = None
     title: str = ''
     ticks_direction: str = 'in'
+    xscale = 'linear'
+    basex = 10
+    yscale = 'linear'
+    basey = 10
 
 class DrawParameters:
     def __init__(self, **kwargs):

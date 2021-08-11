@@ -17,7 +17,8 @@
 - Implement pyfalcon integration to the integrator module of the program (and than track several parameters more often then the output of gurfalcON).
 - Create kind of time plot abstract class that has no options.
 - Zoom in the central region during late stages of evolution.
-- Add contour plots along with density ones
+- Add contour plots along with density ones.
+- Draw density plots into several different color channels to emphasize different galaxies.
 - Move draw parameters out of the Task class so that latter is responsible only for actual computations and nothing else (single-resposibility priciple).
 
 ### More distant future:
