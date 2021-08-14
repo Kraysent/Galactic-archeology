@@ -3,11 +3,10 @@ import time
 import numpy as np
 from amuse.lab import units
 
-from iotools.abstractiomanager import NEMOIOManager
-from tasks.abstract_visualizer_task import AbstractVisualizerTask
-from tasks.task_manager import TaskManager
-from utils.snapshot import Snapshot
-from utils.visualizer import Visualizer
+from archeology.analysis.tasks import AbstractVisualizerTask, TaskManager
+from archeology.analysis.utils import Visualizer
+from archeology.datamodel import Snapshot
+from archeology.iotools import NEMOIOManager
 
 visualizer = Visualizer()
 visualizer.add_axes(0, 0.35, 0.35, 0.6)

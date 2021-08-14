@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
+
+import unsio
 from amuse.datamodel.particles import Particles
 from amuse.lab import units
-import unsio
+from archeology.datamodel import Snapshot
 
-from utils.snapshot import Snapshot
 
 class AbstractIOManager(ABC):
     @abstractmethod

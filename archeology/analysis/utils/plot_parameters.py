@@ -1,6 +1,7 @@
-from typing import Tuple, Union
-import numpy as np
+from typing import Tuple
+
 import matplotlib as mpl
+
 
 class PlotParameters:
     def __init__(self, **kwargs):

@@ -1,17 +1,15 @@
 from typing import Any, Callable, List, Tuple
 
 from amuse.lab import units
-from utils.galactic_utils import get_galactic_basis
-from utils.plot_parameters import DrawParameters
-from utils.snapshot import Snapshot
-
-from tasks.abstract_visualizer_task import (AbstractVisualizerTask,
-                                            AngularMomentumTask,
-                                            CMDistanceTask, CMTrackTask,
-                                            NormalVelocityTask,
-                                            PlaneDirectionTask, PlaneSpatialScatterTask, PlaneVelocityScatterTask,
-                                            SpatialScatterTask, VelocityProfileTask,
-                                            VelocityScatterTask)
+from archeology.analysis.tasks import (AbstractVisualizerTask,
+                                       AngularMomentumTask, CMDistanceTask,
+                                       CMTrackTask, NormalVelocityTask,
+                                       PlaneDirectionTask,
+                                       PlaneSpatialScatterTask,
+                                       PlaneVelocityScatterTask,
+                                       SpatialScatterTask, VelocityProfileTask)
+from archeology.analysis.utils import DrawParameters, get_galactic_basis
+from archeology.datamodel import Snapshot
 
 
 def get_sun_position_and_velocity(snapshot: Snapshot):

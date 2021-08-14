@@ -6,9 +6,8 @@ import numpy as np
 from amuse.lab import units
 from amuse.units.core import named_unit
 from amuse.units.quantities import VectorQuantity
-from utils.galactic_utils import get_galactic_basis
-from utils.plot_parameters import DrawParameters
-from utils.snapshot import Snapshot
+from archeology.analysis.utils import DrawParameters, get_galactic_basis
+from archeology.datamodel import Snapshot
 
 
 class AbstractVisualizerTask(ABC):

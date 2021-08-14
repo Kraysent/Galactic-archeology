@@ -1,0 +1,1 @@
+from archeology.datamodel.snapshot import Snapshot

@@ -1,7 +1,6 @@
 import numpy as np
 from amuse.lab import units
-
-from utils.snapshot import Snapshot
+from archeology.datamodel import Snapshot
 
 
 def get_galactic_basis(snapshot: Snapshot):

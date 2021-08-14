@@ -2,9 +2,8 @@ from typing import Any, Callable, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
+from archeology.analysis.utils import DrawParameters, PlotParameters
 from matplotlib.axes import Axes
-
-from utils.plot_parameters import DrawParameters, PlotParameters
 
 
 class Visualizer:
