@@ -1,5 +1,4 @@
 import time
-from matplotlib.pyplot import yticks
 
 import numpy as np
 from amuse.lab import units
@@ -85,8 +84,7 @@ while (iomanager.next_frame()):
     task_manager.update_tasks(snapshot)
 
     task: AbstractVisualizerTask
-    for a in task_manager.get_tasks():
-        (axes_id, task, part) = a
+    for (axes_id, task, part) in task_manager.get_tasks():
         data = task.run(snapshot[part])
 
         if type(data) is tuple:
@@ -96,14 +94,11 @@ while (iomanager.next_frame()):
 
     timestamp = snapshot.timestamp.value_in(units.Myr)
     visualizer.set_title('Time: {:.02f} Myr'.format(timestamp))
-    visualizer.set_legend()
 
     start_save = time.time()
     visualizer.save('output/img-{:03d}.png'.format(i))
 
     end = time.time()
-    print(f'i: {i}; ' + 
-          f'C {np.round(start_save - start_comp, 2)}, ' + 
-          f'S {np.round(end - start_save, 2)}')
+    print(f'i: {i:03d}; C: {np.round(start_save - start_comp, 2):.02f}; S: {np.round(end - start_save, 2):.02f}')
     
     i += 1

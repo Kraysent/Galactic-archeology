@@ -42,12 +42,12 @@ class Visualizer:
         axes = self.get_axes(axes_id)
 
         if params.xscale == 'log':
-            axes.set_xscale(params.xscale, basex = params.basex)
+            axes.set_xscale(params.xscale, base = params.basex)
         else: 
             axes.set_xscale(params.xscale)
 
         if params.yscale == 'log':
-            axes.set_yscale(params.yscale, basey = params.basey)
+            axes.set_yscale(params.yscale, base = params.basey)
         else:
             axes.set_yscale(params.yscale)
 
@@ -76,11 +76,18 @@ class Visualizer:
         axes = self.get_axes(axes_id)
         (x, y) = data
 
-        axes.plot(x, y,
-            marker = params.marker, color = params.color,
-            markersize = params.markersize, linestyle = params.linestyle,
-            label = params.label
-        )
+        if params.label is None:
+            axes.plot(x, y,
+                marker = params.marker, color = params.color,
+                markersize = params.markersize, linestyle = params.linestyle
+            )
+        else:
+            axes.plot(x, y,
+                marker = params.marker, color = params.color,
+                markersize = params.markersize, linestyle = params.linestyle,
+                label = params.label
+            )
+            axes.legend()
 
     def plot_image(self, 
         axes_id: int, 
@@ -96,9 +103,6 @@ class Visualizer:
 
     def set_title(self, title: str):
         self.figure.suptitle(title)
-
-    def set_legend(self):
-        self._do_for_all_axes(lambda axes: axes.legend())
 
     def set_figsize(self, width: float, height: float):
         self.figure.set_size_inches(width, height)
