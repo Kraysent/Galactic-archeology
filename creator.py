@@ -1,7 +1,8 @@
-from amuse.units.quantities import ScalarQuantity
-from archeology.iotools import CSVReadManager
-from archeology.iotools import FITSWriteManager
 from amuse.lab import units
+from amuse.units.quantities import ScalarQuantity
+
+from archeology.creation import SnapshotBuilder
+from archeology.iotools import CSVReadManager, FITSWriteManager
 
 host_manager = CSVReadManager('data/models/host.txt', ' ')
 sat_manager = CSVReadManager('data/models/sat.txt', ' ')
@@ -25,11 +26,12 @@ def get_velocity(module: ScalarQuantity, pointing: float):
 
     return vel
 
-sat.particles.position += get_offset(150 | units.kpc)
-sat.particles.velocity += get_velocity(113 | units.kms, 0.5)
-
-snapshot = host + sat
-snapshot.particles.move_to_center()
+builder = SnapshotBuilder()
+builder.add_particles(host.particles)
+builder.add_particles(sat.particles, 
+    get_offset(150 | units.kpc), 
+    get_velocity(113 | units.kms, 0.5)
+)
 
 manager = FITSWriteManager('data/models/flat_example.fits')
-manager.write_data(snapshot)
+manager.write_data(builder.get_result())
