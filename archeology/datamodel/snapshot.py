@@ -12,6 +12,10 @@ class Snapshot:
 
     def __add__(self, other: 'Snapshot') -> 'Snapshot':
         if self.timestamp == other.timestamp:
-            return Snapshot(self.particles + other.particles, self.timestamp)
+            particles = Particles()
+            particles.add_particles(self.particles)
+            particles.add_particles(other.particles)
+
+            return Snapshot(particles, self.timestamp)
         else:
             raise RuntimeError('Tried to sum snapshots with different timestamps.')

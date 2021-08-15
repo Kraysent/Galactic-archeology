@@ -63,7 +63,7 @@ class FITSReadManager:
                 'mass': units.MSun
             }
         self.frame = -1
-        self.hdul = fits.open(self.filename)
+        self.hdul = fits.open(self.filename, memmap = True)
 
     def read_data(self) -> Snapshot:
         snapshot = Snapshot(Particles, 0 | units.Myr)

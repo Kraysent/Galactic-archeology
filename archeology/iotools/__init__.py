@@ -1,2 +1,3 @@
 from archeology.iotools.abstractiomanager import AbstractIOManager, NEMOIOManager
 from archeology.iotools.fitsiomanager import FITSReadManager, FITSWriteManager
+from archeology.iotools.csviomanager import CSVReadManager
