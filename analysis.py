@@ -1,3 +1,4 @@
+from archeology.iotools.fitsiomanager import FITSReadManager
 import time
 
 import numpy as np
@@ -59,7 +60,7 @@ visualizer.set_plot_parameters(7)
 
 visualizer.set_figsize(20, 11)
 
-iomanager = NEMOIOManager('output/models/model_out.nemo')
+iomanager = FITSReadManager('output/models/flat_model_out.fits')
 
 task_manager = TaskManager(visualizer.number_of_axes)
 
@@ -78,7 +79,7 @@ def extract_barion_matter(snapshot: Snapshot):
 
 while (iomanager.next_frame()):
     start_comp = time.time()
-    snapshot = extract_barion_matter(iomanager.get_data())
+    snapshot = extract_barion_matter(iomanager.read_data())
     
     task_manager.update_tasks(snapshot)
 

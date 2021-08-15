@@ -62,7 +62,7 @@ class FITSReadManager:
                 'vx': units.kms, 'vy': units.kms, 'vz': units.kms,
                 'mass': units.MSun
             }
-        self.frame = 0
+        self.frame = -1
         self.hdul = fits.open(self.filename)
 
     def read_data(self) -> Snapshot:
