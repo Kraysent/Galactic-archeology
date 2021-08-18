@@ -13,14 +13,11 @@
 
 ### Nearest future:
 - Deal with the tree of abstract classes: do we really need abstractxyztask and abstractscattertask as its heir? 
-- Add integration to the primary program.
-- Implement pyfalcon integration to the integrator module of the program (and than track several parameters more often then the output of gurfalcON).
 - Create kind of time plot abstract class that has no options.
 - Zoom in the central region during late stages of evolution.
 - Add contour plots along with density ones.
 - Draw density plots into several different color channels to emphasize different galaxies.
 - Move draw parameters out of the Task class so that latter is responsible only for actual computations and nothing else (single-resposibility priciple).
-- Program should have 3 modes: create model, integrate model, analize model.
 
 ### More distant future:
 - Add some kind of free parameters' space to the Snapshot class. Probably it should be made with PhaseSpace class that stores x, y, z, vx, vy, vz and some other parameters.

@@ -48,9 +48,10 @@ class FITSWriteManager:
         hdu.header['TIME'] = snapshot.timestamp.value_in(units.Myr)
 
         try:
-            hdul = fits.open(self.filename)
-            hdul.append(hdu)
-            hdul.writeto(self.filename, overwrite = True)
+            fits.append(self.filename, hdu.data, hdu.header)
+            # hdul = fits.open(self.filename, memmap = True)
+            # hdul.append(hdu)
+            # hdul.writeto(self.filename, overwrite = True)
         except:
             hdu.writeto(self.filename, overwrite = True)
 
@@ -84,4 +85,5 @@ class FITSReadManager:
             self.frame += 1
             return True
         else: 
+            self.hdul.close()
             return False

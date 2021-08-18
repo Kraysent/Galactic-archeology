@@ -10,7 +10,7 @@ class CSVReadManager:
         self.delimiter = delimiter
 
     def read_data(self) -> Snapshot:
-        table = pandas.read_csv(self.filename, delimiter = self.delimiter)
+        table = pandas.read_csv(self.filename, delimiter = self.delimiter, index_col = False)
         particles = Particles(len(table.iloc[:, 0]))
         particles.x = np.array(table['x']) | units.kpc
         particles.y = np.array(table['y']) | units.kpc
@@ -18,8 +18,8 @@ class CSVReadManager:
         particles.vx = np.array(table['vx']) | units.kms
         particles.vy = np.array(table['vy']) | units.kms
         particles.vz = np.array(table['vz']) | units.kms
-        particles.mass = np.array(table['m']) | units.MSun
+        particles.mass = np.array(table['m']) | 232500 * units.MSun
 
-        snapshot = Snapshot(particles, 0| units.Myr)
+        snapshot = Snapshot(particles, 0 | units.Myr)
 
         return snapshot

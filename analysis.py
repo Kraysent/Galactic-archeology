@@ -60,7 +60,7 @@ visualizer.set_plot_parameters(7)
 
 visualizer.set_figsize(20, 11)
 
-iomanager = FITSReadManager('output/models/flat_model_out.fits')
+iomanager = FITSReadManager('data/models/flat_out1.fits')
 
 task_manager = TaskManager(visualizer.number_of_axes)
 
@@ -96,7 +96,7 @@ while (iomanager.next_frame()):
     visualizer.set_title('Time: {:.02f} Myr'.format(timestamp))
 
     start_save = time.time()
-    visualizer.save('output/img-{:03d}.png'.format(i))
+    visualizer.save('data/img-{:03d}.png'.format(i))
 
     end = time.time()
     print(f'i: {i:03d}; C: {np.round(start_save - start_comp, 2):.02f}; S: {np.round(end - start_save, 2):.02f}')

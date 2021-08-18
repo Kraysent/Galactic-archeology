@@ -31,6 +31,10 @@ class PyfalconIntegrator:
         self.vel += self.acc * (self.dt / 2)
         self.time += self.dt
 
+    @property
+    def timestamp(self):
+        return self.time | units.Gyr
+
     def get_snapshot(self) -> Snapshot:
         N = len(self.mass)
         snapshot = Snapshot(Particles(N), self.time | units.Myr)
