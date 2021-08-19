@@ -1,4 +1,3 @@
-from archeology.iotools.fitsiomanager import FITSReadManager
 import time
 
 import numpy as np
@@ -7,6 +6,7 @@ from amuse.lab import units
 from archeology.analysis.tasks import AbstractVisualizerTask, TaskManager
 from archeology.analysis.utils import Visualizer
 from archeology.datamodel import Snapshot
+
 
 def analize(datadir: str):
     visualizer = Visualizer()
@@ -60,8 +60,6 @@ def analize(datadir: str):
 
     visualizer.set_figsize(20, 11)
 
-    iomanager = FITSReadManager(f'{datadir}/models/example_out.fits')
-
     task_manager = TaskManager(visualizer.number_of_axes)
 
     task_manager.add_spatial_tasks()
@@ -73,13 +71,16 @@ def analize(datadir: str):
     task_manager.add_velocity_profile_task()
 
     i = 0
+    filename = f'{datadir}/models/example_out.fits'
 
     def extract_barion_matter(snapshot: Snapshot):
         return snapshot[0: 200000] + snapshot[1000000:1100000]
 
-    while (iomanager.next_frame()):
+    timestamps_num = Snapshot.file_info(filename)
+
+    for i in range(timestamps_num):
         start_comp = time.time()
-        snapshot = extract_barion_matter(iomanager.read_data())
+        snapshot = extract_barion_matter(Snapshot.from_fits(filename, i))
         
         task_manager.update_tasks(snapshot)
 

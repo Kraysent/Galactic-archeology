@@ -2,7 +2,6 @@ from amuse.datamodel.particles import Particles
 from amuse.lab import units
 from amuse.units.quantities import VectorQuantity
 from archeology.datamodel import Snapshot
-from archeology.iotools import FITSWriteManager
 
 class SnapshotBuilder:
     def __init__(self):
@@ -28,6 +27,4 @@ class SnapshotBuilder:
 
     def to_fits(self, filename: str):
         self.snapshot.particles.move_to_center()
-
-        manager = FITSWriteManager(filename)
-        manager.write_data(self.snapshot)
+        self.snapshot.to_fits(filename)

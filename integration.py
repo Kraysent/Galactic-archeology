@@ -3,15 +3,16 @@ import time
 import numpy as np
 from amuse.lab import units
 
+from archeology.datamodel.snapshot import Snapshot
 from archeology.integration import PyfalconIntegrator
-from archeology.iotools import FITSReadManager, FITSWriteManager
+
 
 def integrate(datadir: str):
-    manager = FITSReadManager(f'{datadir}/models/example.fits')
-    out_manager = FITSWriteManager(f'{datadir}/models/example_out.fits')
+    # manager = FITSReadManager(f'{datadir}/models/example.fits')
 
-    manager.next_frame()
-    snapshot = manager.read_data()
+    # manager.next_frame()
+    # snapshot = manager.read_data()
+    snapshot = Snapshot.from_fits(f'{datadir}/models/example.fits')
 
     integrator = PyfalconIntegrator(snapshot, 0.2 | units.kpc, 8)
     t = 0
@@ -28,7 +29,7 @@ def integrate(datadir: str):
 
         if i % 2 == 0:
             snapshot = integrator.get_snapshot()
-            out_manager.append_data(snapshot)
+            snapshot.to_fits(f'{datadir}/models/example_out.fits', append = True)
 
         elapsed_time = time.time() - start
         t += elapsed_time

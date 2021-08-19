@@ -1,7 +1,8 @@
 import argparse
+
+from analysis import analize
 from creator import create
 from integration import integrate
-from analysis import analize
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
