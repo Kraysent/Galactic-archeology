@@ -1,21 +1,10 @@
-from abc import ABC, abstractmethod
-
 import unsio
 from amuse.datamodel.particles import Particles
 from amuse.lab import units
 from archeology.datamodel import Snapshot
 
 
-class AbstractIOManager(ABC):
-    @abstractmethod
-    def get_data(self) -> Snapshot:
-        pass
-
-    @abstractmethod
-    def next_frame(self) -> bool:
-        pass
-
-class NEMOIOManager(AbstractIOManager):
+class NEMOReadManager:
     def __init__(self, filename: str):
         self.snapfile = unsio.CunsIn(filename, 'all', 'all')
     
@@ -34,7 +23,7 @@ class NEMOIOManager(AbstractIOManager):
         result.vy = vel[1] | units.kms
         result.vz = vel[2] | units.kms
 
-        result.mass = mass * 232500 | units.MSun
+        result.mass = mass | 232500 * units.MSun
         result.move_to_center()
 
         return Snapshot(result, time | units.Gyr)

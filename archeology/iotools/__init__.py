@@ -1,1 +1,1 @@
-from archeology.iotools.abstractiomanager import AbstractIOManager, NEMOIOManager
+from archeology.iotools.nemoiomanager import NEMOReadManager
