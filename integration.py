@@ -13,7 +13,7 @@ def integrate(datadir: str):
     integrator = PyfalconIntegrator(snapshot, 0.2 | units.kpc, 8)
     t = 0
 
-    print(f'CPU time\titer time\ttimestamp')
+    print(f'ts\tt_cpu\tt_last')
     model_time = 0
     i = 0
 
@@ -30,4 +30,4 @@ def integrate(datadir: str):
         elapsed_time = time.time() - start
         t += elapsed_time
 
-        print(f'{np.round(t, 6)}\t{np.round(elapsed_time, 6)}\t{np.round(model_time, 4)}')
+        print(f'{np.round(model_time, 2)}\t{np.round(t, 2)}\t{np.round(elapsed_time, 2)}')

@@ -1,8 +1,8 @@
-from archeology.datamodel.snapshot import Snapshot
 from amuse.lab import units
 from amuse.units.quantities import ScalarQuantity
 
 from archeology.creation import SnapshotBuilder
+from archeology.datamodel.snapshot import Snapshot
 
 
 def create(datadir: str):
@@ -25,6 +25,7 @@ def create(datadir: str):
 
         return vel
 
+    print('Building model...')
     builder = SnapshotBuilder()
     builder.add_snapshot(host)
     builder.add_snapshot(sat, 
@@ -33,3 +34,4 @@ def create(datadir: str):
     )
 
     builder.to_fits(f'{datadir}/models/example.fits')
+    print('Model built.')

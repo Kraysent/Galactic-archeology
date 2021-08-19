@@ -78,6 +78,8 @@ def analize(datadir: str):
 
     timestamps_num = Snapshot.file_info(filename)
 
+    print('i\tcomp\tsave')
+
     for i in range(timestamps_num):
         start_comp = time.time()
         snapshot = extract_barion_matter(Snapshot.from_fits(filename, i))
@@ -100,6 +102,6 @@ def analize(datadir: str):
         visualizer.save(f'{datadir}/img-{i:03d}.png')
 
         end = time.time()
-        print(f'i: {i:03d}; C: {np.round(start_save - start_comp, 2):.02f}; S: {np.round(end - start_save, 2):.02f}')
+        print(f'{i:03d}\t{np.round(start_save - start_comp, 2):.02f}\t{np.round(end - start_save, 2):.02f}')
         
         i += 1
