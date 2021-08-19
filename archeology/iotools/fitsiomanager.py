@@ -49,9 +49,6 @@ class FITSWriteManager:
 
         try:
             fits.append(self.filename, hdu.data, hdu.header)
-            # hdul = fits.open(self.filename, memmap = True)
-            # hdul.append(hdu)
-            # hdul.writeto(self.filename, overwrite = True)
         except:
             hdu.writeto(self.filename, overwrite = True)
 
