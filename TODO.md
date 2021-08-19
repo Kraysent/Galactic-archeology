@@ -18,7 +18,6 @@
 - Add contour plots along with density ones.
 - Draw density plots into several different color channels to emphasize different galaxies.
 - Move draw parameters out of the Task class so that latter is responsible only for actual computations and nothing else (single-resposibility priciple).
-- Clean up output of all the modes
 
 ### More distant future:
 - Add some kind of free parameters' space to the Snapshot class. Probably it should be made with PhaseSpace class that stores x, y, z, vx, vy, vz and some other parameters.
