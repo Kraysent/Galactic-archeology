@@ -1,15 +1,13 @@
+from archeology.datamodel.snapshot import Snapshot
 from amuse.lab import units
 from amuse.units.quantities import ScalarQuantity
 
 from archeology.creation import SnapshotBuilder
-from archeology.iotools import CSVReadManager
+
 
 def create(datadir: str):
-    host_manager = CSVReadManager(f'{datadir}/models/host.txt', ' ')
-    sat_manager = CSVReadManager(f'{datadir}/models/sat.txt', ' ')
-
-    host = host_manager.read_data()
-    sat = sat_manager.read_data()
+    host = Snapshot.from_csv(f'{datadir}/models/host.txt', ' ')
+    sat = Snapshot.from_csv(f'{datadir}/models/sat.txt', ' ')
 
     def get_offset(distance: ScalarQuantity):
         offset = [0, 0, 0] | units.kpc

@@ -1,2 +1,1 @@
 from archeology.iotools.abstractiomanager import AbstractIOManager, NEMOIOManager
-from archeology.iotools.csviomanager import CSVReadManager

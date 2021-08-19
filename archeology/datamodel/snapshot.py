@@ -3,6 +3,8 @@ from amuse.lab import units
 from amuse.units.quantities import ScalarQuantity
 from astropy.io import fits
 from astropy.io.fits.hdu.table import BinTableHDU
+import pandas
+import numpy as np
 
 
 class Snapshot:
@@ -79,5 +81,21 @@ class Snapshot:
 
         for (key, val) in Snapshot.fields.items():
             setattr(snapshot.particles, key, table.data[key] | val)
+
+        return snapshot
+
+    @staticmethod
+    def from_csv(filename: str, delimiter: str = ',') -> 'Snapshot':
+        table = pandas.read_csv(filename, delimiter = delimiter, index_col = False)
+        particles = Particles(len(table.iloc[:, 0]))
+        particles.x = np.array(table['x']) | units.kpc
+        particles.y = np.array(table['y']) | units.kpc
+        particles.z = np.array(table['z']) | units.kpc
+        particles.vx = np.array(table['vx']) | units.kms
+        particles.vy = np.array(table['vy']) | units.kms
+        particles.vz = np.array(table['vz']) | units.kms
+        particles.mass = np.array(table['m']) | 232500 * units.MSun
+
+        snapshot = Snapshot(particles, 0 | units.Myr)
 
         return snapshot

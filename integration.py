@@ -8,10 +8,6 @@ from archeology.integration import PyfalconIntegrator
 
 
 def integrate(datadir: str):
-    # manager = FITSReadManager(f'{datadir}/models/example.fits')
-
-    # manager.next_frame()
-    # snapshot = manager.read_data()
     snapshot = Snapshot.from_fits(f'{datadir}/models/example.fits')
 
     integrator = PyfalconIntegrator(snapshot, 0.2 | units.kpc, 8)
