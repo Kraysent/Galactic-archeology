@@ -1,3 +1,4 @@
+from archeology.analysis.tasks.task_manager import VisualTask
 import time
 
 import numpy as np
@@ -86,14 +87,14 @@ def analize(datadir: str):
         
         task_manager.update_tasks(snapshot)
 
-        task: AbstractVisualizerTask
-        for (axes_id, task, part) in task_manager.get_tasks():
-            data = task.run(snapshot[part])
+        vtask: VisualTask
+        for vtask in task_manager.get_tasks():
+            data = vtask.run(snapshot)
 
             if type(data) is tuple:
-                visualizer.scatter_points(axes_id, data, task.draw_params)
+                visualizer.scatter_points(vtask.axes_id, data, vtask.draw_params)
             else:
-                visualizer.plot_image(axes_id, data, task.draw_params)
+                visualizer.plot_image(vtask.axes_id, data, vtask.draw_params)
 
         timestamp = snapshot.timestamp.value_in(units.Myr)
         visualizer.set_title(f'Time: {timestamp:.02f} Myr')

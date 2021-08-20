@@ -15,17 +15,6 @@ class AbstractVisualizerTask(ABC):
     def run(self, snapshot: Snapshot) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
         pass
 
-    @property
-    def draw_params(self) -> DrawParameters:
-        try:
-            return self._draw_params
-        except AttributeError:
-            return DrawParameters()
-
-    @draw_params.setter
-    def draw_params(self, value: DrawParameters):
-        self._draw_params = value
-
 class AbstractXYZTask(AbstractVisualizerTask):
     def __init__(self, axes: Tuple[str, str]):
         self.x1_name, self.x2_name = axes
