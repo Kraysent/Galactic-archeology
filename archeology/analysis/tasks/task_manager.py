@@ -1,7 +1,7 @@
 from typing import Any, Callable, List, Tuple
 
 from amuse.lab import units
-from archeology.analysis.tasks import (AbstractVisualizerTask,
+from archeology.analysis.tasks import (AbstractTask,
                                        AngularMomentumTask, CMDistanceTask,
                                        CMTrackTask, NormalVelocityTask,
                                        PlaneDirectionTask,
@@ -30,7 +30,7 @@ def get_sun_position_and_velocity(snapshot: Snapshot):
 class VisualTask:
     def __init__(self, 
         axes_id: int, 
-        task: AbstractVisualizerTask,
+        task: AbstractTask,
         part: slice = slice(0, None),
         draw_params: DrawParameters = DrawParameters()
     ):

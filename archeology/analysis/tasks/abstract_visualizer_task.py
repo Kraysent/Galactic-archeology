@@ -10,12 +10,12 @@ from archeology.analysis.utils import DrawParameters, get_galactic_basis
 from archeology.datamodel import Snapshot
 
 
-class AbstractVisualizerTask(ABC):
+class AbstractTask(ABC):
     @abstractmethod
     def run(self, snapshot: Snapshot) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
         pass
 
-class AbstractXYZTask(AbstractVisualizerTask):
+class AbstractXYZTask(AbstractTask):
     def __init__(self, axes: Tuple[str, str]):
         self.x1_name, self.x2_name = axes
 
@@ -108,7 +108,7 @@ class PlaneVelocityScatterTask(AbstractScatterTask):
 
         return self.apply_mode(new_vel[1], new_vel[2])
 
-class VelocityProfileTask(AbstractVisualizerTask):
+class VelocityProfileTask(AbstractTask):
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         particles = snapshot.particles
         r = (particles.position - particles.center_of_mass()).value_in(units.kpc)
@@ -142,7 +142,7 @@ class CMTrackTask(AbstractXYZTask):
 
         return (self.cmx1, self.cmx2)
 
-class NormalVelocityTask(AbstractVisualizerTask):
+class NormalVelocityTask(AbstractTask):
     def __init__(self, 
         pov: VectorQuantity, 
         pov_velocity: VectorQuantity, 
@@ -179,7 +179,7 @@ class NormalVelocityTask(AbstractVisualizerTask):
         self.pov = pov.value_in(units.kpc)
         self.pov_vel = pov_vel.value_in(units.kms)
 
-class KineticEnergyTask(AbstractVisualizerTask):
+class KineticEnergyTask(AbstractTask):
     def __init__(self):
         self.times = []
         self.energies = []
@@ -236,7 +236,7 @@ class AngularMomentumTask(AbstractXYZTask):
 
         return (np.array([cmx1, x1]), np.array([cmx2, x2]))
 
-class CMDistanceTask(AbstractVisualizerTask):
+class CMDistanceTask(AbstractTask):
     def __init__(self, part1: slice, part2: slice):
         self.part1 = part1
         self.part2 = part2
@@ -253,7 +253,7 @@ class CMDistanceTask(AbstractVisualizerTask):
 
         return (np.array(self.time), np.array(self.dist))
 
-class TestLineTask(AbstractVisualizerTask):
+class TestLineTask(AbstractTask):
     def run(self, snapshot: Snapshot) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
         return (np.array([0, 100]), np.array([0, 100]))
 

@@ -4,7 +4,7 @@ import time
 import numpy as np
 from amuse.lab import units
 
-from archeology.analysis.tasks import AbstractVisualizerTask, TaskManager
+from archeology.analysis.tasks import AbstractTask, TaskManager
 from archeology.analysis.utils import Visualizer
 from archeology.datamodel import Snapshot
 
@@ -61,7 +61,7 @@ def analize(datadir: str):
 
     visualizer.set_figsize(20, 11)
 
-    task_manager = TaskManager(visualizer.number_of_axes)
+    task_manager = TaskManager()
 
     task_manager.add_spatial_tasks()
     # task_manager.add_tracking_tasks()
