@@ -1,4 +1,4 @@
-from typing import Any, Callable, Tuple
+from typing import Any, Callable, List, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -92,17 +92,37 @@ class Visualizer:
             )
             axes.legend()
 
-    def _plot_image(self, 
-        axes_id: int, 
-        data: np.ndarray, 
-        params: DrawParameters
-    ):
-        axes = self.get_axes(axes_id)
-        axes.imshow(data, 
-            extent = params.extent, 
-            cmap = params.cmap, 
-            norm = params.cmapnorm
-        )
+    @staticmethod
+    def _scale_array(array: np.ndarray, start: float, end: float) -> np.ndarray:
+        max_val = array.max()
+        min_val = array.min()
+        span = max_val - min_val
+
+        if span != 0:
+            diff = array - min_val
+            array = diff / span * (end - start) + start
+
+        return array
+
+    @staticmethod
+    def _set_background_color(array: np.ndarray, color: float) -> np.ndarray:
+        mask = (array[:, :] ** 2).sum(axis = 2) == 0
+        array[:, :][mask] = color
+
+        return array
+
+    def _draw_images(self, lst: List[Tuple[int, dict]], params: List[DrawParameters], background_color = 1):
+        for (axes_id, channels) in lst:
+            for i in ('r', 'g', 'b'):
+                channels[i] = Visualizer._scale_array(channels[i], 0, 1)
+
+            rgb_map = np.stack((channels['r'], channels['g'], channels['b']), 2)
+            rgb_map = self._set_background_color(rgb_map, background_color)
+
+            self.get_axes(axes_id).imshow(
+                rgb_map,
+                extent = params[axes_id].extent
+            )
 
     def set_title(self, title: str):
         self.figure.suptitle(title)
@@ -119,38 +139,18 @@ class Visualizer:
                 self._scatter_points(axes_id, data, params)
             else:
                 if not (axes_id in images.keys()):
-                    images[axes_id] = {}
-
-                for i in ('r', 'g', 'b'):
-                    if not i in images[axes_id].keys():
-                        images[axes_id][i] = np.zeros(data.shape)
+                    images[axes_id] = {
+                        'r': np.zeros(data.shape),
+                        'g': np.zeros(data.shape),
+                        'b': np.zeros(data.shape)
+                    }
 
                 images[axes_id][params.channel] += data    
                 imparams[axes_id] = params
-                # self._plot_image(axes_id, data, params)
 
-        for (axes_id, channels) in images.items():
-            for i in ('r', 'g', 'b'):
-                if channels[i].max() - channels[i].min() != 0:
-                    span = channels[i].max() - channels[i].min()
-                    diff = channels[i] - channels[i].min()
-                    channels[i] = diff / span
-
-            stack = np.stack((channels['r'], channels['g'], channels['b']), 2)
-            mask = (stack[:, :, 0] ** 2 + stack[:, :, 1] ** 2 + stack[:, :, 2] ** 2) == 0
-            stack[:, :, 0][mask] = 0.85
-            stack[:, :, 1][mask] = 0.85
-            stack[:, :, 2][mask] = 0.85
-
-            self.get_axes(axes_id).imshow(
-                stack,
-                extent = imparams[axes_id].extent
-            )
-            
+        self._draw_images(images.items(), imparams, 0.85)
 
         self.figure.savefig(filename, dpi = dpi, bbox_inches='tight')
-
-        self.pictures.clear()
 
         def delete_all(axes: Axes):
             while axes.artists != []:
@@ -162,6 +162,7 @@ class Visualizer:
             while axes.images != []:
                 axes.images[0].remove()
                 
+        self.pictures.clear()
         self._do_for_all_axes(delete_all)
 
     def show(self):
