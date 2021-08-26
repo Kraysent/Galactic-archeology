@@ -13,14 +13,14 @@ def analize(datadir: str):
     visualizer = Visualizer()
     visualizer.add_axes(0, 0.35, 0.35, 0.6)
     visualizer.set_plot_parameters(0,
-        xlim = (-60, 60), ylim = (-55, 55),
+        xlim = (-45, 45), ylim = (-40, 40),
         xlabel = 'x, kpc', ylabel = 'y, kpc',
         xticks = [0, 10], yticks = [0, 10]
     )
 
     visualizer.add_axes(0.33, 0.35, 0.35, 0.6)
     visualizer.set_plot_parameters(1,
-        xlim = (-60, 60), ylim = (-55, 55),
+        xlim = (-45, 45), ylim = (-40, 40),
         yticks = [], xticks = [0, 10]
     )
 
@@ -66,13 +66,13 @@ def analize(datadir: str):
     task_manager.add_spatial_tasks()
     # task_manager.add_tracking_tasks()
     task_manager.add_norm_velocity_tasks()
-    task_manager.add_angular_momentum_task()
+    # task_manager.add_angular_momentum_task()
     task_manager.add_velocity_tasks()
     task_manager.add_distance_task()
     task_manager.add_velocity_profile_task()
 
     i = 0
-    filename = f'{datadir}/models/example_out.fits'
+    filename = f'{datadir}/models/flat_out1.fits'
 
     def extract_barion_matter(snapshot: Snapshot):
         return snapshot[0: 200000] + snapshot[1000000:1100000]
@@ -91,7 +91,7 @@ def analize(datadir: str):
         for vtask in task_manager.get_tasks():
             data = vtask.run(snapshot)
             visualizer.plot(vtask.axes_id, data, vtask.draw_params)
-            
+
         timestamp = snapshot.timestamp.value_in(units.Myr)
         visualizer.set_title(f'Time: {timestamp:.02f} Myr')
 

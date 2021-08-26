@@ -16,8 +16,8 @@
 - Create kind of time plot abstract class that has no options.
 - Zoom in the central region during late stages of evolution.
 - Add contour plots along with density ones.
-- Draw density plots into several different color channels to emphasize different galaxies.
 - Swap AbstractXYZTask with AbstractPlaneTask (or just method in abstracttask?) that can project data on any plane. 
+- Clean up DrawParameters. There are probably some unnecessary fields.
 
 ### More distant future:
 - Add some kind of free parameters' space to the Snapshot class. Probably it should be made with PhaseSpace class that stores x, y, z, vx, vy, vz and some other parameters.

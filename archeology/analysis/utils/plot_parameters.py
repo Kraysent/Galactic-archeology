@@ -35,3 +35,4 @@ class DrawParameters:
     cmap: str = 'ocean_r'
     cmapnorm = mpl.colors.LogNorm()
     label = None
+    channel = 'b'

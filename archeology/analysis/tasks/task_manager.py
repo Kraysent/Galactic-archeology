@@ -62,24 +62,42 @@ class TaskManager:
             update(snapshot)
 
     def add_spatial_tasks(self):
-        zy_task = VisualTask(
-            0, SpatialScatterTask(('z', 'y'))
+        zy_host_task = VisualTask(
+            0, SpatialScatterTask(('z', 'y')), slice(200000)
         )
-        gal_plane_task = VisualTask(
-            1, PlaneSpatialScatterTask(('z', 'y'))
+        zy_sat_task = VisualTask(
+            0, SpatialScatterTask(('z', 'y')), slice(200000, None)
         )
-
-        zy_task.task.set_density_mode(700, (-60, 60, -55, 55))
-        gal_plane_task.task.set_density_mode(700, (-60, 60, -55, 55))
-
-        zy_task.draw_params = DrawParameters(
-            extent = [-60, 60, -55, 55]
+        gal_plane_host_task = VisualTask(
+            1, PlaneSpatialScatterTask(('z', 'y')), slice(200000)
         )
-        gal_plane_task.draw_params = DrawParameters(
-            extent = [-60, 60, -55, 55]
+        gal_plane_sat_task = VisualTask(
+            1, PlaneSpatialScatterTask(('z', 'y')), slice(200000, None)
         )
 
-        self.add_tasks(zy_task, gal_plane_task)
+        zy_host_task.task.set_density_mode(700, (-45, 45, -40, 40))
+        zy_sat_task.task.set_density_mode(700, (-45, 45, -40, 40))
+        gal_plane_host_task.task.set_density_mode(700, (-45, 45, -40, 40))
+        gal_plane_sat_task.task.set_density_mode(700, (-45, 45, -40, 40))
+
+        zy_host_task.draw_params = DrawParameters(
+            extent = [-45, 45, -40, 40],
+            channel = 'g'
+        )
+        zy_sat_task.draw_params = DrawParameters(
+            extent = [-45, 45, -40, 40],
+            channel = 'r'
+        )
+        gal_plane_host_task.draw_params = DrawParameters(
+            extent = [-45, 45, -40, 40],
+            channel = 'g'
+        )
+        gal_plane_sat_task.draw_params = DrawParameters(
+            extent = [-45, 45, -40, 40], 
+            channel = 'r'
+        )
+
+        self.add_tasks(zy_sat_task, zy_host_task, gal_plane_host_task, gal_plane_sat_task)
         
     def add_tracking_tasks(self):
         host_xy_track_task = VisualTask(
@@ -178,16 +196,24 @@ class TaskManager:
         )
 
     def add_velocity_tasks(self):
-        vxvy_host_task = VisualTask(
-            3, PlaneVelocityScatterTask(('x', 'y')), 
-            draw_params = DrawParameters(
-                markersize = 0.02, color = 'b', extent = (-400, 400, -400, 400)
+        vel_host_task = VisualTask(
+            3, PlaneVelocityScatterTask(('x', 'y')), slice(200000),
+            DrawParameters(
+                markersize = 0.02, channel = 'g', extent = (-400, 400, -400, 400)
             )
         )
 
-        vxvy_host_task.task.set_density_mode(700, (-400, 400, -400, 400))
+        vel_sat_task = VisualTask(
+            3, PlaneVelocityScatterTask(('x', 'y')), slice(200000, None),
+            DrawParameters(
+                markersize = 0.02, channel = 'r', extent = (-400, 400, -400, 400)
+            )
+        )
 
-        self.add_tasks(vxvy_host_task)
+        vel_host_task.task.set_density_mode(700, (-400, 400, -400, 400))
+        vel_sat_task.task.set_density_mode(700, (-400, 400, -400, 400))
+
+        self.add_tasks(vel_host_task, vel_sat_task)
 
     def add_distance_task(self):
         dist_task = VisualTask(

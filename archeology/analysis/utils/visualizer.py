@@ -111,11 +111,42 @@ class Visualizer:
         self.figure.set_size_inches(width, height)
 
     def save(self, filename: str, dpi: int = 120):
+        images = {}
+        imparams = {}
+
         for (axes_id, data, params) in self.pictures:
             if type(data) is tuple:
                 self._scatter_points(axes_id, data, params)
             else:
-                self._plot_image(axes_id, data, params)
+                if not (axes_id in images.keys()):
+                    images[axes_id] = {}
+
+                for i in ('r', 'g', 'b'):
+                    if not i in images[axes_id].keys():
+                        images[axes_id][i] = np.zeros(data.shape)
+
+                images[axes_id][params.channel] += data    
+                imparams[axes_id] = params
+                # self._plot_image(axes_id, data, params)
+
+        for (axes_id, channels) in images.items():
+            for i in ('r', 'g', 'b'):
+                if channels[i].max() - channels[i].min() != 0:
+                    span = channels[i].max() - channels[i].min()
+                    diff = channels[i] - channels[i].min()
+                    channels[i] = diff / span
+
+            stack = np.stack((channels['r'], channels['g'], channels['b']), 2)
+            mask = (stack[:, :, 0] ** 2 + stack[:, :, 1] ** 2 + stack[:, :, 2] ** 2) == 0
+            stack[:, :, 0][mask] = 0.85
+            stack[:, :, 1][mask] = 0.85
+            stack[:, :, 2][mask] = 0.85
+
+            self.get_axes(axes_id).imshow(
+                stack,
+                extent = imparams[axes_id].extent
+            )
+            
 
         self.figure.savefig(filename, dpi = dpi, bbox_inches='tight')
 
