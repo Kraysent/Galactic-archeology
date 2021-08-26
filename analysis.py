@@ -90,12 +90,8 @@ def analize(datadir: str):
         vtask: VisualTask
         for vtask in task_manager.get_tasks():
             data = vtask.run(snapshot)
-
-            if type(data) is tuple:
-                visualizer.scatter_points(vtask.axes_id, data, vtask.draw_params)
-            else:
-                visualizer.plot_image(vtask.axes_id, data, vtask.draw_params)
-
+            visualizer.plot(vtask.axes_id, data, vtask.draw_params)
+            
         timestamp = snapshot.timestamp.value_in(units.Myr)
         visualizer.set_title(f'Time: {timestamp:.02f} Myr')
 

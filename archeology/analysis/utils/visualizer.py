@@ -10,6 +10,7 @@ class Visualizer:
     def __init__(self, style: str = 'ggplot'):
         plt.style.use(style)
         self.figure = plt.figure()
+        self.pictures = []
 
     @property
     def number_of_axes(self):
@@ -67,7 +68,10 @@ class Visualizer:
         axes.tick_params(axis = 'x', direction = params.ticks_direction)
         axes.tick_params(axis = 'y', direction = params.ticks_direction)
 
-    def scatter_points(self, 
+    def plot(self, axes_id: int, data, params: DrawParameters):
+        self.pictures.append((axes_id, data, params))
+
+    def _scatter_points(self, 
         axes_id: int, 
         data: Tuple[np.ndarray, np.ndarray], 
         params: DrawParameters
@@ -88,7 +92,7 @@ class Visualizer:
             )
             axes.legend()
 
-    def plot_image(self, 
+    def _plot_image(self, 
         axes_id: int, 
         data: np.ndarray, 
         params: DrawParameters
@@ -107,7 +111,15 @@ class Visualizer:
         self.figure.set_size_inches(width, height)
 
     def save(self, filename: str, dpi: int = 120):
+        for (axes_id, data, params) in self.pictures:
+            if type(data) is tuple:
+                self._scatter_points(axes_id, data, params)
+            else:
+                self._plot_image(axes_id, data, params)
+
         self.figure.savefig(filename, dpi = dpi, bbox_inches='tight')
+
+        self.pictures.clear()
 
         def delete_all(axes: Axes):
             while axes.artists != []:

@@ -1,10 +1,9 @@
-from typing import Any, Callable, List, Tuple
+from typing import Any, Callable, List
 
 from amuse.lab import units
-from archeology.analysis.tasks import (AbstractTask,
-                                       AngularMomentumTask, CMDistanceTask,
-                                       CMTrackTask, NormalVelocityTask,
-                                       PlaneDirectionTask,
+from archeology.analysis.tasks import (AbstractTask, AngularMomentumTask,
+                                       CMDistanceTask, CMTrackTask,
+                                       NormalVelocityTask, PlaneDirectionTask,
                                        PlaneSpatialScatterTask,
                                        PlaneVelocityScatterTask,
                                        SpatialScatterTask, VelocityProfileTask)
