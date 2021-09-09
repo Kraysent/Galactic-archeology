@@ -6,7 +6,7 @@ import numpy as np
 from amuse.lab import units
 from amuse.units.core import named_unit
 from amuse.units.quantities import VectorQuantity
-from archeology.analysis.utils import DrawParameters, get_galactic_basis
+import archeology.analysis.utils as utils
 from archeology.datamodel import Snapshot
 
 
@@ -14,6 +14,31 @@ class AbstractTask(ABC):
     @abstractmethod
     def run(self, snapshot: Snapshot) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
         pass
+
+class AbstractPlaneTask(AbstractTask):
+    def __init__(self, e1: np.ndarray, e2: np.ndarray):
+        self.e1 = self._normalize(e1)
+        self.e2 = self._normalize(e2)
+    
+    def update_basis(self, e1: np.ndarray, e2: np.ndarray):
+        self.e1 = self._normalize(e1)
+        self.e2 = self._normalize(e2)
+
+    def _normalize(self, vector: np.ndarray) -> np.ndarray:
+        l = (vector ** 2).sum() ** 0.5
+
+        if l != 0:
+            return vector / l
+        else: 
+            return vector
+
+    def get_projection(
+        self, x: np.ndarray, y: np.ndarray, z: np.ndarray
+    ) -> Tuple[np.ndarray, np.ndarray]:
+        e1_coords = x * self.e1[0] + y * self.e1[1] + z * self.e1[2]
+        e2_coords = x * self.e2[0] + y * self.e2[1] + z * self.e2[2]
+
+        return (e1_coords, e2_coords)
 
 class AbstractXYZTask(AbstractTask):
     def __init__(self, axes: Tuple[str, str]):
@@ -44,6 +69,44 @@ class Mode(Enum):
     PLAIN = 1
     DENSITY = 2
 
+class AbstractScatterTask1(AbstractPlaneTask):
+    def __init__(self, e1: np.ndarray, e2: np.ndarray):
+        self.mode = Mode.PLAIN
+
+        super().__init__(e1, e2)
+
+    def apply_mode(self, 
+        x1: np.ndarray, x2: np.ndarray
+    ) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
+        if self.mode == Mode.PLAIN:
+            return x1, x2
+        elif self.mode == Mode.DENSITY:
+            dist, _, _ = np.histogram2d(x1, x2, self.resolution, range = [
+                self.edges[:2], self.edges[2:]
+            ])
+            dist = np.flip(dist.T, axis = 0)
+
+            return dist
+
+    def set_plain_mode(self):
+        self.mode = Mode.PLAIN
+
+    def set_density_mode(self, 
+        resolution: int, 
+        edges: Tuple[float, float, float, float]
+    ):
+        self.mode = Mode.DENSITY
+        self.resolution = resolution
+        self.edges = edges
+
+class SpatialScatterTask1(AbstractScatterTask1):
+    def run(self, snapshot: Snapshot) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
+        (x1, x2) = self.get_projection(snapshot.particles.position.x.value_in(units.kpc),
+                                       snapshot.particles.position.y.value_in(units.kpc),
+                                       snapshot.particles.position.z.value_in(units.kpc))
+        
+        return self.apply_mode(x1, x2)
+
 class AbstractScatterTask(AbstractXYZTask):
     def __init__(self, 
         axes: Tuple[str, str]
@@ -51,7 +114,7 @@ class AbstractScatterTask(AbstractXYZTask):
         self.mode = Mode.PLAIN
 
         super().__init__(axes = axes)
-
+  
     def apply_mode(self, 
         x1: np.ndarray, x2: np.ndarray
     ) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
@@ -84,7 +147,7 @@ class SpatialScatterTask(AbstractScatterTask):
 
 class PlaneSpatialScatterTask(AbstractScatterTask):
     def run(self, snapshot: Snapshot) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
-        (e1, e2, e3) = get_galactic_basis(snapshot)
+        (e1, e2, e3) = utils.get_galactic_basis(snapshot)
         transition_matrix = np.stack((e1, e2, e3))
 
         pos = snapshot.particles.position.value_in(units.kpc).T
@@ -100,7 +163,7 @@ class VelocityScatterTask(AbstractScatterTask):
 
 class PlaneVelocityScatterTask(AbstractScatterTask):
     def run(self, snapshot: Snapshot) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
-        (e1, e2, e3) = get_galactic_basis(snapshot[0:200000])
+        (e1, e2, e3) = utils.get_galactic_basis(snapshot[0:200000])
         transition_matrix = np.stack((e1, e2, e3))
 
         vel = snapshot.particles.velocity.value_in(units.kms).T
@@ -197,7 +260,7 @@ class PlaneDirectionTask(AbstractXYZTask):
         super().__init__(axes)
 
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
-        (e1, e2, e3) = get_galactic_basis(snapshot[0:200000])
+        (e1, e2, e3) = utils.get_galactic_basis(snapshot)
         cm = snapshot.particles.center_of_mass()
 
         r = 8
@@ -223,7 +286,7 @@ class AngularMomentumTask(AbstractXYZTask):
         super().__init__(axes)
 
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
-        (e1, e2, e3) = get_galactic_basis(snapshot[0:200000])
+        (e1, e2, e3) = utils.get_galactic_basis(snapshot)
         cm = snapshot.particles.center_of_mass()
 
         r = 8

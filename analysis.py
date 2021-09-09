@@ -1,10 +1,10 @@
-from archeology.analysis.tasks.task_manager import VisualTask
 import time
 
 import numpy as np
 from amuse.lab import units
 
-from archeology.analysis.tasks import AbstractTask, TaskManager
+from archeology.analysis.tasks import TaskManager
+from archeology.analysis.tasks.task_manager import VisualTask
 from archeology.analysis.utils import Visualizer
 from archeology.datamodel import Snapshot
 

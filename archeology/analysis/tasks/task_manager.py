@@ -1,5 +1,6 @@
 from typing import Any, Callable, List
 
+import numpy as np
 from amuse.lab import units
 from archeology.analysis.tasks import (AbstractTask, AngularMomentumTask,
                                        CMDistanceTask, CMTrackTask,
@@ -7,6 +8,7 @@ from archeology.analysis.tasks import (AbstractTask, AngularMomentumTask,
                                        PlaneSpatialScatterTask,
                                        PlaneVelocityScatterTask,
                                        SpatialScatterTask, VelocityProfileTask)
+from archeology.analysis.tasks.abstract_task import SpatialScatterTask1
 from archeology.analysis.utils import DrawParameters, get_galactic_basis
 from archeology.datamodel import Snapshot
 
@@ -62,12 +64,20 @@ class TaskManager:
             update(snapshot)
 
     def add_spatial_tasks(self):
+        y_unit = np.array([0, 1, 0])
+        z_unit = np.array([0, 0, 1])
         zy_host_task = VisualTask(
-            0, SpatialScatterTask(('z', 'y')), slice(200000)
+            0, SpatialScatterTask1(z_unit, y_unit), slice(200000)
         )
         zy_sat_task = VisualTask(
-            0, SpatialScatterTask(('z', 'y')), slice(200000, None)
+            0, SpatialScatterTask1(z_unit, y_unit), slice(200000, None)
         )
+        # zy_host_task = VisualTask(
+        #     0, SpatialScatterTask(('z', 'y')), slice(200000)
+        # )
+        # zy_sat_task = VisualTask(
+        #     0, SpatialScatterTask(('z', 'y')), slice(200000, None)
+        # )
         gal_plane_host_task = VisualTask(
             1, PlaneSpatialScatterTask(('z', 'y')), slice(200000)
         )
