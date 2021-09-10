@@ -2,13 +2,12 @@ from typing import Any, Callable, List
 
 import numpy as np
 from amuse.lab import units
+from archeology.analysis import utils
 from archeology.analysis.tasks import (AbstractTask, AngularMomentumTask,
                                        CMDistanceTask, CMTrackTask,
                                        NormalVelocityTask, PlaneDirectionTask,
-                                       PlaneSpatialScatterTask,
-                                       PlaneVelocityScatterTask,
                                        SpatialScatterTask, VelocityProfileTask)
-from archeology.analysis.tasks.abstract_task import SpatialScatterTask1
+from archeology.analysis.tasks.abstract_task import VelocityScatterTask, get_unit_vectors
 from archeology.analysis.utils import DrawParameters, get_galactic_basis
 from archeology.datamodel import Snapshot
 
@@ -64,26 +63,26 @@ class TaskManager:
             update(snapshot)
 
     def add_spatial_tasks(self):
-        y_unit = np.array([0, 1, 0])
-        z_unit = np.array([0, 0, 1])
         zy_host_task = VisualTask(
-            0, SpatialScatterTask1(z_unit, y_unit), slice(200000)
+            0, SpatialScatterTask(*get_unit_vectors('zy')), slice(200000)
         )
         zy_sat_task = VisualTask(
-            0, SpatialScatterTask1(z_unit, y_unit), slice(200000, None)
+            0, SpatialScatterTask(*get_unit_vectors('zy')), slice(200000, None)
         )
-        # zy_host_task = VisualTask(
-        #     0, SpatialScatterTask(('z', 'y')), slice(200000)
-        # )
-        # zy_sat_task = VisualTask(
-        #     0, SpatialScatterTask(('z', 'y')), slice(200000, None)
-        # )
+        
         gal_plane_host_task = VisualTask(
-            1, PlaneSpatialScatterTask(('z', 'y')), slice(200000)
+            1, SpatialScatterTask(*get_unit_vectors('xy')), slice(200000)
         )
         gal_plane_sat_task = VisualTask(
-            1, PlaneSpatialScatterTask(('z', 'y')), slice(200000, None)
+            1, SpatialScatterTask(*get_unit_vectors('xy')), slice(200000, None)
         )
+
+        def update_galactic_plane(snapshot: Snapshot):
+            gal_basis = utils.get_galactic_basis(snapshot)
+            gal_plane_host_task.task.update_basis(gal_basis[1], gal_basis[2])
+            gal_plane_sat_task.task.update_basis(gal_basis[1], gal_basis[2])
+
+        self.add_update(update_galactic_plane)
 
         zy_host_task.task.set_density_mode(700, (-45, 45, -40, 40))
         zy_sat_task.task.set_density_mode(700, (-45, 45, -40, 40))
@@ -207,14 +206,14 @@ class TaskManager:
 
     def add_velocity_tasks(self):
         vel_host_task = VisualTask(
-            3, PlaneVelocityScatterTask(('x', 'y')), slice(200000),
+            3, VelocityScatterTask(*get_unit_vectors('xy')), slice(200000),
             DrawParameters(
                 markersize = 0.02, channel = 'g', extent = (-400, 400, -400, 400)
             )
         )
 
         vel_sat_task = VisualTask(
-            3, PlaneVelocityScatterTask(('x', 'y')), slice(200000, None),
+            3, VelocityScatterTask(*get_unit_vectors('xy')), slice(200000, None),
             DrawParameters(
                 markersize = 0.02, channel = 'r', extent = (-400, 400, -400, 400)
             )

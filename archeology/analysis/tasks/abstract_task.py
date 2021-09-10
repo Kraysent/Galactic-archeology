@@ -9,10 +9,28 @@ from amuse.units.quantities import VectorQuantity
 import archeology.analysis.utils as utils
 from archeology.datamodel import Snapshot
 
+def get_unit_vectors(names: str) -> np.ndarray:
+    output = []
+
+    for name in names:
+        result = []
+    
+        if name == 'x':
+            result = [1, 0, 0]
+        elif name == 'y':
+            result = [0, 1, 0]
+        elif name == 'z':
+            result = [0, 0, 1]
+
+        output.append(np.array(result))
+
+    return output
 
 class AbstractTask(ABC):
     @abstractmethod
-    def run(self, snapshot: Snapshot) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
+    def run(
+        self, snapshot: Snapshot
+    ) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
         pass
 
 class AbstractPlaneTask(AbstractTask):
@@ -31,6 +49,20 @@ class AbstractPlaneTask(AbstractTask):
             return vector / l
         else: 
             return vector
+        
+    def get_coordinates(self, vector: VectorQuantity, unit: named_unit = None):
+        if units is not None:
+            return (
+                vector.x.value_in(unit),
+                vector.y.value_in(unit),
+                vector.z.value_in(unit)
+            )
+        else:
+            return (
+                vector[0],
+                vector[1],
+                vector[2]
+            )
 
     def get_projection(
         self, x: np.ndarray, y: np.ndarray, z: np.ndarray
@@ -40,36 +72,11 @@ class AbstractPlaneTask(AbstractTask):
 
         return (e1_coords, e2_coords)
 
-class AbstractXYZTask(AbstractTask):
-    def __init__(self, axes: Tuple[str, str]):
-        self.x1_name, self.x2_name = axes
-
-    def get_axes(self, vector) -> Tuple[np.ndarray, np.ndarray]:
-        axes = {
-            'x': vector[0],
-            'y': vector[1],
-            'z': vector[2]
-        }
-
-        return (axes[self.x1_name], axes[self.x2_name])
-
-    def get_quantity_axes(self, vector, unit: named_unit = None) -> Tuple[np.ndarray, np.ndarray]:
-        axes = {
-            'x': vector.x,
-            'y': vector.y,
-            'z': vector.z
-        }
-
-        if unit is None:
-            return (axes[self.x1_name], axes[self.x2_name])
-        else: 
-            return (axes[self.x1_name].value_in(unit), axes[self.x2_name].value_in(unit))
-
 class Mode(Enum):
     PLAIN = 1
     DENSITY = 2
 
-class AbstractScatterTask1(AbstractPlaneTask):
+class AbstractScatterTask(AbstractPlaneTask):
     def __init__(self, e1: np.ndarray, e2: np.ndarray):
         self.mode = Mode.PLAIN
 
@@ -99,77 +106,17 @@ class AbstractScatterTask1(AbstractPlaneTask):
         self.resolution = resolution
         self.edges = edges
 
-class SpatialScatterTask1(AbstractScatterTask1):
-    def run(self, snapshot: Snapshot) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
-        (x1, x2) = self.get_projection(snapshot.particles.position.x.value_in(units.kpc),
-                                       snapshot.particles.position.y.value_in(units.kpc),
-                                       snapshot.particles.position.z.value_in(units.kpc))
-        
-        return self.apply_mode(x1, x2)
-
-class AbstractScatterTask(AbstractXYZTask):
-    def __init__(self, 
-        axes: Tuple[str, str]
-    ):
-        self.mode = Mode.PLAIN
-
-        super().__init__(axes = axes)
-  
-    def apply_mode(self, 
-        x1: np.ndarray, x2: np.ndarray
-    ) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
-        if self.mode == Mode.PLAIN:
-            return x1, x2
-        elif self.mode == Mode.DENSITY:
-            dist, _, _ = np.histogram2d(x1, x2, self.resolution, range = [
-                self.edges[:2], self.edges[2:]
-            ])
-            dist = np.flip(dist.T, axis = 0)
-
-            return dist
-
-    def set_plain_mode(self):
-        self.mode = Mode.PLAIN
-
-    def set_density_mode(self, 
-        resolution: int, 
-        edges: Tuple[float, float, float, float]
-    ):
-        self.mode = Mode.DENSITY
-        self.resolution = resolution
-        self.edges = edges
-
 class SpatialScatterTask(AbstractScatterTask):
     def run(self, snapshot: Snapshot) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
-        (x1, x2) = self.get_quantity_axes(snapshot.particles.position, units.kpc)
+        (x1, x2) = self.get_projection(*self.get_coordinates(snapshot.particles.position, units.kpc))
         
         return self.apply_mode(x1, x2)
-
-class PlaneSpatialScatterTask(AbstractScatterTask):
-    def run(self, snapshot: Snapshot) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
-        (e1, e2, e3) = utils.get_galactic_basis(snapshot)
-        transition_matrix = np.stack((e1, e2, e3))
-
-        pos = snapshot.particles.position.value_in(units.kpc).T
-        new_pos = np.matmul(np.linalg.inv(transition_matrix), pos)
-
-        return self.apply_mode(new_pos[1], new_pos[2])
 
 class VelocityScatterTask(AbstractScatterTask):
     def run(self, snapshot: Snapshot) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
-        (vx1, vx2) = self.get_quantity_axes(snapshot.particles.velocity, units.kms)
+        (vx1, vx2) = self.get_projection(*self.get_coordinates(snapshot.particles.velocity, units.kms))
 
         return self.apply_mode(vx1, vx2)
-
-class PlaneVelocityScatterTask(AbstractScatterTask):
-    def run(self, snapshot: Snapshot) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
-        (e1, e2, e3) = utils.get_galactic_basis(snapshot[0:200000])
-        transition_matrix = np.stack((e1, e2, e3))
-
-        vel = snapshot.particles.velocity.value_in(units.kms).T
-        new_vel = np.matmul(np.linalg.inv(transition_matrix), vel)
-
-        return self.apply_mode(new_vel[1], new_vel[2])
 
 class VelocityProfileTask(AbstractTask):
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
@@ -189,16 +136,15 @@ class VelocityProfileTask(AbstractTask):
 
         return (r, v)
 
-
-class CMTrackTask(AbstractXYZTask):
-    def __init__(self, axes: Tuple[str, str]):
+class CMTrackTask(AbstractPlaneTask):
+    def __init__(self, e1: np.ndarray, e2: np.ndarray):
         self.cmx1, self.cmx2 = np.empty((0,)), np.empty((0,))
 
-        super().__init__(axes)
+        super().__init__(e1, e2)
     
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         cm = snapshot.particles.center_of_mass()
-        (x1, x2) = self.get_quantity_axes(cm, units.kpc)
+        (x1, x2) = self.get_projection(*self.get_coordinates(cm, units.kpc))
 
         self.cmx1 = np.append(self.cmx1, x1)
         self.cmx2 = np.append(self.cmx2, x2)
@@ -253,7 +199,7 @@ class KineticEnergyTask(AbstractTask):
 
         return (np.array(self.times), np.array(self.energies))
 
-class PlaneDirectionTask(AbstractXYZTask):
+class PlaneDirectionTask(AbstractPlaneTask):
     def __init__(self, axes: Tuple[int, int], norm: float):
         self.norm = norm
 
@@ -279,7 +225,7 @@ class PlaneDirectionTask(AbstractXYZTask):
             np.array([cmx2, x2, x22, cmx2])
         )
 
-class AngularMomentumTask(AbstractXYZTask):
+class AngularMomentumTask(AbstractPlaneTask):
     def __init__(self, axes: Tuple[int, int], norm: float):
         self.norm = norm
 
