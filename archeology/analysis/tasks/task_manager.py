@@ -44,10 +44,24 @@ class VisualTask:
     def run(self, snapshot: Snapshot):
         return self.task.run(snapshot[self.part])
 
+class NbodyObject:
+    def __init__(self,
+        part: slice,
+        color: str = 'r',
+        label: str = ''
+    ) -> None:
+        self.part = part
+        self.color = color
+        self.label = label
+
 class TaskManager:
     def __init__(self) -> None:
         self.tasks = []
         self.updates = []
+        self.objects = [
+            NbodyObject(slice(200000), 'r', 'host'),
+            NbodyObject(slice(200000, None), 'g', 'satellite')
+        ]
 
     def add_tasks(self, *visual_tasks):
         vtask: VisualTask
@@ -64,77 +78,68 @@ class TaskManager:
         for update in self.updates:
             update(snapshot)
 
-    def add_spatial_tasks(self):
-        zy_host_task = VisualTask(
-            0, SpatialScatterTask(*get_unit_vectors('zy')), slice(200000)
-        )
-        zy_sat_task = VisualTask(
-            0, SpatialScatterTask(*get_unit_vectors('zy')), slice(200000, None)
-        )
+    def add_left_spatial_tasks(self):
+        tasks = []
+
+        for object in self.objects:
+            curr = VisualTask(
+                0, SpatialScatterTask(*get_unit_vectors('zy')), object.part
+            )
+            curr.task.set_density_mode(700, (-45, 45, -40, 40))
+            curr.draw_params = DrawParameters(
+                extent = [-45, 45, -40, 40],
+                channel = object.color
+            )
+
+            tasks.append(curr)
+            
+        self.add_tasks(*tasks)
         
-        gal_plane_host_task = VisualTask(
-            1, SpatialScatterTask(*get_unit_vectors('xy')), slice(200000)
-        )
-        gal_plane_sat_task = VisualTask(
-            1, SpatialScatterTask(*get_unit_vectors('xy')), slice(200000, None)
-        )
+    def add_right_spatial_tasks(self):
+        tasks = []
+
+        for object in self.objects:
+            curr = VisualTask(
+                1, SpatialScatterTask(*get_unit_vectors('xy')), object.part
+            )
+            curr.task.set_density_mode(700, (-45, 45, -40, 40))
+            curr.draw_params = DrawParameters(
+                extent = [-45, 45, -40, 40],
+                channel = object.color
+            )
+
+            tasks.append(curr)
 
         def update_galactic_plane(snapshot: Snapshot):
             gal_basis = utils.get_galactic_basis(snapshot)
-            gal_plane_host_task.task.update_basis(gal_basis[1], gal_basis[2])
-            gal_plane_sat_task.task.update_basis(gal_basis[1], gal_basis[2])
+
+            for task in tasks:
+                task.task.update_basis(gal_basis[1], gal_basis[2])
 
         self.add_update(update_galactic_plane)
+        self.add_tasks(*tasks)
 
-        zy_host_task.task.set_density_mode(700, (-45, 45, -40, 40))
-        zy_sat_task.task.set_density_mode(700, (-45, 45, -40, 40))
-        gal_plane_host_task.task.set_density_mode(700, (-45, 45, -40, 40))
-        gal_plane_sat_task.task.set_density_mode(700, (-45, 45, -40, 40))
-
-        zy_host_task.draw_params = DrawParameters(
-            extent = [-45, 45, -40, 40],
-            channel = 'g'
-        )
-        zy_sat_task.draw_params = DrawParameters(
-            extent = [-45, 45, -40, 40],
-            channel = 'r'
-        )
-        gal_plane_host_task.draw_params = DrawParameters(
-            extent = [-45, 45, -40, 40],
-            channel = 'g'
-        )
-        gal_plane_sat_task.draw_params = DrawParameters(
-            extent = [-45, 45, -40, 40], 
-            channel = 'r'
-        )
-
-        self.add_tasks(zy_sat_task, zy_host_task, gal_plane_host_task, gal_plane_sat_task)
-        
     def add_tracking_tasks(self):
-        host_xy_track_task = VisualTask(
-            0, VectorTrackTask(*get_unit_vectors('zy')), slice(200000), 
-            DrawParameters(linestyle = 'solid', color = 'g', marker = 'None')
-        )
+        tasks = []
 
-        sat_xy_track_task = VisualTask(
-            0, VectorTrackTask(*get_unit_vectors('zy')), slice(200000, None),
-            DrawParameters(linestyle = 'solid', color = 'y', marker = 'None')
-        )
+        for object in self.objects:
+            curr = VisualTask(
+                0, VectorTrackTask(*get_unit_vectors('zy')), object.part, 
+                DrawParameters(
+                    linestyle = 'solid', color = object.color, marker = 'None'
+                )
+            )
+
+            tasks.append(curr)
 
         def update_cm_vectors(snapshot: Snapshot):
-            host_xy_track_task.task.update_vector(
-                snapshot[0:200000].particles.center_of_mass(), units.kpc
-            )
-            sat_xy_track_task.task.update_vector(
-                snapshot[200000:].particles.center_of_mass(), units.kpc
-            )
+            for task in tasks:
+                task.task.update_vector(
+                    snapshot[task.part].particles.center_of_mass(), units.kpc
+                )
         
         self.add_update(update_cm_vectors)
-
-        self.add_tasks(
-            host_xy_track_task, 
-            sat_xy_track_task
-        )
+        self.add_tasks(*tasks)
 
     def add_angular_momentum_task(self):
         xy_ang_momentum_task = VisualTask(
@@ -161,27 +166,22 @@ class TaskManager:
         )
 
     def add_norm_velocity_tasks(self):
-        host_norm_vel_task = VisualTask(
-            2, 
-            NormalVelocityTask(
-                pov = [8, 0, 0] | units.kpc, 
-                pov_velocity = [0, 200, 0] | units.kms,
-                radius = 3 | units.kpc
-            ), 
-            slice(200000),
-            DrawParameters(markersize = 0.2, color = 'b')
-        )
-        sat_norm_vel_task = VisualTask(
-            2, 
-            NormalVelocityTask(
-                pov = [8, 0, 0] | units.kpc, 
-                pov_velocity = [0, 200, 0] | units.kms,
-                radius = 3 | units.kpc
-            ),
-            slice(200000, None),
-            DrawParameters(markersize = 0.2, color = 'r')
-        )
-        
+        tasks = []
+
+        for object in self.objects:
+            curr = VisualTask(
+                2, 
+                NormalVelocityTask(
+                    pov = [8, 0, 0] | units.kpc, 
+                    pov_velocity = [0, 200, 0] | units.kms,
+                    radius = 3 | units.kpc
+                ), 
+                object.part,
+                DrawParameters(markersize = 0.2, color = object.color)
+            )
+
+            tasks.append(curr)
+
         def update_norm_velocity(snapshot: Snapshot):
             particles = snapshot[0:200000].particles
             cm = particles.center_of_mass()
@@ -195,34 +195,26 @@ class TaskManager:
             sun_pos = cm + e2 * r
             sun_vel = cm_vel + e3 * v
 
-            host_norm_vel_task.task.set_pov(sun_pos, sun_vel)
-            sat_norm_vel_task.task.set_pov(sun_pos, sun_vel)
+            for task in tasks:
+                task.task.set_pov(sun_pos, sun_vel)
 
         self.add_update(update_norm_velocity)
-        self.add_tasks(
-            host_norm_vel_task, 
-            sat_norm_vel_task
-        )
+        self.add_tasks(*tasks)
 
     def add_velocity_tasks(self):
-        vel_host_task = VisualTask(
-            3, VelocityScatterTask(*get_unit_vectors('xy')), slice(200000),
-            DrawParameters(
-                markersize = 0.02, channel = 'g', extent = (-400, 400, -400, 400)
+        tasks = []
+
+        for object in self.objects:
+            curr = VisualTask(
+                3, VelocityScatterTask(*get_unit_vectors('xy')), object.part,
+                DrawParameters(
+                    markersize = 0.02, channel = object.color, extent = (-400, 400, -400, 400)
+                )
             )
-        )
+            curr.task.set_density_mode(700, (-400, 400, -400, 400))
+            tasks.append(curr)
 
-        vel_sat_task = VisualTask(
-            3, VelocityScatterTask(*get_unit_vectors('xy')), slice(200000, None),
-            DrawParameters(
-                markersize = 0.02, channel = 'r', extent = (-400, 400, -400, 400)
-            )
-        )
-
-        vel_host_task.task.set_density_mode(700, (-400, 400, -400, 400))
-        vel_sat_task.task.set_density_mode(700, (-400, 400, -400, 400))
-
-        self.add_tasks(vel_host_task, vel_sat_task)
+        self.add_tasks(*tasks)
 
     def add_distance_task(self):
         dist_task = VisualTask(
@@ -235,32 +227,26 @@ class TaskManager:
         self.add_tasks(dist_task)
 
     def add_velocity_profile_task(self):
-        host_vel_profile_task = VisualTask(
-            5, VelocityProfileTask(), slice(200000),
-            DrawParameters(
-                linestyle = 'solid', color = 'r', 
-                marker = 'None', label = 'host'
-            )
-        )
+        tasks = []
 
-        sat_vel_profile_task = VisualTask(
-            5, VelocityProfileTask(), slice(200000, None),
-            DrawParameters(
-                linestyle = 'solid', color = 'g', 
-                marker = 'None', label = 'sat'
-            )
-        )
-        
+        for object in self.objects:
+            tasks.append(VisualTask(
+                5, VelocityProfileTask(), object.part,
+                DrawParameters(
+                    linestyle = 'solid', color = object.color, 
+                    marker = 'None', label = object.label
+                )
+            ))
+
         sum_vel_profile_task = VisualTask(
             5, VelocityProfileTask(), 
             draw_params = DrawParameters(
-                linestyle = 'solid', color = 'b', 
+                linestyle = 'solid', color = 'y', 
                 marker = 'None', label = 'all'
             )
         )
 
         self.add_tasks(
-            host_vel_profile_task, 
-            sat_vel_profile_task,
+            *tasks,
             sum_vel_profile_task
         )
