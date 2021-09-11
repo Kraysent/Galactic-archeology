@@ -3,7 +3,6 @@
 - Place heavy particles into the center of the galaxies.
 - (as an exercise) Explore the dependency of the merger time on the direction of the infall of the satellite. 
 - Explore the dependency of the merger time on the masses of black holes (with masses like 10, 20, 30 times of the real black hole) and extrapolate it to the actual masses (we cannot explore them directly because of mass resolution).
-- Stop mixing colors on the different plots.
 
 ### More distant future: 
 - Play with mass resolution of the models.
@@ -15,13 +14,12 @@
 - Integrator does not write T = 0 to output file
 
 ### Nearest future:
-- Deal with the tree of abstract classes: do we really need abstractxyztask and abstractscattertask as its heir? 
 - Create kind of time plot abstract class that has no options.
 - Zoom in the central region during late stages of evolution.
 - Add contour plots along with density ones.
-- Swap AbstractXYZTask with AbstractPlaneTask (or just method in abstracttask?) that can project data on any plane. 
 - Clean up DrawParameters. There are probably some unnecessary fields.
 - Track some particular parameters more often during integration and write them somewhere (into the fits or in the separate file)
+- Stop mixing colors on the different plots (probably for one simulation there should be slice selected in the beginning and used for all the object-specific calculations)
 
 ### More distant future:
 - Add some kind of free parameters' space to the Snapshot class. Probably it should be made with PhaseSpace class that stores x, y, z, vx, vy, vz and some other parameters.

@@ -4,10 +4,12 @@ import numpy as np
 from amuse.lab import units
 from archeology.analysis import utils
 from archeology.analysis.tasks import (AbstractTask, AngularMomentumTask,
-                                       CMDistanceTask, CMTrackTask,
-                                       NormalVelocityTask, PlaneDirectionTask,
-                                       SpatialScatterTask, VelocityProfileTask)
-from archeology.analysis.tasks.abstract_task import VelocityScatterTask, get_unit_vectors
+                                       CMDistanceTask, NormalVelocityTask,
+                                       PlaneDirectionTask, SpatialScatterTask,
+                                       VelocityProfileTask)
+from archeology.analysis.tasks.abstract_task import (VectorTrackTask,
+                                                     VelocityScatterTask,
+                                                     get_unit_vectors)
 from archeology.analysis.utils import DrawParameters, get_galactic_basis
 from archeology.datamodel import Snapshot
 
@@ -110,30 +112,28 @@ class TaskManager:
         
     def add_tracking_tasks(self):
         host_xy_track_task = VisualTask(
-            0, CMTrackTask(('x', 'y')), slice(200000), 
+            0, VectorTrackTask(*get_unit_vectors('zy')), slice(200000), 
             DrawParameters(linestyle = 'solid', color = 'g', marker = 'None')
         )
 
         sat_xy_track_task = VisualTask(
-            0, CMTrackTask(('x', 'y')), slice(200000, None),
+            0, VectorTrackTask(*get_unit_vectors('zy')), slice(200000, None),
             DrawParameters(linestyle = 'solid', color = 'y', marker = 'None')
         )
 
-        host_zy_track_task = VisualTask(
-            1, CMTrackTask(('z', 'y')), slice(200000),
-            DrawParameters(linestyle = 'solid', color = 'g', marker = 'None')
-        )
-
-        sat_zy_track_task = VisualTask(
-            1, CMTrackTask(('z', 'y')), slice(200000, None),
-            DrawParameters(linestyle = 'solid', color = 'y', marker = 'None')
-        )
+        def update_cm_vectors(snapshot: Snapshot):
+            host_xy_track_task.task.update_vector(
+                snapshot[0:200000].particles.center_of_mass(), units.kpc
+            )
+            sat_xy_track_task.task.update_vector(
+                snapshot[200000:].particles.center_of_mass(), units.kpc
+            )
+        
+        self.add_update(update_cm_vectors)
 
         self.add_tasks(
             host_xy_track_task, 
-            sat_xy_track_task, 
-            host_zy_track_task, 
-            sat_zy_track_task
+            sat_xy_track_task
         )
 
     def add_angular_momentum_task(self):

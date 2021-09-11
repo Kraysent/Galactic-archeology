@@ -64,7 +64,7 @@ def analize(datadir: str):
     task_manager = TaskManager()
 
     task_manager.add_spatial_tasks()
-    # task_manager.add_tracking_tasks()
+    task_manager.add_tracking_tasks()
     task_manager.add_norm_velocity_tasks()
     # task_manager.add_angular_momentum_task()
     task_manager.add_velocity_tasks()

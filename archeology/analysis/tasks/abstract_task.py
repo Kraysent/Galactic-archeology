@@ -136,20 +136,25 @@ class VelocityProfileTask(AbstractTask):
 
         return (r, v)
 
-class CMTrackTask(AbstractPlaneTask):
+class VectorTrackTask(AbstractPlaneTask):
     def __init__(self, e1: np.ndarray, e2: np.ndarray):
-        self.cmx1, self.cmx2 = np.empty((0,)), np.empty((0,))
+        self.vector = None
+        self.x1 = np.empty((0,))
+        self.x2 = np.empty((0,))
 
         super().__init__(e1, e2)
     
+    def update_vector(self, vector: VectorQuantity, unit: named_unit):
+        self.vector = vector
+        self.unit = unit
+
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
-        cm = snapshot.particles.center_of_mass()
-        (x1, x2) = self.get_projection(*self.get_coordinates(cm, units.kpc))
+        (x1, x2) = self.get_projection(*self.get_coordinates(self.vector, self.unit))
 
-        self.cmx1 = np.append(self.cmx1, x1)
-        self.cmx2 = np.append(self.cmx2, x2)
+        self.x1 = np.append(self.x1, x1)
+        self.x2 = np.append(self.x2, x2)
 
-        return (self.cmx1, self.cmx2)
+        return (self.x1, self.x2)
 
 class NormalVelocityTask(AbstractTask):
     def __init__(self, 
@@ -261,9 +266,3 @@ class CMDistanceTask(AbstractTask):
         self.time.append(snapshot.timestamp.value_in(units.Myr))
 
         return (np.array(self.time), np.array(self.dist))
-
-class TestLineTask(AbstractTask):
-    def run(self, snapshot: Snapshot) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
-        return (np.array([0, 100]), np.array([0, 100]))
-
-
