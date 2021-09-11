@@ -25,7 +25,7 @@ def get_unit_vectors(names: str) -> np.ndarray:
         output.append(np.array(result))
 
     return output
-
+ 
 class AbstractTask(ABC):
     @abstractmethod
     def run(
@@ -135,6 +135,26 @@ class VelocityProfileTask(AbstractTask):
         v = v.reshape(-1, resolution).mean(axis = 1)
 
         return (r, v)
+
+class PointEmphasisTask(AbstractPlaneTask):
+    def __init__(self, e1: np.ndarray, e2: np.ndarray):
+        self.vector = None
+        self.x1 = np.empty((0,))
+        self.x2 = np.empty((0,))
+
+        super().__init__(e1, e2)
+    
+    def update_vector(self, vector: VectorQuantity, unit: named_unit):
+        self.vector = vector
+        self.unit = unit
+
+    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
+        (x1, x2) = self.get_projection(*self.get_coordinates(self.vector, self.unit))
+
+        self.x1 = np.append(self.x1, x1)
+        self.x2 = np.append(self.x2, x2)
+
+        return (self.x1[-1:], self.x2[-1:])
 
 class VectorTrackTask(AbstractPlaneTask):
     def __init__(self, e1: np.ndarray, e2: np.ndarray):

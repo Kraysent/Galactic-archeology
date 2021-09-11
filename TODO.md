@@ -19,11 +19,11 @@
 - Add contour plots along with density ones.
 - Clean up DrawParameters. There are probably some unnecessary fields.
 - Track some particular parameters more often during integration and write them somewhere (into the fits or in the separate file)
-- Stop mixing colors on the different plots (probably for one simulation there should be slice selected in the beginning and used for all the object-specific calculations)
 
 ### More distant future:
 - Add some kind of free parameters' space to the Snapshot class. Probably it should be made with PhaseSpace class that stores x, y, z, vx, vy, vz and some other parameters.
 - Add tests for the code.
+- Update README.md
 
 ## Thoughts:
 ### Models:

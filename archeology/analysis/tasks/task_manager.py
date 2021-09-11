@@ -1,15 +1,13 @@
 from typing import Any, Callable, List
 
-import numpy as np
 from amuse.lab import units
 from archeology.analysis import utils
 from archeology.analysis.tasks import (AbstractTask, AngularMomentumTask,
                                        CMDistanceTask, NormalVelocityTask,
-                                       PlaneDirectionTask, SpatialScatterTask,
-                                       VelocityProfileTask)
-from archeology.analysis.tasks.abstract_task import (VectorTrackTask,
-                                                     VelocityScatterTask,
-                                                     get_unit_vectors)
+                                       PlaneDirectionTask, PointEmphasisTask,
+                                       SpatialScatterTask, VectorTrackTask,
+                                       VelocityProfileTask,
+                                       VelocityScatterTask, get_unit_vectors)
 from archeology.analysis.utils import DrawParameters, get_galactic_basis
 from archeology.datamodel import Snapshot
 
@@ -59,8 +57,8 @@ class TaskManager:
         self.tasks = []
         self.updates = []
         self.objects = [
-            NbodyObject(slice(200000), 'r', 'host'),
-            NbodyObject(slice(200000, None), 'g', 'satellite')
+            NbodyObject(slice(200000), 'g', 'host'),
+            NbodyObject(slice(200000, None), 'r', 'satellite')
         ]
 
     def add_tasks(self, *visual_tasks):
@@ -94,7 +92,7 @@ class TaskManager:
             tasks.append(curr)
             
         self.add_tasks(*tasks)
-        
+
     def add_right_spatial_tasks(self):
         tasks = []
 
@@ -123,20 +121,29 @@ class TaskManager:
         tasks = []
 
         for object in self.objects:
-            curr = VisualTask(
-                0, VectorTrackTask(*get_unit_vectors('zy')), object.part, 
+            tasks.append(VisualTask(
+                1, VectorTrackTask(*get_unit_vectors('zy')), object.part, 
                 DrawParameters(
                     linestyle = 'solid', color = object.color, marker = 'None'
                 )
-            )
+            ))
 
-            tasks.append(curr)
+            tasks.append(VisualTask(
+                1, PointEmphasisTask(*get_unit_vectors('zy')), object.part,
+                DrawParameters(
+                    linestyle = 'solid', color = object.color, 
+                    marker = 'o', markersize = 5
+                )
+            ))
 
         def update_cm_vectors(snapshot: Snapshot):
+            gal_basis = utils.get_galactic_basis(snapshot)
+
             for task in tasks:
                 task.task.update_vector(
-                    snapshot[task.part].particles.center_of_mass(), units.kpc
+                    snapshot[task.part].particles[1000].position, units.kpc
                 )
+                task.task.update_basis(gal_basis[1], gal_basis[2])
         
         self.add_update(update_cm_vectors)
         self.add_tasks(*tasks)
