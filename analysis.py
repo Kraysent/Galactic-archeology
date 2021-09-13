@@ -14,7 +14,7 @@ def analize(datadir: str):
     visualizer.add_axes(0, 0.35, 0.35, 0.6)
     visualizer.set_plot_parameters(0,
         xlim = (-45, 45), ylim = (-40, 40),
-        xlabel = 'x, kpc', ylabel = 'y, kpc',
+        xlabel = 'z, kpc', ylabel = 'y, kpc',
         xticks = [0, 10], yticks = [0, 10]
     )
 
@@ -65,7 +65,7 @@ def analize(datadir: str):
 
     task_manager.add_left_spatial_tasks()
     task_manager.add_right_spatial_tasks()
-    task_manager.add_tracking_tasks()
+    # task_manager.add_tracking_tasks()
     task_manager.add_norm_velocity_tasks()
     # task_manager.add_angular_momentum_task()
     task_manager.add_velocity_tasks()
@@ -73,7 +73,7 @@ def analize(datadir: str):
     task_manager.add_velocity_profile_task()
 
     i = 0
-    filename = f'{datadir}/models/flat_out1.fits'
+    filename = f'{datadir}/models/bh_0_25_out.fits'
 
     def extract_barion_matter(snapshot: Snapshot):
         return snapshot[0: 200000] + snapshot[1000000:1100000]
@@ -100,6 +100,6 @@ def analize(datadir: str):
         visualizer.save(f'{datadir}/img-{i:03d}.png')
 
         end = time.time()
-        print(f'{i:03d}\t{np.round(start_save - start_comp, 2):.02f}\t{np.round(end - start_save, 2):.02f}')
+        print(f'{i:03d}\t{start_save - start_comp:.02f}\t{end - start_save:.02f}')
         
         i += 1

@@ -1,3 +1,4 @@
+from amuse.datamodel.particles import Particle, Particles
 from amuse.lab import units
 from amuse.units.quantities import ScalarQuantity
 
@@ -15,23 +16,35 @@ def create(datadir: str):
 
         return offset
 
-    def get_velocity(module: ScalarQuantity, pointing: float):
+    def get_velocity(module: ScalarQuantity, pointing: float, zvalue: ScalarQuantity):
         v_r = module / (pointing ** 2 + 1) ** 0.5
         v_tau = pointing * v_r
 
         vel = [0, 0, 0] | units.kms
         vel[0] = - v_r
         vel[1] = v_tau
+        vel[2] = zvalue
 
         return vel
 
     print('Building model...')
+    sat_offset = get_offset(150 | units.kpc)
+    sat_velocity = get_velocity(113 | units.kms, 1, 10 | units.kms)
     builder = SnapshotBuilder()
-    builder.add_snapshot(host)
-    builder.add_snapshot(sat, 
-        get_offset(150 | units.kpc), 
-        get_velocity(113 | units.kms, 0.75)
-    )
 
-    builder.to_fits(f'{datadir}/models/example.fits')
+    black_holes = Particles(2)
+    black_holes[0].position = [0., 0., 0.] | units.kpc
+    black_holes[0].velocity = [0., 0., 0.] | units.kms
+    black_holes[0].mass = 5e7 | units.MSun
+
+    black_holes[1].position = sat_offset
+    black_holes[1].velocity = sat_velocity
+    black_holes[1].mass = 1e7 | units.MSun
+
+    builder.add_particles(black_holes[:1])
+    builder.add_snapshot(host)
+    builder.add_particles(black_holes[1:])
+    builder.add_snapshot(sat, sat_offset, sat_velocity)
+
+    builder.to_fits(f'{datadir}/models/bh_1_0.fits')
     print('Model built.')

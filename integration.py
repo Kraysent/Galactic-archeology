@@ -8,7 +8,7 @@ from archeology.integration import PyfalconIntegrator
 
 
 def integrate(datadir: str):
-    snapshot = Snapshot.from_fits(f'{datadir}/models/example.fits')
+    snapshot = Snapshot.from_fits(f'{datadir}/models/bh_1_0.fits')
 
     integrator = PyfalconIntegrator(snapshot, 0.2 | units.kpc, 8)
     t = 0
@@ -17,17 +17,20 @@ def integrate(datadir: str):
     model_time = 0
     i = 0
 
-    while model_time < 100:
+    while model_time < 10000:
         model_time = integrator.timestamp.value_in(units.Myr)
         start = time.time()
         integrator.leapfrog()
         i += 1
 
-        if i % 2 == 0:
+        if i % 15 == 0:
             snapshot = integrator.get_snapshot()
-            snapshot.to_fits(f'{datadir}/models/example_out.fits', append = True)
+            snapshot.to_fits(f'{datadir}/models/bh_1_0_out.fits', append = True)
 
         elapsed_time = time.time() - start
         t += elapsed_time
 
-        print(f'{np.round(model_time, 2)}\t{np.round(t, 2)}\t{np.round(elapsed_time, 2)}')
+        print(f'{model_time:.01f}\t{t:.01f}\t{elapsed_time:.02f}')
+
+        # i += 1
+
