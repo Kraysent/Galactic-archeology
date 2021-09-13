@@ -21,7 +21,6 @@ def integrate(datadir: str):
         model_time = integrator.timestamp.value_in(units.Myr)
         start = time.time()
         integrator.leapfrog()
-        i += 1
 
         if i % 15 == 0:
             snapshot = integrator.get_snapshot()
@@ -32,5 +31,4 @@ def integrate(datadir: str):
 
         print(f'{model_time:.01f}\t{t:.01f}\t{elapsed_time:.02f}')
 
-        # i += 1
-
+        i += 1
