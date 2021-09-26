@@ -5,33 +5,17 @@ from archeology.analysis import utils
 from archeology.analysis.tasks import (AbstractTask, AngularMomentumTask,
                                        NormalVelocityTask, PlaneDirectionTask,
                                        PointEmphasisTask, SpatialScatterTask,
-                                       VectorTrackTask, VelocityProfileTask,
+                                       VelocityProfileTask,
                                        VelocityScatterTask, get_unit_vectors)
 from archeology.analysis.tasks.abstract_task import DistanceTask
 from archeology.analysis.utils import DrawParameters, get_galactic_basis
 from archeology.datamodel import Snapshot
 
-
-def get_sun_position_and_velocity(snapshot: Snapshot):
-    particles = snapshot[0:200000].particles
-    cm = particles.center_of_mass()
-    cm_vel = particles.center_of_mass_velocity()
-
-    (e1, e2, e3) = get_galactic_basis(snapshot[0:200000])
-
-    r = 8 | units.kpc
-    v = 200 | units.kms
-
-    sun_pos = cm + e2 * r
-    sun_vel = cm_vel + e3 * v
-
-    return sun_pos, sun_vel
-
 class VisualTask:
     def __init__(self, 
         axes_id: int, 
         task: AbstractTask,
-        part: slice = slice(0, None),
+        part = slice(0, None),
         draw_params: DrawParameters = DrawParameters()
     ):
         self.axes_id = axes_id
@@ -39,8 +23,21 @@ class VisualTask:
         self.part = part
         self.draw_params = draw_params
 
+    def _get_sliced_snapshot(self, snapshot: Snapshot):
+        if isinstance(self.part, slice):
+            return snapshot[self.part]
+        elif isinstance(self.part, tuple):
+            total = snapshot[self.part[0]]
+
+            for i in range(1, len(self.part)):
+                total.add(snapshot[self.part[i]])
+
+            return total
+        else:
+            raise RuntimeError('Unknown slicing type')
+
     def run(self, snapshot: Snapshot):
-        return self.task.run(snapshot[self.part])
+        return self.task.run(self._get_sliced_snapshot(snapshot))
 
 class NbodyObject:
     def __init__(self,
@@ -58,7 +55,7 @@ class TaskManager:
         self.updates = []
         self.objects = [
             NbodyObject(slice(200001), 'b', 'host'),
-            NbodyObject(slice(200001, None), 'r', 'satellite')
+            NbodyObject(slice(1000001, 1100002), 'r', 'satellite')
         ]
 
     def add_tasks(self, *visual_tasks):
@@ -121,13 +118,6 @@ class TaskManager:
         tasks = []
 
         for object in self.objects:
-            # tasks.append(VisualTask(
-            #     1, VectorTrackTask(*get_unit_vectors('zy')), object.part, 
-            #     DrawParameters(
-            #         linestyle = 'solid', color = object.color, marker = 'None'
-            #     )
-            # ))
-
             tasks.append(VisualTask(
                 0, PointEmphasisTask(*get_unit_vectors('zy')), object.part,
                 DrawParameters(
@@ -144,7 +134,7 @@ class TaskManager:
                 )
             ))
 
-        def update_cm_vectors(snapshot: Snapshot):
+        def update_vectors(snapshot: Snapshot):
             gal_basis = utils.get_galactic_basis(snapshot)
 
             for task in tasks:
@@ -154,8 +144,8 @@ class TaskManager:
 
             for task in (tasks[1], tasks[3]):
                 task.task.update_basis(gal_basis[1], gal_basis[2])
-        
-        self.add_update(update_cm_vectors)
+
+        self.add_update(update_vectors)
         self.add_tasks(*tasks)
 
     def add_angular_momentum_task(self):
@@ -243,8 +233,8 @@ class TaskManager:
 
         def update_bh_coords(snapshot: Snapshot):
             dist_task.task.update_points(
-                snapshot.particles[0].position, 
-                snapshot.particles[200001].position, 
+                snapshot[self.objects[0].part].particles[0].position, 
+                snapshot[self.objects[1].part].particles[0].position, 
                 units.kpc
             )
 
@@ -265,7 +255,8 @@ class TaskManager:
 
         sum_vel_profile_task = VisualTask(
             5, VelocityProfileTask(), 
-            draw_params = DrawParameters(
+            (self.objects[0].part, self.objects[1].part),
+            DrawParameters(
                 linestyle = 'solid', color = 'y', 
                 marker = 'None', label = 'all'
             )

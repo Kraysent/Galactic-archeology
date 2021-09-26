@@ -26,7 +26,7 @@ def analize(datadir: str):
 
     visualizer.add_axes(0.72, 0.66, 0.14, 0.3)
     visualizer.set_plot_parameters(2,
-        xlim = (-200, 200), ylim = (0, 200),
+        xlim = (-350, 350), ylim = (0, 350),
         xlabel = '$v_r$, km/s', ylabel = '$v_{\\tau}$, km/s'
     )
 
@@ -75,16 +75,13 @@ def analize(datadir: str):
     i = 0
     filename = f'{datadir}/models/bh_1_0_out.fits'
 
-    def extract_barion_matter(snapshot: Snapshot):
-        return snapshot[0: 200001] + snapshot[1000001:1100002]
-
     timestamps_num = Snapshot.file_info(filename)
 
     print('i\ttimestamp\tcomp\tsave')
 
     for i in range(timestamps_num):
         start_comp = time.time()
-        snapshot = extract_barion_matter(Snapshot.from_fits(filename, i))
+        snapshot = Snapshot.from_fits(filename, i)
         
         task_manager.update_tasks(snapshot)
 

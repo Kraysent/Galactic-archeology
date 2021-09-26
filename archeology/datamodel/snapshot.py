@@ -14,7 +14,10 @@ class Snapshot:
         'mass': units.MSun
     }
     
-    def __init__(self, particles: Particles, timestamp: ScalarQuantity):
+    def __init__(self, 
+        particles: Particles = Particles(), 
+        timestamp: ScalarQuantity = 0 | units.Myr
+    ):
         self.particles = particles
         self.timestamp = timestamp
 
@@ -30,6 +33,17 @@ class Snapshot:
             return Snapshot(particles, self.timestamp)
         else:
             raise RuntimeError('Tried to sum snapshots with different timestamps.')
+
+    def add(self, other: 'Snapshot', ignore_timestamp = False):
+        '''
+        Adds other snapshot to this one. If ignore_timestamps is False, 
+        does not change timestamp. Otherwise RuntimeError would be thrown if 
+        timestamps are different.
+        '''
+        if not ignore_timestamp and (self.timestamp != other.timestamp):
+            raise RuntimeError('Tried to sum snapshots with different timestamps.')
+
+        self.particles.add_particles(other.particles)
 
     @staticmethod
     def file_info(filename: str) -> int:
