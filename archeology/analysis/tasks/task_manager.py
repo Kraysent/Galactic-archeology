@@ -3,11 +3,11 @@ from typing import Any, Callable, List
 from amuse.lab import units
 from archeology.analysis import utils
 from archeology.analysis.tasks import (AbstractTask, AngularMomentumTask,
-                                       CMDistanceTask, NormalVelocityTask,
-                                       PlaneDirectionTask, PointEmphasisTask,
-                                       SpatialScatterTask, VectorTrackTask,
-                                       VelocityProfileTask,
+                                       NormalVelocityTask, PlaneDirectionTask,
+                                       PointEmphasisTask, SpatialScatterTask,
+                                       VectorTrackTask, VelocityProfileTask,
                                        VelocityScatterTask, get_unit_vectors)
+from archeology.analysis.tasks.abstract_task import DistanceTask
 from archeology.analysis.utils import DrawParameters, get_galactic_basis
 from archeology.datamodel import Snapshot
 
@@ -57,8 +57,8 @@ class TaskManager:
         self.tasks = []
         self.updates = []
         self.objects = [
-            NbodyObject(slice(200000), 'g', 'host'),
-            NbodyObject(slice(200000, None), 'r', 'satellite')
+            NbodyObject(slice(200001), 'b', 'host'),
+            NbodyObject(slice(200001, None), 'r', 'satellite')
         ]
 
     def add_tasks(self, *visual_tasks):
@@ -121,10 +121,18 @@ class TaskManager:
         tasks = []
 
         for object in self.objects:
+            # tasks.append(VisualTask(
+            #     1, VectorTrackTask(*get_unit_vectors('zy')), object.part, 
+            #     DrawParameters(
+            #         linestyle = 'solid', color = object.color, marker = 'None'
+            #     )
+            # ))
+
             tasks.append(VisualTask(
-                1, VectorTrackTask(*get_unit_vectors('zy')), object.part, 
+                0, PointEmphasisTask(*get_unit_vectors('zy')), object.part,
                 DrawParameters(
-                    linestyle = 'solid', color = object.color, marker = 'None'
+                    linestyle = 'solid', color = object.color, 
+                    marker = 'o', markersize = 5
                 )
             ))
 
@@ -141,8 +149,10 @@ class TaskManager:
 
             for task in tasks:
                 task.task.update_vector(
-                    snapshot[task.part].particles[1000].position, units.kpc
+                    snapshot[task.part].particles[0].position, units.kpc
                 )
+
+            for task in (tasks[1], tasks[3]):
                 task.task.update_basis(gal_basis[1], gal_basis[2])
         
         self.add_update(update_cm_vectors)
@@ -197,7 +207,7 @@ class TaskManager:
             (e1, e2, e3) = get_galactic_basis(snapshot[0:200000])
 
             r = 8 | units.kpc
-            v = 200 | units.kms
+            v = -200 | units.kms
 
             sun_pos = cm + e2 * r
             sun_vel = cm_vel + e3 * v
@@ -225,12 +235,20 @@ class TaskManager:
 
     def add_distance_task(self):
         dist_task = VisualTask(
-            4, CMDistanceTask(slice(0, 200000, None), slice(200000, None, None)),
+            4, DistanceTask(),
             draw_params = DrawParameters(
                 linestyle = 'solid', color = 'r'
             )   
         )
 
+        def update_bh_coords(snapshot: Snapshot):
+            dist_task.task.update_points(
+                snapshot.particles[0].position, 
+                snapshot.particles[200001].position, 
+                units.kpc
+            )
+
+        self.add_update(update_bh_coords)
         self.add_tasks(dist_task)
 
     def add_velocity_profile_task(self):

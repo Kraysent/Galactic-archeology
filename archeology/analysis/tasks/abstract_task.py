@@ -5,7 +5,7 @@ from typing import Tuple, Union
 import numpy as np
 from amuse.lab import units
 from amuse.units.core import named_unit
-from amuse.units.quantities import VectorQuantity
+from amuse.units.quantities import ScalarQuantity, VectorQuantity
 import archeology.analysis.utils as utils
 from archeology.datamodel import Snapshot
 
@@ -131,8 +131,9 @@ class VelocityProfileTask(AbstractTask):
         v = v[perm]
 
         resolution = 1000
-        r = r.reshape(-1, resolution).mean(axis = 1)
-        v = v.reshape(-1, resolution).mean(axis = 1)
+        number_of_chunks = (len(r) // resolution) * resolution
+        r = r[0:number_of_chunks].reshape(-1, resolution).mean(axis = 1)
+        v = v[0:number_of_chunks].reshape(-1, resolution).mean(axis = 1)
 
         return (r, v)
 
@@ -270,18 +271,21 @@ class AngularMomentumTask(AbstractPlaneTask):
 
         return (np.array([cmx1, x1]), np.array([cmx2, x2]))
 
-class CMDistanceTask(AbstractTask):
-    def __init__(self, part1: slice, part2: slice):
-        self.part1 = part1
-        self.part2 = part2
+class DistanceTask(AbstractTask):
+    def __init__(self):
         self.dist = []
         self.time = []
 
-    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
-        cm1 = snapshot.particles[self.part1].center_of_mass().value_in(units.kpc)
-        cm2 = snapshot.particles[self.part2].center_of_mass().value_in(units.kpc)
+    def update_points(self, vector1: VectorQuantity, vector2: VectorQuantity, unit: named_unit):
+        self.v1 = vector1
+        self.v2 = vector2
+        self.unit = unit
 
-        dist = ((cm1 - cm2) ** 2).sum() ** 0.5
+    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
+        v1 = self.v1.value_in(units.kpc)
+        v2 = self.v2.value_in(units.kpc)
+
+        dist = ((v1 - v2) ** 2).sum() ** 0.5
         self.dist.append(dist)
         self.time.append(snapshot.timestamp.value_in(units.Myr))
 

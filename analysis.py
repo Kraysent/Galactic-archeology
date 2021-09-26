@@ -26,7 +26,7 @@ def analize(datadir: str):
 
     visualizer.add_axes(0.72, 0.66, 0.14, 0.3)
     visualizer.set_plot_parameters(2,
-        xlim = (-600, 600), ylim = (0, 500),
+        xlim = (-200, 200), ylim = (0, 200),
         xlabel = '$v_r$, km/s', ylabel = '$v_{\\tau}$, km/s'
     )
 
@@ -40,7 +40,7 @@ def analize(datadir: str):
     visualizer.set_plot_parameters(4,
         xlim = (0, 10000), ylim = (0, 150),
         xlabel = 'Time, Myr', ylabel = 'Separation, kpc',
-        grid = True, yscale = 'log'
+        grid = True
     )
 
     visualizer.add_axes(0.18, 0, 0.32, 0.3)
@@ -65,7 +65,7 @@ def analize(datadir: str):
 
     task_manager.add_left_spatial_tasks()
     task_manager.add_right_spatial_tasks()
-    # task_manager.add_tracking_tasks()
+    task_manager.add_tracking_tasks()
     task_manager.add_norm_velocity_tasks()
     # task_manager.add_angular_momentum_task()
     task_manager.add_velocity_tasks()
@@ -73,14 +73,14 @@ def analize(datadir: str):
     task_manager.add_velocity_profile_task()
 
     i = 0
-    filename = f'{datadir}/models/bh_0_25_out.fits'
+    filename = f'{datadir}/models/bh_1_0_out.fits'
 
     def extract_barion_matter(snapshot: Snapshot):
-        return snapshot[0: 200000] + snapshot[1000000:1100000]
+        return snapshot[0: 200001] + snapshot[1000001:1100002]
 
     timestamps_num = Snapshot.file_info(filename)
 
-    print('i\tcomp\tsave')
+    print('i\ttimestamp\tcomp\tsave')
 
     for i in range(timestamps_num):
         start_comp = time.time()
@@ -100,6 +100,6 @@ def analize(datadir: str):
         visualizer.save(f'{datadir}/img-{i:03d}.png')
 
         end = time.time()
-        print(f'{i:03d}\t{start_save - start_comp:.02f}\t{end - start_save:.02f}')
+        print(f'{i:03d}\t{timestamp:.02f}\t\t{start_save - start_comp:.02f}\t{end - start_save:.02f}')
         
         i += 1
