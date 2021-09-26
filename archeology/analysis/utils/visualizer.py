@@ -100,7 +100,8 @@ class Visualizer:
 
         if span != 0:
             diff = array - min_val
-            array = diff / span * (end - start) + start
+            non_zero_filter = diff != 0
+            array[non_zero_filter] = (1 - diff[non_zero_filter] / span) * (end - start) + start
 
         return array
 
