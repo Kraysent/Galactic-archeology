@@ -119,10 +119,14 @@ class VelocityScatterTask(AbstractScatterTask):
         return self.apply_mode(vx1, vx2)
 
 class VelocityProfileTask(AbstractTask):
+    def __init__(self) -> None:
+        self.center_pos = [0, 0, 0] | units.kpc
+        self.center_vel = [0, 0, 0] | units.kms
+
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         particles = snapshot.particles
-        r = (particles.position - particles.center_of_mass()).value_in(units.kpc)
-        v = (particles.velocity - particles.center_of_mass_velocity()).value_in(units.kms)
+        r = (particles.position - self.center_pos).value_in(units.kpc)
+        v = (particles.velocity - self.center_vel).value_in(units.kms)
         r = (r ** 2).sum(axis = 1) ** 0.5
         v = (v ** 2).sum(axis = 1) ** 0.5
 
@@ -136,6 +140,10 @@ class VelocityProfileTask(AbstractTask):
         v = v[0:number_of_chunks].reshape(-1, resolution).mean(axis = 1)
 
         return (r, v)
+
+    def update_center(self, pos: VectorQuantity, vel: VectorQuantity):
+        self.center_pos = pos
+        self.center_vel = vel
 
 class PointEmphasisTask(AbstractPlaneTask):
     def __init__(self, e1: np.ndarray, e2: np.ndarray):

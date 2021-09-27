@@ -16,14 +16,16 @@ class VisualTask:
         axes_id: int, 
         task: AbstractTask,
         part = slice(0, None),
-        draw_params: DrawParameters = DrawParameters()
+        draw_params: DrawParameters = DrawParameters(),
+        action: Callable[[Snapshot], Any] = None
     ):
         self.axes_id = axes_id
         self.task = task
         self.part = part
         self.draw_params = draw_params
+        self.action = action
 
-    def _get_sliced_snapshot(self, snapshot: Snapshot):
+    def get_active_snapshot(self, snapshot: Snapshot):
         if isinstance(self.part, slice):
             return snapshot[self.part]
         elif isinstance(self.part, tuple):
@@ -37,7 +39,10 @@ class VisualTask:
             raise RuntimeError('Unknown slicing type')
 
     def run(self, snapshot: Snapshot):
-        return self.task.run(self._get_sliced_snapshot(snapshot))
+        if self.action is not None:
+            self.action(snapshot)
+        
+        return self.task.run(self.get_active_snapshot(snapshot))
 
 class NbodyObject:
     def __init__(self,
@@ -76,14 +81,14 @@ class TaskManager:
     def add_left_spatial_tasks(self):
         tasks = []
 
-        for object in self.objects:
+        for obj in self.objects:
             curr = VisualTask(
-                0, SpatialScatterTask(*get_unit_vectors('zy')), object.part
+                0, SpatialScatterTask(*get_unit_vectors('zy')), obj.part
             )
             curr.task.set_density_mode(700, (-45, 45, -40, 40))
             curr.draw_params = DrawParameters(
                 extent = [-45, 45, -40, 40],
-                channel = object.color
+                channel = obj.color
             )
 
             tasks.append(curr)
@@ -93,59 +98,65 @@ class TaskManager:
     def add_right_spatial_tasks(self):
         tasks = []
 
-        for object in self.objects:
+        for obj in self.objects:
             curr = VisualTask(
-                1, SpatialScatterTask(*get_unit_vectors('xy')), object.part
+                1, SpatialScatterTask(*get_unit_vectors('xy')), obj.part
             )
             curr.task.set_density_mode(700, (-45, 45, -40, 40))
             curr.draw_params = DrawParameters(
                 extent = [-45, 45, -40, 40],
-                channel = object.color
+                channel = obj.color
             )
+
+            def update_action(snapshot: Snapshot, curr = curr):
+                gal_basis = utils.get_galactic_basis(snapshot)
+                curr.task.update_basis(gal_basis[1], gal_basis[2])
+
+            curr.action = update_action
 
             tasks.append(curr)
 
-        def update_galactic_plane(snapshot: Snapshot):
-            gal_basis = utils.get_galactic_basis(snapshot)
-
-            for task in tasks:
-                task.task.update_basis(gal_basis[1], gal_basis[2])
-
-        self.add_update(update_galactic_plane)
         self.add_tasks(*tasks)
 
     def add_tracking_tasks(self):
         tasks = []
 
-        for object in self.objects:
-            tasks.append(VisualTask(
-                0, PointEmphasisTask(*get_unit_vectors('zy')), object.part,
+        for obj in self.objects:
+            curr = VisualTask(
+                0, PointEmphasisTask(*get_unit_vectors('zy')), obj.part,
                 DrawParameters(
-                    linestyle = 'solid', color = object.color, 
+                    linestyle = 'solid', color = obj.color, 
                     marker = 'o', markersize = 5
                 )
-            ))
+            )
 
-            tasks.append(VisualTask(
-                1, PointEmphasisTask(*get_unit_vectors('zy')), object.part,
+            def update_action(snapshot: Snapshot, curr = curr):
+                curr.task.update_vector(
+                    snapshot[curr.part].particles[0].position, units.kpc
+                )
+
+            curr.action = update_action
+            tasks.append(curr)
+
+            curr = VisualTask(
+                1, PointEmphasisTask(*get_unit_vectors('zy')), obj.part,
                 DrawParameters(
-                    linestyle = 'solid', color = object.color, 
+                    linestyle = 'solid', color = obj.color, 
                     marker = 'o', markersize = 5
                 )
-            ))
+            )
 
-        def update_vectors(snapshot: Snapshot):
-            gal_basis = utils.get_galactic_basis(snapshot)
+            def update_action(snapshot: Snapshot, curr = curr):
+                gal_basis = utils.get_galactic_basis(snapshot)
 
-            for task in tasks:
-                task.task.update_vector(
-                    snapshot[task.part].particles[0].position, units.kpc
+                curr.task.update_vector(
+                    snapshot[curr.part].particles[0].position, units.kpc
                 )
+                curr.task.update_basis(gal_basis[1], gal_basis[2])
 
-            for task in (tasks[1], tasks[3]):
-                task.task.update_basis(gal_basis[1], gal_basis[2])
+            curr.action = update_action
+            tasks.append(curr)
 
-        self.add_update(update_vectors)
         self.add_tasks(*tasks)
 
     def add_angular_momentum_task(self):
@@ -175,7 +186,7 @@ class TaskManager:
     def add_norm_velocity_tasks(self):
         tasks = []
 
-        for object in self.objects:
+        for obj in self.objects:
             curr = VisualTask(
                 2, 
                 NormalVelocityTask(
@@ -183,8 +194,8 @@ class TaskManager:
                     pov_velocity = [0, 200, 0] | units.kms,
                     radius = 3 | units.kpc
                 ), 
-                object.part,
-                DrawParameters(markersize = 0.2, color = object.color)
+                obj.part,
+                DrawParameters(markersize = 0.2, color = obj.color)
             )
 
             tasks.append(curr)
@@ -211,11 +222,11 @@ class TaskManager:
     def add_velocity_tasks(self):
         tasks = []
 
-        for object in self.objects:
+        for obj in self.objects:
             curr = VisualTask(
-                3, VelocityScatterTask(*get_unit_vectors('xy')), object.part,
+                3, VelocityScatterTask(*get_unit_vectors('xy')), obj.part,
                 DrawParameters(
-                    markersize = 0.02, channel = object.color, extent = (-400, 400, -400, 400)
+                    markersize = 0.02, channel = obj.color, extent = (-400, 400, -400, 400)
                 )
             )
             curr.task.set_density_mode(700, (-400, 400, -400, 400))
@@ -224,36 +235,44 @@ class TaskManager:
         self.add_tasks(*tasks)
 
     def add_distance_task(self):
-        dist_task = VisualTask(
+        curr = VisualTask(
             4, DistanceTask(),
             draw_params = DrawParameters(
                 linestyle = 'solid', color = 'r'
             )   
         )
 
-        def update_bh_coords(snapshot: Snapshot):
-            dist_task.task.update_points(
+        def update_action(snapshot: Snapshot):
+            curr.task.update_points(
                 snapshot[self.objects[0].part].particles[0].position, 
                 snapshot[self.objects[1].part].particles[0].position, 
                 units.kpc
             )
 
-        self.add_update(update_bh_coords)
-        self.add_tasks(dist_task)
+        curr.action = update_action
+
+        self.add_tasks(curr)
 
     def add_velocity_profile_task(self):
         tasks = []
 
-        for object in self.objects:
-            tasks.append(VisualTask(
-                5, VelocityProfileTask(), object.part,
+        for obj in self.objects:
+            curr = VisualTask(
+                5, VelocityProfileTask(), obj.part,
                 DrawParameters(
-                    linestyle = 'solid', color = object.color, 
-                    marker = 'None', label = object.label
+                    linestyle = 'solid', color = obj.color, 
+                    marker = 'None', label = obj.label
                 )
-            ))
+            )
 
-        sum_vel_profile_task = VisualTask(
+            def update_action(snapshot: Snapshot, curr = curr):
+                particles = curr.get_active_snapshot(snapshot).particles
+                curr.task.update_center(particles.center_of_mass(), particles.center_of_mass_velocity())
+
+            curr.action = update_action
+            tasks.append(curr)
+
+        curr = VisualTask(
             5, VelocityProfileTask(), 
             (self.objects[0].part, self.objects[1].part),
             DrawParameters(
@@ -262,7 +281,10 @@ class TaskManager:
             )
         )
 
-        self.add_tasks(
-            *tasks,
-            sum_vel_profile_task
-        )
+        def update_action(snapshot: Snapshot, curr = curr):
+            particles = snapshot.particles
+            curr.task.update_center(particles.center_of_mass(), particles.center_of_mass_velocity())
+
+        curr.action = update_action
+
+        self.add_tasks(*tasks, curr)
