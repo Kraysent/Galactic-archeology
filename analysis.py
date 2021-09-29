@@ -1,4 +1,5 @@
 import time
+from matplotlib.pyplot import ylabel
 
 import numpy as np
 from amuse.lab import units
@@ -53,11 +54,15 @@ def analize(datadir: str):
     # visualizer.add_axes(0.36, 0, 0.14, 0.3)
     # visualizer.set_plot_parameters(6)
 
-    visualizer.add_axes(0.54, 0, 0.14, 0.3)
-    visualizer.set_plot_parameters(6)
+    visualizer.add_axes(0.54, 0, 0.32, 0.3)
+    visualizer.set_plot_parameters(6,
+        xlim = (0, 50), ylim = (0, 4e11),
+        xlabel = '$r$, kpc', ylabel = '$M$, MSun',
+        grid = True
+    )
 
-    visualizer.add_axes(0.72, 0, 0.14, 0.3)
-    visualizer.set_plot_parameters(7)
+    # visualizer.add_axes(0.72, 0, 0.14, 0.3)
+    # visualizer.set_plot_parameters(7)
 
     visualizer.set_figsize(20, 11)
 
@@ -71,6 +76,7 @@ def analize(datadir: str):
     task_manager.add_velocity_tasks()
     task_manager.add_distance_task()
     task_manager.add_velocity_profile_task()
+    task_manager.add_mass_profile_task()
 
     i = 0
     filename = f'{datadir}/models/bh_1_0_out.fits'

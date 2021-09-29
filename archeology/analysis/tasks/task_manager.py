@@ -7,7 +7,7 @@ from archeology.analysis.tasks import (AbstractTask, AngularMomentumTask,
                                        PointEmphasisTask, SpatialScatterTask,
                                        VelocityProfileTask,
                                        VelocityScatterTask, get_unit_vectors)
-from archeology.analysis.tasks.abstract_task import DistanceTask
+from archeology.analysis.tasks.abstract_task import DistanceTask, MassProfileTask
 from archeology.analysis.utils import DrawParameters, get_galactic_basis
 from archeology.datamodel import Snapshot
 
@@ -48,19 +48,21 @@ class NbodyObject:
     def __init__(self,
         part: slice,
         color: str = 'r',
-        label: str = ''
+        label: str = '',
+        whole_part: slice = slice(0, None)
     ) -> None:
         self.part = part
         self.color = color
         self.label = label
+        self.whole_part = whole_part
 
 class TaskManager:
     def __init__(self) -> None:
         self.tasks = []
         self.updates = []
         self.objects = [
-            NbodyObject(slice(200001), 'b', 'host'),
-            NbodyObject(slice(1000001, 1100002), 'r', 'satellite')
+            NbodyObject(slice(200001), 'b', 'host', slice(1000000)),
+            NbodyObject(slice(1000001, 1100002), 'r', 'satellite', slice(1000001, None))
         ]
 
     def add_tasks(self, *visual_tasks):
@@ -123,7 +125,7 @@ class TaskManager:
 
         for obj in self.objects:
             curr = VisualTask(
-                0, PointEmphasisTask(*get_unit_vectors('zy')), obj.part,
+                0, PointEmphasisTask(*get_unit_vectors('zy')), obj.whole_part,
                 DrawParameters(
                     linestyle = 'solid', color = obj.color, 
                     marker = 'o', markersize = 5
@@ -139,7 +141,7 @@ class TaskManager:
             tasks.append(curr)
 
             curr = VisualTask(
-                1, PointEmphasisTask(*get_unit_vectors('zy')), obj.part,
+                1, PointEmphasisTask(*get_unit_vectors('zy')), obj.whole_part,
                 DrawParameters(
                     linestyle = 'solid', color = obj.color, 
                     marker = 'o', markersize = 5
@@ -288,3 +290,40 @@ class TaskManager:
         curr.action = update_action
 
         self.add_tasks(*tasks, curr)
+
+    def add_mass_profile_task(self):
+        tasks = []
+
+        for obj in self.objects:
+            curr = VisualTask(
+                6, MassProfileTask(), obj.whole_part,
+                DrawParameters(
+                    linestyle = 'solid', color = obj.color, 
+                    marker = 'None', label = obj.label
+                )
+            )
+
+            def update_action(snapshot: Snapshot, curr = curr):
+                particles = curr.get_active_snapshot(snapshot).particles
+                curr.task.update_center(particles.center_of_mass())
+
+            curr.action = update_action
+            tasks.append(curr)
+
+        curr = VisualTask(
+            6, MassProfileTask(), 
+            (self.objects[0].whole_part, self.objects[1].whole_part),
+            DrawParameters(
+                linestyle = 'solid', color = 'y', 
+                marker = 'None', label = 'all'
+            )
+        )
+
+        def update_action(snapshot: Snapshot, curr = curr):
+            particles = snapshot.particles
+            curr.task.update_center(particles.center_of_mass())
+
+        curr.action = update_action
+
+        self.add_tasks(*tasks, curr)
+

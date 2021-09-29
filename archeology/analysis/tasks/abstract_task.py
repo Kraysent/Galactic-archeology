@@ -145,6 +145,32 @@ class VelocityProfileTask(AbstractTask):
         self.center_pos = pos
         self.center_vel = vel
 
+class MassProfileTask(AbstractTask):
+    def __init__(self) -> None:
+        self.center_pos = [0, 0, 0] | units.kpc
+
+    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
+        particles = snapshot.particles
+        r = (particles.position - self.center_pos).value_in(units.kpc)
+        m = particles.mass.value_in(units.MSun)
+        r = (r ** 2).sum(axis = 1) ** 0.5
+
+        perm = r.argsort()
+        r = r[perm]
+        m = m[perm]
+
+        resolution = 1000
+        number_of_chunks = (len(r) // resolution) * resolution
+
+        r = r[0:number_of_chunks:resolution]
+        m = m[0:number_of_chunks].reshape(-1, resolution).sum(axis = 1)
+        m = np.cumsum(m)
+
+        return (r, m)
+
+    def update_center(self, pos: VectorQuantity):
+        self.center_pos = pos
+
 class PointEmphasisTask(AbstractPlaneTask):
     def __init__(self, e1: np.ndarray, e2: np.ndarray):
         self.vector = None
