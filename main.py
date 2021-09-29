@@ -3,6 +3,7 @@ import argparse
 from analysis import analize
 from creator import create
 from integration import integrate
+from manual_analysis import manual_analize
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -22,5 +23,7 @@ elif args.mode == 'integrate':
     integrate(args.datadir)
 elif args.mode == 'analize':
     analize(args.datadir)
+elif args.mode == 'mananalize':
+    manual_analize(args.datadir)
 elif args.mode == 'test':
     pass
