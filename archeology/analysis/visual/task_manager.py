@@ -2,59 +2,15 @@ from typing import Any, Callable, List
 
 from amuse.lab import units
 from archeology.analysis import utils
-from archeology.analysis.tasks import (AbstractTask, AngularMomentumTask,
-                                       NormalVelocityTask, PlaneDirectionTask,
-                                       PointEmphasisTask, SpatialScatterTask,
-                                       VelocityProfileTask,
+from archeology.analysis.tasks import (AngularMomentumTask, DistanceTask,
+                                       MassProfileTask, NormalVelocityTask,
+                                       PlaneDirectionTask, PointEmphasisTask,
+                                       SpatialScatterTask, VelocityProfileTask,
                                        VelocityScatterTask, get_unit_vectors)
-from archeology.analysis.tasks.abstract_task import DistanceTask, MassProfileTask
 from archeology.analysis.utils import DrawParameters, get_galactic_basis
+from archeology.analysis.visual import VisualTask, NbodyObject
 from archeology.datamodel import Snapshot
 
-class VisualTask:
-    def __init__(self, 
-        axes_id: int, 
-        task: AbstractTask,
-        part = slice(0, None),
-        draw_params: DrawParameters = DrawParameters(),
-        action: Callable[[Snapshot], Any] = None
-    ):
-        self.axes_id = axes_id
-        self.task = task
-        self.part = part
-        self.draw_params = draw_params
-        self.action = action
-
-    def get_active_snapshot(self, snapshot: Snapshot):
-        if isinstance(self.part, slice):
-            return snapshot[self.part]
-        elif isinstance(self.part, tuple):
-            total = snapshot[self.part[0]]
-
-            for i in range(1, len(self.part)):
-                total.add(snapshot[self.part[i]])
-
-            return total
-        else:
-            raise RuntimeError('Unknown slicing type')
-
-    def run(self, snapshot: Snapshot):
-        if self.action is not None:
-            self.action(snapshot)
-        
-        return self.task.run(self.get_active_snapshot(snapshot))
-
-class NbodyObject:
-    def __init__(self,
-        part: slice,
-        color: str = 'r',
-        label: str = '',
-        whole_part: slice = slice(0, None)
-    ) -> None:
-        self.part = part
-        self.color = color
-        self.label = label
-        self.whole_part = whole_part
 
 class TaskManager:
     def __init__(self) -> None:

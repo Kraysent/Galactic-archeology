@@ -1,5 +1,5 @@
-from archeology.analysis.tasks.task_manager import NbodyObject
-from archeology.analysis.tasks.abstract_task import MassProfileTask
+from archeology.analysis.visual import NbodyObject
+from archeology.analysis.tasks import MassProfileTask
 from archeology.datamodel.snapshot import Snapshot
 from scipy import interpolate, misc, integrate
 import numpy as np
