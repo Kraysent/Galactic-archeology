@@ -2,13 +2,14 @@ from typing import Any, Callable, List
 
 from amuse.lab import units
 from archeology.analysis import utils
-from archeology.analysis.tasks import (AngularMomentumTask, DistanceTask,
-                                       MassProfileTask, NormalVelocityTask,
-                                       PlaneDirectionTask, PointEmphasisTask,
+from archeology.analysis.tasks import (DistanceTask, MassProfileTask,
+                                       NormalVelocityTask, PointEmphasisTask,
                                        SpatialScatterTask, VelocityProfileTask,
                                        VelocityScatterTask, get_unit_vectors)
-from archeology.analysis.utils import DrawParameters, get_galactic_basis
-from archeology.analysis.visual import VisualTask, NbodyObject
+from archeology.analysis.utils import get_galactic_basis
+from archeology.analysis.visual.nbody_object import NbodyObject
+from archeology.analysis.visual.plot_parameters import DrawParameters
+from archeology.analysis.visual.visual_task import VisualTask
 from archeology.datamodel import Snapshot
 
 

@@ -1,12 +1,10 @@
 import time
-from matplotlib.pyplot import ylabel
 
-import numpy as np
 from amuse.lab import units
 
+from archeology.analysis.visual.visual_task import VisualTask
 from archeology.analysis.visual.task_manager import TaskManager
-from archeology.analysis.visual import VisualTask
-from archeology.analysis.utils import Visualizer
+from archeology.analysis.visual.visualizer import Visualizer
 from archeology.datamodel import Snapshot
 
 

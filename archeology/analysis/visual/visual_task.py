@@ -1,6 +1,6 @@
 from typing import Any, Callable
 from archeology.analysis.tasks import AbstractTask
-from archeology.analysis.utils import DrawParameters
+from archeology.analysis.visual.plot_parameters import DrawParameters
 from archeology.datamodel import Snapshot
 
 class VisualTask:
