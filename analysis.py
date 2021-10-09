@@ -72,7 +72,6 @@ def analize(datadir: str):
     task_manager.add_right_spatial_tasks()
     task_manager.add_tracking_tasks()
     task_manager.add_norm_velocity_tasks()
-    # task_manager.add_angular_momentum_task()
     task_manager.add_velocity_tasks()
     task_manager.add_distance_task()
     task_manager.add_velocity_profile_task()

@@ -117,30 +117,6 @@ class TaskManager:
 
         self.add_tasks(*tasks)
 
-    def add_angular_momentum_task(self):
-        xy_ang_momentum_task = VisualTask(
-            0, AngularMomentumTask(('z', 'y'), 1000), slice(200000),
-            DrawParameters(linestyle = 'solid', marker = 'None')
-        )
-        xy_plane_direction_task = VisualTask(
-            0, PlaneDirectionTask(('z', 'y'), 1000), slice(200000),
-            DrawParameters(linestyle = 'solid', marker = 'None')
-        )
-
-        zy_ang_momentum_task = VisualTask(
-            1, AngularMomentumTask(('z', 'y'), 1000), slice(200000),
-            DrawParameters(linestyle = 'solid', marker = 'None')
-        )
-        zy_plane_direction_task = VisualTask(
-            1, PlaneDirectionTask(('z', 'y'), 1000), slice(200000),
-            DrawParameters(linestyle = 'solid', marker = 'None')
-        )
-
-        self.add_tasks(
-            xy_ang_momentum_task, 
-            xy_plane_direction_task
-        )
-
     def add_norm_velocity_tasks(self):
         tasks = []
 

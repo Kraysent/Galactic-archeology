@@ -260,52 +260,6 @@ class KineticEnergyTask(AbstractTask):
 
         return (np.array(self.times), np.array(self.energies))
 
-class PlaneDirectionTask(AbstractPlaneTask):
-    def __init__(self, axes: Tuple[int, int], norm: float):
-        self.norm = norm
-
-        super().__init__(axes)
-
-    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
-        (e1, e2, e3) = utils.get_galactic_basis(snapshot)
-        cm = snapshot.particles.center_of_mass()
-
-        r = 8
-
-        (x1, x2) = self.get_axes(e2)
-        (x11, x22) = self.get_axes(e3)
-        (cmx1, cmx2) = self.get_quantity_axes(cm, units.kpc)
-
-        x1 = x1 * r + cmx1
-        x2 = x2 * r + cmx2
-        x11 = x11 * r + cmx1
-        x22 = x22 * r + cmx2
-
-        return (
-            np.array([cmx1, x1, x11, cmx1]), 
-            np.array([cmx2, x2, x22, cmx2])
-        )
-
-class AngularMomentumTask(AbstractPlaneTask):
-    def __init__(self, axes: Tuple[int, int], norm: float):
-        self.norm = norm
-
-        super().__init__(axes)
-
-    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
-        (e1, e2, e3) = utils.get_galactic_basis(snapshot)
-        cm = snapshot.particles.center_of_mass()
-
-        r = 8
-
-        (x1, x2) = self.get_axes(e1)
-        (cmx1, cmx2) = self.get_quantity_axes(cm, units.kpc)
-
-        x1 = x1 * r * 3 + cmx1
-        x2 = x2 * r * 3 + cmx2
-
-        return (np.array([cmx1, x1]), np.array([cmx2, x2]))
-
 class DistanceTask(AbstractTask):
     def __init__(self):
         self.dist = []
