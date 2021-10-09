@@ -81,13 +81,12 @@ def analize(datadir: str):
     i = 0
     filename = f'{datadir}/models/bh_1_0_out.fits'
 
-    timestamps_num = Snapshot.file_info(filename)
+    snapshots = Snapshot.from_fits(filename)
 
     print('i\ttimestamp\tcomp\tsave')
 
-    for i in range(timestamps_num):
+    for snapshot in snapshots:
         start_comp = time.time()
-        snapshot = Snapshot.from_fits(filename, i)
         
         task_manager.update_tasks(snapshot)
 

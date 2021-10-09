@@ -1,3 +1,4 @@
+from typing import Iterator
 from amuse.datamodel.particles import Particles
 from amuse.lab import units
 from amuse.units.quantities import ScalarQuantity
@@ -83,7 +84,24 @@ class Snapshot:
             hdu.writeto(filename, overwrite = True)
 
     @staticmethod
-    def from_fits(filename: str, frame: int = 0) -> 'Snapshot':
+    def from_fits(filename: str) -> Iterator['Snapshot']:
+        hdul = fits.open(filename, memmap = True)
+        snapshot = Snapshot(Particles, 0 | units.Myr)
+
+        for frame in range(len(hdul)):
+            table: BinTableHDU = hdul[frame + 1]
+            number_of_particles = len(table.data[list(Snapshot.fields.keys())[0]])
+
+            snapshot.timestamp = table.header['TIME'] | units.Myr
+            snapshot.particles = Particles(number_of_particles)
+
+            for (key, val) in Snapshot.fields.items():
+                setattr(snapshot.particles, key, table.data[key] | val)
+
+            yield snapshot
+
+    @staticmethod
+    def from_fits_frame(filename: str, frame: int = 0) -> 'Snapshot':
         hdul = fits.open(filename, memmap = True)
         snapshot = Snapshot(Particles, 0 | units.Myr)
 

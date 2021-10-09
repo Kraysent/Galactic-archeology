@@ -9,7 +9,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument(
     'mode', 
     help = 'Mode of the program to run', 
-    choices = ['create', 'integrate', 'analize', 'test'])
+    choices = ['create', 'integrate', 'analize', 'mananalize', 'test'])
 parser.add_argument(
     'datadir', 
     help = 'Directory where data is stored'
