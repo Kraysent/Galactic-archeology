@@ -88,7 +88,7 @@ class Snapshot:
         hdul = fits.open(filename, memmap = True)
         snapshot = Snapshot(Particles, 0 | units.Myr)
 
-        for frame in range(len(hdul)):
+        for frame in range(len(hdul) - 1):
             table: BinTableHDU = hdul[frame + 1]
             number_of_particles = len(table.data[list(Snapshot.fields.keys())[0]])
 
