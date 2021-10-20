@@ -28,23 +28,23 @@ def create(datadir: str):
         return vel
 
     print('Building model...')
-    sat_offset = get_offset(150 | units.kpc)
-    sat_velocity = get_velocity(113 | units.kms, 1, 10 | units.kms)
+    sat_offset = get_offset(10 | units.kpc)
+    sat_velocity = get_velocity(66 | units.kms, 1, 0 | units.kms)
     builder = SnapshotBuilder()
 
     black_holes = Particles(2)
     black_holes[0].position = [0., 0., 0.] | units.kpc
     black_holes[0].velocity = [0., 0., 0.] | units.kms
-    black_holes[0].mass = 5e7 | units.MSun
+    black_holes[0].mass = 4e8 | units.MSun
 
     black_holes[1].position = sat_offset
     black_holes[1].velocity = sat_velocity
-    black_holes[1].mass = 1e7 | units.MSun
+    black_holes[1].mass = 1e8 | units.MSun
 
     builder.add_particles(black_holes[:1])
     builder.add_snapshot(host)
     builder.add_particles(black_holes[1:])
-    builder.add_snapshot(sat, sat_offset, sat_velocity)
+    # builder.add_snapshot(sat, sat_offset, sat_velocity)
 
-    builder.to_fits(f'{datadir}/models/bh_1_0.fits')
+    builder.to_fits(f'{datadir}/models/bh_100x_flat_without_galaxy.fits')
     print('Model built.')

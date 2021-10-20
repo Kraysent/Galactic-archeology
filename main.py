@@ -1,10 +1,5 @@
 import argparse
 
-from analysis import analize
-from creator import create
-from integration import integrate
-from manual_analysis import manual_analize
-
 parser = argparse.ArgumentParser()
 parser.add_argument(
     'mode', 
@@ -18,12 +13,20 @@ parser.add_argument(
 args = parser.parse_args()
 
 if args.mode == 'create':
+    from creator import create
+
     create(args.datadir)
 elif args.mode == 'integrate':
+    from integration import integrate
+
     integrate(args.datadir)
 elif args.mode == 'analize':
+    from analysis import analize
+
     analize(args.datadir)
 elif args.mode == 'mananalize':
-    manual_analize(args.datadir)
+    from manual_analysis import manual_analize
+
+    manual_analize()
 elif args.mode == 'test':
     pass

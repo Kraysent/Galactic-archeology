@@ -76,7 +76,7 @@ def analize(datadir: str):
     task_manager.add_mass_profile_task()
 
     i = 0
-    filename = f'{datadir}/models/bh_1_0_out.fits'
+    filename = f'{datadir}/models/bh_100x_flat_wgalaxy_out.fits'
 
     snapshots = Snapshot.from_fits(filename)
 
