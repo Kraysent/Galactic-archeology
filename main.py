@@ -1,4 +1,11 @@
 import argparse
+import logging
+
+logging.basicConfig(
+    level = logging.INFO, 
+    format = '[%(levelname)s] %(asctime)s | %(message)s', 
+    datefmt = '%H:%M:%S'
+)
 
 parser = argparse.ArgumentParser()
 parser.add_argument(

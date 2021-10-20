@@ -1,3 +1,4 @@
+import logging
 from amuse.datamodel.particles import Particle, Particles
 from amuse.lab import units
 from amuse.units.quantities import ScalarQuantity
@@ -34,7 +35,7 @@ def create(host_fn: str, sat_fn: str,output_fn: str):
 
         return vel
 
-    print('Building model...')
+    logging.info('Building model...')
     sat_offset = get_offset(10 | units.kpc)
     sat_velocity = get_velocity(66 | units.kms, 1, 0 | units.kms)
     builder = SnapshotBuilder()
@@ -51,7 +52,7 @@ def create(host_fn: str, sat_fn: str,output_fn: str):
     builder.add_particles(black_holes[:1])
     builder.add_snapshot(host)
     builder.add_particles(black_holes[1:])
-    # builder.add_snapshot(sat, sat_offset, sat_velocity)
+    builder.add_snapshot(sat, sat_offset, sat_velocity)
 
     builder.to_fits(output_fn)
-    print('Model built.')
+    logging.info(f'Model has been written to {output_fn}.')
