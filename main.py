@@ -6,8 +6,9 @@ parser.add_argument(
     help = 'Mode of the program to run', 
     choices = ['create', 'integrate', 'analize', 'mananalize', 'test'])
 parser.add_argument(
-    'datadir', 
-    help = 'Directory where data is stored'
+    'inputparams',
+    help = 'input parameters for particular mode (for example, input file)',
+    nargs = argparse.REMAINDER
 )
 
 args = parser.parse_args()
@@ -15,15 +16,15 @@ args = parser.parse_args()
 if args.mode == 'create':
     from creator import create
 
-    create(args.datadir)
+    create(*args.inputparams[0:3])
 elif args.mode == 'integrate':
     from integration import integrate
 
-    integrate(args.datadir)
+    integrate(*args.inputparams[0:2])
 elif args.mode == 'analize':
     from analysis import analize
 
-    analize(args.datadir)
+    analize(*args.inputparams[0:2])
 elif args.mode == 'mananalize':
     from manual_analysis import manual_analize
 

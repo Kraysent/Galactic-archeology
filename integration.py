@@ -7,8 +7,13 @@ from archeology.datamodel.snapshot import Snapshot
 from archeology.integration import PyfalconIntegrator
 
 
-def integrate(datadir: str):
-    snapshot = next(Snapshot.from_fits(f'{datadir}/models/bh_100x_flat_without_galaxy.fits'))
+def integrate(input_fn: str, output_fn: str):
+    '''
+    input_fn: str - filename of input snapshot
+
+    output_fn: str - filename of output snapshot
+    '''
+    snapshot = next(Snapshot.from_fits(input_fn))
 
     integrator = PyfalconIntegrator(snapshot, 0.2 | units.kpc, 8)
     t = 0
@@ -24,7 +29,7 @@ def integrate(datadir: str):
 
         if i % 15 == 0:
             snapshot = integrator.get_snapshot()
-            snapshot.to_fits(f'{datadir}/models/bh_100x_flat_wgalaxy_out.fits', append = True)
+            snapshot.to_fits(output_fn, append = True)
 
         elapsed_time = time.time() - start
         t += elapsed_time

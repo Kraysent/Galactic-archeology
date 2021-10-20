@@ -6,9 +6,16 @@ from archeology.creation import SnapshotBuilder
 from archeology.datamodel.snapshot import Snapshot
 
 
-def create(datadir: str):
-    host = Snapshot.from_csv(f'{datadir}/models/host.txt', ' ')
-    sat = Snapshot.from_csv(f'{datadir}/models/sat.txt', ' ')
+def create(host_fn: str, sat_fn: str,output_fn: str):
+    '''
+    output_fn: str - filename which saved snapshot would have
+
+    host_fn: str - filename of host snapshot *.csv file
+
+    sat_fn: str - filename of satellite snapshot *.csv file
+    '''
+    host = Snapshot.from_csv(host_fn, ' ')
+    sat = Snapshot.from_csv(sat_fn, ' ')
 
     def get_offset(distance: ScalarQuantity):
         offset = [0, 0, 0] | units.kpc
@@ -46,5 +53,5 @@ def create(datadir: str):
     builder.add_particles(black_holes[1:])
     # builder.add_snapshot(sat, sat_offset, sat_velocity)
 
-    builder.to_fits(f'{datadir}/models/bh_100x_flat_without_galaxy.fits')
+    builder.to_fits(output_fn)
     print('Model built.')

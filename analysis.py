@@ -8,7 +8,12 @@ from archeology.analysis.visual.visualizer import Visualizer
 from archeology.datamodel import Snapshot
 
 
-def analize(datadir: str):
+def analize(input_fn: str, output_dir: str):
+    '''
+    input_fn: str - filename of input snapshot
+
+    output_dir: str - directory where output images would be saved
+    '''
     visualizer = Visualizer()
     visualizer.add_axes(0, 0.35, 0.35, 0.6)
     visualizer.set_plot_parameters(0,
@@ -76,9 +81,8 @@ def analize(datadir: str):
     task_manager.add_mass_profile_task()
 
     i = 0
-    filename = f'{datadir}/models/bh_100x_flat_wgalaxy_out.fits'
 
-    snapshots = Snapshot.from_fits(filename)
+    snapshots = Snapshot.from_fits(input_fn)
 
     print('i\ttimestamp\tcomp\tsave')
 
@@ -96,7 +100,7 @@ def analize(datadir: str):
         visualizer.set_title(f'Time: {timestamp:.02f} Myr')
 
         start_save = time.time()
-        visualizer.save(f'{datadir}/img-{i:03d}.png')
+        visualizer.save(f'{output_dir}/img-{i:03d}.png')
 
         end = time.time()
         print(f'{i:03d}\t{timestamp:.02f}\t\t{start_save - start_comp:.02f}\t{end - start_save:.02f}')
