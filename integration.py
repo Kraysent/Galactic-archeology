@@ -4,6 +4,7 @@ import numpy as np
 from amuse.lab import units
 
 from archeology.datamodel.snapshot import Snapshot
+from archeology.datamodel import Config
 from archeology.integration import PyfalconIntegrator
 
 
