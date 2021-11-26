@@ -131,3 +131,18 @@ class Snapshot:
         snapshot = Snapshot(particles, 0 | units.Myr)
 
         return snapshot
+
+    def from_mass(mass: ScalarQuantity) -> 'Snapshot':
+        particles = Particles(1)
+        particles.x = np.array([0]) | units.kpc
+        particles.y = np.array([0]) | units.kpc
+        particles.z = np.array([0]) | units.kpc
+        particles.vx = np.array([0]) | units.kms
+        particles.vy = np.array([0]) | units.kms
+        particles.vz = np.array([0]) | units.kms
+        particles.mass = np.array([mass.value_in(units.MSun)]) | units.MSun
+
+        snapshot = Snapshot(particles, 0 | units.Myr)
+
+        return snapshot
+        

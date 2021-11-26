@@ -27,7 +27,7 @@ args = parser.parse_args()
 if args.mode == 'create':
     from creator import create
 
-    create(*args.inputparams[0:3])
+    create(Config.from_yaml(args.inputparams[0]))
 elif args.mode == 'integrate':
     from integration import integrate
 

@@ -1,13 +1,30 @@
 import logging
-from amuse.datamodel.particles import Particle, Particles
+from amuse.datamodel.particles import Particles
 from amuse.lab import units
 from amuse.units.quantities import ScalarQuantity
 
 from archeology.creation import SnapshotBuilder
-from archeology.datamodel.snapshot import Snapshot
+from archeology.datamodel import Snapshot, Config
 
 
-def create(host_fn: str, sat_fn: str,output_fn: str):
+def create(config: Config):
+    builder = SnapshotBuilder()
+
+    for object in config.objects:
+        if object['type'] == 'csv':
+            curr_snapshot = Snapshot.from_csv(object['path'], object['delimeter'])
+        elif object['type'] == 'body':
+            curr_snapshot = Snapshot.from_mass(object['mass'] | units.MSun)
+        
+        curr_snapshot.particles.position += object['position'] | units.kpc
+        curr_snapshot.particles.velocity += object['velocity'] | units.kms
+
+        builder.add_snapshot(curr_snapshot)
+
+    builder.to_fits(config.output_file)
+
+
+def create1(host_fn: str, sat_fn: str, output_fn: str):
     '''
     output_fn: str - filename which saved snapshot would have
 
