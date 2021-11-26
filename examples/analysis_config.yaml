@@ -58,10 +58,6 @@ plots:
       xlabel: '$r$, kpc'
       ylabel: '$M$, MSun'
       grid: True
-  # - coords: [0.36, 0, 0.14, 0.3]
-  #   params: {}
-  # - coords: [0.72, 0, 0.14, 0.3]
-  #   params: {}
 
 # figure size in inches
 figsize: [20, 11]
