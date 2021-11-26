@@ -1,6 +1,10 @@
 import argparse
 import logging
 
+from amuse.lab import units
+
+from archeology.datamodel import Config
+
 logging.basicConfig(
     level = logging.INFO, 
     format = '[%(levelname)s] %(asctime)s | %(message)s', 
@@ -27,7 +31,7 @@ if args.mode == 'create':
 elif args.mode == 'integrate':
     from integration import integrate
 
-    integrate(*args.inputparams[0:2])
+    integrate(Config.from_yaml(args.inputparams[0]))
 elif args.mode == 'analize':
     from analysis import analize
 
@@ -36,5 +40,3 @@ elif args.mode == 'mananalize':
     from manual_analysis import manual_analize
 
     manual_analize()
-elif args.mode == 'test':
-    pass
