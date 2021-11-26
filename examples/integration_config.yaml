@@ -1,0 +1,12 @@
+# file with input model
+input_file: '/home/user/data/test.fits'
+# file where output model would be written
+output_file: '/home/user/data/test_out.fits'
+# time until which model would be integrated
+model_time: 10000 Myr
+# interval between to consecutive snapshots to write to output file: 
+snapshot_interval: 2
+# timestep coefficient (actual timestep is model_time * e^(-timestep))
+timestep: 8
+# softening distance
+eps: 0.2 kpc

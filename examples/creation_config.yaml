@@ -1,0 +1,27 @@
+# output model would be written in this file
+output_file: '/home/user/data/test.fits'
+
+# list of objects; they can be either read from csv files or given directly using masses and positions.
+objects: 
+  # host black hole
+  - type: 'body'
+    mass: 4.e+8
+    position: [0, 0, 0]
+    velocity: [0, 0, 0]
+  # host galaxy
+  - type: 'csv'
+    delimeter: ' '
+    path: '/home/user/data/host.txt'
+    position: [0, 0, 0]
+    velocity: [0, 0, 0]
+  # satellite black hole
+  - type: 'body'
+    mass: 1.e+8
+    position: [20, 0, 0]
+    velocity: [0, 100, 0]
+  # satellite galaxy
+  - type: 'csv'
+    delimeter: ' '
+    path: '/home/user/data/sat.txt'
+    position: [20, 0, 0]
+    velocity: [0, 100, 0]

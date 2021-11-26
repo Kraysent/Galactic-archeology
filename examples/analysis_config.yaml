@@ -1,0 +1,67 @@
+# file with a bunch of snapshots
+input_file: '/home/user/data/test_out.fits'
+# directory where output pictures would be stored
+output_dir: /home/user/data/analysis'
+
+# description of plots layout in following format:
+# - coords: [x, y, width, height]
+#   params: 
+#      attr: value
+#
+# params should be given the same names as ones in matplotlib.pyplot (and proper values) as most of them are just passed along to it
+
+plots: 
+  - coords: [0, 0.35, 0.35, 0.6]
+    params: 
+      xlim: [-45, 45]
+      ylim: [-40, 40]
+      xlabel: 'z, kpc'
+      ylabel: 'y, kpc'
+      xticks: [0, 10]
+      yticks: [0, 10]
+  - coords: [0.33, 0.35, 0.35, 0.6]
+    params: 
+      xlim: [-45, 45]
+      ylim: [-40, 40]
+      yticks: []
+      xticks: [0, 10]
+  - coords: [0.72, 0.66, 0.14, 0.3]
+    params: 
+      xlim: [-350, 350]
+      ylim: [0, 350]
+      xlabel: '$v_r$, km/s'
+      ylabel: '$v_{\tau}$, km/s'
+  - coords: [0.72, 0.33, 0.14, 0.3]
+    params:
+      xlim: [-400, 400]
+      ylim: [-400, 400]
+      xlabel: '$v_x$, km/s'
+      ylabel: '$v_y$, km/s'
+  - coords: [0, 0, 0.14, 0.3]
+    params: 
+      xlim: [0, 10000]
+      ylim: [0, 150]
+      xlabel: 'Time, Myr'
+      ylabel: 'Separation, kpc'
+      grid: True
+  - coords: [0.18, 0, 0.32, 0.3]
+    params: 
+      xlim: [0, 15]
+      ylim: [0, 400]
+      xlabel: '$r$, kpc'
+      ylabel: '$v$, km/s'
+      grid: True
+  - coords: [0.54, 0, 0.32, 0.3]
+    params: 
+      xlim: [0, 50]
+      ylim: [0, 4.e+11]
+      xlabel: '$r$, kpc'
+      ylabel: '$M$, MSun'
+      grid: True
+  # - coords: [0.36, 0, 0.14, 0.3]
+  #   params: {}
+  # - coords: [0.72, 0, 0.14, 0.3]
+  #   params: {}
+
+# figure size in inches
+figsize: [20, 11]
