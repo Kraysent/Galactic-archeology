@@ -2,7 +2,6 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import Tuple, Union
 
-import archeology.analysis.utils as utils
 import numpy as np
 from amuse.lab import units
 from amuse.units.core import named_unit

@@ -45,14 +45,14 @@ def create(host_fn: str, sat_fn: str,output_fn: str):
     black_holes[0].velocity = [0., 0., 0.] | units.kms
     black_holes[0].mass = 4e8 | units.MSun
 
-    black_holes[1].position = sat_offset
-    black_holes[1].velocity = sat_velocity
+    black_holes[1].position = [10, 0, 0] | units.kpc
+    black_holes[1].velocity = [-66, 0, 0] | units.kms
     black_holes[1].mass = 1e8 | units.MSun
 
     builder.add_particles(black_holes[:1])
     builder.add_snapshot(host)
     builder.add_particles(black_holes[1:])
-    builder.add_snapshot(sat, sat_offset, sat_velocity)
+    # builder.add_snapshot(sat, sat_offset, sat_velocity)
 
     builder.to_fits(output_fn)
     logging.info(f'Model has been written to {output_fn}.')

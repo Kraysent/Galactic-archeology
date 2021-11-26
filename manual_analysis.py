@@ -10,8 +10,7 @@ def manual_analize():
     sigma = 100 | units.kms
     R = 10 | units.kpc
     G = constants.G
-    m_sat = 1e8 | units.MSun
-    m_part = 10 | 232500 * units.MSun
+    m_sat = 1e7 | units.MSun
     b_max = 300 | units.kpc
     b_min = 1 | units.AU
     ln_lambda = np.log(b_max / b_min)
