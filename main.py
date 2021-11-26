@@ -35,7 +35,7 @@ elif args.mode == 'integrate':
 elif args.mode == 'analize':
     from analysis import analize
 
-    analize(*args.inputparams[0:2])
+    analize(Config.from_yaml(args.inputparams[0]))
 elif args.mode == 'mananalize':
     from manual_analysis import manual_analize
 

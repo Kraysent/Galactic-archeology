@@ -2,72 +2,20 @@ import time
 
 from amuse.lab import units
 
-from archeology.analysis.visual.visual_task import VisualTask
 from archeology.analysis.visual.task_manager import TaskManager
+from archeology.analysis.visual.visual_task import VisualTask
 from archeology.analysis.visual.visualizer import Visualizer
-from archeology.datamodel import Snapshot
+from archeology.datamodel import Config, Snapshot
 
 
-def analize(input_fn: str, output_dir: str):
-    '''
-    input_fn: str - filename of input snapshot
-
-    output_dir: str - directory where output images would be saved
-    '''
+def analize(config: Config):
     visualizer = Visualizer()
-    visualizer.add_axes(0, 0.35, 0.35, 0.6)
-    visualizer.set_plot_parameters(0,
-        xlim = (-45, 45), ylim = (-40, 40),
-        xlabel = 'z, kpc', ylabel = 'y, kpc',
-        xticks = [0, 10], yticks = [0, 10]
-    )
 
-    visualizer.add_axes(0.33, 0.35, 0.35, 0.6)
-    visualizer.set_plot_parameters(1,
-        xlim = (-45, 45), ylim = (-40, 40),
-        yticks = [], xticks = [0, 10]
-    )
+    for i, plot in enumerate(config.plots):
+        visualizer.add_axes(*plot['coords'])
+        visualizer.set_plot_parameters(i, **plot['params'])
 
-    visualizer.add_axes(0.72, 0.66, 0.14, 0.3)
-    visualizer.set_plot_parameters(2,
-        xlim = (-350, 350), ylim = (0, 350),
-        xlabel = '$v_r$, km/s', ylabel = '$v_{\\tau}$, km/s'
-    )
-
-    visualizer.add_axes(0.72, 0.33, 0.14, 0.3)
-    visualizer.set_plot_parameters(3,
-        xlim = (-400, 400), ylim = (-400, 400),
-        xlabel = '$v_x$, km/s', ylabel = '$v_y$, km/s'
-    )
-
-    visualizer.add_axes(0, 0, 0.14, 0.3)
-    visualizer.set_plot_parameters(4,
-        xlim = (0, 10000), ylim = (0, 150),
-        xlabel = 'Time, Myr', ylabel = 'Separation, kpc',
-        grid = True
-    )
-
-    visualizer.add_axes(0.18, 0, 0.32, 0.3)
-    visualizer.set_plot_parameters(5,
-        xlim = (0, 15), ylim = (0, 400),
-        xlabel = '$r$, kpc', ylabel = '$v$, km/s',
-        grid = True
-    )
-
-    # visualizer.add_axes(0.36, 0, 0.14, 0.3)
-    # visualizer.set_plot_parameters(6)
-
-    visualizer.add_axes(0.54, 0, 0.32, 0.3)
-    visualizer.set_plot_parameters(6,
-        xlim = (0, 50), ylim = (0, 4e11),
-        xlabel = '$r$, kpc', ylabel = '$M$, MSun',
-        grid = True
-    )
-
-    # visualizer.add_axes(0.72, 0, 0.14, 0.3)
-    # visualizer.set_plot_parameters(7)
-
-    visualizer.set_figsize(20, 11)
+    visualizer.set_figsize(*config.figsize)
 
     task_manager = TaskManager()
 
@@ -82,7 +30,7 @@ def analize(input_fn: str, output_dir: str):
 
     i = 0
 
-    snapshots = Snapshot.from_fits(input_fn)
+    snapshots = Snapshot.from_fits(config.input_file)
 
     print('i\ttimestamp\tcomp\tsave')
 
@@ -100,7 +48,7 @@ def analize(input_fn: str, output_dir: str):
         visualizer.set_title(f'Time: {timestamp:.02f} Myr')
 
         start_save = time.time()
-        visualizer.save(f'{output_dir}/img-{i:03d}.png')
+        visualizer.save(f'{config.output_dir}/img-{i:03d}.png')
 
         end = time.time()
         print(f'{i:03d}\t{timestamp:.02f}\t\t{start_save - start_comp:.02f}\t{end - start_save:.02f}')
