@@ -11,11 +11,11 @@ from archeology.datamodel import Config, Snapshot
 def analize(config: Config):
     visualizer = Visualizer()
 
-    for i, plot in enumerate(config.plots):
+    for i, plot in enumerate(config['plots']):
         visualizer.add_axes(*plot['coords'])
         visualizer.set_plot_parameters(i, **plot['params'])
 
-    visualizer.set_figsize(*config.figsize)
+    visualizer.set_figsize(*config['figsize'])
 
     task_manager = TaskManager()
 
@@ -30,7 +30,7 @@ def analize(config: Config):
 
     i = 0
 
-    snapshots = Snapshot.from_fits(config.input_file)
+    snapshots = Snapshot.from_fits(config['input_file'])
 
     print('i\ttimestamp\tcomp\tsave')
 
@@ -48,7 +48,7 @@ def analize(config: Config):
         visualizer.set_title(f'Time: {timestamp:.02f} Myr')
 
         start_save = time.time()
-        visualizer.save(f'{config.output_dir}/img-{i:03d}.png')
+        visualizer.save(f'{config["output_dir"]}/img-{i:03d}.png')
 
         end = time.time()
         print(f'{i:03d}\t{timestamp:.02f}\t\t{start_save - start_comp:.02f}\t{end - start_save:.02f}')

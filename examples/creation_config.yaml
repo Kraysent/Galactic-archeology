@@ -5,6 +5,7 @@ output_file: '/home/user/data/test.fits'
 objects: 
   # host black hole
   - type: 'body'
+    # use !q tag and sequence of 2 elements to denote a quantity 
     mass: !q [4.e+8, MSun]
     position: !q [[0, 0, 0], kpc]
     velocity: !q [[0, 0, 0], kms]

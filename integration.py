@@ -7,21 +7,21 @@ from archeology.integration import PyfalconIntegrator
 
 
 def integrate(config: Config):
-    snapshot = next(Snapshot.from_fits(config.input_file))
+    snapshot = next(Snapshot.from_fits(config['input_file']))
 
-    integrator = PyfalconIntegrator(snapshot, config.eps, config.timestep)
+    integrator = PyfalconIntegrator(snapshot, config['eps'], config['timestep'])
     t = 0
 
     print(f'ts\tt_cpu\tt_last')
     i = 0
 
-    while integrator.timestamp < config.model_time:
+    while integrator.timestamp < config['model_time']:
         start = time.time()
         integrator.leapfrog()
 
-        if i % config.snapshot_interval == 0:
+        if i % config['snapshot_interval'] == 0:
             snapshot = integrator.get_snapshot()
-            snapshot.to_fits(config.output_file, append = True)
+            snapshot.to_fits(config['output_file'], append = True)
 
         elapsed_time = time.time() - start
         t += elapsed_time

@@ -7,7 +7,7 @@ from archeology.datamodel import Snapshot, Config
 def create(config: Config):
     builder = SnapshotBuilder()
 
-    for object in config.objects:
+    for object in config['objects']:
         if object['type'] == 'csv':
             curr_snapshot = Snapshot.from_csv(object['path'], object['delimeter'])
         elif object['type'] == 'body':
@@ -18,4 +18,4 @@ def create(config: Config):
 
         builder.add_snapshot(curr_snapshot)
 
-    builder.to_fits(config.output_file)
+    builder.to_fits(config['output_file'])

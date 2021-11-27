@@ -35,12 +35,15 @@ def yaml_loader() -> yaml.Loader:
     return loader
 
 class Config:
-    def __init__(self, mapper: dict = None, defaults: dict = None):
-        self.mapper = mapper
+    def __init__(self, defaults: dict = None):
+        self.data = {}
 
         if defaults is not None:
             for (key, value) in defaults.items():
                 setattr(self, key, value)
+
+    def __getitem__(self, key):
+        return self.data[key]
 
     @staticmethod
     def from_yaml(filename: str) -> 'Config':
@@ -50,7 +53,6 @@ class Config:
         with open(filename, 'r') as stream:
             data = yaml.load(stream, Loader = yaml_loader())
 
-        for (key, value) in data.items():
-            setattr(res, key, value)
+        res.data = data
 
         return res
