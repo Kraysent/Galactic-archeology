@@ -1,3 +1,4 @@
+import logging
 import time
 
 from amuse.lab import units
@@ -32,7 +33,7 @@ def analize(config: Config):
 
     snapshots = Snapshot.from_fits(config['input_file'])
 
-    print('i\ttimestamp\tcomp\tsave')
+    logging.info('i\tT, Myr\tTcomp\tTsave')
 
     for snapshot in snapshots:
         start_comp = time.time()
@@ -51,6 +52,6 @@ def analize(config: Config):
         visualizer.save(f'{config["output_dir"]}/img-{i:03d}.png')
 
         end = time.time()
-        print(f'{i:03d}\t{timestamp:.02f}\t\t{start_save - start_comp:.02f}\t{end - start_save:.02f}')
+        logging.info(f'{i:03d}\t{timestamp:.01f}\t{start_save - start_comp:.01f}\t{end - start_save:.01f}')
         
         i += 1
