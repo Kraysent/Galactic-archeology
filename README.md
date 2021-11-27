@@ -1,6 +1,6 @@
 # Galactic archeology
 ## Description
-This program is used to numerically solve and visualize N-body problem with huge number of particles. Primary application is galactic evolition. 
+This program is used to numerically solve and visualize N-body problem with huge number of particles. Primary application is galactic evolution. 
 
 ## Prerequisites
 It requires following packages to work:
@@ -10,7 +10,7 @@ pip install numpy matplotlib pandas pyyaml amuse-framework argparse astropy
 You also need to install [pyfalcon](https://github.com/GalacticDynamics-Oxford/pyfalcon) module which makes integration possible.
 
 ## Usage
-Program has three modes: creation, integration and analysis
+Program has three modes: creation, integration and analysis:
 ### Creation
 This module is responsible for initialisation of snapshots. You can create [configuration YAML file](examples/creation_config.yaml) which describes list of objects in the snapshot (single objects and ```*.csv``` files are supported for now).  
 
