@@ -11,10 +11,10 @@ def create(config: Config):
         if object['type'] == 'csv':
             curr_snapshot = Snapshot.from_csv(object['path'], object['delimeter'])
         elif object['type'] == 'body':
-            curr_snapshot = Snapshot.from_mass(object['mass'] | units.MSun)
+            curr_snapshot = Snapshot.from_mass(object['mass'])
         
-        curr_snapshot.particles.position += object['position'] | units.kpc
-        curr_snapshot.particles.velocity += object['velocity'] | units.kms
+        curr_snapshot.particles.position += object['position']
+        curr_snapshot.particles.velocity += object['velocity']
 
         builder.add_snapshot(curr_snapshot)
 
