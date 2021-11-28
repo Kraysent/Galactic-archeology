@@ -12,7 +12,8 @@ class Snapshot:
     fields = {
         'x': units.kpc, 'y': units.kpc, 'z': units.kpc,
         'vx': units.kms, 'vy': units.kms, 'vz': units.kms,
-        'mass': units.MSun
+        'mass': units.MSun, 
+        'is_barion': None
     }
     
     def __init__(self, 
@@ -63,11 +64,18 @@ class Snapshot:
         cols = []
 
         for (key, val) in Snapshot.fields.items():
+            array = getattr(self.particles, key)
+            fmt = 'L'
+
+            if val is not None:
+                array = array.value_in(val)
+                fmt = 'E'
+
             col = fits.Column(
                 name = key,
                 unit = str(Snapshot.fields[key]), 
-                format = 'E', 
-                array = getattr(self.particles, key).value_in(val)
+                format = fmt, 
+                array = array
             )
             cols.append(col)
 
@@ -96,7 +104,11 @@ class Snapshot:
             snapshot.particles = Particles(number_of_particles)
 
             for (key, val) in Snapshot.fields.items():
-                setattr(snapshot.particles, key, table.data[key] | val)
+                if val is not None:
+                    setattr(snapshot.particles, key, table.data[key] | val)
+                else: 
+                    data = np.array(table.data[key], dtype = np.float64)
+                    setattr(snapshot.particles, key, data)
 
             yield snapshot
 
@@ -119,6 +131,7 @@ class Snapshot:
     @staticmethod
     def from_csv(filename: str, delimiter: str = ',') -> 'Snapshot':
         table = pandas.read_csv(filename, delimiter = delimiter, index_col = False)
+        table['barion'].map({ 'True': True, 'False': False })
         particles = Particles(len(table.iloc[:, 0]))
         particles.x = np.array(table['x']) | units.kpc
         particles.y = np.array(table['y']) | units.kpc
@@ -127,6 +140,7 @@ class Snapshot:
         particles.vy = np.array(table['vy']) | units.kms
         particles.vz = np.array(table['vz']) | units.kms
         particles.mass = np.array(table['m']) | 232500 * units.MSun
+        particles.is_barion = table['barion']
 
         snapshot = Snapshot(particles, 0 | units.Myr)
 
@@ -137,13 +151,7 @@ class Snapshot:
         particles[0].position = [0, 0, 0] | units.kpc
         particles[0].velocity = [0, 0, 0] | units.kms
         particles[0].mass = mass
-        # particles.x = np.array([0]) | units.kpc
-        # particles.y = np.array([0]) | units.kpc
-        # particles.z = np.array([0]) | units.kpc
-        # particles.vx = np.array([0]) | units.kms
-        # particles.vy = np.array([0]) | units.kms
-        # particles.vz = np.array([0]) | units.kms
-        # particles.mass = np.array([mass.value_in(units.MSun)]) | units.MSun
+        particles[0].is_barion = True
 
         snapshot = Snapshot(particles, 0 | units.Myr)
 

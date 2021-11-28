@@ -11,7 +11,7 @@ class PyfalconIntegrator:
         eps: ScalarQuantity,
         kmax: float
     ):
-        self.pos, self.vel, self.mass, self.time = self._get_params(snapshot)
+        self.pos, self.vel, self.mass, self.is_barion, self.time = self._get_params(snapshot)
         self.eps = eps.value_in(units.kpc)
         self.dt = 0.5 ** kmax
         self.acc, _ = pyfalcon.gravity(self.pos, self.mass, self.eps)
@@ -20,9 +20,10 @@ class PyfalconIntegrator:
         pos = snapshot.particles.position.value_in(units.kpc)
         vel = snapshot.particles.velocity.value_in(units.kms)
         mass = snapshot.particles.mass.value_in(232500 * units.MSun)
+        is_barion = snapshot.particles.is_barion
         time = snapshot.timestamp.value_in(units.Gyr)
         
-        return (pos, vel, mass, time)
+        return (pos, vel, mass, is_barion, time)
 
     def leapfrog(self):
         self.vel += self.acc * (self.dt / 2)
@@ -44,6 +45,7 @@ class PyfalconIntegrator:
         snapshot.particles.position = pos
         snapshot.particles.velocity = vel
         snapshot.particles.mass = mass
+        snapshot.particles.is_barion = self.is_barion
         snapshot.timestamp = self.time | units.Gyr
 
         return snapshot

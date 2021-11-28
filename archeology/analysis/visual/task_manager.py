@@ -14,8 +14,8 @@ class TaskManager:
     def __init__(self) -> None:
         self.tasks = []
         self.objects = [
-            NbodyObject(slice(0, 200001), 'b', 'host', slice(0, 1000000)),
-            NbodyObject(slice(1000001, 1100002), 'r', 'satellite', slice(1000001, None))
+            NbodyObject('b', 'host', slice(0, 1000000)),
+            NbodyObject('r', 'satellite', slice(1000001, None))
         ]
 
     def add_tasks(self, *visual_tasks):
@@ -31,7 +31,7 @@ class TaskManager:
 
         for obj in self.objects:
             curr = VisualTask(
-                0, SpatialScatterTask(*get_unit_vectors('zy')), obj.part
+                0, SpatialScatterTask(*get_unit_vectors('zy')), obj.whole_part
             )
             curr.task.set_density_mode(700, (-45, 45, -40, 40))
             curr.draw_params = DrawParameters(
@@ -48,7 +48,7 @@ class TaskManager:
 
         for obj in self.objects:
             curr = VisualTask(
-                1, SpatialScatterTask(*get_unit_vectors('xy')), obj.part
+                1, SpatialScatterTask(*get_unit_vectors('xy')), obj.whole_part
             )
             curr.task.set_density_mode(700, (-45, 45, -40, 40))
             curr.draw_params = DrawParameters(
@@ -65,7 +65,7 @@ class TaskManager:
 
         for obj in self.objects:
             curr = VisualTask(
-                0, PointEmphasisTask(obj.part.start, *get_unit_vectors('zy')), #obj.whole_part,
+                0, PointEmphasisTask(obj.whole_part.start, *get_unit_vectors('zy')),
                 draw_params = DrawParameters(
                     linestyle = 'solid', color = obj.color, 
                     marker = 'o', markersize = 5
@@ -75,7 +75,7 @@ class TaskManager:
             tasks.append(curr)
 
             curr = VisualTask(
-                1, PointEmphasisTask(obj.part.start, *get_unit_vectors('xy')), #obj.whole_part,
+                1, PointEmphasisTask(obj.whole_part.start, *get_unit_vectors('xy')),
                 draw_params = DrawParameters(
                     linestyle = 'solid', color = obj.color, 
                     marker = 'o', markersize = 5
@@ -88,11 +88,11 @@ class TaskManager:
 
     def add_norm_velocity_tasks(self):
         def update_norm_velocity(snapshot: Snapshot):
-            particles = snapshot[self.objects[0].part].particles
+            particles = snapshot.particles
             cm = particles.center_of_mass()
             cm_vel = particles.center_of_mass_velocity()
 
-            (e1, e2, e3) = get_galactic_basis(snapshot[self.objects[0].part])
+            (e1, e2, e3) = get_galactic_basis(snapshot)
 
             r = 8 | units.kpc
             v = -200 | units.kms
@@ -111,7 +111,7 @@ class TaskManager:
                     update_norm_velocity,
                     radius = 3 | units.kpc
                 ), 
-                obj.part,
+                obj.whole_part,
                 DrawParameters(markersize = 0.2, color = obj.color)
             )
 
@@ -124,7 +124,7 @@ class TaskManager:
 
         for obj in self.objects:
             curr = VisualTask(
-                3, VelocityScatterTask(*get_unit_vectors('xy')), obj.part,
+                3, VelocityScatterTask(*get_unit_vectors('xy')), obj.whole_part,
                 DrawParameters(
                     markersize = 0.02, channel = obj.color, extent = (-400, 400, -400, 400)
                 )
@@ -136,7 +136,7 @@ class TaskManager:
 
     def add_distance_task(self):
         curr = VisualTask(
-            4, DistanceTask(self.objects[0].part.start, self.objects[1].part.start),
+            4, DistanceTask(self.objects[0].whole_part.start, self.objects[1].whole_part.start),
             draw_params = DrawParameters(
                 linestyle = 'solid', color = 'r'
             )   
@@ -148,11 +148,8 @@ class TaskManager:
         tasks = []
 
         for obj in self.objects:
-            barion_slice = obj.part
-            barion_slice = slice(obj.part.start - obj.whole_part.start, obj.part.stop - obj.whole_part.start)
-
             curr = VisualTask(
-                5, VelocityProfileTask(barion_slice), obj.whole_part,
+                5, VelocityProfileTask(), obj.whole_part,
                 DrawParameters(
                     linestyle = 'solid', color = obj.color, 
                     marker = 'None', label = obj.label
@@ -162,7 +159,7 @@ class TaskManager:
             tasks.append(curr)
 
         curr = VisualTask(
-            5, VelocityProfileTask(self.objects[0].part, self.objects[1].part),
+            5, VelocityProfileTask(),
             draw_params = DrawParameters(
                 linestyle = 'solid', color = 'y', 
                 marker = 'None', label = 'all'

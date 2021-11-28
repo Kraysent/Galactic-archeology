@@ -19,7 +19,7 @@ def get_galactic_basis(snapshot: Snapshot):
     
     e2 = np.empty(e1.shape)
     e2[0] = 1
-    e2[1] = 1
+    e2[1] = 0
     e2[2] = - e2[0] * e1[0] / e1[2] - e2[1] * e1[1] / e1[2] 
     e2 = e2 / (e2 ** 2).sum() ** 0.5
 

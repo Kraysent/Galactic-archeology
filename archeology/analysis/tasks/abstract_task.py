@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from enum import Enum
 from typing import Callable, Tuple, Union
-from amuse.datamodel.particles import Particles
 
 import numpy as np
 from amuse.lab import units
@@ -27,6 +26,11 @@ def get_unit_vectors(names: str) -> np.ndarray:
 
     return output
  
+def filter_barion_particles(snapshot: Snapshot):
+    barion_filter = np.array(snapshot.particles.is_barion, dtype = bool)
+
+    return snapshot.particles[barion_filter]
+
 class AbstractTask(ABC):
     @abstractmethod
     def run(
@@ -105,28 +109,24 @@ class AbstractScatterTask(AbstractPlaneTask):
 
 class SpatialScatterTask(AbstractScatterTask):
     def run(self, snapshot: Snapshot) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
-        (x1, x2) = self.get_projection(*self.get_coordinates(snapshot.particles.position, units.kpc))
+        particles = filter_barion_particles(snapshot)
+        (x1, x2) = self.get_projection(*self.get_coordinates(particles.position, units.kpc))
         
         return self.apply_mode(x1, x2)
 
 class VelocityScatterTask(AbstractScatterTask):
     def run(self, snapshot: Snapshot) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
-        (vx1, vx2) = self.get_projection(*self.get_coordinates(snapshot.particles.velocity, units.kms))
+        particles = filter_barion_particles(snapshot)
+        (vx1, vx2) = self.get_projection(*self.get_coordinates(particles.velocity, units.kms))
 
         return self.apply_mode(vx1, vx2)
 
 class VelocityProfileTask(AbstractTask):
-    def __init__(self, *barion_slices: slice) -> None:
-        self.barion_slices = barion_slices
-
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         cm = snapshot.particles.center_of_mass()
         cm_vel = snapshot.particles.center_of_mass_velocity()
 
-        particles = Particles()
-
-        for barion_slice in self.barion_slices:
-            particles.add_particles(snapshot.particles[barion_slice])
+        particles = filter_barion_particles(snapshot)
 
         r = (particles.position - cm).value_in(units.kpc)
         v = (particles.velocity - cm_vel).value_in(units.kms)
@@ -178,30 +178,10 @@ class PointEmphasisTask(AbstractPlaneTask):
 
         return (x1, x2)
 
-class VectorTrackTask(AbstractPlaneTask):
-    def __init__(self, e1: np.ndarray, e2: np.ndarray):
-        self.vector = None
-        self.x1 = np.empty((0,))
-        self.x2 = np.empty((0,))
-
-        super().__init__(e1, e2)
-    
-    def update_vector(self, vector: VectorQuantity, unit: named_unit):
-        self.vector = vector
-        self.unit = unit
-
-    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
-        (x1, x2) = self.get_projection(*self.get_coordinates(self.vector, self.unit))
-
-        self.x1 = np.append(self.x1, x1)
-        self.x2 = np.append(self.x2, x2)
-
-        return (self.x1, self.x2)
-
 class NormalVelocityTask(AbstractTask):
     def __init__(self,
         pov_updater: Callable[[Snapshot], Tuple[VectorQuantity, VectorQuantity]],
-        radius: VectorQuantity,
+        radius: VectorQuantity
     ):
         self.pov_updater = pov_updater
         self.radius = radius.value_in(units.kpc)
@@ -209,8 +189,10 @@ class NormalVelocityTask(AbstractTask):
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         pov, pov_vel = self.pov_updater(snapshot)
 
-        r_vec = (snapshot.particles.position - pov).value_in(units.kpc)
-        v_vec = (snapshot.particles.velocity - pov_vel).value_in(units.kms)
+        particles = filter_barion_particles(snapshot)
+
+        r_vec = (particles.position - pov).value_in(units.kpc)
+        v_vec = (particles.velocity - pov_vel).value_in(units.kms)
         x, y, z = r_vec[:, 0], r_vec[:, 1], r_vec[:, 2]
         vx, vy, vz = v_vec[:, 0], v_vec[:, 1], v_vec[:, 2]
         
