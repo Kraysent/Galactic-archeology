@@ -30,8 +30,12 @@ class TaskManager:
         tasks = []
 
         for obj in self.objects:
-            curr = VisualTask(
-                0, SpatialScatterTask(*get_unit_vectors('zy')), obj.whole_part
+            curr = VisualTask(0, 
+                SpatialScatterTask(
+                    [0, 0, 1] | units.kpc,
+                    [0, 1, 0] | units.kpc
+                ), 
+                obj.whole_part
             )
             curr.task.set_density_mode(700, (-45, 45, -40, 40))
             curr.draw_params = DrawParameters(
@@ -47,8 +51,12 @@ class TaskManager:
         tasks = []
 
         for obj in self.objects:
-            curr = VisualTask(
-                1, SpatialScatterTask(*get_unit_vectors('xy')), obj.whole_part
+            curr = VisualTask(1, 
+                SpatialScatterTask(
+                    [1, 0, 0] | units.kpc,
+                    [0, 1, 0] | units.kpc
+                ), 
+                obj.whole_part
             )
             curr.task.set_density_mode(700, (-45, 45, -40, 40))
             curr.draw_params = DrawParameters(
@@ -64,8 +72,12 @@ class TaskManager:
         tasks = []
 
         for obj in self.objects:
-            curr = VisualTask(
-                0, PointEmphasisTask(obj.whole_part.start, *get_unit_vectors('zy')),
+            curr = VisualTask(0, 
+                PointEmphasisTask(
+                    obj.whole_part.start, 
+                    [0, 0, 1] | units.kpc,
+                    [0, 1, 0] | units.kpc
+                ),
                 draw_params = DrawParameters(
                     linestyle = 'solid', color = obj.color, 
                     marker = 'o', markersize = 5
@@ -74,8 +86,12 @@ class TaskManager:
 
             tasks.append(curr)
 
-            curr = VisualTask(
-                1, PointEmphasisTask(obj.whole_part.start, *get_unit_vectors('xy')),
+            curr = VisualTask(1, 
+                PointEmphasisTask(
+                    obj.whole_part.start, 
+                    [1, 0, 0] | units.kpc,
+                    [0, 1, 0] | units.kpc
+                ),
                 draw_params = DrawParameters(
                     linestyle = 'solid', color = obj.color, 
                     marker = 'o', markersize = 5
@@ -123,8 +139,12 @@ class TaskManager:
         tasks = []
 
         for obj in self.objects:
-            curr = VisualTask(
-                3, VelocityScatterTask(*get_unit_vectors('xy')), obj.whole_part,
+            curr = VisualTask(3, 
+                VelocityScatterTask(
+                    [1, 0, 0] | units.kms,
+                    [0, 1, 0] | units.kms
+                ), 
+                obj.whole_part,
                 DrawParameters(
                     markersize = 0.02, channel = obj.color, extent = (-400, 400, -400, 400)
                 )
@@ -135,8 +155,11 @@ class TaskManager:
         self.add_tasks(*tasks)
 
     def add_distance_task(self):
-        curr = VisualTask(
-            4, DistanceTask(self.objects[0].whole_part.start, self.objects[1].whole_part.start),
+        curr = VisualTask(4, 
+            DistanceTask(
+                self.objects[0].whole_part.start, 
+                self.objects[1].whole_part.start
+            ),
             draw_params = DrawParameters(
                 linestyle = 'solid', color = 'r'
             )   
@@ -148,8 +171,8 @@ class TaskManager:
         tasks = []
 
         for obj in self.objects:
-            curr = VisualTask(
-                5, VelocityProfileTask(), obj.whole_part,
+            curr = VisualTask(5, 
+                VelocityProfileTask(), obj.whole_part,
                 DrawParameters(
                     linestyle = 'solid', color = obj.color, 
                     marker = 'None', label = obj.label
@@ -158,8 +181,8 @@ class TaskManager:
 
             tasks.append(curr)
 
-        curr = VisualTask(
-            5, VelocityProfileTask(),
+        curr = VisualTask(5, 
+            VelocityProfileTask(),
             draw_params = DrawParameters(
                 linestyle = 'solid', color = 'y', 
                 marker = 'None', label = 'all'

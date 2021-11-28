@@ -39,17 +39,9 @@ class AbstractTask(ABC):
         pass
 
 class AbstractPlaneTask(AbstractTask):
-    def __init__(self, e1: np.ndarray, e2: np.ndarray):
-        self.e1 = self._normalize(e1)
-        self.e2 = self._normalize(e2)
-    
-    def _normalize(self, vector: np.ndarray) -> np.ndarray:
-        l = (vector ** 2).sum() ** 0.5
-
-        if l != 0:
-            return vector / l
-        else: 
-            return vector
+    def __init__(self, e1: VectorQuantity, e2: VectorQuantity):
+        self.e1 = e1
+        self.e2 = e2
         
     def get_coordinates(self, vector: VectorQuantity, unit: named_unit = None):
         if units is not None:
@@ -66,19 +58,19 @@ class AbstractPlaneTask(AbstractTask):
             )
 
     def get_projection(
-        self, x: np.ndarray, y: np.ndarray, z: np.ndarray
+        self, r: VectorQuantity
     ) -> Tuple[np.ndarray, np.ndarray]:
-        e1_coords = x * self.e1[0] + y * self.e1[1] + z * self.e1[2]
-        e2_coords = x * self.e2[0] + y * self.e2[1] + z * self.e2[2]
+        e1_coords = r.x * self.e1.x + r.y * self.e1.y + r.z * self.e1.z
+        e2_coords = r.x * self.e2.x + r.y * self.e2.y + r.z * self.e2.z
 
-        return (e1_coords, e2_coords)
+        return (e1_coords / self.e1.length() ** 2, e2_coords / self.e2.length() ** 2)
 
 class Mode(Enum):
     PLAIN = 1
     DENSITY = 2
 
 class AbstractScatterTask(AbstractPlaneTask):
-    def __init__(self, e1: np.ndarray, e2: np.ndarray):
+    def __init__(self, e1: VectorQuantity, e2: VectorQuantity):
         self.mode = Mode.PLAIN
 
         super().__init__(e1, e2)
@@ -110,14 +102,14 @@ class AbstractScatterTask(AbstractPlaneTask):
 class SpatialScatterTask(AbstractScatterTask):
     def run(self, snapshot: Snapshot) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
         particles = filter_barion_particles(snapshot)
-        (x1, x2) = self.get_projection(*self.get_coordinates(particles.position, units.kpc))
+        (x1, x2) = self.get_projection(particles.position)
         
         return self.apply_mode(x1, x2)
 
 class VelocityScatterTask(AbstractScatterTask):
     def run(self, snapshot: Snapshot) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
         particles = filter_barion_particles(snapshot)
-        (vx1, vx2) = self.get_projection(*self.get_coordinates(particles.velocity, units.kms))
+        (vx1, vx2) = self.get_projection(particles.velocity)
 
         return self.apply_mode(vx1, vx2)
 
@@ -167,14 +159,14 @@ class MassProfileTask(AbstractTask):
         return (r, m)
 
 class PointEmphasisTask(AbstractPlaneTask):
-    def __init__(self, point_id: int, e1: np.ndarray, e2: np.ndarray):
+    def __init__(self, point_id: int, e1: VectorQuantity, e2: VectorQuantity):
         self.point_id = point_id
 
         super().__init__(e1, e2)
     
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         vector = snapshot.particles[self.point_id].position
-        (x1, x2) = self.get_projection(*self.get_coordinates(vector, units.kpc))
+        (x1, x2) = self.get_projection(vector)
 
         return (x1, x2)
 
