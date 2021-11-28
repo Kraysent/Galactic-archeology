@@ -38,7 +38,7 @@ def analize(config: Config):
     for snapshot in snapshots:
         start_comp = time.time()
         
-        task_manager.update_tasks(snapshot)
+        # task_manager.update_tasks(snapshot)
 
         vtask: VisualTask
         for vtask in task_manager.get_tasks():

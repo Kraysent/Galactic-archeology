@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import Tuple, Union
+from typing import Callable, Tuple, Union
+from amuse.datamodel.particles import Particles
 
 import numpy as np
 from amuse.lab import units
@@ -38,10 +39,6 @@ class AbstractPlaneTask(AbstractTask):
         self.e1 = self._normalize(e1)
         self.e2 = self._normalize(e2)
     
-    def update_basis(self, e1: np.ndarray, e2: np.ndarray):
-        self.e1 = self._normalize(e1)
-        self.e2 = self._normalize(e2)
-
     def _normalize(self, vector: np.ndarray) -> np.ndarray:
         l = (vector ** 2).sum() ** 0.5
 
@@ -119,14 +116,20 @@ class VelocityScatterTask(AbstractScatterTask):
         return self.apply_mode(vx1, vx2)
 
 class VelocityProfileTask(AbstractTask):
-    def __init__(self) -> None:
-        self.center_pos = [0, 0, 0] | units.kpc
-        self.center_vel = [0, 0, 0] | units.kms
+    def __init__(self, *barion_slices: slice) -> None:
+        self.barion_slices = barion_slices
 
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
-        particles = snapshot.particles
-        r = (particles.position - self.center_pos).value_in(units.kpc)
-        v = (particles.velocity - self.center_vel).value_in(units.kms)
+        cm = snapshot.particles.center_of_mass()
+        cm_vel = snapshot.particles.center_of_mass_velocity()
+
+        particles = Particles()
+
+        for barion_slice in self.barion_slices:
+            particles.add_particles(snapshot.particles[barion_slice])
+
+        r = (particles.position - cm).value_in(units.kpc)
+        v = (particles.velocity - cm_vel).value_in(units.kms)
         r = (r ** 2).sum(axis = 1) ** 0.5
         v = (v ** 2).sum(axis = 1) ** 0.5
 
@@ -141,17 +144,12 @@ class VelocityProfileTask(AbstractTask):
 
         return (r, v)
 
-    def update_center(self, pos: VectorQuantity, vel: VectorQuantity):
-        self.center_pos = pos
-        self.center_vel = vel
-
 class MassProfileTask(AbstractTask):
-    def __init__(self) -> None:
-        self.center_pos = [0, 0, 0] | units.kpc
-
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         particles = snapshot.particles
-        r = (particles.position - self.center_pos).value_in(units.kpc)
+        cm = particles.center_of_mass()
+
+        r = (particles.position - cm).value_in(units.kpc)
         m = particles.mass.value_in(units.MSun)
         r = (r ** 2).sum(axis = 1) ** 0.5
 
@@ -168,28 +166,17 @@ class MassProfileTask(AbstractTask):
 
         return (r, m)
 
-    def update_center(self, pos: VectorQuantity):
-        self.center_pos = pos
-
 class PointEmphasisTask(AbstractPlaneTask):
-    def __init__(self, e1: np.ndarray, e2: np.ndarray):
-        self.vector = None
-        self.x1 = np.empty((0,))
-        self.x2 = np.empty((0,))
+    def __init__(self, point_id: int, e1: np.ndarray, e2: np.ndarray):
+        self.point_id = point_id
 
         super().__init__(e1, e2)
     
-    def update_vector(self, vector: VectorQuantity, unit: named_unit):
-        self.vector = vector
-        self.unit = unit
-
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
-        (x1, x2) = self.get_projection(*self.get_coordinates(self.vector, self.unit))
+        vector = snapshot.particles[self.point_id].position
+        (x1, x2) = self.get_projection(*self.get_coordinates(vector, units.kpc))
 
-        self.x1 = np.append(self.x1, x1)
-        self.x2 = np.append(self.x2, x2)
-
-        return (self.x1[-1:], self.x2[-1:])
+        return (x1, x2)
 
 class VectorTrackTask(AbstractPlaneTask):
     def __init__(self, e1: np.ndarray, e2: np.ndarray):
@@ -212,18 +199,18 @@ class VectorTrackTask(AbstractPlaneTask):
         return (self.x1, self.x2)
 
 class NormalVelocityTask(AbstractTask):
-    def __init__(self, 
-        pov: VectorQuantity, 
-        pov_velocity: VectorQuantity, 
+    def __init__(self,
+        pov_updater: Callable[[Snapshot], Tuple[VectorQuantity, VectorQuantity]],
         radius: VectorQuantity,
     ):
-        self.pov = pov.value_in(units.kpc)
-        self.pov_vel = pov_velocity.value_in(units.kms)
+        self.pov_updater = pov_updater
         self.radius = radius.value_in(units.kpc)
     
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
-        r_vec = snapshot.particles.position.value_in(units.kpc) - self.pov
-        v_vec = snapshot.particles.velocity.value_in(units.kms) - self.pov_vel
+        pov, pov_vel = self.pov_updater(snapshot)
+
+        r_vec = (snapshot.particles.position - pov).value_in(units.kpc)
+        v_vec = (snapshot.particles.velocity - pov_vel).value_in(units.kms)
         x, y, z = r_vec[:, 0], r_vec[:, 1], r_vec[:, 2]
         vx, vy, vz = v_vec[:, 0], v_vec[:, 1], v_vec[:, 2]
         
@@ -244,10 +231,6 @@ class NormalVelocityTask(AbstractTask):
 
         return (v_r, v_t)
 
-    def set_pov(self, pov: VectorQuantity, pov_vel: VectorQuantity):
-        self.pov = pov.value_in(units.kpc)
-        self.pov_vel = pov_vel.value_in(units.kms)
-
 class KineticEnergyTask(AbstractTask):
     def __init__(self):
         self.times = []
@@ -260,18 +243,16 @@ class KineticEnergyTask(AbstractTask):
         return (np.array(self.times), np.array(self.energies))
 
 class DistanceTask(AbstractTask):
-    def __init__(self):
+    def __init__(self, start_id: int, end_id: int):
+        self.ids = (start_id, end_id)
         self.dist = []
         self.time = []
 
-    def update_points(self, vector1: VectorQuantity, vector2: VectorQuantity, unit: named_unit):
-        self.v1 = vector1
-        self.v2 = vector2
-        self.unit = unit
-
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
-        v1 = self.v1.value_in(units.kpc)
-        v2 = self.v2.value_in(units.kpc)
+        start, end = self.ids
+
+        v1 = snapshot.particles[start].position.value_in(units.kpc)
+        v2 = snapshot.particles[end].position.value_in(units.kpc)
 
         dist = ((v1 - v2) ** 2).sum() ** 0.5
         self.dist.append(dist)
