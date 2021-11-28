@@ -12,7 +12,7 @@ You also need to install [pyfalcon](https://github.com/GalacticDynamics-Oxford/p
 ## Usage
 Program has three modes: creation, integration and analysis:
 ### Creation
-This module is responsible for initialisation of snapshots. You can create [configuration YAML file](examples/creation_config.yaml) which describes list of objects in the snapshot (single objects and ```*.csv``` files are supported for now).  
+This module is responsible for initialization of snapshots. You can create [configuration YAML file](examples/creation_config.yaml) which describes list of objects in the snapshot (single objects and ```*.csv``` files are supported for now).
 
 The output is single FITS file which has two HDUs: empty primary one (it is required by FITS standard) and binary table with positions, velocities and masses of each particle in the system. It also stores timestamp T = 0 in the header. 
 

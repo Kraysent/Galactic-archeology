@@ -4,28 +4,10 @@ from typing import Callable, Tuple, Union
 
 import numpy as np
 from amuse.lab import units
-from amuse.units.core import named_unit
 from amuse.units.quantities import VectorQuantity
 from archeology.datamodel import Snapshot
 
 
-def get_unit_vectors(names: str) -> np.ndarray:
-    output = []
-
-    for name in names:
-        result = []
-    
-        if name == 'x':
-            result = [1, 0, 0]
-        elif name == 'y':
-            result = [0, 1, 0]
-        elif name == 'z':
-            result = [0, 0, 1]
-
-        output.append(np.array(result))
-
-    return output
- 
 def filter_barion_particles(snapshot: Snapshot):
     barion_filter = np.array(snapshot.particles.is_barion, dtype = bool)
 
@@ -43,20 +25,6 @@ class AbstractPlaneTask(AbstractTask):
         self.e1 = e1
         self.e2 = e2
         
-    def get_coordinates(self, vector: VectorQuantity, unit: named_unit = None):
-        if units is not None:
-            return (
-                vector.x.value_in(unit),
-                vector.y.value_in(unit),
-                vector.z.value_in(unit)
-            )
-        else:
-            return (
-                vector[0],
-                vector[1],
-                vector[2]
-            )
-
     def get_projection(
         self, r: VectorQuantity
     ) -> Tuple[np.ndarray, np.ndarray]:

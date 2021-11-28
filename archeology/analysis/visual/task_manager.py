@@ -2,7 +2,7 @@ from amuse.lab import units
 from archeology.analysis.tasks import (DistanceTask, MassProfileTask,
                                        NormalVelocityTask, PointEmphasisTask,
                                        SpatialScatterTask, VelocityProfileTask,
-                                       VelocityScatterTask, get_unit_vectors)
+                                       VelocityScatterTask)
 from archeology.analysis.utils import get_galactic_basis
 from archeology.analysis.visual.nbody_object import NbodyObject
 from archeology.analysis.visual.plot_parameters import DrawParameters
@@ -35,13 +35,13 @@ class TaskManager:
                     [0, 0, 1] | units.kpc,
                     [0, 1, 0] | units.kpc
                 ), 
-                obj.whole_part
+                obj.whole_part,
+                DrawParameters(
+                    extent = [-45, 45, -40, 40],
+                    channel = obj.color
+                )
             )
             curr.task.set_density_mode(700, (-45, 45, -40, 40))
-            curr.draw_params = DrawParameters(
-                extent = [-45, 45, -40, 40],
-                channel = obj.color
-            )
 
             tasks.append(curr)
             
@@ -56,13 +56,13 @@ class TaskManager:
                     [1, 0, 0] | units.kpc,
                     [0, 1, 0] | units.kpc
                 ), 
-                obj.whole_part
+                obj.whole_part,
+                DrawParameters(
+                    extent = [-45, 45, -40, 40],
+                    channel = obj.color
+                )
             )
             curr.task.set_density_mode(700, (-45, 45, -40, 40))
-            curr.draw_params = DrawParameters(
-                extent = [-45, 45, -40, 40],
-                channel = obj.color
-            )
 
             tasks.append(curr)
 
@@ -195,8 +195,9 @@ class TaskManager:
         tasks = []
 
         for obj in self.objects:
-            curr = VisualTask(
-                6, MassProfileTask(), obj.whole_part,
+            curr = VisualTask(6, 
+                MassProfileTask(), 
+                obj.whole_part,
                 DrawParameters(
                     linestyle = 'solid', color = obj.color, 
                     marker = 'None', label = obj.label
@@ -205,10 +206,9 @@ class TaskManager:
 
             tasks.append(curr)
 
-        curr = VisualTask(
-            6, MassProfileTask(), 
-            (self.objects[0].whole_part, self.objects[1].whole_part),
-            DrawParameters(
+        curr = VisualTask(6, 
+            MassProfileTask(), 
+            draw_params = DrawParameters(
                 linestyle = 'solid', color = 'y', 
                 marker = 'None', label = 'all'
             )
