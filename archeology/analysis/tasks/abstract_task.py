@@ -19,7 +19,8 @@ def get_task(task_name: str, args: dict) -> AbstractTask:
         'VelocityScatterTask': VelocityScatterTask,
         'DistanceTask': DistanceTask,
         'VelocityProfileTask': VelocityProfileTask,
-        'MassProfileTask': MassProfileTask
+        'MassProfileTask': MassProfileTask,
+        'PointEmphasisTask': PointEmphasisTask
     }
 
     return task_map[task_name](**args)

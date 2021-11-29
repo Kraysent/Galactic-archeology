@@ -1,9 +1,4 @@
-from archeology.analysis.visual.nbody_object import NbodyObject
-from archeology.analysis.tasks import MassProfileTask
-from archeology.datamodel.snapshot import Snapshot
-from scipy import interpolate, misc, integrate
 import numpy as np
-import matplotlib.pyplot as plt
 from amuse.lab import units, constants
 
 def manual_analize():
