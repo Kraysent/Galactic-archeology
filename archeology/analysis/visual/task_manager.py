@@ -33,10 +33,11 @@ class TaskManager:
                 obj.whole_part,
                 DrawParameters(
                     extent = [-45, 45, -40, 40],
-                    channel = obj.color
+                    channel = obj.color,
+                    is_density_plot = True,
+                    resolution = 700
                 )
             )
-            curr.task.set_density_mode(700, (-45, 45, -40, 40))
 
             tasks.append(curr)
             
@@ -54,10 +55,11 @@ class TaskManager:
                 obj.whole_part,
                 DrawParameters(
                     extent = [-45, 45, -40, 40],
-                    channel = obj.color
+                    channel = obj.color,
+                    is_density_plot = True,
+                    resolution = 700
                 )
             )
-            curr.task.set_density_mode(700, (-45, 45, -40, 40))
 
             tasks.append(curr)
 
@@ -97,39 +99,6 @@ class TaskManager:
 
         self.add_tasks(*tasks)
 
-    # def add_norm_velocity_tasks(self):
-    #     def update_norm_velocity(snapshot: Snapshot):
-    #         particles = snapshot.particles
-    #         cm = particles.center_of_mass()
-    #         cm_vel = particles.center_of_mass_velocity()
-
-    #         (e1, e2, e3) = get_galactic_basis(snapshot)
-
-    #         r = 8 | units.kpc
-    #         v = -200 | units.kms
-
-    #         sun_pos = cm + e2 * r
-    #         sun_vel = cm_vel + e3 * v
-
-    #         return sun_pos, sun_vel
-
-    #     tasks = []
-
-    #     for obj in self.objects:
-    #         curr = VisualTask(
-    #             2, 
-    #             NormalVelocityTask(
-    #                 update_norm_velocity,
-    #                 radius = 3 | units.kpc
-    #             ), 
-    #             obj.whole_part,
-    #             DrawParameters(markersize = 0.2, color = obj.color)
-    #         )
-
-    #         tasks.append(curr)
-
-    #     self.add_tasks(*tasks)
-
     def add_velocity_tasks(self):
         tasks = []
 
@@ -141,10 +110,14 @@ class TaskManager:
                 ), 
                 obj.whole_part,
                 DrawParameters(
-                    markersize = 0.02, channel = obj.color, extent = (-400, 400, -400, 400)
+                    markersize = 0.02, 
+                    channel = obj.color,
+                    is_density_plot = True, 
+                    resolution = 700,
+                    extent = (-400, 400, -400, 400)
                 )
             )
-            curr.task.set_density_mode(700, (-400, 400, -400, 400))
+
             tasks.append(curr)
 
         self.add_tasks(*tasks)

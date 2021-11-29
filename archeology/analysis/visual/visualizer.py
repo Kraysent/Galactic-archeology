@@ -125,6 +125,19 @@ class Visualizer:
                 extent = params[axes_id].extent
             )
 
+    def _get_hist(self, 
+        x1: np.ndarray, 
+        x2: np.ndarray, 
+        resolution: int, 
+        extent: tuple[float, float, float, float]
+    ) -> np.ndarray:
+        hist, _, _ = np.histogram2d(x1, x2, resolution, range = [
+            extent[:2], extent[2:]
+        ])
+        hist = np.flip(hist.T, axis = 0)
+
+        return hist
+
     def set_title(self, title: str):
         self.figure.suptitle(title)
 
@@ -136,17 +149,19 @@ class Visualizer:
         imparams = {}
 
         for (axes_id, data, params) in self.pictures:
-            if type(data) is tuple:
+            if not params.is_density_plot:
                 self._scatter_points(axes_id, data, params)
             else:
+                hist = self._get_hist(data[0], data[1], params.resolution, params.extent)
+
                 if not (axes_id in images.keys()):
                     images[axes_id] = {
-                        'r': np.zeros(data.shape),
-                        'g': np.zeros(data.shape),
-                        'b': np.zeros(data.shape)
+                        'r': np.zeros(hist.shape),
+                        'g': np.zeros(hist.shape),
+                        'b': np.zeros(hist.shape)
                     }
 
-                images[axes_id][params.channel] += data    
+                images[axes_id][params.channel] += hist    
                 imparams[axes_id] = params
 
         self._draw_images(images.items(), imparams, 0.85)

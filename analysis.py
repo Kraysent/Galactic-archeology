@@ -2,7 +2,9 @@ import logging
 import time
 
 from amuse.lab import units
+from archeology.analysis.tasks.abstract_task import get_task
 from archeology.analysis.visual.nbody_object import NbodyObject
+from archeology.analysis.visual.plot_parameters import DrawParameters
 
 from archeology.analysis.visual.task_manager import TaskManager
 from archeology.analysis.visual.visual_task import VisualTask
@@ -11,14 +13,6 @@ from archeology.datamodel import Config, Snapshot
 
 
 def analize(config: Config):
-    visualizer = Visualizer()
-
-    for i, plot in enumerate(config['plots']):
-        visualizer.add_axes(*plot['coords'])
-        visualizer.set_plot_parameters(i, **plot['params'])
-
-    visualizer.set_figsize(*config['figsize'])
-
     objects = []
 
     for curr_obj in config['objects']:
@@ -28,7 +22,15 @@ def analize(config: Config):
         obj = NbodyObject(curr_obj['color'], curr_obj['name'], curr_slice)
         objects.append(obj)
 
+    visualizer = Visualizer()
     task_manager = TaskManager(objects)
+
+    visualizer.set_figsize(*config['figsize'])
+
+    for i, plot in enumerate(config['plots']):
+        visualizer.add_axes(*plot['coords'])
+        visualizer.set_plot_parameters(i, **plot['params'])
+
 
     task_manager.add_left_spatial_tasks()
     task_manager.add_right_spatial_tasks()

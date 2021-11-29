@@ -31,6 +31,8 @@ class DrawParameters:
     linestyle: str = 'None'
     color: str = 'b'
     marker: str = 'o'
+    is_density_plot: bool = False
+    resolution: int = 100
     extent: list = [0, 100, 0, 100]
     cmap: str = 'ocean_r'
     cmapnorm = mpl.colors.LogNorm()

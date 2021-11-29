@@ -1,17 +1,10 @@
 from abc import ABC, abstractmethod
-from enum import Enum
-from typing import Callable, Tuple, Union
+from typing import Tuple, Union
 
 import numpy as np
 from amuse.lab import units
 from amuse.units.quantities import VectorQuantity
 from archeology.datamodel import Snapshot
-
-
-def filter_barion_particles(snapshot: Snapshot):
-    barion_filter = np.array(snapshot.particles.is_barion, dtype = bool)
-
-    return snapshot.particles[barion_filter]
 
 class AbstractTask(ABC):
     @abstractmethod
@@ -19,6 +12,22 @@ class AbstractTask(ABC):
         self, snapshot: Snapshot
     ) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
         pass
+
+def get_task(task_name: str, args: dict) -> AbstractTask:
+    task_map = {
+        'SpatialScatterTask': SpatialScatterTask,
+        'VelocityScatterTask': VelocityScatterTask,
+        'DistanceTask': DistanceTask,
+        'VelocityProfileTask': VelocityProfileTask,
+        'MassProfileTask': MassProfileTask
+    }
+
+    return task_map[task_name](**args)
+
+def filter_barion_particles(snapshot: Snapshot):
+    barion_filter = np.array(snapshot.particles.is_barion, dtype = bool)
+
+    return snapshot.particles[barion_filter]
 
 class AbstractPlaneTask(AbstractTask):
     def __init__(self, e1: VectorQuantity, e2: VectorQuantity):
@@ -33,53 +42,19 @@ class AbstractPlaneTask(AbstractTask):
 
         return (e1_coords / self.e1.length() ** 2, e2_coords / self.e2.length() ** 2)
 
-class Mode(Enum):
-    PLAIN = 1
-    DENSITY = 2
-
-class AbstractScatterTask(AbstractPlaneTask):
-    def __init__(self, e1: VectorQuantity, e2: VectorQuantity):
-        self.mode = Mode.PLAIN
-
-        super().__init__(e1, e2)
-
-    def apply_mode(self, 
-        x1: np.ndarray, x2: np.ndarray
-    ) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
-        if self.mode == Mode.PLAIN:
-            return x1, x2
-        elif self.mode == Mode.DENSITY:
-            dist, _, _ = np.histogram2d(x1, x2, self.resolution, range = [
-                self.edges[:2], self.edges[2:]
-            ])
-            dist = np.flip(dist.T, axis = 0)
-
-            return dist
-
-    def set_plain_mode(self):
-        self.mode = Mode.PLAIN
-
-    def set_density_mode(self, 
-        resolution: int, 
-        edges: Tuple[float, float, float, float]
-    ):
-        self.mode = Mode.DENSITY
-        self.resolution = resolution
-        self.edges = edges
-
-class SpatialScatterTask(AbstractScatterTask):
+class SpatialScatterTask(AbstractPlaneTask):
     def run(self, snapshot: Snapshot) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
         particles = filter_barion_particles(snapshot)
         (x1, x2) = self.get_projection(particles.position)
         
-        return self.apply_mode(x1, x2)
+        return x1, x2
 
-class VelocityScatterTask(AbstractScatterTask):
+class VelocityScatterTask(AbstractPlaneTask):
     def run(self, snapshot: Snapshot) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
         particles = filter_barion_particles(snapshot)
         (vx1, vx2) = self.get_projection(particles.velocity)
 
-        return self.apply_mode(vx1, vx2)
+        return vx1, vx2
 
 class VelocityProfileTask(AbstractTask):
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
@@ -137,41 +112,6 @@ class PointEmphasisTask(AbstractPlaneTask):
         (x1, x2) = self.get_projection(vector)
 
         return (x1, x2)
-
-# class NormalVelocityTask(AbstractTask):
-#     def __init__(self,
-#         pov_updater: Callable[[Snapshot], Tuple[VectorQuantity, VectorQuantity]],
-#         radius: VectorQuantity
-#     ):
-#         self.pov_updater = pov_updater
-#         self.radius = radius.value_in(units.kpc)
-    
-#     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
-#         pov, pov_vel = self.pov_updater(snapshot)
-
-#         particles = filter_barion_particles(snapshot)
-
-#         r_vec = (particles.position - pov).value_in(units.kpc)
-#         v_vec = (particles.velocity - pov_vel).value_in(units.kms)
-#         x, y, z = r_vec[:, 0], r_vec[:, 1], r_vec[:, 2]
-#         vx, vy, vz = v_vec[:, 0], v_vec[:, 1], v_vec[:, 2]
-        
-#         r = np.sum(r_vec ** 2, axis = 1) ** 0.5
-
-#         filter = r < self.radius
-
-#         r = r[filter]
-#         x, y, z = x[filter], y[filter], z[filter]
-#         vx, vy, vz = vx[filter], vy[filter], vz[filter]
-
-#         ex, ey, ez = x / r, y / r, z / r
-
-#         v_r = ex * vx + ey * vy + ez * vz
-
-#         v_rx, v_ry, v_rz = v_r * ex, v_r * ey, v_r * ez
-#         v_t = ((vx - v_rx) ** 2 + (vy - v_ry) ** 2 + (vz - v_rz) ** 2) ** 0.5
-
-#         return (v_r, v_t)
 
 class KineticEnergyTask(AbstractTask):
     def __init__(self):
