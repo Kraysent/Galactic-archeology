@@ -3,14 +3,8 @@ input_file: '/home/user/data/test_out.fits'
 # directory where output pictures would be stored
 output_dir: /home/user/data/analysis'
 
-# list of objects used to distinguish two galaxies
-objects:
-  - name: host
-    color: b
-    slice: [0, 1000000]
-  - name: satellite
-    color: r
-    slice: [1000001, 1500002]
+# figure size in inches
+figsize: [20, 11]
 
 # description of plots layout in following format:
 # - coords: [x, y, width, height]
@@ -20,6 +14,7 @@ objects:
 # params should be given the same names as ones in matplotlib.pyplot (and proper values) as most of them are just passed along to it
 
 plots: 
+  # Left coordinate plot
   - coords: [0, 0.35, 0.35, 0.6]
     params: 
       xlim: [-45, 45]
@@ -28,31 +23,127 @@ plots:
       ylabel: 'y, kpc'
       xticks: [0, 10]
       yticks: [0, 10]
+    tasks:
+      - name: SpatialScatterTask
+        args: { e1: !q [[0, 0, 1], kpc], e2: !q [[0, 1, 0], kpc] }
+        slice: [0, 1000000]
+        display: 
+          is_density_plot: True
+          resolution: 700
+          extent: [-45, 45, -40, 40]
+          channel: b
+      - name: SpatialScatterTask
+        args: { e1: !q [[0, 0, 1], kpc], e2: !q [[0, 1, 0], kpc] }
+        slice: [1000001, 1500002]
+        display: 
+          is_density_plot: True
+          resolution: 700
+          extent: [-45, 45, -40, 40]
+          channel: r
+      - name: PointEmphasisTask
+        args: { point_id: 0, e1: !q [[0, 0, 1], kpc], e2: !q [[0, 1, 0], kpc] }
+        display: 
+          linestyle: solid
+          color: b
+          marker: o
+          markersize: 5
+      - name: PointEmphasisTask
+        args: { point_id: 1000001, e1: !q [[0, 0, 1], kpc], e2: !q [[0, 1, 0], kpc] }
+        display: 
+          linestyle: solid
+          color: r
+          marker: o
+          markersize: 5
+      
+  # Right coordinate plot
   - coords: [0.33, 0.35, 0.35, 0.6]
     params: 
       xlim: [-45, 45]
       ylim: [-40, 40]
+      xlabel: 'x, kpc'
       yticks: []
       xticks: [0, 10]
+    tasks:
+      - name: SpatialScatterTask
+        args: { e1: !q [[1, 0, 0], kpc], e2: !q [[0, 1, 0], kpc] }
+        slice: [0, 1000000]
+        display: 
+          is_density_plot: True
+          resolution: 700
+          extent: [-45, 45, -40, 40]
+          channel: b
+      - name: SpatialScatterTask
+        args: { e1: !q [[1, 0, 0], kpc], e2: !q [[0, 1, 0], kpc] }
+        slice: [1000001, 1500002]
+        display: 
+          is_density_plot: True
+          resolution: 700
+          extent: [-45, 45, -40, 40]
+          channel: r
+      - name: PointEmphasisTask
+        args: { point_id: 0, e1: !q [[1, 0, 0], kpc], e2: !q [[0, 1, 0], kpc] }
+        display: 
+          linestyle: solid
+          color: b
+          marker: o
+          markersize: 5
+      - name: PointEmphasisTask
+        args: { point_id: 1000001, e1: !q [[1, 0, 0], kpc], e2: !q [[0, 1, 0], kpc] }
+        display: 
+          linestyle: solid
+          color: r
+          marker: o
+          markersize: 5
+
+  # Empty plot
   - coords: [0.72, 0.66, 0.14, 0.3]
     params: 
       xlim: [-350, 350]
       ylim: [0, 350]
-      xlabel: '$v_r$, km/s'
-      ylabel: '$v_{\tau}$, km/s'
+
+  # Velocity plot
   - coords: [0.72, 0.33, 0.14, 0.3]
     params:
       xlim: [-400, 400]
       ylim: [-400, 400]
       xlabel: '$v_x$, km/s'
       ylabel: '$v_y$, km/s'
+    tasks:
+      - name: VelocityScatterTask
+        args: { e1: !q [[1, 0, 0], kms], e2: !q [[0, 1, 0], kms] }
+        slice: [0, 1000000]
+        display: 
+          is_density_plot: True
+          resolution: 700
+          extent: [-400, 400, -400, 400]
+          markersize: 0.02
+          channel: b
+      - name: VelocityScatterTask
+        args: { e1: !q [[1, 0, 0], kms], e2: !q [[0, 1, 0], kms] }
+        slice: [1000001, 1500002]
+        display: 
+          is_density_plot: True
+          resolution: 700
+          extent: [-400, 400, -400, 400]
+          markersize: 0.02
+          channel: r
+
+  # Separation plot
   - coords: [0, 0, 0.14, 0.3]
     params: 
-      xlim: [0, 10000]
+      xlim: [0, 1000]
       ylim: [0, 150]
       xlabel: 'Time, Myr'
       ylabel: 'Separation, kpc'
       grid: True
+    tasks: 
+      - name: DistanceTask
+        args: { start_id: 0, end_id: 1000001 }
+        display: 
+          linestyle: solid
+          color: r
+
+  # Velocity profile plot
   - coords: [0.18, 0, 0.32, 0.3]
     params: 
       xlim: [0, 15]
@@ -60,6 +151,32 @@ plots:
       xlabel: '$r$, kpc'
       ylabel: '$v$, km/s'
       grid: True
+    tasks:
+      - name: VelocityProfileTask
+        args: {}
+        slice: [0, 1000000]
+        display:
+          linestyle: solid
+          color: b
+          marker: 'None'
+          label: host
+      - name: VelocityProfileTask
+        args: {}
+        slice: [1000001, 1500002]
+        display:
+          linestyle: solid
+          color: r
+          marker: 'None'
+          label: satellite
+      - name: VelocityProfileTask
+        args: {}
+        display:
+          linestyle: solid
+          color: y
+          marker: 'None'
+          label: all
+
+  # Mass profile plot
   - coords: [0.54, 0, 0.32, 0.3]
     params: 
       xlim: [0, 50]
@@ -67,6 +184,27 @@ plots:
       xlabel: '$r$, kpc'
       ylabel: '$M$, MSun'
       grid: True
-
-# figure size in inches
-figsize: [20, 11]
+    tasks:
+      - name: MassProfileTask
+        args: {}
+        slice: [0, 1000000]
+        display: 
+          linestyle: solid
+          color: b
+          marker: 'None'
+          label: host
+      - name: MassProfileTask
+        args: {}
+        slice: [1000001, 1500002]
+        display: 
+          linestyle: solid
+          color: r
+          marker: 'None'
+          label: satellite
+      - name: MassProfileTask
+        args: {}
+        display: 
+          linestyle: solid
+          color: y
+          marker: 'None'
+          label: all
