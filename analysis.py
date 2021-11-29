@@ -2,6 +2,7 @@ import logging
 import time
 
 from amuse.lab import units
+from archeology.analysis.visual.nbody_object import NbodyObject
 
 from archeology.analysis.visual.task_manager import TaskManager
 from archeology.analysis.visual.visual_task import VisualTask
@@ -18,12 +19,21 @@ def analize(config: Config):
 
     visualizer.set_figsize(*config['figsize'])
 
-    task_manager = TaskManager()
+    objects = []
+
+    for curr_obj in config['objects']:
+        curr_slice = curr_obj['slice']
+        curr_slice = slice(curr_slice[0], curr_slice[1])
+
+        obj = NbodyObject(curr_obj['color'], curr_obj['name'], curr_slice)
+        objects.append(obj)
+
+    task_manager = TaskManager(objects)
 
     task_manager.add_left_spatial_tasks()
     task_manager.add_right_spatial_tasks()
     task_manager.add_tracking_tasks()
-    task_manager.add_norm_velocity_tasks()
+    # task_manager.add_norm_velocity_tasks()
     task_manager.add_velocity_tasks()
     task_manager.add_distance_task()
     task_manager.add_velocity_profile_task()

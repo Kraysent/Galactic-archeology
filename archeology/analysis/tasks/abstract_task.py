@@ -138,40 +138,40 @@ class PointEmphasisTask(AbstractPlaneTask):
 
         return (x1, x2)
 
-class NormalVelocityTask(AbstractTask):
-    def __init__(self,
-        pov_updater: Callable[[Snapshot], Tuple[VectorQuantity, VectorQuantity]],
-        radius: VectorQuantity
-    ):
-        self.pov_updater = pov_updater
-        self.radius = radius.value_in(units.kpc)
+# class NormalVelocityTask(AbstractTask):
+#     def __init__(self,
+#         pov_updater: Callable[[Snapshot], Tuple[VectorQuantity, VectorQuantity]],
+#         radius: VectorQuantity
+#     ):
+#         self.pov_updater = pov_updater
+#         self.radius = radius.value_in(units.kpc)
     
-    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
-        pov, pov_vel = self.pov_updater(snapshot)
+#     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
+#         pov, pov_vel = self.pov_updater(snapshot)
 
-        particles = filter_barion_particles(snapshot)
+#         particles = filter_barion_particles(snapshot)
 
-        r_vec = (particles.position - pov).value_in(units.kpc)
-        v_vec = (particles.velocity - pov_vel).value_in(units.kms)
-        x, y, z = r_vec[:, 0], r_vec[:, 1], r_vec[:, 2]
-        vx, vy, vz = v_vec[:, 0], v_vec[:, 1], v_vec[:, 2]
+#         r_vec = (particles.position - pov).value_in(units.kpc)
+#         v_vec = (particles.velocity - pov_vel).value_in(units.kms)
+#         x, y, z = r_vec[:, 0], r_vec[:, 1], r_vec[:, 2]
+#         vx, vy, vz = v_vec[:, 0], v_vec[:, 1], v_vec[:, 2]
         
-        r = np.sum(r_vec ** 2, axis = 1) ** 0.5
+#         r = np.sum(r_vec ** 2, axis = 1) ** 0.5
 
-        filter = r < self.radius
+#         filter = r < self.radius
 
-        r = r[filter]
-        x, y, z = x[filter], y[filter], z[filter]
-        vx, vy, vz = vx[filter], vy[filter], vz[filter]
+#         r = r[filter]
+#         x, y, z = x[filter], y[filter], z[filter]
+#         vx, vy, vz = vx[filter], vy[filter], vz[filter]
 
-        ex, ey, ez = x / r, y / r, z / r
+#         ex, ey, ez = x / r, y / r, z / r
 
-        v_r = ex * vx + ey * vy + ez * vz
+#         v_r = ex * vx + ey * vy + ez * vz
 
-        v_rx, v_ry, v_rz = v_r * ex, v_r * ey, v_r * ez
-        v_t = ((vx - v_rx) ** 2 + (vy - v_ry) ** 2 + (vz - v_rz) ** 2) ** 0.5
+#         v_rx, v_ry, v_rz = v_r * ex, v_r * ey, v_r * ez
+#         v_t = ((vx - v_rx) ** 2 + (vy - v_ry) ** 2 + (vz - v_rz) ** 2) ** 0.5
 
-        return (v_r, v_t)
+#         return (v_r, v_t)
 
 class KineticEnergyTask(AbstractTask):
     def __init__(self):

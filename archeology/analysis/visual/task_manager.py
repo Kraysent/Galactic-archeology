@@ -1,22 +1,17 @@
 from amuse.lab import units
 from archeology.analysis.tasks import (DistanceTask, MassProfileTask,
-                                       NormalVelocityTask, PointEmphasisTask,
-                                       SpatialScatterTask, VelocityProfileTask,
+                                       PointEmphasisTask, SpatialScatterTask,
+                                       VelocityProfileTask,
                                        VelocityScatterTask)
-from archeology.analysis.utils import get_galactic_basis
 from archeology.analysis.visual.nbody_object import NbodyObject
 from archeology.analysis.visual.plot_parameters import DrawParameters
 from archeology.analysis.visual.visual_task import VisualTask
-from archeology.datamodel import Snapshot
 
 
 class TaskManager:
-    def __init__(self) -> None:
+    def __init__(self, objects: list[NbodyObject]) -> None:
         self.tasks = []
-        self.objects = [
-            NbodyObject('b', 'host', slice(0, 1000000)),
-            NbodyObject('r', 'satellite', slice(1000001, None))
-        ]
+        self.objects = objects
 
     def add_tasks(self, *visual_tasks):
         vtask: VisualTask
@@ -102,38 +97,38 @@ class TaskManager:
 
         self.add_tasks(*tasks)
 
-    def add_norm_velocity_tasks(self):
-        def update_norm_velocity(snapshot: Snapshot):
-            particles = snapshot.particles
-            cm = particles.center_of_mass()
-            cm_vel = particles.center_of_mass_velocity()
+    # def add_norm_velocity_tasks(self):
+    #     def update_norm_velocity(snapshot: Snapshot):
+    #         particles = snapshot.particles
+    #         cm = particles.center_of_mass()
+    #         cm_vel = particles.center_of_mass_velocity()
 
-            (e1, e2, e3) = get_galactic_basis(snapshot)
+    #         (e1, e2, e3) = get_galactic_basis(snapshot)
 
-            r = 8 | units.kpc
-            v = -200 | units.kms
+    #         r = 8 | units.kpc
+    #         v = -200 | units.kms
 
-            sun_pos = cm + e2 * r
-            sun_vel = cm_vel + e3 * v
+    #         sun_pos = cm + e2 * r
+    #         sun_vel = cm_vel + e3 * v
 
-            return sun_pos, sun_vel
+    #         return sun_pos, sun_vel
 
-        tasks = []
+    #     tasks = []
 
-        for obj in self.objects:
-            curr = VisualTask(
-                2, 
-                NormalVelocityTask(
-                    update_norm_velocity,
-                    radius = 3 | units.kpc
-                ), 
-                obj.whole_part,
-                DrawParameters(markersize = 0.2, color = obj.color)
-            )
+    #     for obj in self.objects:
+    #         curr = VisualTask(
+    #             2, 
+    #             NormalVelocityTask(
+    #                 update_norm_velocity,
+    #                 radius = 3 | units.kpc
+    #             ), 
+    #             obj.whole_part,
+    #             DrawParameters(markersize = 0.2, color = obj.color)
+    #         )
 
-            tasks.append(curr)
+    #         tasks.append(curr)
 
-        self.add_tasks(*tasks)
+    #     self.add_tasks(*tasks)
 
     def add_velocity_tasks(self):
         tasks = []
@@ -175,7 +170,7 @@ class TaskManager:
                 VelocityProfileTask(), obj.whole_part,
                 DrawParameters(
                     linestyle = 'solid', color = obj.color, 
-                    marker = 'None', label = obj.label
+                    marker = 'None', label = obj.name
                 )
             )
 
@@ -200,7 +195,7 @@ class TaskManager:
                 obj.whole_part,
                 DrawParameters(
                     linestyle = 'solid', color = obj.color, 
-                    marker = 'None', label = obj.label
+                    marker = 'None', label = obj.name
                 )
             )
 
