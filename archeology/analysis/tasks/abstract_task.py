@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Tuple, Union
 
 import numpy as np
-from amuse.lab import units
+from amuse.lab import units, constants
 from amuse.units.quantities import VectorQuantity
 from archeology.datamodel import Snapshot
 
@@ -20,7 +20,8 @@ def get_task(task_name: str, args: dict) -> AbstractTask:
         'DistanceTask': DistanceTask,
         'VelocityProfileTask': VelocityProfileTask,
         'MassProfileTask': MassProfileTask,
-        'PointEmphasisTask': PointEmphasisTask
+        'PointEmphasisTask': PointEmphasisTask,
+        'EccentricityTask': EccentricityTask
     }
 
     return task_map[task_name](**args)
@@ -142,3 +143,28 @@ class DistanceTask(AbstractTask):
         self.time.append(snapshot.timestamp.value_in(units.Myr))
 
         return (np.array(self.time), np.array(self.dist))
+
+class EccentricityTask(AbstractTask):
+    def __init__(self, point_id: int):
+        self.point_id = point_id
+        self.ecc = []
+        self.time = []
+
+    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
+        pos = snapshot.particles[self.point_id].position
+        vel = snapshot.particles[self.point_id].velocity
+        
+        r = snapshot.particles.position
+        r = (r ** 2).sum(axis = 1) ** 0.5
+
+        pos_filter = r < (np.sum(pos ** 2) ** 0.5)
+        filtered_masses = snapshot.particles.mass.value_in(units.MSun)[pos_filter]
+        grav_parameter = (np.sum(filtered_masses) | units.MSun) * constants.G
+
+        h = pos.cross(vel)
+        e = vel.cross(h) / grav_parameter - pos / pos.length()
+
+        self.time.append(snapshot.timestamp.value_in(units.Myr))
+        self.ecc.append(np.sum(e ** 2))
+
+        return (np.array(self.time), np.array(self.ecc))
