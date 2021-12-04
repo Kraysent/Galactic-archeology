@@ -1,5 +1,8 @@
 # file with a bunch of snapshots
-input_file: '/home/user/data/test_out.fits'
+input_file: 
+  format: fits
+  filenames: 
+    - '/home/user/data/test_out.fits'
 # directory where output pictures would be stored
 output_dir: /home/user/data/analysis'
 

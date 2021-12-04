@@ -1,5 +1,5 @@
 from typing import Iterator
-from amuse.datamodel.particles import Particles
+from amuse.datamodel.particles import Particle, Particles
 from amuse.lab import units
 from amuse.units.quantities import ScalarQuantity
 from astropy.io import fits
@@ -146,6 +146,33 @@ class Snapshot:
 
         return snapshot
 
+    @staticmethod
+    def from_logged_csvs(filenames: list[str], delimiter: str = ',') -> Iterator['Snapshot']:
+        # This is not lazy implementation!
+        tables = []
+
+        for filename in filenames:
+            tables.append(pandas.read_csv(filename, delimiter = delimiter, index_col = False))
+            
+        tables = [table.iterrows() for table in tables]
+
+        for rows in zip(*tables):
+            rows = [row for (_, row) in rows]
+
+            particles = Particles()
+
+            for row in rows:
+                particle = Particle()
+                particle.position = [row['x'], row['y'], row['z']] | units.kpc
+                particle.velocity = [row['vx'], row['vy'], row['vz']] | units.kms
+                particle.mass = row['m'] | units.MSun
+                particle.is_barion = 1
+
+                particles.add_particle(particle)
+
+            yield Snapshot(particles, rows[0]['T'] | units.Myr)
+            
+    # shouldn't this method be static?
     def from_mass(mass: ScalarQuantity) -> 'Snapshot':
         particles = Particles(1)
         particles[0].position = [0, 0, 0] | units.kpc

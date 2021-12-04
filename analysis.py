@@ -1,5 +1,6 @@
 import logging
 import time
+from typing import Iterator, Union
 
 from amuse.lab import units
 from archeology.analysis.tasks.abstract_task import get_task
@@ -10,6 +11,11 @@ from archeology.analysis.visual.visual_task import VisualTask
 from archeology.analysis.visual.visualizer import Visualizer
 from archeology.datamodel import Config, Snapshot
 
+def generate_snapshot(fmt: str, files: list[str]) -> Iterator[Snapshot]:
+    if fmt == 'fits':
+        return Snapshot.from_fits(files[0])
+    elif fmt == 'csv':
+        return Snapshot.from_logged_csvs(files, delimiter = ' ')
 
 def analize(config: Config):
     visualizer = Visualizer()
@@ -37,13 +43,11 @@ def analize(config: Config):
 
                 task_manager.add_tasks(visual_task)
 
-    i = 0
-
-    snapshots = Snapshot.from_fits(config['input_file'])
+    snapshots = generate_snapshot(config['input_file']['format'], config['input_file']['filenames'])
 
     logging.info('i\tT, Myr\tTcomp\tTsave')
 
-    for snapshot in snapshots:
+    for (i, snapshot) in enumerate(snapshots):
         start_comp = time.time()
 
         vtask: VisualTask
@@ -59,5 +63,3 @@ def analize(config: Config):
 
         end = time.time()
         logging.info(f'{i:03d}\t{timestamp:.01f}\t{start_save - start_comp:.01f}\t{end - start_save:.01f}')
-        
-        i += 1
