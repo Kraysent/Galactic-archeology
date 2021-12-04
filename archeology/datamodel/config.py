@@ -45,6 +45,9 @@ class Config:
     def __getitem__(self, key):
         return self.data[key]
 
+    def keys(self):
+        return self.data.keys()
+
     @staticmethod
     def from_yaml(filename: str) -> 'Config':
         data = {}
