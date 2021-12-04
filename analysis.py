@@ -3,13 +3,13 @@ import time
 from typing import Iterator, Union
 
 from amuse.lab import units
-from archeology.analysis.tasks.abstract_task import get_task
-from archeology.analysis.visual.plot_parameters import DrawParameters
+from omtool.analysis.tasks.abstract_task import get_task
+from omtool.analysis.visual.plot_parameters import DrawParameters
 
-from archeology.analysis.visual.task_manager import TaskManager
-from archeology.analysis.visual.visual_task import VisualTask
-from archeology.analysis.visual.visualizer import Visualizer
-from archeology.datamodel import Config, Snapshot
+from omtool.analysis.visual.task_manager import TaskManager
+from omtool.analysis.visual.visual_task import VisualTask
+from omtool.analysis.visual.visualizer import Visualizer
+from omtool.datamodel import Config, Snapshot
 
 def generate_snapshot(fmt: str, files: list[str]) -> Iterator[Snapshot]:
     if fmt == 'fits':

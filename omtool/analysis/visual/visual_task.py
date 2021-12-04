@@ -1,6 +1,6 @@
-from archeology.analysis.tasks import AbstractTask
-from archeology.analysis.visual.plot_parameters import DrawParameters
-from archeology.datamodel import Snapshot
+from omtool.analysis.tasks import AbstractTask
+from omtool.analysis.visual.plot_parameters import DrawParameters
+from omtool.datamodel import Snapshot
 
 class VisualTask:
     def __init__(self, 

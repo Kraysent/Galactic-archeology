@@ -2,8 +2,8 @@ import logging
 
 from amuse.lab import units
 
-from archeology.datamodel import Config, Snapshot
-from archeology.integration import PyfalconIntegrator
+from omtool.datamodel import Config, Snapshot
+from omtool.integration import PyfalconIntegrator
 
 
 def integrate(config: Config):

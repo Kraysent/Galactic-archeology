@@ -2,7 +2,7 @@ import argparse
 import logging
 
 from analysis import analize
-from archeology.datamodel import Config
+from omtool.datamodel import Config
 from creator import create
 from integration import integrate
 from manual_analysis import manual_analize

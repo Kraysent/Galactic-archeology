@@ -4,7 +4,7 @@ from typing import Tuple, Union
 import numpy as np
 from amuse.lab import units, constants
 from amuse.units.quantities import VectorQuantity
-from archeology.datamodel import Snapshot
+from omtool.datamodel import Snapshot
 
 class AbstractTask(ABC):
     @abstractmethod

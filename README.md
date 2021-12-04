@@ -1,6 +1,6 @@
-# Galactic archeology
+# Open Modeling Tool
 ## Description
-This program is used to numerically solve and visualize N-body problem with huge number of particles. Primary application is galactic evolution. 
+OMT (Open Modeling Tool) is used to numerically solve and visualize N-body problem with huge number of particles. Primary application is galactic evolution. 
 
 ## Prerequisites
 It requires following packages to work:

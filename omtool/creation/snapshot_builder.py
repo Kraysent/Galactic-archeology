@@ -1,7 +1,7 @@
 from amuse.datamodel.particles import Particles
 from amuse.lab import units
 from amuse.units.quantities import VectorQuantity
-from archeology.datamodel import Snapshot
+from omtool.datamodel import Snapshot
 import logging
 import numpy as np
 

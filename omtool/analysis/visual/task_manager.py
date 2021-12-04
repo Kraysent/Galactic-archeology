@@ -1,4 +1,4 @@
-from archeology.analysis.visual.visual_task import VisualTask
+from omtool.analysis.visual.visual_task import VisualTask
 
 
 class TaskManager:

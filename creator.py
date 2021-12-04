@@ -1,7 +1,7 @@
 from amuse.lab import units
 
-from archeology.creation import SnapshotBuilder
-from archeology.datamodel import Snapshot, Config
+from omtool.creation import SnapshotBuilder
+from omtool.datamodel import Snapshot, Config
 
 
 def create(config: Config):

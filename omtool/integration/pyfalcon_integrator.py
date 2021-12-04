@@ -2,7 +2,7 @@ import pyfalcon
 from amuse.datamodel.particles import Particle, Particles
 from amuse.lab import units
 from amuse.units.quantities import ScalarQuantity
-from archeology.datamodel import Snapshot
+from omtool.datamodel import Snapshot
 
 
 class PyfalconIntegrator:

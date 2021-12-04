@@ -2,7 +2,7 @@ from typing import Any, Callable, List, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
-from archeology.analysis.visual.plot_parameters import DrawParameters, PlotParameters
+from omtool.analysis.visual.plot_parameters import DrawParameters, PlotParameters
 from matplotlib.axes import Axes
 
 
