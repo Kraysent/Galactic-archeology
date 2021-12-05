@@ -45,6 +45,8 @@ def analize(config: Config):
 
     snapshots = generate_snapshot(config['input_file']['format'], config['input_file']['filenames'])
 
+    plot_interval = config['plot_interval']
+
     logging.info('i\tT, Myr\tTcomp\tTsave')
 
     for (i, snapshot) in enumerate(snapshots):
@@ -53,13 +55,17 @@ def analize(config: Config):
         vtask: VisualTask
         for vtask in task_manager.get_tasks():
             data = vtask.run(snapshot)
-            visualizer.plot(vtask.axes_id, data, vtask.draw_params)
+
+            if i % plot_interval == 0:
+                visualizer.plot(vtask.axes_id, data, vtask.draw_params)
 
         timestamp = snapshot.timestamp.value_in(units.Myr)
         visualizer.set_title(f'Time: {timestamp:.02f} Myr')
 
         start_save = time.time()
-        visualizer.save(f'{config["output_dir"]}/img-{i:03d}.png')
+
+        if i % plot_interval == 0:
+            visualizer.save(f'{config["output_dir"]}/img-{i:03d}.png')
 
         end = time.time()
         logging.info(f'{i:03d}\t{timestamp:.01f}\t{start_save - start_comp:.01f}\t{end - start_save:.01f}')
