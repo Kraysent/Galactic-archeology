@@ -6,6 +6,7 @@ import numpy.linalg as linalg
 from amuse.lab import units
 from amuse.units.quantities import VectorQuantity
 from omtool.datamodel import Snapshot
+import omtool.analysis.utils as math
 
 class AbstractTask(ABC):
     @abstractmethod
@@ -66,43 +67,34 @@ class VelocityProfileTask(AbstractTask):
 
         particles = filter_barion_particles(snapshot)
 
-        r = (particles.position - cm).value_in(units.kpc)
-        v = (particles.velocity - cm_vel).value_in(units.kms)
-        r = (r ** 2).sum(axis = 1) ** 0.5
-        v = (v ** 2).sum(axis = 1) ** 0.5
-
-        perm = r.argsort()
-        r = r[perm]
-        v = v[perm]
+        r = math.get_lengths(particles.position - cm)
+        v = math.get_lengths(particles.velocity - cm_vel)
+        (r, v) = math.sort_with(r, v)
 
         resolution = 1000
         number_of_chunks = (len(r) // resolution) * resolution
-        r = r[0:number_of_chunks].reshape(-1, resolution).mean(axis = 1)
-        v = v[0:number_of_chunks].reshape(-1, resolution).mean(axis = 1)
+        r = r[0:number_of_chunks:resolution]
+        v = v[0:number_of_chunks].reshape((-1, resolution)).mean(axis = 1)
 
-        return (r, v)
+        return (r.value_in(units.kpc), v.value_in(units.kms))
 
 class MassProfileTask(AbstractTask):
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         particles = snapshot.particles
         cm = particles.center_of_mass()
 
-        r = (particles.position - cm).value_in(units.kpc)
-        m = particles.mass.value_in(units.MSun)
-        r = (r ** 2).sum(axis = 1) ** 0.5
-
-        perm = r.argsort()
-        r = r[perm]
-        m = m[perm]
+        r = math.get_lengths(particles.position - cm)
+        m = particles.mass
+        (r, m) = math.sort_with(r, m)
 
         resolution = 1000
         number_of_chunks = (len(r) // resolution) * resolution
 
         r = r[0:number_of_chunks:resolution]
-        m = m[0:number_of_chunks].reshape(-1, resolution).sum(axis = 1)
+        m = m[0:number_of_chunks].reshape((-1, resolution)).sum(axis = 1)
         m = np.cumsum(m)
 
-        return (r, m)
+        return (r.value_in(units.kpc), m.value_in(units.MSun))
 
 class PointEmphasisTask(AbstractPlaneTask):
     def __init__(self, point_id: int, e1: VectorQuantity, e2: VectorQuantity):
@@ -136,10 +128,10 @@ class DistanceTask(AbstractTask):
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         start, end = self.ids
 
-        v1 = snapshot.particles[start].position.value_in(units.kpc)
-        v2 = snapshot.particles[end].position.value_in(units.kpc)
+        r1 = snapshot.particles[start].position.value_in(units.kpc)
+        r2 = snapshot.particles[end].position.value_in(units.kpc)
 
-        dist = ((v1 - v2) ** 2).sum() ** 0.5
+        dist = math.get_lengths(r1 - r2, axis = 0)
         self.dist.append(dist)
         self.time.append(snapshot.timestamp.value_in(units.Myr))
 
