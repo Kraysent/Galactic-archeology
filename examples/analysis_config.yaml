@@ -2,9 +2,9 @@
 input_file: 
   format: fits
   filenames: 
-    - '/home/user/data/test_out.fits'
+    - '/data/test_out.fits'
 # directory where output pictures would be stored
-output_dir: /home/user/data/analysis'
+output_dir: /data/analysis'
 
 # figure size in inches
 figsize: [20, 11]
@@ -15,6 +15,7 @@ figsize: [20, 11]
 #      attr: value
 #
 # params should be given the same names as ones in matplotlib.pyplot (and proper values) as most of them are just passed along to it
+plot_interval: 1
 
 plots: 
   # Left coordinate plot

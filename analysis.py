@@ -1,6 +1,6 @@
 import logging
 import time
-from typing import Iterator, Union
+from typing import Iterator, List, Union
 
 from amuse.lab import units
 from omtool.analysis.tasks.abstract_task import get_task
@@ -11,7 +11,7 @@ from omtool.analysis.visual.visual_task import VisualTask
 from omtool.analysis.visual.visualizer import Visualizer
 from omtool.datamodel import Config, Snapshot
 
-def generate_snapshot(fmt: str, files: list[str]) -> Iterator[Snapshot]:
+def generate_snapshot(fmt: str, files: List[str]) -> Iterator[Snapshot]:
     if fmt == 'fits':
         return Snapshot.from_fits(files[0])
     elif fmt == 'csv':

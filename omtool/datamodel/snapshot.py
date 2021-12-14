@@ -1,4 +1,4 @@
-from typing import Iterator
+from typing import Iterator, List
 from amuse.datamodel.particles import Particle, Particles
 from amuse.lab import units
 from amuse.units.quantities import ScalarQuantity
@@ -147,7 +147,7 @@ class Snapshot:
         return snapshot
 
     @staticmethod
-    def from_logged_csvs(filenames: list[str], delimiter: str = ',') -> Iterator['Snapshot']:
+    def from_logged_csvs(filenames: List[str], delimiter: str = ',') -> Iterator['Snapshot']:
         # This is not lazy implementation!
         tables = []
 

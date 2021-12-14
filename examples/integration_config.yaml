@@ -1,9 +1,9 @@
 # file with input model
-input_file: '/home/user/data/test.fits'
+input_file: '/data/test.fits'
 # file where output model would be written
-output_file: '/home/user/data/test_out.fits'
+output_file: '/data/test_out.fits'
 # time until which model would be integrated
-model_time: !q [10000, Myr]
+model_time: !q [1000, Myr]
 # interval between to consecutive snapshots to write to output file: 
 snapshot_interval: 2
 # timestep coefficient (actual timestep is model_time * e^(-timestep))
@@ -13,8 +13,8 @@ eps: !q [0.2, kpc]
 
 # list of files and points to log.
 # Note that for now each point should have separate log file.
-logs: 
-  - filename: '/home/user/data/host_pos_log.csv'
-    point_id: 0
-  - filename: '/home/user/data/sat_pos_log.csv'
-    point_id: 1000001
+# logs: 
+#   - filename: '/data/host_pos_log.csv'
+#     point_id: 0
+#   - filename: '/data/sat_pos_log.csv'
+#     point_id: 1

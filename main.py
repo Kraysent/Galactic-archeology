@@ -1,11 +1,7 @@
 import argparse
 import logging
 
-from analysis import analize
 from omtool.datamodel import Config
-from creator import create
-from integration import integrate
-from manual_analysis import manual_analize
 
 if __name__ == '__main__':
     logging.basicConfig(
@@ -28,10 +24,14 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.mode == 'create':
+        from creator import create
         create(Config.from_yaml(args.inputparams[0]))
     elif args.mode == 'integrate':
+        from integration import integrate
         integrate(Config.from_yaml(args.inputparams[0]))
     elif args.mode == 'analize':
+        from analysis import analize
         analize(Config.from_yaml(args.inputparams[0]))
     elif args.mode == 'mananalize':
+        from manual_analysis import manual_analize
         manual_analize()

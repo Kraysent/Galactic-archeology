@@ -129,7 +129,7 @@ class Visualizer:
         x1: np.ndarray, 
         x2: np.ndarray, 
         resolution: int, 
-        extent: tuple[float, float, float, float]
+        extent: Tuple[float, float, float, float]
     ) -> np.ndarray:
         hist, _, _ = np.histogram2d(x1, x2, resolution, range = [
             extent[:2], extent[2:]
