@@ -169,13 +169,13 @@ class Visualizer:
         self.figure.savefig(filename, dpi = dpi, bbox_inches='tight')
 
         def delete_all(axes: Axes):
-            while axes.artists != []:
+            while len(axes.artists) != 0:
                 axes.artists[0].remove()
 
-            while axes.lines != []:
+            while len(axes.lines) != 0:
                 axes.lines[0].remove()
             
-            while axes.images != []:
+            while len(axes.images) != 0:
                 axes.images[0].remove()
                 
         self.pictures.clear()
