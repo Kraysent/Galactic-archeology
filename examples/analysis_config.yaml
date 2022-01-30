@@ -99,11 +99,34 @@ plots:
           marker: o
           markersize: 5
 
-  # Empty plot
+  # Potential profile plot
   - coords: [0.72, 0.66, 0.14, 0.3]
     params: 
-      xlim: [-350, 350]
-      ylim: [0, 350]
+      xlim: [0, 50]
+      ylim: [0, 3]
+      xlabel: '$r$, kpc'
+      ylabel: 'potential, $\frac{\varphi(r)}{\bar{\varphi}}$'
+    tasks:
+      - name: PotentialTask
+        args: {}
+        slice: [1000001, 1500002]
+        display:
+          linestyle: None
+          color: r
+          label: satellite
+      - name: PotentialTask
+        args: {}
+        slice: [0, 1000001]
+        display:
+          linestyle: None
+          color: b
+          label: host
+      - name: PotentialTask
+        args: {}
+        display:
+          linestyle: None
+          color: y
+          label: all
 
   # Velocity plot
   - coords: [0.72, 0.33, 0.14, 0.3]
@@ -160,24 +183,24 @@ plots:
         args: {}
         slice: [0, 1000000]
         display:
-          linestyle: solid
+          markersize: 0.5
+          linestyle: None
           color: b
-          marker: 'None'
           label: host
       - name: VelocityProfileTask
         args: {}
         slice: [1000001, 1500002]
         display:
-          linestyle: solid
+          markersize: 0.5
+          linestyle: None
           color: r
-          marker: 'None'
           label: satellite
       - name: VelocityProfileTask
         args: {}
         display:
-          linestyle: solid
+          markersize: 0.5
+          linestyle: None
           color: y
-          marker: 'None'
           label: all
 
   # Mass profile plot
@@ -193,22 +216,22 @@ plots:
         args: {}
         slice: [0, 1000000]
         display: 
-          linestyle: solid
+          markersize: 0.5
+          linestyle: None
           color: b
-          marker: 'None'
           label: host
       - name: MassProfileTask
         args: {}
         slice: [1000001, 1500002]
         display: 
-          linestyle: solid
+          markersize: 0.5
+          linestyle: None
           color: r
-          marker: 'None'
           label: satellite
       - name: MassProfileTask
         args: {}
         display: 
-          linestyle: solid
+          markersize: 0.5
+          linestyle: None
           color: y
-          marker: 'None'
           label: all

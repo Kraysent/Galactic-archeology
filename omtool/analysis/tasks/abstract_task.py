@@ -3,8 +3,9 @@ from typing import Tuple, Union
 
 import numpy as np
 import numpy.linalg as linalg
-from amuse.lab import units
+from amuse.lab import units, constants
 from amuse.units.quantities import VectorQuantity
+from omtool.analysis.utils.pyfalcon_analizer import get_potentials
 from omtool.datamodel import Snapshot
 import omtool.analysis.utils as math
 
@@ -23,7 +24,8 @@ def get_task(task_name: str, args: dict) -> AbstractTask:
         'VelocityProfileTask': VelocityProfileTask,
         'MassProfileTask': MassProfileTask,
         'PointEmphasisTask': PointEmphasisTask,
-        'EccentricityTask': EccentricityTask
+        'EccentricityTask': EccentricityTask,
+        'PotentialTask': PotentialTask
     }
 
     return task_map[task_name](**args)
@@ -59,6 +61,24 @@ class VelocityScatterTask(AbstractPlaneTask):
         (vx1, vx2) = self.get_projection(particles.velocity)
 
         return vx1, vx2
+
+class PotentialTask(AbstractTask):
+    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
+        cm = snapshot.particles.center_of_mass()
+        particles = snapshot.particles
+
+        r = math.get_lengths(particles.position - cm)
+        potentials = get_potentials(snapshot, 0.2 | units.kpc)
+        (r, potentials) = math.sort_with(r, potentials)
+
+        resolution = 1000
+        number_of_chunks = (len(r) // resolution) * resolution
+
+        r = r[0:number_of_chunks:resolution]
+        potentials = potentials[0:number_of_chunks].reshape((-1, resolution)).mean(axis = 1)
+        potentials = potentials / potentials.mean()
+
+        return (r.value_in(units.kpc), potentials)
 
 class VelocityProfileTask(AbstractTask):
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
