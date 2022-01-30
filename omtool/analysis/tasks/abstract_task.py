@@ -4,6 +4,7 @@ from typing import Tuple, Union
 import numpy as np
 import numpy.linalg as linalg
 from amuse.lab import units, constants
+from amuse.units.core import named_unit
 from amuse.units.quantities import VectorQuantity
 from omtool.analysis.utils.pyfalcon_analizer import get_potentials
 from omtool.datamodel import Snapshot
@@ -36,6 +37,19 @@ def filter_barion_particles(snapshot: Snapshot):
 
     return snapshot.particles[barion_filter]
 
+class AbstractTimeTask(AbstractTask):
+    def __init__(self):
+        self.time_unit = units.Myr
+        self.times = []
+        self.values = []
+    
+    def _append_value(self, snapshot, value):
+        self.times.append(snapshot.timestamp.value_in(self.time_unit))
+        self.values.append(value)
+
+    def _as_tuple(self) -> Tuple[np.ndarray, np.ndarray]:
+        return (np.array(self.times), np.array(self.values))
+        
 class AbstractPlaneTask(AbstractTask):
     def __init__(self, e1: VectorQuantity, e2: VectorQuantity):
         self.e1 = e1
@@ -81,10 +95,9 @@ class PotentialTask(AbstractTask):
 
         return (r.value_in(units.kpc), potentials)
 
-class BoundMassTask(AbstractTask):
+class BoundMassTask(AbstractTimeTask):
     def __init__(self):
-        self.bound_mass = []
-        self.times = []
+        super().__init__()
 
     def _get_bound_particles(self, particles):
         potentials = get_potentials(particles, 0.2 | units.kpc)
@@ -98,11 +111,9 @@ class BoundMassTask(AbstractTask):
         bound_particles = self._get_bound_particles(bound_particles)
         bound_particles = self._get_bound_particles(bound_particles)
 
-        self.bound_mass.append(bound_particles.total_mass().value_in(units.MSun))
-        self.times.append(snapshot.timestamp.value_in(units.Myr))
+        self._append_value(snapshot, bound_particles.total_mass().value_in(units.MSun))
 
-        return (np.array(self.times), np.array(self.bound_mass))
-
+        return self._as_tuple()
 
 class VelocityProfileTask(AbstractTask):
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
@@ -152,22 +163,19 @@ class PointEmphasisTask(AbstractPlaneTask):
 
         return (x1, x2)
 
-class KineticEnergyTask(AbstractTask):
+class KineticEnergyTask(AbstractTimeTask):
     def __init__(self):
-        self.times = []
-        self.energies = []
+        super().__init__()
 
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
-        self.times.append(snapshot.timestamp.value_in(units.Myr))
-        self.energies.append(snapshot.particles.kinetic_energy().value_in(units.J))
+        self._append_value(snapshot, snapshot.particles.kinetic_energy().value_in(units.J))
 
-        return (np.array(self.times), np.array(self.energies))
+        return self._as_tuple()
 
-class DistanceTask(AbstractTask):
+class DistanceTask(AbstractTimeTask):
     def __init__(self, start_id: int, end_id: int):
         self.ids = (start_id, end_id)
-        self.dist = []
-        self.time = []
+        super().__init__()
 
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         start, end = self.ids
@@ -176,11 +184,11 @@ class DistanceTask(AbstractTask):
         r2 = snapshot.particles[end].position.value_in(units.kpc)
 
         dist = math.get_lengths(r1 - r2, axis = 0)
-        self.dist.append(dist)
-        self.time.append(snapshot.timestamp.value_in(units.Myr))
+        self._append_value(snapshot, dist)
 
-        return (np.array(self.time), np.array(self.dist))
+        return self._as_tuple()
 
+# Not implemented correctly yet
 class EccentricityTask(AbstractTask):
     def __init__(self, point_id: int, memory_length: int):
         self.point_id = point_id
