@@ -25,7 +25,8 @@ def get_task(task_name: str, args: dict) -> AbstractTask:
         'MassProfileTask': MassProfileTask,
         'PointEmphasisTask': PointEmphasisTask,
         'EccentricityTask': EccentricityTask,
-        'PotentialTask': PotentialTask
+        'PotentialTask': PotentialTask,
+        'BoundMassTask': BoundMassTask
     }
 
     return task_map[task_name](**args)
@@ -68,7 +69,7 @@ class PotentialTask(AbstractTask):
         particles = snapshot.particles
 
         r = math.get_lengths(particles.position - cm)
-        potentials = get_potentials(snapshot, 0.2 | units.kpc)
+        potentials = get_potentials(snapshot.particles, 0.2 | units.kpc)
         (r, potentials) = math.sort_with(r, potentials)
 
         resolution = 1000
@@ -79,6 +80,29 @@ class PotentialTask(AbstractTask):
         potentials = potentials / potentials.mean()
 
         return (r.value_in(units.kpc), potentials)
+
+class BoundMassTask(AbstractTask):
+    def __init__(self):
+        self.bound_mass = []
+        self.times = []
+
+    def _get_bound_particles(self, particles):
+        potentials = get_potentials(particles, 0.2 | units.kpc)
+        velocities = math.get_lengths(particles.velocity - particles.center_of_mass_velocity())
+        full_specific_energies = potentials + velocities ** 2 / 2
+
+        return particles[full_specific_energies < (0 | units.J / units.MSun)]
+
+    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
+        bound_particles = self._get_bound_particles(snapshot.particles)
+        bound_particles = self._get_bound_particles(bound_particles)
+        bound_particles = self._get_bound_particles(bound_particles)
+
+        self.bound_mass.append(bound_particles.total_mass().value_in(units.MSun))
+        self.times.append(snapshot.timestamp.value_in(units.Myr))
+
+        return (np.array(self.times), np.array(self.bound_mass))
+
 
 class VelocityProfileTask(AbstractTask):
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:

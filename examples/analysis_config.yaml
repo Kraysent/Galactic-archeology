@@ -128,32 +128,21 @@ plots:
           color: y
           label: all
 
-  # Velocity plot
+  # Bound mass plot
   - coords: [0.72, 0.33, 0.14, 0.3]
     params:
-      xlim: [-400, 400]
-      ylim: [-400, 400]
-      xlabel: '$v_x$, km/s'
-      ylabel: '$v_y$, km/s'
+      xlim: [0, 10000]
+      ylim: [0, 3.e+11]
+      xlabel: 'Time, Myr'
+      ylabel: 'Bound mass, MSun'
+      grid: True
     tasks:
-      - name: VelocityScatterTask
-        args: { e1: !q [[1, 0, 0], kms], e2: !q [[0, 1, 0], kms] }
-        slice: [0, 1000000]
-        display: 
-          is_density_plot: True
-          resolution: 700
-          extent: [-400, 400, -400, 400]
-          markersize: 0.02
-          channel: b
-      - name: VelocityScatterTask
-        args: { e1: !q [[1, 0, 0], kms], e2: !q [[0, 1, 0], kms] }
+      - name: BoundMassTask
+        args: { }
         slice: [1000001, 1500002]
         display: 
-          is_density_plot: True
-          resolution: 700
-          extent: [-400, 400, -400, 400]
-          markersize: 0.02
-          channel: r
+          linestyle: solid
+          color: r
 
   # Separation plot
   - coords: [0, 0, 0.14, 0.3]
