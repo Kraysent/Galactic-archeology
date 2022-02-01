@@ -32,6 +32,3 @@ if __name__ == '__main__':
     elif args.mode == 'analize':
         from analysis import analize
         analize(Config.from_yaml(args.inputparams[0]))
-    elif args.mode == 'mananalize':
-        from manual_analysis import manual_analize
-        manual_analize()
