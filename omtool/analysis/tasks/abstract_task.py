@@ -3,12 +3,13 @@ from typing import Tuple, Union
 
 import numpy as np
 import numpy.linalg as linalg
-from amuse.lab import units, constants
+from amuse.lab import units, constants, Particles
 from amuse.units.core import named_unit
-from amuse.units.quantities import VectorQuantity
+from amuse.units.quantities import VectorQuantity, ScalarQuantity
 from omtool.analysis.utils.pyfalcon_analizer import get_potentials
 from omtool.datamodel import Snapshot
 import omtool.analysis.utils as math
+from physical_evaluator import Parser
 
 class AbstractTask(ABC):
     @abstractmethod
@@ -19,12 +20,10 @@ class AbstractTask(ABC):
 
 def get_task(task_name: str, args: dict) -> AbstractTask:
     task_map = {
-        'SpatialScatterTask': SpatialScatterTask,
-        'VelocityScatterTask': VelocityScatterTask,
+        'ScatterTask': ScatterTask,
         'DistanceTask': DistanceTask,
         'VelocityProfileTask': VelocityProfileTask,
         'MassProfileTask': MassProfileTask,
-        'PointEmphasisTask': PointEmphasisTask,
         'EccentricityTask': EccentricityTask,
         'PotentialTask': PotentialTask,
         'BoundMassTask': BoundMassTask
@@ -49,33 +48,34 @@ class AbstractTimeTask(AbstractTask):
 
     def _as_tuple(self) -> Tuple[np.ndarray, np.ndarray]:
         return (np.array(self.times), np.array(self.values))
-        
-class AbstractPlaneTask(AbstractTask):
-    def __init__(self, e1: VectorQuantity, e2: VectorQuantity):
-        self.e1 = e1
-        self.e2 = e2
-        
-    def get_projection(
-        self, r: VectorQuantity
-    ) -> Tuple[np.ndarray, np.ndarray]:
-        e1_coords = r.x * self.e1.x + r.y * self.e1.y + r.z * self.e1.z
-        e2_coords = r.x * self.e2.x + r.y * self.e2.y + r.z * self.e2.z
+    
+class ScatterTask(AbstractTask):
+    def __init__(self, x_expr: str, y_expr: str, x_unit: ScalarQuantity, y_unit: ScalarQuantity):
+        parser = Parser()
+        self.x_unit = x_unit
+        self.y_unit = y_unit
+        self.x_expr = parser.parse(x_expr)
+        self.y_expr = parser.parse(y_expr)
 
-        return (e1_coords / self.e1.length() ** 2, e2_coords / self.e2.length() ** 2)
+    def _get_sliced_parameters(self, particles: Particles) -> dict:
+        return {
+            'x': particles.x,
+            'y': particles.y,
+            'z': particles.z,
+            'vx': particles.vx,
+            'vy': particles.vy,
+            'vz': particles.vz,
+            'm': particles.mass
+        }
 
-class SpatialScatterTask(AbstractPlaneTask):
-    def run(self, snapshot: Snapshot) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
+    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         particles = filter_barion_particles(snapshot)
-        (x1, x2) = self.get_projection(particles.position)
+        params = self._get_sliced_parameters(particles)
         
-        return x1, x2
+        x_value = self.x_expr.evaluate(params)
+        y_value = self.y_expr.evaluate(params)
 
-class VelocityScatterTask(AbstractPlaneTask):
-    def run(self, snapshot: Snapshot) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
-        particles = filter_barion_particles(snapshot)
-        (vx1, vx2) = self.get_projection(particles.velocity)
-
-        return vx1, vx2
+        return (x_value / self.x_unit, y_value / self.y_unit)
 
 class PotentialTask(AbstractTask):
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
@@ -150,18 +150,6 @@ class MassProfileTask(AbstractTask):
         m = np.cumsum(m)
 
         return (r.value_in(units.kpc), m.value_in(units.MSun))
-
-class PointEmphasisTask(AbstractPlaneTask):
-    def __init__(self, point_id: int, e1: VectorQuantity, e2: VectorQuantity):
-        self.point_id = point_id
-
-        super().__init__(e1, e2)
-    
-    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
-        vector = snapshot.particles[self.point_id].position
-        (x1, x2) = self.get_projection(vector)
-
-        return (x1, x2)
 
 class KineticEnergyTask(AbstractTimeTask):
     def __init__(self):

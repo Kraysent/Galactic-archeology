@@ -13,6 +13,9 @@ figsize: [20, 11]
 # - coords: [x, y, width, height]
 #   params: 
 #      attr: value
+#   tasks:
+#       - task 1
+#       - task 2
 #
 # params should be given the same names as ones in matplotlib.pyplot (and proper values) as most of them are just passed along to it
 plot_interval: 1
@@ -28,34 +31,52 @@ plots:
       xticks: [0, 10]
       yticks: [0, 10]
     tasks:
-      - name: SpatialScatterTask
-        args: { e1: !q [[0, 0, 1], kpc], e2: !q [[0, 1, 0], kpc] }
+      - name: ScatterTask
+        args:
+          x_expr: 'z'
+          y_expr: 'y'
+          x_unit: !q [1, kpc]
+          y_unit: !q [1, kpc]
         slice: [0, 1000000]
         display: 
           is_density_plot: True
           resolution: 700
           extent: [-45, 45, -40, 40]
           channel: b
-      - name: SpatialScatterTask
-        args: { e1: !q [[0, 0, 1], kpc], e2: !q [[0, 1, 0], kpc] }
+      - name: ScatterTask
+        args:
+          x_expr: 'z'
+          y_expr: 'y'
+          x_unit: !q [1, kpc]
+          y_unit: !q [1, kpc]
         slice: [1000001, 1500002]
         display: 
           is_density_plot: True
           resolution: 700
           extent: [-45, 45, -40, 40]
           channel: r
-      - name: PointEmphasisTask
-        args: { point_id: 0, e1: !q [[0, 0, 1], kpc], e2: !q [[0, 1, 0], kpc] }
+      - name: ScatterTask
+        args:
+          x_expr: 'z'
+          y_expr: 'y'
+          x_unit: !q [1, kpc]
+          y_unit: !q [1, kpc]
+        slice: [0, 1]
         display: 
           linestyle: solid
           color: b
           marker: o
           markersize: 5
-      - name: PointEmphasisTask
-        args: { point_id: 1000001, e1: !q [[0, 0, 1], kpc], e2: !q [[0, 1, 0], kpc] }
+      - name: ScatterTask
+        args:
+          x_expr: 'z'
+          y_expr: 'y'
+          x_unit: !q [1, kpc]
+          y_unit: !q [1, kpc]
+        slice: [1000001, 1000002]
         display: 
           linestyle: solid
-          color: r
+          color: b
           marker: o
           markersize: 5
       
@@ -68,34 +89,52 @@ plots:
       yticks: []
       xticks: [0, 10]
     tasks:
-      - name: SpatialScatterTask
-        args: { e1: !q [[1, 0, 0], kpc], e2: !q [[0, 1, 0], kpc] }
+      - name: ScatterTask
+        args:
+          x_expr: 'x'
+          y_expr: 'y'
+          x_unit: !q [1, kpc]
+          y_unit: !q [1, kpc]
         slice: [0, 1000000]
         display: 
           is_density_plot: True
           resolution: 700
           extent: [-45, 45, -40, 40]
           channel: b
-      - name: SpatialScatterTask
-        args: { e1: !q [[1, 0, 0], kpc], e2: !q [[0, 1, 0], kpc] }
+      - name: ScatterTask
+        args:
+          x_expr: 'x'
+          y_expr: 'y'
+          x_unit: !q [1, kpc]
+          y_unit: !q [1, kpc]
         slice: [1000001, 1500002]
         display: 
           is_density_plot: True
           resolution: 700
           extent: [-45, 45, -40, 40]
           channel: r
-      - name: PointEmphasisTask
-        args: { point_id: 0, e1: !q [[1, 0, 0], kpc], e2: !q [[0, 1, 0], kpc] }
+      - name: ScatterTask
+        args:
+          x_expr: 'x'
+          y_expr: 'y'
+          x_unit: !q [1, kpc]
+          y_unit: !q [1, kpc]
+        slice: [0, 1]
         display: 
           linestyle: solid
           color: b
           marker: o
           markersize: 5
-      - name: PointEmphasisTask
-        args: { point_id: 1000001, e1: !q [[1, 0, 0], kpc], e2: !q [[0, 1, 0], kpc] }
+      - name: ScatterTask
+        args:
+          x_expr: 'x'
+          y_expr: 'y'
+          x_unit: !q [1, kpc]
+          y_unit: !q [1, kpc]
+        slice: [1000001, 1000002]
         display: 
           linestyle: solid
-          color: r
+          color: b
           marker: o
           markersize: 5
 
