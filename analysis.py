@@ -1,9 +1,9 @@
 import logging
 import time
-from typing import Iterator, List, Union
+from typing import Iterator, List
 
 from amuse.lab import units
-from omtool.analysis.tasks.abstract_task import get_task
+from omtool.analysis.tasks import get_task
 from omtool.analysis.visual.plot_parameters import DrawParameters
 
 from omtool.analysis.visual.task_manager import TaskManager
