@@ -167,18 +167,21 @@ plots:
           color: y
           label: all
 
-  # Bound mass plot
+  # Kinetic energy plot
   - coords: [0.72, 0.33, 0.14, 0.3]
     params:
       xlim: [0, 10000]
-      ylim: [0, 3.e+11]
+      ylim: [0, 3.e+52]
       xlabel: 'Time, Myr'
-      ylabel: 'Bound mass, MSun'
+      ylabel: 'Keenetic energy, J'
       grid: True
     tasks:
-      - name: BoundMassTask
-        args: { }
-        slice: [1000001, 1500002]
+      - name: TimeEvolutionTask
+        args: 
+          expr: 'm * (vx ** 2 + vy ** 2 + vz ** 2) / 2'
+          function: 'sum'
+          time_unit: !q [1, Myr]
+          value_unit: !q [1, J]
         display: 
           linestyle: solid
           color: r

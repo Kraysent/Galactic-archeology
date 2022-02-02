@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Tuple, Union
+from typing import Tuple
 
 import numpy as np
 import numpy.linalg as linalg
@@ -15,12 +15,24 @@ class AbstractTask(ABC):
     @abstractmethod
     def run(
         self, snapshot: Snapshot
-    ) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
+    ) -> Tuple[np.ndarray, np.ndarray]:
         pass
+
+    def _get_sliced_parameters(self, particles: Particles) -> dict:
+        return {
+            'x': particles.x,
+            'y': particles.y,
+            'z': particles.z,
+            'vx': particles.vx,
+            'vy': particles.vy,
+            'vz': particles.vz,
+            'm': particles.mass
+        }
 
 def get_task(task_name: str, args: dict) -> AbstractTask:
     task_map = {
         'ScatterTask': ScatterTask,
+        'TimeEvolutionTask': TimeEvolutionTask,
         'DistanceTask': DistanceTask,
         'VelocityProfileTask': VelocityProfileTask,
         'MassProfileTask': MassProfileTask,
@@ -52,21 +64,11 @@ class AbstractTimeTask(AbstractTask):
 class ScatterTask(AbstractTask):
     def __init__(self, x_expr: str, y_expr: str, x_unit: ScalarQuantity, y_unit: ScalarQuantity):
         parser = Parser()
+
         self.x_unit = x_unit
         self.y_unit = y_unit
         self.x_expr = parser.parse(x_expr)
         self.y_expr = parser.parse(y_expr)
-
-    def _get_sliced_parameters(self, particles: Particles) -> dict:
-        return {
-            'x': particles.x,
-            'y': particles.y,
-            'z': particles.z,
-            'vx': particles.vx,
-            'vy': particles.vy,
-            'vz': particles.vz,
-            'm': particles.mass
-        }
 
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         particles = filter_barion_particles(snapshot)
@@ -76,6 +78,32 @@ class ScatterTask(AbstractTask):
         y_value = self.y_expr.evaluate(params)
 
         return (x_value / self.x_unit, y_value / self.y_unit)
+
+class TimeEvolutionTask(AbstractTask):
+    functions = {
+        'sum': np.sum,
+        'mean': np.mean,
+        'none': lambda x: x
+    }
+
+    def __init__(self, expr: str, time_unit: ScalarQuantity, value_unit: ScalarQuantity,  function: str = 'none'):
+        parser = Parser()
+
+        self.expr = parser.parse(expr)
+        self.function = self.functions[function]
+        self.time_unit = time_unit
+        self.value_unit = value_unit
+        self.times = VectorQuantity([], time_unit.unit)
+        self.values = VectorQuantity([], value_unit.unit)
+
+    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
+        value = self.expr.evaluate(self._get_sliced_parameters(snapshot.particles))
+        value = self.function(value)
+
+        self.times.append(snapshot.timestamp)
+        self.values.append(value)
+
+        return (self.times / self.time_unit, self.values / self.value_unit)
 
 class PotentialTask(AbstractTask):
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
@@ -150,15 +178,6 @@ class MassProfileTask(AbstractTask):
         m = np.cumsum(m)
 
         return (r.value_in(units.kpc), m.value_in(units.MSun))
-
-class KineticEnergyTask(AbstractTimeTask):
-    def __init__(self):
-        super().__init__()
-
-    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
-        self._append_value(snapshot, snapshot.particles.kinetic_energy().value_in(units.J))
-
-        return self._as_tuple()
 
 class DistanceTask(AbstractTimeTask):
     def __init__(self, start_id: int, end_id: int):

@@ -5,8 +5,8 @@ from amuse.lab import units, ScalarQuantity, VectorQuantity
 from amuse.units.core import named_unit
 
 def str_to_unit(s: str) -> named_unit:
-    unit_names = ['Myr', 'kpc', 'kms', 'MSun']
-    actual_units = [units.Myr, units.kpc, units.kms, units.MSun]
+    unit_names = ['Myr', 'kpc', 'kms', 'MSun', 'J']
+    actual_units = [units.Myr, units.kpc, units.kms, units.MSun, units.J]
 
     index = unit_names.index(s) if s in unit_names else None
 
