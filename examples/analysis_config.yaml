@@ -1,13 +1,16 @@
-# file with a bunch of snapshots
+# file with a set of snapshots
 input_file: 
   format: fits
   filenames: 
     - '/data/test_out.fits'
-# directory where output pictures would be stored
+# directory to store output pictures. It must exist
 output_dir: /data/analysis'
 
 # figure size in inches
 figsize: [20, 11]
+
+# Save only each $(plot_interval)th picture
+plot_interval: 1
 
 # description of plots layout in following format:
 # - coords: [x, y, width, height]
@@ -18,7 +21,19 @@ figsize: [20, 11]
 #       - task 2
 #
 # params should be given the same names as ones in matplotlib.pyplot (and proper values) as most of them are just passed along to it
-plot_interval: 1
+
+# you can also use YAML anchors to substitute some values that repeat several times over the yaml
+host_slice: &host_slice
+  - 0
+  - 1000001
+host_color: &host_clr b
+
+sat_slice: &sat_slice
+  - 1000001
+  - 1500002
+sat_color: &sat_clr r
+
+all_color: &all_clr y
 
 plots: 
   # Left coordinate plot
@@ -37,24 +52,24 @@ plots:
           y_expr: 'y'
           x_unit: !q [1, kpc]
           y_unit: !q [1, kpc]
-        slice: [0, 1000000]
+        slice: *host_slice
         display: 
           is_density_plot: True
           resolution: 700
           extent: [-45, 45, -40, 40]
-          channel: b
+          channel: *host_clr
       - name: ScatterTask
         args:
           x_expr: 'z'
           y_expr: 'y'
           x_unit: !q [1, kpc]
           y_unit: !q [1, kpc]
-        slice: [1000001, 1500002]
+        slice: *sat_slice
         display: 
           is_density_plot: True
           resolution: 700
           extent: [-45, 45, -40, 40]
-          channel: r
+          channel: *sat_clr
       - name: ScatterTask
         args:
           x_expr: 'z'
@@ -64,7 +79,7 @@ plots:
         slice: [0, 1]
         display: 
           linestyle: solid
-          color: b
+          color: *host_clr
           marker: o
           markersize: 5
       - name: ScatterTask
@@ -76,7 +91,7 @@ plots:
         slice: [1000001, 1000002]
         display: 
           linestyle: solid
-          color: b
+          color: *sat_clr
           marker: o
           markersize: 5
       
@@ -95,24 +110,24 @@ plots:
           y_expr: 'y'
           x_unit: !q [1, kpc]
           y_unit: !q [1, kpc]
-        slice: [0, 1000000]
+        slice: *host_slice
         display: 
           is_density_plot: True
           resolution: 700
           extent: [-45, 45, -40, 40]
-          channel: b
+          channel: *host_clr
       - name: ScatterTask
         args:
           x_expr: 'x'
           y_expr: 'y'
           x_unit: !q [1, kpc]
           y_unit: !q [1, kpc]
-        slice: [1000001, 1500002]
+        slice: *sat_slice
         display: 
           is_density_plot: True
           resolution: 700
           extent: [-45, 45, -40, 40]
-          channel: r
+          channel: *sat_clr
       - name: ScatterTask
         args:
           x_expr: 'x'
@@ -122,7 +137,7 @@ plots:
         slice: [0, 1]
         display: 
           linestyle: solid
-          color: b
+          color: *host_clr
           marker: o
           markersize: 5
       - name: ScatterTask
@@ -134,7 +149,7 @@ plots:
         slice: [1000001, 1000002]
         display: 
           linestyle: solid
-          color: b
+          color: *sat_clr
           marker: o
           markersize: 5
 
@@ -144,36 +159,37 @@ plots:
       xlim: [0, 50]
       ylim: [0, 3]
       xlabel: '$r$, kpc'
-      ylabel: 'potential, $\frac{\varphi(r)}{\bar{\varphi}}$'
+      ylabel: 'Potential, portion of the average'
+      grid: True
     tasks:
       - name: PotentialTask
         args: {}
-        slice: [1000001, 1500002]
+        slice: *host_slice
         display:
           linestyle: None
-          color: r
-          label: satellite
-      - name: PotentialTask
-        args: {}
-        slice: [0, 1000001]
-        display:
-          linestyle: None
-          color: b
+          color: *host_clr
           label: host
       - name: PotentialTask
         args: {}
+        slice: *sat_slice
         display:
           linestyle: None
-          color: y
+          color: *sat_clr
+          label: satellite
+      - name: PotentialTask
+        args: {}
+        display:
+          linestyle: None
+          color: *all_clr
           label: all
 
   # Kinetic energy plot
   - coords: [0.72, 0.33, 0.14, 0.3]
     params:
-      xlim: [0, 1000]
+      xlim: [0, 10000]
       ylim: [0, 3.e+52]
       xlabel: 'Time, Myr'
-      ylabel: 'Keenetic energy, J'
+      ylabel: 'Kinetic energy, J'
       grid: True
     tasks:
       - name: TimeEvolutionTask
@@ -189,7 +205,7 @@ plots:
   # Separation plot
   - coords: [0, 0, 0.14, 0.3]
     params: 
-      xlim: [0, 1000]
+      xlim: [0, 10000]
       ylim: [0, 150]
       xlabel: 'Time, Myr'
       ylabel: 'Separation, kpc'
@@ -212,26 +228,26 @@ plots:
     tasks:
       - name: VelocityProfileTask
         args: {}
-        slice: [0, 1000000]
+        slice: *host_slice
         display:
           markersize: 0.5
           linestyle: None
-          color: b
+          color: *host_clr
           label: host
       - name: VelocityProfileTask
         args: {}
-        slice: [1000001, 1500002]
+        slice: *sat_slice
         display:
           markersize: 0.5
           linestyle: None
-          color: r
+          color: *sat_clr
           label: satellite
       - name: VelocityProfileTask
         args: {}
         display:
           markersize: 0.5
           linestyle: None
-          color: y
+          color: *all_clr
           label: all
 
   # Mass profile plot
@@ -245,24 +261,24 @@ plots:
     tasks:
       - name: MassProfileTask
         args: {}
-        slice: [0, 1000000]
+        slice: *host_slice
         display: 
           markersize: 0.5
           linestyle: None
-          color: b
+          color: *host_clr
           label: host
       - name: MassProfileTask
         args: {}
-        slice: [1000001, 1500002]
+        slice: *sat_slice
         display: 
           markersize: 0.5
           linestyle: None
-          color: r
+          color: *sat_clr
           label: satellite
       - name: MassProfileTask
         args: {}
         display: 
           markersize: 0.5
           linestyle: None
-          color: y
+          color: *all_clr
           label: all
