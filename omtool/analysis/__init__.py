@@ -1,0 +1,1 @@
+from omtool.analysis.config import AnalysisConfig

@@ -3,13 +3,14 @@ import time
 from typing import Iterator, List
 
 from amuse.lab import units
+from omtool.analysis.config import AnalysisConfig
 from omtool.analysis.tasks import get_task
 from omtool.analysis.visual.plot_parameters import DrawParameters
 
 from omtool.analysis.visual.task_manager import TaskManager
 from omtool.analysis.visual.visual_task import VisualTask
 from omtool.analysis.visual.visualizer import Visualizer
-from omtool.datamodel import Config, Snapshot
+from omtool.datamodel import Snapshot
 
 def generate_snapshot(fmt: str, files: List[str]) -> Iterator[Snapshot]:
     if fmt == 'fits':
@@ -17,35 +18,26 @@ def generate_snapshot(fmt: str, files: List[str]) -> Iterator[Snapshot]:
     elif fmt == 'csv':
         return Snapshot.from_logged_csvs(files, delimiter = ' ')
 
-def analize(config: Config):
+def analize(config: AnalysisConfig):
     visualizer = Visualizer()
     task_manager = TaskManager()
 
-    visualizer.set_figsize(*config['figsize'])
+    visualizer.set_figsize(*config.figsize)
 
-    for i, plot in enumerate(config['plots']):
-        visualizer.add_axes(*plot['coords'])
-        visualizer.set_plot_parameters(i, **plot['params'])
+    for i, plot in enumerate(config.plots):
+        visualizer.add_axes(*plot.coords)
+        visualizer.set_plot_parameters(i, **plot.params)
 
-        if 'tasks' in plot:
-            for task in plot['tasks']:
-                abstract_task = get_task(task['name'], task['args'])
-                
-                if 'slice' in task:
-                    curr_slice = task['slice']
-                    curr_slice = slice(curr_slice[0], curr_slice[1])
-                else: 
-                    curr_slice = slice(0, None)
+        for task in plot.tasks:
+            visual_task = VisualTask(
+                i, task.abstract_task, task.slice, task.display
+            )
 
-                visual_task = VisualTask(
-                    i, abstract_task, curr_slice, DrawParameters(**task['display'])
-                )
+            task_manager.add_tasks(visual_task)
 
-                task_manager.add_tasks(visual_task)
+    snapshots = generate_snapshot(config.input_file.format, config.input_file.filenames)
 
-    snapshots = generate_snapshot(config['input_file']['format'], config['input_file']['filenames'])
-
-    plot_interval = config['plot_interval']
+    plot_interval = config.plot_interval
 
     logging.info('i\tT, Myr\tTcomp\tTsave')
 
@@ -65,7 +57,7 @@ def analize(config: Config):
         start_save = time.time()
 
         if i % plot_interval == 0:
-            visualizer.save(f'{config["output_dir"]}/img-{i:03d}.png')
+            visualizer.save(f'{config.output_dir}/img-{i:03d}.png')
 
         end = time.time()
         logging.info(f'{i:03d}\t{timestamp:.01f}\t{start_save - start_comp:.01f}\t{end - start_save:.01f}')

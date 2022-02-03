@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Any, Dict, List, Tuple, Union
 import numpy as np
 import yaml
 from amuse.lab import units, ScalarQuantity, VectorQuantity
