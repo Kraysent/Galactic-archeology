@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from typing import Any, Dict, List, Tuple
 
 import matplotlib as mpl
@@ -7,22 +8,21 @@ from omtool.analysis.tasks.abstract_task import AbstractTask
 from omtool.datamodel import yaml_loader
 
 
-class DrawParameters:
-    def __init__(self, **kwargs):
-        for (key, val) in kwargs.items():
-            setattr(self, key, val)
-            
-    markersize: float = 0.1
-    linestyle: str = 'None'
-    color: str = 'b'
-    marker: str = 'o'
-    is_density_plot: bool = False
-    resolution: int = 100
-    extent: list = [0, 100, 0, 100]
-    cmap: str = 'ocean_r'
-    cmapnorm = mpl.colors.LogNorm()
-    label = None
-    channel = 'b'
+@dataclass
+class PlotParameters:
+    grid: bool = False
+    xlim: Tuple[int, int] = (None, None)
+    ylim: Tuple[int, int] = (None, None)
+    xlabel: str = ''
+    ylabel: str = ''
+    xticks: list = None
+    yticks: list = None
+    title: str = ''
+    ticks_direction: str = 'in'
+    xscale = 'linear'
+    basex = 10
+    yscale = 'linear'
+    basey = 10
 
 class InputFile:
     # optional parameters
@@ -46,6 +46,20 @@ class InputFile:
             raise Exception("No input filenames specified in analysis configuration file")
 
         return res
+
+@dataclass
+class DrawParameters:  
+    markersize: float = 0.1
+    linestyle: str = 'None'
+    color: str = 'b'
+    marker: str = 'o'
+    is_density_plot: bool = False
+    resolution: int = 100
+    extent: Tuple[int, int, int, int] = (0, 100, 0, 100)
+    cmap: str = 'ocean_r'
+    cmapnorm: Any = mpl.colors.LogNorm()
+    label: str = None
+    channel: str = 'b'
 
 class Task:
     slice: slice
