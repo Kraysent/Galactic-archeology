@@ -1,9 +1,28 @@
 from typing import Any, Dict, List, Tuple
+
+import matplotlib as mpl
 import yaml
 from omtool.analysis.tasks import get_task
 from omtool.analysis.tasks.abstract_task import AbstractTask
-from omtool.analysis.visual.plot_parameters import DrawParameters
 from omtool.datamodel import yaml_loader
+
+
+class DrawParameters:
+    def __init__(self, **kwargs):
+        for (key, val) in kwargs.items():
+            setattr(self, key, val)
+            
+    markersize: float = 0.1
+    linestyle: str = 'None'
+    color: str = 'b'
+    marker: str = 'o'
+    is_density_plot: bool = False
+    resolution: int = 100
+    extent: list = [0, 100, 0, 100]
+    cmap: str = 'ocean_r'
+    cmapnorm = mpl.colors.LogNorm()
+    label = None
+    channel = 'b'
 
 class InputFile:
     # optional parameters
@@ -29,37 +48,35 @@ class InputFile:
         return res
 
 class Task:
-    _args: Dict[str, Any]
-    _name: str
-    _display_args: dict
-
     slice: slice
     abstract_task: AbstractTask
+    display: DrawParameters
 
     def from_dict(input: dict) -> 'Task':
         res = Task()
-        res._args = { }
-        res._name = ''
-        res._display_args = { }
         res.slice = slice(0, None)
         res.abstract_task = None
 
+        args = { }
+        name = ''
+        display_args = { }
+
         if 'args' in input:
-            res._args = input['args']
+            args = input['args']
 
         if 'slice' in input:
             res.slice = slice(*input['slice'])
 
         if 'display' in input:
             for key, val in input['display'].items():
-                res._display_args[key] = val
+                display_args[key] = val
 
-        res.display = DrawParameters(**res._display_args)
+        res.display = DrawParameters(**display_args)
 
         if 'name' in input:
-            res._name = input['name']
+            name = input['name']
 
-            res.abstract_task = get_task(res._name, res._args)
+            res.abstract_task = get_task(name, args)
         else: 
             raise Exception("No task name specified in analysis configuration file")
 

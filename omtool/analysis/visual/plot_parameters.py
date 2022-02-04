@@ -1,7 +1,5 @@
 from typing import Tuple
 
-import matplotlib as mpl
-
 
 class PlotParameters:
     def __init__(self, **kwargs):
@@ -21,20 +19,3 @@ class PlotParameters:
     basex = 10
     yscale = 'linear'
     basey = 10
-
-class DrawParameters:
-    def __init__(self, **kwargs):
-        for (key, val) in kwargs.items():
-            setattr(self, key, val)
-            
-    markersize: float = 0.1
-    linestyle: str = 'None'
-    color: str = 'b'
-    marker: str = 'o'
-    is_density_plot: bool = False
-    resolution: int = 100
-    extent: list = [0, 100, 0, 100]
-    cmap: str = 'ocean_r'
-    cmapnorm = mpl.colors.LogNorm()
-    label = None
-    channel = 'b'

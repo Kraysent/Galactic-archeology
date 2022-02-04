@@ -4,8 +4,6 @@ from typing import Iterator, List
 
 from amuse.lab import units
 from omtool.analysis.config import AnalysisConfig
-from omtool.analysis.tasks import get_task
-from omtool.analysis.visual.plot_parameters import DrawParameters
 
 from omtool.analysis.visual.task_manager import TaskManager
 from omtool.analysis.visual.visual_task import VisualTask

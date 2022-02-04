@@ -1,5 +1,5 @@
 from omtool.analysis.tasks import AbstractTask
-from omtool.analysis.visual.plot_parameters import DrawParameters
+from omtool.analysis.config import DrawParameters
 from omtool.datamodel import Snapshot
 
 class VisualTask:

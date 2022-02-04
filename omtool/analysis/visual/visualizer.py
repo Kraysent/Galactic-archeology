@@ -2,7 +2,8 @@ from typing import Any, Callable, List, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
-from omtool.analysis.visual.plot_parameters import DrawParameters, PlotParameters
+from omtool.analysis.visual.plot_parameters import PlotParameters
+from omtool.analysis.config import DrawParameters
 from matplotlib.axes import Axes
 
 
