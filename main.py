@@ -4,8 +4,8 @@ import logging
 from analysis import analize
 from creator import create
 from integration import integrate
-from omtool.creation import CreationConfig
 from omtool.analysis import AnalysisConfig
+from omtool.creation import CreationConfig
 from omtool.integration import IntegrationConfig
 
 if __name__ == '__main__':

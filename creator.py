@@ -1,5 +1,4 @@
-from amuse.lab import units
-
+from pathlib import Path
 from omtool.creation import SnapshotBuilder
 from omtool.creation import CreationConfig, Type
 from omtool.datamodel import Snapshot
@@ -7,6 +6,10 @@ from omtool.datamodel import Snapshot
 
 def create(config: CreationConfig):
     builder = SnapshotBuilder()
+
+    if not config.overwrite:
+        if Path(config.output_file).is_file():
+            raise Exception('Output file exists and "overwrite" option in creation config file is false (default)')
 
     for object in config.objects:
         if object.type == Type.CSV:

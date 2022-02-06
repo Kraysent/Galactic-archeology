@@ -1,8 +1,10 @@
-from typing import Any, Dict, List, Tuple, Union
+from typing import Union
+
 import numpy as np
 import yaml
-from amuse.lab import units, ScalarQuantity, VectorQuantity
+from amuse.lab import ScalarQuantity, VectorQuantity, units
 from amuse.units.core import named_unit
+
 
 def str_to_unit(s: str) -> named_unit:
     unit_names = ['Myr', 'kpc', 'kms', 'MSun', 'J']

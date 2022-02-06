@@ -1,9 +1,8 @@
 from enum import Enum
 from typing import List
-from amuse.lab import units
 
 import yaml
-from amuse.lab import ScalarQuantity, VectorQuantity
+from amuse.lab import ScalarQuantity, VectorQuantity, units
 from omtool.datamodel import yaml_loader
 
 
@@ -63,6 +62,7 @@ class Object:
 class CreationConfig:
     output_file: str
     objects: List[Object]
+    overwrite: bool
 
     @staticmethod
     def from_yaml(filename: str) -> 'CreationConfig':
@@ -74,12 +74,16 @@ class CreationConfig:
         res = CreationConfig()
         res.output_file = ''
         res.objects = []
+        res.overwrite = False
 
         if 'output_file' in data:
             res.output_file = data['output_file']
         else:
             raise Exception("No output file specified in creation configuration file")
     
+        if 'overwrite' in data:
+            res.overwrite = data['overwrite']
+
         if 'objects' in data:
             for object in data['objects']:
                 res.objects.append(Object.from_dict(object))

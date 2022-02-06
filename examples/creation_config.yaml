@@ -1,5 +1,7 @@
 # output model would be written in this file
 output_file: '/data/test.fits'
+# what to do if output file already exists
+overwrite: True
 
 # list of objects; they can be either read from csv files or given directly using masses and positions.
 objects: 
