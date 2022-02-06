@@ -32,7 +32,7 @@ def loop_analysis_stage(
         if iteration % config.plot_interval == 0:
             visualizer.plot(vtask.axes_id, data, vtask.draw_params)
 
-    visualizer.set_title(f'Time: {snapshot.timestamp.value_in(units.Myr):.02f} Myr')
+    visualizer.set_title(config.title.format(time = snapshot.timestamp.value_in(units.Myr)))
 
 @profiler('Saving stage')
 def loop_saving_stage(

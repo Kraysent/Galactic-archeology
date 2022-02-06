@@ -6,6 +6,9 @@ input_file:
 # directory to store output pictures. It must exist
 output_dir: /data/analysis'
 
+# Title template. Use "time" to get time in Myr. To format it you can use standart python formatters.
+title: 'Time: {time:.02f} Myr'
+
 # figure size in inches
 figsize: [20, 11]
 

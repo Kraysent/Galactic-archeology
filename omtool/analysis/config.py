@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import string
 from typing import Any, Dict, List, Tuple
 
 import matplotlib as mpl
@@ -128,6 +129,7 @@ class AnalysisConfig:
     # optional parameters
     figsize: Tuple[int, int]
     plot_interval: int
+    title: string
 
     # required parameters
     plots: List[Plot]
@@ -146,6 +148,7 @@ class AnalysisConfig:
         res.plot_interval = 1
         res.plots = []
         res.output_dir = ''
+        res.title = 'Time {time} Myr'
         res.input_file = InputFile()
 
         if 'figsize' in data:
@@ -153,6 +156,9 @@ class AnalysisConfig:
 
         if 'plot_interval' in data:
             res.plot_interval = int(data['plot_interval'])
+
+        if 'title' in data:
+            res.title = data['title']
 
         if 'output_dir' in data:
             res.output_dir = data['output_dir']
