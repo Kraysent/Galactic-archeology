@@ -33,16 +33,24 @@ class ProfilerSingleton:
 
         return res
 
-def profiler(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        start = time.time()
-        res = func(*args, **kwargs)
-        result_time = time.time() - start
-        
-        profiler_instance = ProfilerSingleton.get_instance()
-        profiler_instance.add_value(func.__qualname__, result_time)
 
-        return res
+class profiler:
+    def __init__(self, name = ''):
+        self.name = name
+
+    def __call__(self, func):
+        def wrapper(*args, **kwargs):
+            start = time.time()
+            res = func(*args, **kwargs)
+            result_time = time.time() - start
+            
+            profiler_instance = ProfilerSingleton.get_instance()
+
+            if self.name == '':
+                self.name = func.__qualname__
+
+            profiler_instance.add_value(self.name, result_time)
+
+            return res
     
-    return wrapper
+        return wrapper

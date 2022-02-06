@@ -30,7 +30,7 @@ class EccentricityTask(AbstractTask):
 
         return coeffs.squeeze()
 
-    @profiler
+    @profiler('Eccenticity task')
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         pos = snapshot.particles[self.point_id].position.value_in(units.kpc)
         pos = pos - np.mean(pos, axis = 0)

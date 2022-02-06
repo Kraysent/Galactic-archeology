@@ -12,7 +12,7 @@ class DistanceTask(AbstractTimeTask):
         self.ids = (start_id, end_id)
         super().__init__()
 
-    @profiler
+    @profiler('Distance task')
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         start, end = self.ids
 

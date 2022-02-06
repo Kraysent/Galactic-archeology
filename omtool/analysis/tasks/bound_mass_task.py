@@ -19,7 +19,7 @@ class BoundMassTask(AbstractTimeTask):
 
         return particles[full_specific_energies < (0 | units.J / units.MSun)]
 
-    @profiler
+    @profiler('Bound mass task')
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         bound_particles = self._get_bound_particles(snapshot.particles)
         bound_particles = self._get_bound_particles(bound_particles)

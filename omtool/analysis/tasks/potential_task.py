@@ -9,7 +9,7 @@ from omtool.datamodel.task_profiler import profiler
 
 
 class PotentialTask(AbstractTask):
-    @profiler
+    @profiler('Potential task')
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         cm = snapshot.particles.center_of_mass()
         particles = snapshot.particles
