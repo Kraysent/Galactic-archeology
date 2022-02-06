@@ -9,7 +9,7 @@ def create(config: CreationConfig):
 
     if not config.overwrite:
         if Path(config.output_file).is_file():
-            raise Exception('Output file exists and "overwrite" option in creation config file is false (default)')
+            raise Exception(f'Output file ({config.output_file}) exists and "overwrite" option in creation config file is false (default)')
 
     for object in config.objects:
         if object.type == Type.CSV:

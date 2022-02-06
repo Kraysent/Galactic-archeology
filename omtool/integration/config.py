@@ -28,6 +28,7 @@ class LogParams:
 class IntegrationConfig:
     input_file: str
     output_file: str
+    overwrite: bool
     model_time: ScalarQuantity
     snapshot_interval: int
     timestep: int
@@ -43,6 +44,7 @@ class IntegrationConfig:
         
         res = IntegrationConfig()
         res.snapshot_interval = 1
+        res.overwrite = False
         res.logs = []
 
         if 'input_file' in data:
@@ -54,6 +56,9 @@ class IntegrationConfig:
             res.output_file = data['output_file']
         else:
            raise Exception('No output file specified in integration configuration file')
+
+        if 'overwrite' in data:
+            res.overwrite = data['overwrite']
 
         if 'model_time' in data:
             res.model_time = data['model_time']

@@ -1,4 +1,6 @@
 import logging
+import os
+from pathlib import Path
 
 from amuse.lab import units
 
@@ -9,8 +11,18 @@ from omtool.integration.config import IntegrationConfig
 
 def integrate(config: IntegrationConfig):
     snapshot = next(Snapshot.from_fits(config.input_file))
-
     integrator = PyfalconIntegrator(snapshot, config.eps, config.timestep)
+
+    if not config.overwrite:
+        if Path(config.output_file).is_file():
+            raise Exception(f'Output file ({config.output_file}) exists and "overwrite" option in integration config file is false (default)')
+        
+        for x in config.logs:
+            if Path(x.filename).is_file():
+                raise Exception(f'Log output file ({x.filename}) exists and "overwrite" option in integration config file is false (default)')
+
+    if Path(config.output_file).is_file():
+        os.remove(config.output_file)
 
     logging.info('T, Myr')
     i = 0
