@@ -172,7 +172,7 @@ class Snapshot:
 
             yield Snapshot(particles, rows[0]['T'] | units.Myr)
             
-    # shouldn't this method be static?
+    @staticmethod
     def from_mass(mass: ScalarQuantity) -> 'Snapshot':
         particles = Particles(1)
         particles[0].position = [0, 0, 0] | units.kpc
