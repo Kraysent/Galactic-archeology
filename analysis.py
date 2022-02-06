@@ -1,4 +1,3 @@
-import atexit
 import logging
 import time
 from typing import Iterator, List
@@ -10,7 +9,6 @@ from omtool.analysis.visual.task_manager import TaskManager
 from omtool.analysis.visual.visual_task import VisualTask
 from omtool.analysis.visual.visualizer import Visualizer
 from omtool.datamodel import Snapshot
-from omtool.datamodel.task_profiler import ProfilerSingleton
 
 def generate_snapshot(fmt: str, files: List[str]) -> Iterator[Snapshot]:
     if fmt == 'fits':
@@ -38,14 +36,6 @@ def analize(config: AnalysisConfig):
     snapshots = generate_snapshot(config.input_file.format, config.input_file.filenames)
 
     plot_interval = config.plot_interval
-
-    @atexit.register
-    def print_times():
-        profiler_instance = ProfilerSingleton.get_instance()
-        res = profiler_instance.dump_times()
-
-        for key, val in res.items():
-            logging.info(f'{key} worked {val:.02f} seconds on average')
 
     logging.info('i\tT, Myr\tTcomp\tTsave')
 

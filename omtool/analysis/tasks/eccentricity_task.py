@@ -5,7 +5,7 @@ from amuse.lab import units
 from numpy import linalg
 from omtool.analysis.tasks import AbstractTask
 from omtool.datamodel import Snapshot
-from omtool.datamodel.task_profiler import profiler
+from omtool.datamodel import profiler
 
 
 # Not implemented correctly yet

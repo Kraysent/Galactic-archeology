@@ -5,7 +5,7 @@ from amuse.lab import units
 from omtool.analysis.tasks import AbstractTask
 from omtool.analysis.utils import math, pyfalcon_analizer
 from omtool.datamodel import Snapshot
-from omtool.datamodel.task_profiler import profiler
+from omtool.datamodel import profiler
 
 
 class PotentialTask(AbstractTask):

@@ -7,7 +7,7 @@ from amuse.units.quantities import VectorQuantity, ScalarQuantity
 from omtool.datamodel import Snapshot
 from physical_evaluator import Parser
 
-from omtool.datamodel.task_profiler import profiler
+from omtool.datamodel import profiler
 
 class AbstractTask(ABC):
     @abstractmethod

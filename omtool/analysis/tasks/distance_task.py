@@ -5,7 +5,7 @@ from amuse.lab import units
 from omtool.analysis.tasks import AbstractTimeTask
 from omtool.analysis.utils import math
 from omtool.datamodel import Snapshot
-from omtool.datamodel.task_profiler import profiler
+from omtool.datamodel import profiler
 
 class DistanceTask(AbstractTimeTask):
     def __init__(self, start_id: int, end_id: int):
