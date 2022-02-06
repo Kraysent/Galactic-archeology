@@ -5,12 +5,14 @@ from amuse.lab import units
 from omtool.analysis.tasks import AbstractTimeTask
 from omtool.analysis.utils import math
 from omtool.datamodel import Snapshot
+from omtool.datamodel.task_profiler import profiler
 
 class DistanceTask(AbstractTimeTask):
     def __init__(self, start_id: int, end_id: int):
         self.ids = (start_id, end_id)
         super().__init__()
 
+    @profiler
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         start, end = self.ids
 

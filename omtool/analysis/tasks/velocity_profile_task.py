@@ -5,9 +5,11 @@ from amuse.lab import units
 from omtool.analysis.tasks import AbstractTask
 from omtool.analysis.utils import math
 from omtool.datamodel import Snapshot
+from omtool.datamodel.task_profiler import profiler
 
 
 class VelocityProfileTask(AbstractTask):
+    @profiler
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         cm = snapshot.particles.center_of_mass()
         cm_vel = snapshot.particles.center_of_mass_velocity()

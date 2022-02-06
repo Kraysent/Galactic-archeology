@@ -7,6 +7,8 @@ from amuse.units.quantities import VectorQuantity, ScalarQuantity
 from omtool.datamodel import Snapshot
 from physical_evaluator import Parser
 
+from omtool.datamodel.task_profiler import profiler
+
 class AbstractTask(ABC):
     @abstractmethod
     def run(
@@ -52,6 +54,7 @@ class ScatterTask(AbstractTask):
         self.x_expr = parser.parse(x_expr)
         self.y_expr = parser.parse(y_expr)
 
+    @profiler
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         particles = self.filter_barion_particles(snapshot)
         params = self._get_sliced_parameters(particles)
@@ -78,6 +81,7 @@ class TimeEvolutionTask(AbstractTask):
         self.times = VectorQuantity([], time_unit.unit)
         self.values = VectorQuantity([], value_unit.unit)
 
+    @profiler
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         value = self.expr.evaluate(self._get_sliced_parameters(snapshot.particles))
         value = self.function(value)

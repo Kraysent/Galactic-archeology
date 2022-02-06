@@ -5,6 +5,7 @@ from amuse.lab import units
 from omtool.analysis.tasks import AbstractTimeTask
 from omtool.analysis.utils import math, pyfalcon_analizer
 from omtool.datamodel import Snapshot
+from omtool.datamodel.task_profiler import profiler
 
 
 class BoundMassTask(AbstractTimeTask):
@@ -18,6 +19,7 @@ class BoundMassTask(AbstractTimeTask):
 
         return particles[full_specific_energies < (0 | units.J / units.MSun)]
 
+    @profiler
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         bound_particles = self._get_bound_particles(snapshot.particles)
         bound_particles = self._get_bound_particles(bound_particles)

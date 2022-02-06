@@ -5,6 +5,7 @@ from amuse.lab import units
 from numpy import linalg
 from omtool.analysis.tasks import AbstractTask
 from omtool.datamodel import Snapshot
+from omtool.datamodel.task_profiler import profiler
 
 
 # Not implemented correctly yet
@@ -29,6 +30,7 @@ class EccentricityTask(AbstractTask):
 
         return coeffs.squeeze()
 
+    @profiler
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         pos = snapshot.particles[self.point_id].position.value_in(units.kpc)
         pos = pos - np.mean(pos, axis = 0)

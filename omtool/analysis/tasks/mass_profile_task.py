@@ -5,9 +5,11 @@ from amuse.lab import units
 from omtool.analysis.tasks import AbstractTask
 from omtool.analysis.utils import math
 from omtool.datamodel import Snapshot
+from omtool.datamodel.task_profiler import profiler
 
 
 class MassProfileTask(AbstractTask):
+    @profiler
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         particles = snapshot.particles
         cm = particles.center_of_mass()
