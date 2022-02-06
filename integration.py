@@ -2,33 +2,31 @@ import logging
 
 from amuse.lab import units
 
-from omtool.datamodel import Config, Snapshot
+from omtool.datamodel import Snapshot
 from omtool.integration import PyfalconIntegrator
+from omtool.integration.config import IntegrationConfig
 
 
-def integrate(config: Config):
-    snapshot = next(Snapshot.from_fits(config['input_file']))
+def integrate(config: IntegrationConfig):
+    snapshot = next(Snapshot.from_fits(config.input_file))
 
-    integrator = PyfalconIntegrator(snapshot, config['eps'], config['timestep'])
+    integrator = PyfalconIntegrator(snapshot, config.eps, config.timestep)
 
     logging.info('T, Myr')
     i = 0
 
-    if 'logs' in config.keys():
-        points_to_track = { x['point_id']: x['filename'] for x in config['logs'] }
-    else: 
-        points_to_track = {}
-
+    points_to_track = { x.point_id: x.filename for x in config.logs }
+    
     for (point_id, name) in points_to_track.items():
         with open(name, 'w') as stream:
             stream.write('T x y z vx vy vz m\n')
 
-    while integrator.timestamp < config['model_time']:
+    while integrator.timestamp < config.model_time:
         integrator.leapfrog()
 
-        if i % config['snapshot_interval'] == 0:
+        if i % config.snapshot_interval == 0:
             snapshot = integrator.get_snapshot()
-            snapshot.to_fits(config['output_file'], append = True)
+            snapshot.to_fits(config.output_file, append = True)
 
         for (point_id, name) in points_to_track.items():
             with open(name, 'a') as stream:

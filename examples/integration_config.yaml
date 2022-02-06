@@ -13,8 +13,8 @@ eps: !q [0.2, kpc]
 
 # list of files and points to log.
 # Note that for now each point should have separate log file.
-# logs: 
-#   - filename: '/data/host_pos_log.csv'
-#     point_id: 0
-#   - filename: '/data/sat_pos_log.csv'
-#     point_id: 1
+logs: 
+  - filename: '/data/host_pos_log.csv'
+    point_id: 0
+  - filename: '/data/sat_pos_log.csv'
+    point_id: 1
