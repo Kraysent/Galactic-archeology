@@ -9,12 +9,39 @@ from omtool.analysis.visual.task_manager import TaskManager
 from omtool.analysis.visual.visual_task import VisualTask
 from omtool.analysis.visual.visualizer import Visualizer
 from omtool.datamodel import Snapshot
+from omtool.datamodel.task_profiler import profiler
 
 def generate_snapshot(fmt: str, files: List[str]) -> Iterator[Snapshot]:
     if fmt == 'fits':
         return Snapshot.from_fits(files[0])
     elif fmt == 'csv':
         return Snapshot.from_logged_csvs(files, delimiter = ' ')
+
+@profiler('Analysis stage')
+def loop_analysis_stage(
+    visualizer: Visualizer, 
+    task_manager: TaskManager, 
+    snapshot: Snapshot, 
+    iteration: int,
+    config: AnalysisConfig
+):
+    vtask: VisualTask
+    for vtask in task_manager.get_tasks():
+        data = vtask.run(snapshot)
+
+        if iteration % config.plot_interval == 0:
+            visualizer.plot(vtask.axes_id, data, vtask.draw_params)
+
+    visualizer.set_title(f'Time: {snapshot.timestamp.value_in(units.Myr):.02f} Myr')
+
+@profiler('Saving stage')
+def loop_saving_stage(
+    visualizer: Visualizer, 
+    iteration: int, 
+    config: AnalysisConfig
+):
+    if iteration % config.plot_interval == 0:
+        visualizer.save(f'{config.output_dir}/img-{iteration:03d}.png')
 
 def analize(config: AnalysisConfig):
     visualizer = Visualizer()
@@ -35,27 +62,13 @@ def analize(config: AnalysisConfig):
 
     snapshots = generate_snapshot(config.input_file.format, config.input_file.filenames)
 
-    plot_interval = config.plot_interval
-
     logging.info('i\tT, Myr\tTcomp\tTsave')
 
     for (i, snapshot) in enumerate(snapshots):
         start_comp = time.time()
-
-        vtask: VisualTask
-        for vtask in task_manager.get_tasks():
-            data = vtask.run(snapshot)
-
-            if i % plot_interval == 0:
-                visualizer.plot(vtask.axes_id, data, vtask.draw_params)
-
-        timestamp = snapshot.timestamp.value_in(units.Myr)
-        visualizer.set_title(f'Time: {timestamp:.02f} Myr')
-
+        loop_analysis_stage(visualizer, task_manager, snapshot, i, config)
         start_save = time.time()
-
-        if i % plot_interval == 0:
-            visualizer.save(f'{config.output_dir}/img-{i:03d}.png')
-
+        loop_saving_stage(visualizer, i, config)
         end = time.time()
-        logging.info(f'{i:03d}\t{timestamp:.01f}\t{start_save - start_comp:.01f}\t{end - start_save:.01f}')
+
+        logging.info(f'{i:03d}\t{snapshot.timestamp.value_in(units.Myr):.01f}\t{start_save - start_comp:.01f}\t{end - start_save:.01f}')
