@@ -33,29 +33,3 @@ def yaml_loader() -> yaml.Loader:
     loader.add_constructor('!q', unit_constructor)
 
     return loader
-
-class Config:
-    def __init__(self, defaults: dict = None):
-        self.data = {}
-
-        if defaults is not None:
-            for (key, value) in defaults.items():
-                setattr(self, key, value)
-
-    def __getitem__(self, key):
-        return self.data[key]
-
-    def keys(self):
-        return self.data.keys()
-
-    @staticmethod
-    def from_yaml(filename: str) -> 'Config':
-        data = {}
-        res = Config()
-
-        with open(filename, 'r') as stream:
-            data = yaml.load(stream, Loader = yaml_loader())
-
-        res.data = data
-
-        return res
