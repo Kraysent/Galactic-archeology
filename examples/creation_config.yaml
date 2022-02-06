@@ -12,7 +12,7 @@ objects:
   # # host galaxy
   # - type: 'csv'
   #   delimeter: ' '
-  #   path: '/home/user/data/host.txt'
+  #   path: '/home/user/data/host.csv'
   #   position: !q [[0, 0, 0], kpc]
   #   velocity: !q [[0, 0, 0], kms]
   # satellite black hole
@@ -23,6 +23,6 @@ objects:
   # # satellite galaxy
   # - type: 'csv'
   #   delimeter: ' '
-  #   path: '/home/user/data/sat.txt'
+  #   path: '/home/user/data/sat.csv'
   #   position: !q [[20, 0, 0], kpc]
   #   velocity: !q [[0, 100, 0], kms]

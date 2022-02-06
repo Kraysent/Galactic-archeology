@@ -4,6 +4,7 @@ import logging
 from analysis import analize
 from creator import create
 from integration import integrate
+from omtool.creation import CreationConfig
 from omtool.datamodel import Config
 from omtool.analysis import AnalysisConfig
 
@@ -28,7 +29,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.mode == 'create':
-        create(Config.from_yaml(args.inputparams[0]))
+        create(CreationConfig.from_yaml(args.inputparams[0]))
     elif args.mode == 'integrate':
         integrate(Config.from_yaml(args.inputparams[0]))
     elif args.mode == 'analize':
