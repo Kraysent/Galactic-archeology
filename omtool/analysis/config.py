@@ -128,7 +128,7 @@ class Plot:
 class AnalysisConfig:
     # optional parameters
     figsize: Tuple[int, int]
-    plot_interval: int
+    plot_interval_slice: int
     title: string
 
     # required parameters
@@ -145,7 +145,7 @@ class AnalysisConfig:
 
         res = AnalysisConfig()
         res.figsize = (20, 11)
-        res.plot_interval = 1
+        res.plot_interval_slice = slice(0, None)
         res.plots = []
         res.output_dir = ''
         res.title = 'Time {time} Myr'
@@ -155,7 +155,7 @@ class AnalysisConfig:
             res.figsize = tuple(data['figsize'])
 
         if 'plot_interval' in data:
-            res.plot_interval = int(data['plot_interval'])
+            res.plot_interval_slice = slice(*data['plot_interval'])
 
         if 'title' in data:
             res.title = data['title']

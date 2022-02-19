@@ -12,8 +12,8 @@ title: 'Time: {time:.02f} Myr'
 # figure size in inches
 figsize: [20, 11]
 
-# Save only each $(plot_interval)th picture
-plot_interval: 1
+# this slice would be applied to the range(number_of_snapshots). If given iteration is in the resulting array, it would be drawn to the disc.
+plot_interval: [0, null, 1]
 
 # description of plots layout in following format:
 # - coords: [x, y, width, height]
