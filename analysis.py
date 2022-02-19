@@ -47,7 +47,8 @@ def loop_saving_stage(
     config: AnalysisConfig
 ):
     if iteration in plot_indexes:
-        visualizer.save(f'{config.output_dir}/img-{iteration:03d}.png')
+        filename = config.pic_filename.format(i = iteration)
+        visualizer.save(f'{config.output_dir}/{filename}')
 
 def analize(config: AnalysisConfig):
     visualizer = Visualizer()

@@ -126,12 +126,9 @@ class Plot:
         return res
 
 class AnalysisConfig:
-    # optional parameters
     figsize: Tuple[int, int]
     plot_interval_slice: int
     title: string
-
-    # required parameters
     plots: List[Plot]
     output_dir: str
     input_file: InputFile
@@ -150,12 +147,16 @@ class AnalysisConfig:
         res.output_dir = ''
         res.title = 'Time {time} Myr'
         res.input_file = InputFile()
+        res.pic_filename = 'img-{i:03d}.png'
 
         if 'figsize' in data:
             res.figsize = tuple(data['figsize'])
 
         if 'plot_interval' in data:
             res.plot_interval_slice = slice(*data['plot_interval'])
+
+        if 'pic_filename' in data:
+            res.pic_filename = data['pic_filename']
 
         if 'title' in data:
             res.title = data['title']
