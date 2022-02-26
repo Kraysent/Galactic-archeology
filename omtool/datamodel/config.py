@@ -1,3 +1,4 @@
+import os
 from typing import Union
 
 import numpy as np
@@ -30,8 +31,19 @@ def unit_constructor(
     else:
         return data[0] | str_to_unit(data[1])
 
+def env_constructor(
+    loader: yaml.SafeLoader, node: yaml.nodes.Node
+) -> str:
+    data = loader.construct_scalar(node)
+
+    if not isinstance(data, str):
+        raise RuntimeError(f'Tried to paste environment variable into not-string: {data}')
+
+    return data.format(**os.environ)
+
 def yaml_loader() -> yaml.Loader:
     loader = yaml.SafeLoader
     loader.add_constructor('!q', unit_constructor)
+    loader.add_constructor('!env', env_constructor)
 
     return loader

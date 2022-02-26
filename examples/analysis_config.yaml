@@ -2,9 +2,9 @@
 input_file: 
   format: fits
   filenames: 
-    - '/data/test_out.fits'
+    - !env '{WORKING_DIR}/test_out.fits'
 # directory to store output pictures. It must exist
-output_dir: /data/analysis'
+output_dir: !env '{WORKING_DIR}/analysis'
 
 # Title template. Use "time" to get time in Myr. To format it you can use standart python formatters.
 title: 'Time: {time:.02f} Myr'

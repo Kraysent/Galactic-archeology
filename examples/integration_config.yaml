@@ -1,7 +1,7 @@
 # file with input model
-input_file: '/data/test.fits'
+input_file: !env '{WORKING_DIR}/test_model/test.fits'
 # file where output model would be written
-output_file: '/data/test_out.fits'
+output_file: !env '{WORKING_DIR}/test_model/test_out.fits'
 # what to do if output file or any of log files already exist
 overwrite: True
 # time until which model would be integrated
@@ -16,7 +16,7 @@ eps: !q [0.2, kpc]
 # list of files and points to log.
 # Note that for now each point should have separate log file.
 logs: 
-  - filename: '/data/host_pos_log.csv'
+  - filename: !env '{WORKING_DIR}/test_model/host_pos_log.csv'
     point_id: 0
-  - filename: '/data/sat_pos_log.csv'
+  - filename: !env '{WORKING_DIR}/test_model/sat_pos_log.csv'
     point_id: 1
