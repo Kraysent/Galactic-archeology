@@ -9,8 +9,9 @@ from omtool.datamodel import profiler
 
 
 class BoundMassTask(AbstractTimeTask):
-    def __init__(self):
+    def __init__(self, number_of_iterations: int = 3):
         super().__init__()
+        self.number_of_iterations = number_of_iterations
 
     def _get_bound_particles(self, particles):
         potentials = pyfalcon_analizer.get_potentials(particles, 0.2 | units.kpc)
@@ -21,9 +22,10 @@ class BoundMassTask(AbstractTimeTask):
 
     @profiler('Bound mass task')
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
-        bound_particles = self._get_bound_particles(snapshot.particles)
-        bound_particles = self._get_bound_particles(bound_particles)
-        bound_particles = self._get_bound_particles(bound_particles)
+        bound_particles = snapshot.particles
+
+        for i in range(self.number_of_iterations):
+            bound_particles = self._get_bound_particles(bound_particles)
 
         self._append_value(snapshot, bound_particles.total_mass().value_in(units.MSun))
 
