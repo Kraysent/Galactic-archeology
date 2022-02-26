@@ -21,35 +21,6 @@ def generate_snapshot(fmt: str, files: List[str]) -> Iterator[Snapshot]:
     elif fmt == 'csv':
         return Snapshot.from_logged_csvs(files, delimiter = ' ')
 
-@profiler('Analysis stage')
-def loop_analysis_stage(
-    visualizer: Visualizer, 
-    task_manager: TaskManager, 
-    snapshot: Snapshot, 
-    iteration: int,
-    plot_indexes: List[int],
-    config: AnalysisConfig
-):
-    vtask: VisualTask
-    for vtask in task_manager.get_tasks():
-        data = vtask.run(snapshot)
-
-        if iteration in plot_indexes:
-            visualizer.plot(vtask.axes_id, data, vtask.draw_params)
-
-    visualizer.set_title(config.title.format(time = snapshot.timestamp.value_in(units.Myr)))
-
-@profiler('Saving stage')
-def loop_saving_stage(
-    visualizer: Visualizer, 
-    iteration: int, 
-    plot_indexes: List[int],
-    config: AnalysisConfig
-):
-    if iteration in plot_indexes:
-        filename = config.pic_filename.format(i = iteration)
-        visualizer.save(f'{config.output_dir}/{filename}')
-
 def analize(config: AnalysisConfig):
     visualizer = Visualizer()
     task_manager = TaskManager()
@@ -73,11 +44,28 @@ def analize(config: AnalysisConfig):
 
     logging.info('i\tT, Myr\tTcomp\tTsave')
 
+    @profiler('Analysis stage')
+    def loop_analysis_stage(snapshot: Snapshot, iteration: int):
+        vtask: VisualTask
+        for vtask in task_manager.get_tasks():
+            data = vtask.run(snapshot)
+
+            if iteration in plot_indexes:
+                visualizer.plot(vtask.axes_id, data, vtask.draw_params)
+
+        visualizer.set_title(config.title.format(time = snapshot.timestamp.value_in(units.Myr)))
+
+    @profiler('Saving stage')
+    def loop_saving_stage(iteration: int):
+        if iteration in plot_indexes:
+            filename = config.pic_filename.format(i = iteration)
+            visualizer.save(f'{config.output_dir}/{filename}')
+
     for (i, snapshot) in enumerate(snapshots):
         start_comp = time.time()
-        loop_analysis_stage(visualizer, task_manager, snapshot, i, plot_indexes, config)
+        loop_analysis_stage(snapshot, i)
         start_save = time.time()
-        loop_saving_stage(visualizer, i, plot_indexes, config)
+        loop_saving_stage(i)
         end = time.time()
 
         logging.info(f'{i:03d}\t{snapshot.timestamp.value_in(units.Myr):.01f}\t{start_save - start_comp:.01f}\t{end - start_save:.01f}')
