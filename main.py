@@ -12,7 +12,7 @@ from omtool.integration import IntegrationConfig
 
 if __name__ == '__main__':
     logging.basicConfig(
-        level = logging.INFO, 
+        level = logging.DEBUG, 
         format = '[%(levelname)s] %(asctime)s | %(message)s', 
         datefmt = '%H:%M:%S'
     )

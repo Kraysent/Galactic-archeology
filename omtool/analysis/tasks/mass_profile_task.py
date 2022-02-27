@@ -3,7 +3,7 @@ from typing import Tuple
 import numpy as np
 from amuse.lab import units
 from omtool.analysis.tasks import AbstractTask
-from omtool.analysis.utils import math
+from omtool.analysis.utils import math, particle_centers
 from omtool.datamodel import Snapshot
 from omtool.datamodel import profiler
 
@@ -12,9 +12,9 @@ class MassProfileTask(AbstractTask):
     @profiler('Mass profile task')
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         particles = snapshot.particles
-        cm = particles.center_of_mass()
+        center = particle_centers.center_of_mass(particles)
 
-        r = math.get_lengths(particles.position - cm)
+        r = math.get_lengths(particles.position - center)
         m = particles.mass
         (r, m) = math.sort_with(r, m)
 
