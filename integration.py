@@ -1,10 +1,9 @@
-import logging
 import os
 from pathlib import Path
 
 from amuse.lab import units
 
-from omtool.datamodel import Snapshot, profiler
+from omtool.datamodel import Snapshot, logger, profiler
 from omtool.integration import PyfalconIntegrator
 from omtool.integration.config import IntegrationConfig
 
@@ -24,7 +23,7 @@ def integrate(config: IntegrationConfig):
     if Path(config.output_file).is_file():
         os.remove(config.output_file)
 
-    logging.info('T, Myr')
+    logger.info('T, Myr')
     i = 0
 
     points_to_track = { x.point_id: x.filename for x in config.logs }
@@ -52,7 +51,7 @@ def integrate(config: IntegrationConfig):
                 T = integrator.timestamp.value_in(units.Myr)
                 stream.write(f'{T} {x} {y} {z} {vx} {vy} {vz} {m}\n')
 
-        logging.info(f'{integrator.timestamp.value_in(units.Myr):.01f}')
+        logger.info(f'{integrator.timestamp.value_in(units.Myr):.01f}')
 
     while integrator.timestamp < config.model_time:
         loop_integration_stage()

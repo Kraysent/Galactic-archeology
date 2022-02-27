@@ -1,15 +1,15 @@
-import logging
 import time
 from typing import Iterator, List
 
 from amuse.lab import units
-from omtool.analysis.config import AnalysisConfig
 
+from omtool.analysis.config import AnalysisConfig
 from omtool.analysis.visual.task_manager import TaskManager
 from omtool.analysis.visual.visual_task import VisualTask
 from omtool.analysis.visual.visualizer import Visualizer
-from omtool.datamodel import Snapshot
+from omtool.datamodel import Snapshot, logger
 from omtool.datamodel.task_profiler import profiler
+
 
 def get_file_info(fmt: str, files: List[str]) -> int:
     if fmt == 'fits':
@@ -42,7 +42,7 @@ def analize(config: AnalysisConfig):
     snapshots = generate_snapshot(config.input_file.format, config.input_file.filenames)
     plot_indexes = range(number_of_snapshots)[config.plot_interval_slice]
 
-    logging.info('i\tT, Myr\tTcomp\tTsave')
+    logger.info('i\tT, Myr\tTcomp\tTsave')
 
     @profiler('Analysis stage')
     def loop_analysis_stage(snapshot: Snapshot, iteration: int):
@@ -68,4 +68,4 @@ def analize(config: AnalysisConfig):
         loop_saving_stage(i)
         end = time.time()
 
-        logging.info(f'{i:03d}\t{snapshot.timestamp.value_in(units.Myr):.01f}\t{start_save - start_comp:.01f}\t{end - start_save:.01f}')
+        logger.info(f'{i:03d}\t{snapshot.timestamp.value_in(units.Myr):.01f}\t{start_save - start_comp:.01f}\t{end - start_save:.01f}')

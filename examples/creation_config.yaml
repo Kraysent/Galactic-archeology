@@ -1,5 +1,5 @@
 # output model would be written in this file
-output_file: !env '{WORKING_DIR}/test_model/test.fits'
+output_file: !env '{WORKING_DIR}/test.fits'
 # what to do if output file already exists
 overwrite: True
 
@@ -11,20 +11,20 @@ objects:
     mass: !q [4.e+8, MSun]
     position: !q [[0, 0, 0], kpc]
     velocity: !q [[0, 0, 0], kms]
-  # # host galaxy
-  # - type: 'csv'
-  #   delimeter: ' '
-  #   path: !env '{WORKING_DIR}/host.csv'
-  #   position: !q [[0, 0, 0], kpc]
-  #   velocity: !q [[0, 0, 0], kms]
+  # host galaxy
+  - type: 'csv'
+    delimeter: ' '
+    path: !env '{DATA_DIR}/host.csv'
+    position: !q [[0, 0, 0], kpc]
+    velocity: !q [[0, 0, 0], kms]
   # satellite black hole
   - type: 'body'
     mass: !q [1.e+8, MSun]
     position: !q [[20, 0, 0], kpc]
     velocity: !q [[0, 100, 0], kms]
-  # # satellite galaxy
-  # - type: 'csv'
-  #   delimeter: ' '
-  #   path: !env '{WORKING_DIR}/sat.csv'
-  #   position: !q [[20, 0, 0], kpc]
-  #   velocity: !q [[0, 100, 0], kms]
+  # satellite galaxy
+  - type: 'csv'
+    delimeter: ' '
+    path: !env '{DATA_DIR}/sat.csv'
+    position: !q [[20, 0, 0], kpc]
+    velocity: !q [[0, 100, 0], kms]

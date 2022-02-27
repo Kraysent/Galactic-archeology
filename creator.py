@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from omtool.creation import CreationConfig, Object, SnapshotBuilder, Type
-from omtool.datamodel import Snapshot, profiler
+from omtool.datamodel import Snapshot, logger, profiler
 
 
 def create(config: CreationConfig):
@@ -21,7 +21,9 @@ def create(config: CreationConfig):
         curr_snapshot.particles.position += object.position
         curr_snapshot.particles.velocity += object.velocity
 
+        logger.info(f'Adding snapshot of {len(curr_snapshot.particles)} particles.')
         builder.add_snapshot(curr_snapshot)
+        logger.info('Snapshot added.')
 
     for object in config.objects:
         loop_creation_stage(object)

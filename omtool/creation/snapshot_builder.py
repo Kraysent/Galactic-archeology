@@ -2,7 +2,6 @@ from amuse.datamodel.particles import Particles
 from amuse.lab import units
 from amuse.units.quantities import VectorQuantity
 from omtool.datamodel import Snapshot
-import logging
 import numpy as np
 
 class SnapshotBuilder:
@@ -14,14 +13,10 @@ class SnapshotBuilder:
         offset: VectorQuantity = [0, 0, 0] | units.kpc, 
         velocity: VectorQuantity = [0, 0, 0] | units.kms
     ):
-        logging.info(f'Adding snapshot of {len(snapshot.particles)} particles.')
-
         snapshot.particles.position += offset
         snapshot.particles.velocity += velocity
         
         self.snapshot = self.snapshot + snapshot
-
-        logging.info('Snapshot added.')
 
     def add_particles(self, particles: Particles):
         self.snapshot.particles.add_particles(particles)
