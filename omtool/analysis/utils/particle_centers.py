@@ -1,6 +1,7 @@
+import numpy as np
 from amuse.lab import Particles, VectorQuantity, units
 from omtool.analysis.utils import pyfalcon_analizer
-import numpy as np
+
 
 def center_of_mass(particles: Particles) -> VectorQuantity:
     return particles.center_of_mass()
@@ -19,6 +20,4 @@ def potential_center(particles: Particles) -> VectorQuantity:
     masses = particles.mass[perm]
     masses = masses[:int(len(masses) * top_percent)]
 
-    center = np.sum(positions * masses[:, np.newaxis]) / np.sum(masses)
-
-    return center
+    return np.sum(positions * masses[:, np.newaxis], axis = 0) / np.sum(masses)

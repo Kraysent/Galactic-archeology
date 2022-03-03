@@ -3,18 +3,17 @@ from typing import Tuple
 import numpy as np
 from amuse.lab import units
 from omtool.analysis.tasks import AbstractTask
-from omtool.analysis.utils import math, pyfalcon_analizer
-from omtool.datamodel import Snapshot
-from omtool.datamodel import profiler
+from omtool.analysis.utils import math, particle_centers, pyfalcon_analizer
+from omtool.datamodel import Snapshot, profiler
 
 
 class PotentialTask(AbstractTask):
     @profiler('Potential task')
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
-        cm = snapshot.particles.center_of_mass()
+        center = particle_centers.center_of_mass(snapshot.particles)
         particles = snapshot.particles
 
-        r = math.get_lengths(particles.position - cm)
+        r = math.get_lengths(particles.position - center)
         potentials = pyfalcon_analizer.get_potentials(snapshot.particles, 0.2 | units.kpc)
         (r, potentials) = math.sort_with(r, potentials)
 

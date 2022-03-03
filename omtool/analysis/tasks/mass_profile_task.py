@@ -4,8 +4,7 @@ import numpy as np
 from amuse.lab import units
 from omtool.analysis.tasks import AbstractTask
 from omtool.analysis.utils import math, particle_centers
-from omtool.datamodel import Snapshot
-from omtool.datamodel import profiler
+from omtool.datamodel import Snapshot, profiler
 
 
 class MassProfileTask(AbstractTask):
