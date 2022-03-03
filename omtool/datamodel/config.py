@@ -47,3 +47,9 @@ def yaml_loader() -> yaml.Loader:
     loader.add_constructor('!env', env_constructor)
 
     return loader
+
+def required_get(data: dict, field: str):
+    try: 
+        return data[field]
+    except KeyError as e:
+        raise Exception(f'no required key {field} found') from e

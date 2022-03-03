@@ -4,6 +4,7 @@ from typing import List
 import yaml
 from amuse.lab import ScalarQuantity, VectorQuantity, units
 from omtool.datamodel import yaml_loader
+from omtool.datamodel.config import required_get
 
 
 class Type(Enum):
@@ -20,50 +21,22 @@ class Type(Enum):
             raise Exception(f'Unknown object type "{string}"')
 
 class Object:
-    type: Type
-    mass: ScalarQuantity
-    position: VectorQuantity
-    velocity: VectorQuantity
-    delimeter: str
-    path: str
-
     @staticmethod
     def from_dict(input: dict) -> 'Object':
         res = Object()
-        res.delimeter = ','
-        res.position = [0, 0, 0] | units.kpc
-        res.velocity = [0, 0, 0] | units.kms
+        res.delimeter = input.get('delimeter', ',')
+        res.position = input.get('position', [0, 0, 0] | units.kpc)
+        res.velocity = input.get('velocity', [0, 0, 0] | units.kms)
+        res.type = Type.from_string(required_get(input, 'type'))
 
-        if 'type' in input:
-            res.type = Type.from_string(input['type'])
-
-            if res.type == Type.CSV:
-                if 'path' in input:
-                    res.path = input['path']
-                else: 
-                    raise Exception('No path to csv specified')
-                
-                if 'delimeter' in input:
-                    res.delimeter = input['delimeter']
-            elif res.type == Type.BODY:
-                if 'mass' in input:
-                    res.mass = input['mass']
-                else:
-                    raise Exception('No mass of the object specified')
-            
-        if 'position' in input:
-            res.position = input['position']
-        
-        if 'velocity' in input:
-            res.velocity = input['velocity']
+        if res.type == Type.CSV:
+            res.path = required_get(input, 'path')
+        elif res.type == Type.BODY:
+            res.mass = required_get(input, 'mass')
 
         return res
 
 class CreationConfig:
-    output_file: str
-    objects: List[Object]
-    overwrite: bool
-
     @staticmethod
     def from_yaml(filename: str) -> 'CreationConfig':
         data = {}
@@ -71,23 +44,15 @@ class CreationConfig:
         with open(filename, 'r') as stream:
             data = yaml.load(stream, Loader = yaml_loader())
 
+        return CreationConfig.from_dict(data)
+
+    @staticmethod
+    def from_dict(input: dict) -> 'CreationConfig':
         res = CreationConfig()
-        res.output_file = ''
-        res.objects = []
-        res.overwrite = False
-
-        if 'output_file' in data:
-            res.output_file = data['output_file']
-        else:
-            raise Exception("No output file specified in creation configuration file")
-    
-        if 'overwrite' in data:
-            res.overwrite = data['overwrite']
-
-        if 'objects' in data:
-            for object in data['objects']:
-                res.objects.append(Object.from_dict(object))
-        else:
-            raise Exception("No objects specified in creation configuration file")
+        res.output_file = required_get(input, 'output_file')
+        res.objects = [
+            Object.from_dict(object) for object in required_get(input, 'objects')
+        ]
+        res.overwrite = input.get('overwrite', False)
 
         return res

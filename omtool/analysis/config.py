@@ -1,12 +1,10 @@
 from dataclasses import dataclass
-import string
-from typing import Any, Dict, List, Tuple
+from typing import Any, Tuple
 
 import matplotlib as mpl
 import yaml
 from omtool.analysis.tasks import get_task
-from omtool.analysis.tasks.abstract_task import AbstractTask
-from omtool.datamodel import yaml_loader
+from omtool.datamodel import required_get, yaml_loader
 
 
 @dataclass
@@ -25,29 +23,6 @@ class PlotParameters:
     yscale = 'linear'
     basey = 10
 
-class InputFile:
-    # optional parameters
-    format: str
-
-    # required parameters
-    filenames: List[str]
-
-    @staticmethod
-    def from_dict(input: dict) -> 'InputFile':
-        res = InputFile()
-        res.format = 'fits'
-        res.filenames = []
-
-        if 'format' in input:
-            res.format = input['format']   
-
-        if 'filenames' in input:
-            res.filenames = list(input['filenames']) 
-        else:
-            raise Exception("No input filenames specified in analysis configuration file")
-
-        return res
-
 @dataclass
 class DrawParameters:  
     markersize: float = 0.1
@@ -62,120 +37,66 @@ class DrawParameters:
     label: str = None
     channel: str = 'b'
 
-class Task:
-    slice: slice
-    abstract_task: AbstractTask
-    display: DrawParameters
+class InputFile:
+    @staticmethod
+    def from_dict(input: dict) -> 'InputFile':
+        res = InputFile()
+        res.format = input.get('format', 'fits')
+        res.filenames = required_get(input, 'filenames')
 
+        return res
+
+class Task:
+    @staticmethod
     def from_dict(input: dict) -> 'Task':
         res = Task()
-        res.slice = slice(0, None)
+        res.slice = slice(*input.get('slice', [0, None, 1]))
         res.abstract_task = None
-
-        args = { }
-        name = ''
-        display_args = { }
-
-        if 'args' in input:
-            args = input['args']
-
-        if 'slice' in input:
-            res.slice = slice(*input['slice'])
-
-        if 'display' in input:
-            for key, val in input['display'].items():
-                display_args[key] = val
-
-        res.display = DrawParameters(**display_args)
-
-        if 'name' in input:
-            name = input['name']
-
-            res.abstract_task = get_task(name, args)
-        else: 
-            raise Exception("No task name specified in analysis configuration file")
+        res.display = DrawParameters(**input.get('display', { }))
+        res.abstract_task = get_task(
+            required_get(input, 'name'), 
+            input.get('args', { })
+        )
 
         return res
 
 class Plot:
-    coords: Tuple[int, int, int, int]
-    params: Dict[str, Any]
-    tasks: List[Task]
-
     @staticmethod
     def from_dict(input: dict) -> 'Plot':
         res = Plot()
-        res.coords = (0, 0, 1, 1)
-        res.params = {
+        res.coords = tuple(input.get('coords', [0, 1, 1, 1]))
+        res.params = input.get('params', {
             'xlim': [0, 1],
             'ylim': [0, 1]
-        }
-        res.tasks = []
-
-        if 'coords' in input:
-            res.coords = tuple(input['coords'])
-        
-        if 'params' in input:
-            for key, val in input['params'].items():
-                res.params[key] = val
-
-        if 'tasks' in input:
-            for task in input['tasks']:
-                res.tasks.append(Task.from_dict(task))
+        })
+        res.tasks = [
+            Task.from_dict(task) for task in input.get('tasks', [])
+        ]
 
         return res
 
 class AnalysisConfig:
-    figsize: Tuple[int, int]
-    plot_interval_slice: int
-    title: string
-    plots: List[Plot]
-    output_dir: str
-    input_file: InputFile
-
     @staticmethod
     def from_yaml(filename: str) -> 'AnalysisConfig':
         data = {}
 
         with open(filename, 'r') as stream:
             data = yaml.load(stream, Loader = yaml_loader())
-
-        res = AnalysisConfig()
-        res.figsize = (20, 11)
-        res.plot_interval_slice = slice(0, None)
-        res.plots = []
-        res.output_dir = ''
-        res.title = 'Time {time} Myr'
-        res.input_file = InputFile()
-        res.pic_filename = 'img-{i:03d}.png'
-
-        if 'figsize' in data:
-            res.figsize = tuple(data['figsize'])
-
-        if 'plot_interval' in data:
-            res.plot_interval_slice = slice(*data['plot_interval'])
-
-        if 'pic_filename' in data:
-            res.pic_filename = data['pic_filename']
-
-        if 'title' in data:
-            res.title = data['title']
-
-        if 'output_dir' in data:
-            res.output_dir = data['output_dir']
-        else: 
-            raise Exception("No output directory specified in analysis configuration file")
         
-        if 'input_file' in data:
-            res.input_file = InputFile.from_dict(data['input_file'])
-        else: 
-            raise Exception("No input file specified in analysis configuration file")
+        return AnalysisConfig.from_dict(data)
 
-        if 'plots' in data:
-            for plot in data['plots']:
-                res.plots.append(Plot.from_dict(plot))
-        else: 
-            raise Exception("No plots specified in analysis configuration file")
+    @staticmethod
+    def from_dict(input: dict) -> 'AnalysisConfig':
+        res = AnalysisConfig()
+        res.figsize = tuple(input.get('figsize', [20, 11]))
+        res.plot_interval_slice = slice(*input.get('plot_interval', [0, None, 1]))
+        res.plots = [
+            Plot.from_dict(plot) for plot in required_get(input, 'plots')
+        ]
+        res.output_dir = required_get(input, 'output_dir')
+        res.title = input.get('title', 'Time {time} Myr')
+        res.input_file = InputFile.from_dict(required_get(input, 'input_file'))
+        res.pic_filename = input.get('pic_filename', 'img-{i:03d}.png')
 
         return res
 
