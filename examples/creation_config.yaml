@@ -3,6 +3,18 @@ output_file: !env '{WORKING_DIR}/test.fits'
 # what to do if output file already exists
 overwrite: True
 
+# You can specify list of logging handlers
+logging:
+  - handler_type: console
+    args:
+      format: '[%(levelname)s] %(asctime)s | %(message)s'
+      stream: stdout
+  - handler_type: file
+    args: 
+      format: '[%(levelname)s] %(asctime)s | %(message)s'
+      filename: !env '{WORKING_DIR}/test_log.txt'
+      datefmt: '%H:%M:%S'
+
 # list of objects; they can be either read from csv files or given directly using masses and positions.
 objects: 
   # host black hole

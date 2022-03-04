@@ -13,6 +13,18 @@ timestep: 8
 # softening distance
 eps: !q [0.2, kpc]
 
+# You can specify list of logging handlers
+logging:
+  - handler_type: console
+    args:
+      format: '[%(levelname)s] %(asctime)s | %(message)s'
+      stream: stdout
+  - handler_type: file
+    args: 
+      format: '[%(levelname)s] %(asctime)s | %(message)s'
+      filename: !env '{WORKING_DIR}/test_log.txt'
+      datefmt: '%H:%M:%S'
+
 # list of files and points to log.
 # Note that for now each point should have separate log file.
 logs: 
