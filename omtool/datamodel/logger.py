@@ -1,32 +1,41 @@
 import logging
+import sys
 
 _instance = None
 
-def get_instance() -> 'Logger':
+def get_instance() -> logging.Logger:
     global _instance
 
     if _instance is None:
-        _instance = Logger()
-        _instance.logger = logging.getLogger('OMTool')
-        _instance.logger.setLevel(logging.DEBUG)
-        fh = logging.StreamHandler()
-        fh_formatter = logging.Formatter('[%(levelname)s] %(asctime)s | %(message)s', '%H:%M:%S')
-        fh.setFormatter(fh_formatter)
-        _instance.logger.addHandler(fh)
+        _instance = logging.getLogger('OMTool')
+        _instance.setLevel(logging.DEBUG)
 
     return _instance
+
+def add_console_handler(format: str, stream = 'stderr', datefmt: str = '%H:%M:%S'):
+    stream_names = {
+        'stderr': sys.stderr,
+        'stdout': sys.stdout
+    }
+    handler = logging.StreamHandler(stream_names.get(stream, sys.stderr))
+    formatter = logging.Formatter(format, datefmt)
+    handler.setFormatter(formatter)
+    get_instance().addHandler(handler)
+
+def add_file_handler(format: str, filename: str, datefmt: str = '%H:%M:%S'):
+    handler = logging.FileHandler(filename)
+    formatter = logging.Formatter(format, datefmt)
+    handler.setFormatter(formatter)
+    get_instance().addHandler(handler)
 
 def info(msg: str):
     get_instance().info(msg)
 
 def debug(msg: str):
-    get_instance().logger.debug(msg)
+    get_instance().debug(msg)
 
-class Logger:
-    logger: logging.Logger
+def warning(msg: str):
+    get_instance().warning(msg)
 
-    def info(self, msg: str):
-        self.logger.info(msg)
-
-    def debug(self, msg: str):
-        self.logger.debug(msg)
+def error(msg: str):
+    get_instance().error(msg)

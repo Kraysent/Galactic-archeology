@@ -52,7 +52,7 @@ def get(func_name: str) -> Callable[[Particles], VectorQuantity]:
     }
 
     if not func_name in names:
-        logger.debug(f'Unknown center name "{func_name}", falling back to center of mass')
+        logger.warning(f'Unknown center name "{func_name}", falling back to center of mass.')
         func_name = 'mass'
 
     return names[func_name]
@@ -65,7 +65,7 @@ def get_velocity(func_name: str) -> Callable[[Particles], VectorQuantity]:
     }
 
     if not func_name in names:
-        logger.debug(f'Unknown center velocity name "{func_name}", falling back to center of mass velocity')
+        logger.warning(f'Unknown center velocity name "{func_name}", falling back to center of mass velocity.')
         func_name = 'mass'
 
     return names[func_name]

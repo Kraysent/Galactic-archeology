@@ -6,7 +6,7 @@ from creator import create
 from integration import integrate
 from omtool.analysis import AnalysisConfig
 from omtool.creation import CreationConfig
-from omtool.datamodel import task_profiler, logger
+from omtool.datamodel import BaseConfig, logger, task_profiler
 from omtool.integration import IntegrationConfig
 
 if __name__ == '__main__':
@@ -14,7 +14,7 @@ if __name__ == '__main__':
     parser.add_argument(
         'mode', 
         help = 'Mode of the program to run', 
-        choices = ['create', 'integrate', 'analize', 'mananalize', 'test'])
+        choices = ['create', 'integrate', 'analize', 'test'])
     parser.add_argument(
         'inputparams',
         help = 'input parameters for particular mode (for example, path to config file)',
@@ -29,6 +29,14 @@ if __name__ == '__main__':
 
         for key, val in res.items():
             logger.info(f'{key} worked {val:.02f} seconds on average')
+
+    baseConfig = BaseConfig.from_yaml(args.inputparams[0])
+    
+    for log in baseConfig.logging:
+        if log.handler_type == 'console':
+            logger.add_console_handler(**log.args)
+        elif log.handler_type == 'file':
+            logger.add_file_handler(**log.args)
 
     if args.mode == 'create':
         create(CreationConfig.from_yaml(args.inputparams[0]))

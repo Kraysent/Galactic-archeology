@@ -53,3 +53,36 @@ def required_get(data: dict, field: str):
         return data[field]
     except KeyError as e:
         raise Exception(f'no required key {field} found') from e
+
+class LoggingHandler:
+    @staticmethod
+    def from_dict(input: str) -> 'LoggingHandler':
+        res = LoggingHandler()
+        res.handler_type = required_get(input, 'handler_type')
+        res.args = required_get(input, 'args')
+
+        return res
+
+class BaseConfig:
+    @staticmethod
+    def from_yaml(filename: str) -> 'BaseConfig':
+        data = {}
+
+        with open(filename, 'r') as stream:
+            data = yaml.load(stream, Loader = yaml_loader())
+        
+        return BaseConfig.from_dict(data)
+
+    @staticmethod
+    def from_dict(input: str) -> 'BaseConfig':
+        res = BaseConfig()
+        res.logging = [
+            LoggingHandler.from_dict(conf) for conf in input.get('logging', { 
+                'handler_type': 'console',
+                'args': {
+                    'format': '[%(levelname)s] %(asctime)s | %(message)s'
+                }
+            })
+        ]
+
+        return res
