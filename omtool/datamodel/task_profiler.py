@@ -1,23 +1,27 @@
-from functools import wraps
 import time
 from typing import Any, Dict, List
+
 import numpy as np
 
 instance = None
 
-class ProfilerSingleton:
+def _get_instance() -> 'profilerSingleton':
+    global instance 
+
+    if instance is None:
+        instance = profilerSingleton()
+
+    return instance
+
+def add_value(key, value):
+    _get_instance().add_value(key, value)
+
+def dump_times() -> Dict[Any, float]:
+    return _get_instance().dump_times()
+
+class profilerSingleton:
     def __init__(self):
         self.times: Dict[Any, List[float]] = {}
-        self.instance = self
-
-    @staticmethod
-    def get_instance() -> 'ProfilerSingleton':
-        global instance 
-
-        if instance is None:
-            instance = ProfilerSingleton()
-
-        return instance
 
     def add_value(self, key, value):
         if not key in self.times:
@@ -33,7 +37,6 @@ class ProfilerSingleton:
 
         return res
 
-
 class profiler:
     def __init__(self, name = ''):
         self.name = name
@@ -44,12 +47,10 @@ class profiler:
             res = func(*args, **kwargs)
             result_time = time.time() - start
             
-            profiler_instance = ProfilerSingleton.get_instance()
-
             if self.name == '':
                 self.name = func.__qualname__
 
-            profiler_instance.add_value(self.name, result_time)
+            add_value(self.name, result_time)
 
             return res
     

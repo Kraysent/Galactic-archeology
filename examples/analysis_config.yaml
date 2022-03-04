@@ -168,21 +168,24 @@ plots:
       grid: True
     tasks:
       - name: PotentialTask
-        args: {}
+        args:
+          center_type: potential
         slice: *host_slice
         display:
           linestyle: None
           color: *host_clr
           label: host
       - name: PotentialTask
-        args: {}
+        args: 
+          center_type: potential
         slice: *sat_slice
         display:
           linestyle: None
           color: *sat_clr
           label: satellite
       - name: PotentialTask
-        args: {}
+        args: 
+          center_type: potential
         display:
           linestyle: None
           color: *all_clr

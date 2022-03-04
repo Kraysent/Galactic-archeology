@@ -6,13 +6,10 @@ from creator import create
 from integration import integrate
 from omtool.analysis import AnalysisConfig
 from omtool.creation import CreationConfig
-from omtool.datamodel import ProfilerSingleton
-from omtool.datamodel import logger as log
+from omtool.datamodel import task_profiler, logger
 from omtool.integration import IntegrationConfig
 
 if __name__ == '__main__':
-    logger = log.get_instance()
-
     parser = argparse.ArgumentParser()
     parser.add_argument(
         'mode', 
@@ -28,8 +25,7 @@ if __name__ == '__main__':
 
     @atexit.register
     def print_times():
-        profiler_instance = ProfilerSingleton.get_instance()
-        res = profiler_instance.dump_times()
+        res = task_profiler.dump_times()
 
         for key, val in res.items():
             logger.info(f'{key} worked {val:.02f} seconds on average')
