@@ -3,21 +3,25 @@ from typing import Tuple
 import numpy as np
 from amuse.lab import units
 from omtool.analysis.tasks import AbstractTask
-from omtool.analysis.utils import math
-from omtool.datamodel import Snapshot
-from omtool.datamodel import profiler
+from omtool.analysis.utils import math, particle_centers
+from omtool.datamodel import Snapshot, profiler
 
 
 class VelocityProfileTask(AbstractTask):
+    def __init__(self, center_type: str = 'mass') -> None:
+        super().__init__()
+        self.center_func = particle_centers.get(center_type)
+        self.center_vel_func = particle_centers.get_velocity(center_type)
+
     @profiler('Velocity profile task')
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
-        cm = snapshot.particles.center_of_mass()
-        cm_vel = snapshot.particles.center_of_mass_velocity()
+        center = self.center_func(snapshot.particles)
+        center_vel = self.center_vel_func(snapshot.particles)
 
         particles = self.filter_barion_particles(snapshot)
 
-        r = math.get_lengths(particles.position - cm)
-        v = math.get_lengths(particles.velocity - cm_vel)
+        r = math.get_lengths(particles.position - center)
+        v = math.get_lengths(particles.velocity - center_vel)
         (r, v) = math.sort_with(r, v)
 
         resolution = 1000

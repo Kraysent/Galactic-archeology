@@ -1,6 +1,8 @@
 from collections import namedtuple
+from functools import lru_cache
+
 import pyfalcon
-from amuse.lab import VectorQuantity, ScalarQuantity, units, Particles
+from amuse.lab import Particles, ScalarQuantity, VectorQuantity, units
 
 Units = namedtuple("Units", "L V M T")
 u = Units(
@@ -10,6 +12,9 @@ u = Units(
     V = units.kms
 )
 
+ScalarQuantity.__hash__ = lambda q: hash((q.number, q.unit))
+
+@lru_cache(maxsize = 10)
 def get_potentials(particles: Particles, eps: ScalarQuantity) -> VectorQuantity:
     pos = particles.position.value_in(u.L)
     mass = particles.mass.value_in(u.M)

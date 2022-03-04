@@ -8,9 +8,13 @@ from omtool.datamodel import Snapshot, profiler
 
 
 class PotentialTask(AbstractTask):
+    def __init__(self, center_type: str = 'mass') -> None:
+        super().__init__()
+        self.center_func = particle_centers.get(center_type)
+
     @profiler('Potential task')
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
-        center = particle_centers.center_of_mass(snapshot.particles)
+        center = self.center_func(snapshot.particles)
         particles = snapshot.particles
 
         r = math.get_lengths(particles.position - center)
