@@ -3,7 +3,11 @@
   "title": "Creation config YAML schema",
   "description": "YAML schema for creation configuration file of OMTool",
   "type": "object",
-  "additionalProperties": false,
+  "additionalProperties": true,
+  "required": [
+    "output_file",
+    "objects"
+  ],
   "properties": {
     "output_file": {
       "type": "string",
@@ -20,6 +24,10 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
+        "required": [
+          "handler_type",
+          "args"
+        ],
         "properties": {
           "handler_type": {
             "type": "string",
@@ -34,11 +42,7 @@
             "description": "Arguments to handler constructor.",
             "additionalProperties": true
           }
-        },
-        "required": [
-          "handler_type",
-          "args"
-        ]
+        }
       }
     },
     "objects": {
@@ -47,6 +51,9 @@
       "items": {
         "type": "object",
         "additionalItems": true,
+        "required": [
+          "type"
+        ],
         "properties": {
           "type": {
             "type": "string",
@@ -79,9 +86,5 @@
         }
       }
     }
-  },
-  "required": [
-    "output_file",
-    "objects"
-  ]
+  }
 }

@@ -3,7 +3,14 @@
   "title": "Integration config YAML schema",
   "description": "YAML schema for integration configuration file of OMTool",
   "type": "object",
-  "additionalProperties": false,
+  "additionalProperties": true,
+  "required": [
+    "input_file",
+    "output_file",
+    "model_time",
+    "timestep",
+    "eps"
+  ],
   "properties": {
     "input_file": {
       "type": "string",
@@ -40,6 +47,10 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
+        "required": [
+          "handler_type",
+          "args"
+        ],
         "properties": {
           "handler_type": {
             "type": "string",
@@ -54,11 +65,7 @@
             "description": "Arguments to handler constructor.",
             "additionalProperties": true
           }
-        },
-        "required": [
-          "handler_type",
-          "args"
-        ]
+        }
       }
     },
     "logs": {
@@ -67,6 +74,10 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
+        "required": [
+          "filename",
+          "point_id"
+        ],
         "properties": {
           "filename": {
             "type": "string",
@@ -76,11 +87,7 @@
             "type": "integer",
             "description": "ID of particles to track. It corresponds one from initial model."
           }
-        },
-        "required": [
-          "filename",
-          "point_id"
-        ]
+        }
       }
     }
   }

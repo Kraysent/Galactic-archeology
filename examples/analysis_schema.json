@@ -1,0 +1,155 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Analysis config YAML schema",
+  "description": "YAML schema for analysis configuration file of OMTool",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "input_file",
+    "output_dir",
+    "plots"
+  ],
+  "properties": {
+    "input_file": {
+      "type": "object",
+      "description": "Parameters of input file(s).",
+      "additionalProperties": false,
+      "required": [
+        "format",
+        "filenames"
+      ],
+      "properties": {
+        "format": {
+          "type": "string",
+          "description": "Type of input file(s).",
+          "enum": [
+            "fits",
+            "csv"
+          ]
+        },
+        "filenames": {
+          "type": "array",
+          "description": "List of filenames to be read by analysis tool.",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "output_dir": {
+      "type": "string",
+      "description": "Directory where the result of analysis would be saved."
+    },
+    "title": {
+      "type": "string",
+      "description": "Title template. Use {time} to get time in Myr. One can use standart python formatters to format number of digits, rounding, etc."
+    },
+    "logging": {
+      "type": "array",
+      "description": "List of logging handlers.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "handler_type",
+          "args"
+        ],
+        "properties": {
+          "handler_type": {
+            "type": "string",
+            "description": "Type of handler that processes the logging message.",
+            "enum": [
+              "console",
+              "file"
+            ]
+          },
+          "args": {
+            "type": "object",
+            "description": "Arguments to handler constructor.",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    "figsize": {
+      "type": "array",
+      "description": "Figure size in inches",
+      "items": {
+        "type": "integer"
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "plot_interval": {
+      "type": "array",
+      "description": "This slice would be applied to the range(number_of_snapshots). If given iteration is in the resulting array, it would be writen to the disk.",
+      "minItems": 2,
+      "maxItems": 3
+    },
+    "pic_filename": {
+      "type": "string",
+      "description": "Pictures will be saved in output_dir with this filename. i is iteration number."
+    },
+    "plots": {
+      "type": "array",
+      "description": "List of plots with their paramaters and tasks inside them.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "coords",
+          "params",
+          "tasks"
+        ],
+        "properties": {
+          "coords": {
+            "type": "array",
+            "description": "Position and size of the graph in form of [x, y, width, height]",
+            "items": {
+              "type": "number"
+            },
+            "maxItems": 4,
+            "minItems": 4
+          },
+          "params": {
+            "type": "object",
+            "description": "Parameters of the graph box. They should be given the same names as ones in matplotlib.pyplot (and proper values) as most of them are just passed along to it."
+          },
+          "tasks": {
+            "type": "array",
+            "description": "List of the tasks that belong to this particular plot.",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "name",
+                "args",
+                "display"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Name of the task to run."
+                },
+                "args": {
+                  "type": "object",
+                  "description": "Arguments to the constructor of the task."
+                },
+                "slice": {
+                  "type": "array",
+                  "description": "Slice of the snapshot that would participate in the calculations.",
+                  "minItems": 2,
+                  "maxItems": 3
+                },
+                "display": {
+                  "type": "object",
+                  "description": "Parameters of the display of the result of this task. They should be given the same names as ones in matplotlib.pyplot (and proper values) as most of them are just passed along to it."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

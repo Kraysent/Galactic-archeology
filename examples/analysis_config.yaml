@@ -24,7 +24,7 @@ logging:
 # figure size in inches
 figsize: [20, 11]
 
-# this slice would be applied to the range(number_of_snapshots). If given iteration is in the resulting array, it would be drawn to the disc.
+# this slice would be applied to the range(number_of_snapshots). If given iteration is in the resulting array, it would be drawn to the disk.
 plot_interval: [0, null, 1]
 # pictures will be saved in output_dir with this filename. i is iteration number.
 pic_filename: 'img-{i:03d}.png'
