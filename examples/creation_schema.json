@@ -1,0 +1,75 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Creation config YAML schema",
+  "description": "YAML schema for creation configuration file of OMTool",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "output_file": {
+      "type": "string",
+      "description": "Path to the file where the output model would be saved."
+    },
+    "overwrite": {
+      "type": "boolean",
+      "description": "Should the program overwrite model file if it already exists or not.",
+      "default": false
+    },
+    "logging": {
+      "type":"array",
+      "description": "List of logging handlers.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "handler_type": {
+            "type": "string",
+            "description": "Type of handler that processes the logging message.",
+            "enum": ["console", "file"]
+          },
+          "args": {
+            "type": "object",
+            "description": "Arguments to handler constructor.",
+            "additionalProperties": true
+          }
+        },
+        "required": ["handler_type", "args"]
+      }
+    },
+    "objects": {
+      "type": "array",
+      "description": "List of objects that would be added to model.",
+      "items": {
+        "type": "object",
+        "additionalItems": true,
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Type of object.",
+            "enum": ["body", "csv"]
+          },
+          "mass": {
+            "type": "array",
+            "description": "Mass of the object if its type is 'body'. Should be denoted with !q tag."
+          },
+          "position": { 
+            "type": "array",
+            "description": "Initial position of the system. Should be denoted with !q tag."
+          },
+          "velocity": {
+            "type": "array",
+            "description": "Initial velocity of the system. Should be denoted with !q tag."
+          },
+          "path": {
+            "type": "string",
+            "description": "Path to the file with model if its type is 'csv'."
+          },
+          "delimeter": {
+            "type": "string",
+            "description": "Delimeter thet would be used when reading the csv file."
+          }
+        }
+      }      
+    }
+  },
+  "required": ["output_file"]
+}
