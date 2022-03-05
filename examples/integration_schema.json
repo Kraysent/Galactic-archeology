@@ -1,0 +1,87 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Integration config YAML schema",
+  "description": "YAML schema for integration configuration file of OMTool",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "input_file": {
+      "type": "string",
+      "description": "Path to file where initial model lies."
+    },
+    "output_file": {
+      "type": "string",
+      "description": "Path to file where output model would be saved."
+    },
+    "overwrite": {
+      "type": "boolean",
+      "description": "Should the program overwrite model file if it already exists or not.",
+      "default": false
+    },
+    "model_time": {
+      "type": "array",
+      "description": "Time of the system until which integration would be performed."
+    },
+    "snapshot_interval": {
+      "type": "integer",
+      "description": "Interval between to consecutive snapshots to write to output file"
+    },
+    "timestep": {
+      "type": "integer",
+      "description": "Timestep coefficient (actual timestep is model_time * e^(-timestep))."
+    },
+    "eps": {
+      "type": "array",
+      "description": "Softening distance of the integrator."
+    },
+    "logging": {
+      "type": "array",
+      "description": "List of logging handlers.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "handler_type": {
+            "type": "string",
+            "description": "Type of handler that processes the logging message.",
+            "enum": [
+              "console",
+              "file"
+            ]
+          },
+          "args": {
+            "type": "object",
+            "description": "Arguments to handler constructor.",
+            "additionalProperties": true
+          }
+        },
+        "required": [
+          "handler_type",
+          "args"
+        ]
+      }
+    },
+    "logs": {
+      "type": "array",
+      "description": "List of points to log to file. Note that for now each point should have separate log file.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "filename": {
+            "type": "string",
+            "description": "Path to file where particles parameters would be stored."
+          },
+          "point_id": {
+            "type": "integer",
+            "description": "ID of particles to track. It corresponds one from initial model."
+          }
+        },
+        "required": [
+          "filename",
+          "point_id"
+        ]
+      }
+    }
+  }
+}

@@ -3,7 +3,7 @@
   "title": "Creation config YAML schema",
   "description": "YAML schema for creation configuration file of OMTool",
   "type": "object",
-  "additionalProperties": true,
+  "additionalProperties": false,
   "properties": {
     "output_file": {
       "type": "string",
@@ -15,7 +15,7 @@
       "default": false
     },
     "logging": {
-      "type":"array",
+      "type": "array",
       "description": "List of logging handlers.",
       "items": {
         "type": "object",
@@ -24,7 +24,10 @@
           "handler_type": {
             "type": "string",
             "description": "Type of handler that processes the logging message.",
-            "enum": ["console", "file"]
+            "enum": [
+              "console",
+              "file"
+            ]
           },
           "args": {
             "type": "object",
@@ -32,7 +35,10 @@
             "additionalProperties": true
           }
         },
-        "required": ["handler_type", "args"]
+        "required": [
+          "handler_type",
+          "args"
+        ]
       }
     },
     "objects": {
@@ -45,13 +51,16 @@
           "type": {
             "type": "string",
             "description": "Type of object.",
-            "enum": ["body", "csv"]
+            "enum": [
+              "body",
+              "csv"
+            ]
           },
           "mass": {
             "type": "array",
             "description": "Mass of the object if its type is 'body'. Should be denoted with !q tag."
           },
-          "position": { 
+          "position": {
             "type": "array",
             "description": "Initial position of the system. Should be denoted with !q tag."
           },
@@ -68,8 +77,11 @@
             "description": "Delimeter thet would be used when reading the csv file."
           }
         }
-      }      
+      }
     }
   },
-  "required": ["output_file"]
+  "required": [
+    "output_file",
+    "objects"
+  ]
 }

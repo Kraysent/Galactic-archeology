@@ -6,7 +6,7 @@ output_file: !env '{WORKING_DIR}/test_out.fits'
 overwrite: True
 # time until which model would be integrated
 model_time: !q [1.e+4, Myr]
-# interval between to consecutive snapshots to write to output file: 
+# interval between to consecutive snapshots to write to output file 
 snapshot_interval: 2
 # timestep coefficient (actual timestep is model_time * e^(-timestep))
 timestep: 8
