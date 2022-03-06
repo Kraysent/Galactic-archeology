@@ -1,13 +1,13 @@
 import yaml
 from omtool.datamodel import required_get, yaml_loader
-
+import io_service
 
 class LogParams:
     @staticmethod
-    def from_dict(input: dict) -> 'LogParams':
+    def from_dict(data: dict) -> 'LogParams':
         res = LogParams()
-        res.filename = required_get(input, 'filename')
-        res.point_id = required_get(input, 'point_id')
+        res.filename = required_get(data, 'filename')
+        res.point_id = required_get(data, 'point_id')
         
         return res
         
@@ -22,17 +22,17 @@ class IntegrationConfig:
         return IntegrationConfig.from_dict(data)
 
     @staticmethod
-    def from_dict(input: dict) -> 'IntegrationConfig':
+    def from_dict(data: dict) -> 'IntegrationConfig':
         res = IntegrationConfig()
-        res.input_file = required_get(input, 'input_file')
-        res.output_file = required_get(input, 'output_file')
-        res.overwrite = input.get('overwrite', False)
-        res.model_time = required_get(input, 'model_time')
-        res.snapshot_interval = input.get('snapshot_interval', 1)
-        res.timestep = required_get(input, 'timestep')
-        res.eps = required_get(input, 'eps')
+        res.input_file = io_service.Config.from_dict(required_get(data, 'input_file'))
+        res.output_file = required_get(data, 'output_file')
+        res.overwrite = data.get('overwrite', False)
+        res.model_time = required_get(data, 'model_time')
+        res.snapshot_interval = data.get('snapshot_interval', 1)
+        res.timestep = required_get(data, 'timestep')
+        res.eps = required_get(data, 'eps')
         res.logs = [
-            LogParams.from_dict(log) for log in input.get('logs', [])
+            LogParams.from_dict(log) for log in data.get('logs', [])
         ]
         
         return res

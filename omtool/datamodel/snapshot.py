@@ -1,11 +1,9 @@
-from typing import Iterator, List
-from amuse.datamodel.particles import Particle, Particles
+import numpy as np
+import pandas
+from amuse.datamodel.particles import Particles
 from amuse.lab import units
 from amuse.units.quantities import ScalarQuantity
 from astropy.io import fits
-from astropy.io.fits.hdu.table import BinTableHDU
-import pandas
-import numpy as np
 
 
 class Snapshot:
@@ -47,19 +45,6 @@ class Snapshot:
 
         self.particles.add_particles(other.particles)
 
-    @staticmethod
-    def file_info(filename: str) -> int:
-        '''
-        Returns number of snapshots in the FITS file.
-        '''
-        hdul = fits.open(filename, memmap = True)
-        
-        number_of_snaps = len(hdul) - 1
-
-        hdul.close()
-
-        return number_of_snaps
-
     def to_fits(self, filename: str, append: bool = False):
         cols = []
 
@@ -92,43 +77,6 @@ class Snapshot:
             hdu.writeto(filename, overwrite = True)
 
     @staticmethod
-    def from_fits(filename: str) -> Iterator['Snapshot']:
-        hdul = fits.open(filename, memmap = True)
-        snapshot = Snapshot(Particles, 0 | units.Myr)
-
-        for frame in range(len(hdul) - 1):
-            table: BinTableHDU = hdul[frame + 1]
-            number_of_particles = len(table.data[list(Snapshot.fields.keys())[0]])
-
-            snapshot.timestamp = table.header['TIME'] | units.Myr
-            snapshot.particles = Particles(number_of_particles)
-
-            for (key, val) in Snapshot.fields.items():
-                if val is not None:
-                    setattr(snapshot.particles, key, table.data[key] | val)
-                else: 
-                    data = np.array(table.data[key], dtype = np.float64)
-                    setattr(snapshot.particles, key, data)
-
-            yield snapshot
-
-    @staticmethod
-    def from_fits_frame(filename: str, frame: int = 0) -> 'Snapshot':
-        hdul = fits.open(filename, memmap = True)
-        snapshot = Snapshot(Particles, 0 | units.Myr)
-
-        table: BinTableHDU = hdul[frame + 1]
-
-        snapshot.timestamp = table.header['TIME'] | units.Myr
-        number_of_particles = len(table.data[list(Snapshot.fields.keys())[0]])
-        snapshot.particles = Particles(number_of_particles)
-
-        for (key, val) in Snapshot.fields.items():
-            setattr(snapshot.particles, key, table.data[key] | val)
-
-        return snapshot
-
-    @staticmethod
     def from_csv(filename: str, delimiter: str = ',') -> 'Snapshot':
         table = pandas.read_csv(filename, delimiter = delimiter, index_col = False)
         table['barion'].map({ 'True': True, 'False': False })
@@ -145,32 +93,6 @@ class Snapshot:
         snapshot = Snapshot(particles, 0 | units.Myr)
 
         return snapshot
-
-    @staticmethod
-    def from_logged_csvs(filenames: List[str], delimiter: str = ',') -> Iterator['Snapshot']:
-        # This is not lazy implementation!
-        tables = []
-
-        for filename in filenames:
-            tables.append(pandas.read_csv(filename, delimiter = delimiter, index_col = False))
-            
-        tables = [table.iterrows() for table in tables]
-
-        for rows in zip(*tables):
-            rows = [row for (_, row) in rows]
-
-            particles = Particles()
-
-            for row in rows:
-                particle = Particle()
-                particle.position = [row['x'], row['y'], row['z']] | units.kpc
-                particle.velocity = [row['vx'], row['vy'], row['vz']] | units.kms
-                particle.mass = row['m'] | units.MSun
-                particle.is_barion = 1
-
-                particles.add_particle(particle)
-
-            yield Snapshot(particles, rows[0]['T'] | units.Myr)
             
     @staticmethod
     def from_mass(mass: ScalarQuantity) -> 'Snapshot':

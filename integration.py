@@ -6,10 +6,13 @@ from amuse.lab import units
 from omtool.datamodel import Snapshot, logger, profiler
 from omtool.integration import PyfalconIntegrator
 from omtool.integration.config import IntegrationConfig
+import io_service
 
 
 def integrate(config: IntegrationConfig):
-    snapshot = next(Snapshot.from_fits(config.input_file))
+    input_service = io_service.InputService(config.input_file)
+    snapshot = next(input_service.get_snapshot_generator())
+    snapshot = Snapshot(*snapshot) # convert iterator element to actual snapshot object 
     integrator = PyfalconIntegrator(snapshot, config.eps, config.timestep)
 
     if not config.overwrite:

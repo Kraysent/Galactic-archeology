@@ -1,5 +1,8 @@
 # file with input model
-input_file: !env '{WORKING_DIR}/test.fits'
+input_file:
+  format: fits
+  filenames:
+    - !env '{WORKING_DIR}/test.fits'
 # file where output model would be written
 output_file: !env '{WORKING_DIR}/test_out.fits'
 # what to do if output file or any of log files already exist

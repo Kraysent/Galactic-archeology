@@ -3,6 +3,7 @@ from typing import Iterator, List
 
 from amuse.lab import units
 
+import io_service
 from omtool.analysis.config import AnalysisConfig
 from omtool.analysis.visual.task_manager import TaskManager
 from omtool.analysis.visual.visual_task import VisualTask
@@ -11,17 +12,9 @@ from omtool.datamodel import Snapshot, logger
 from omtool.datamodel.task_profiler import profiler
 
 
-def get_file_info(fmt: str, files: List[str]) -> int:
-    if fmt == 'fits':
-        return Snapshot.file_info(files[0])
-
-def generate_snapshot(fmt: str, files: List[str]) -> Iterator[Snapshot]:
-    if fmt == 'fits':
-        return Snapshot.from_fits(files[0])
-    elif fmt == 'csv':
-        return Snapshot.from_logged_csvs(files, delimiter = ' ')
-
 def analize(config: AnalysisConfig):
+    input_service = io_service.InputService(config.input_file)
+
     visualizer = Visualizer()
     task_manager = TaskManager()
 
@@ -38,8 +31,8 @@ def analize(config: AnalysisConfig):
 
             task_manager.add_tasks(visual_task)
 
-    number_of_snapshots = get_file_info(config.input_file.format, config.input_file.filenames)
-    snapshots = generate_snapshot(config.input_file.format, config.input_file.filenames)
+    number_of_snapshots = input_service.get_number_of_snapshots()
+    snapshots = input_service.get_snapshot_generator()
     plot_indexes = range(number_of_snapshots)[config.plot_interval_slice]
 
     logger.info('i\tT, Myr\tTcomp\tTsave')
@@ -62,6 +55,7 @@ def analize(config: AnalysisConfig):
             visualizer.save(f'{config.output_dir}/{filename}')
 
     for (i, snapshot) in enumerate(snapshots):
+        snapshot = Snapshot(*snapshot) # convert iterator element to actual snapshot object
         start_comp = time.time()
         loop_analysis_stage(snapshot, i)
         start_save = time.time()

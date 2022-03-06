@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Any, Tuple
 
+import io_service
 import matplotlib as mpl
 import yaml
 from omtool.analysis.tasks import get_task
@@ -36,15 +37,6 @@ class DrawParameters:
     cmapnorm: Any = mpl.colors.LogNorm()
     label: str = None
     channel: str = 'b'
-
-class InputFile:
-    @staticmethod
-    def from_dict(input: dict) -> 'InputFile':
-        res = InputFile()
-        res.format = input.get('format', 'fits')
-        res.filenames = required_get(input, 'filenames')
-
-        return res
 
 class Task:
     @staticmethod
@@ -95,7 +87,7 @@ class AnalysisConfig:
         ]
         res.output_dir = required_get(input, 'output_dir')
         res.title = input.get('title', 'Time {time} Myr')
-        res.input_file = InputFile.from_dict(required_get(input, 'input_file'))
+        res.input_file = io_service.Config.from_dict(required_get(input, 'input_file'))
         res.pic_filename = input.get('pic_filename', 'img-{i:03d}.png')
 
         return res

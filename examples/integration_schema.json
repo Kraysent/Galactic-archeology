@@ -13,8 +13,30 @@
   ],
   "properties": {
     "input_file": {
-      "type": "string",
-      "description": "Path to file where initial model lies."
+      "type": "object",
+      "description": "Parameters of input file(s).",
+      "additionalProperties": false,
+      "required": [
+        "format",
+        "filenames"
+      ],
+      "properties": {
+        "format": {
+          "type": "string",
+          "description": "Type of input file(s).",
+          "enum": [
+            "fits",
+            "csv"
+          ]
+        },
+        "filenames": {
+          "type": "array",
+          "description": "List of filenames to be read by tool.",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
     },
     "output_file": {
       "type": "string",

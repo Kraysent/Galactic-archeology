@@ -29,7 +29,7 @@
         },
         "filenames": {
           "type": "array",
-          "description": "List of filenames to be read by analysis tool.",
+          "description": "List of filenames to be read by tool.",
           "items": {
             "type": "string"
           }
