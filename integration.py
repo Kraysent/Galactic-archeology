@@ -3,10 +3,11 @@ from pathlib import Path
 
 from amuse.lab import units
 
-from omtool.datamodel import Snapshot, logger, profiler
+import io_service
+import logger
+from omtool.datamodel import Snapshot, profiler
 from omtool.integration import PyfalconIntegrator
 from omtool.integration.config import IntegrationConfig
-import io_service
 
 
 def integrate(config: IntegrationConfig):

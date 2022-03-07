@@ -1,14 +1,14 @@
 import time
-from typing import Iterator, List
 
 from amuse.lab import units
 
 import io_service
+import logger
 from omtool.analysis.config import AnalysisConfig
 from omtool.analysis.visual.task_manager import TaskManager
 from omtool.analysis.visual.visual_task import VisualTask
 from omtool.analysis.visual.visualizer import Visualizer
-from omtool.datamodel import Snapshot, logger
+from omtool.datamodel import Snapshot
 from omtool.datamodel.task_profiler import profiler
 
 

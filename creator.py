@@ -1,7 +1,8 @@
 from pathlib import Path
 
+import logger
 from omtool.creation import CreationConfig, Object, SnapshotBuilder, Type
-from omtool.datamodel import Snapshot, logger, profiler
+from omtool.datamodel import Snapshot, profiler
 
 
 def create(config: CreationConfig):

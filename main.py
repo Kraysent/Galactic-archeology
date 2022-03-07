@@ -1,12 +1,13 @@
 import argparse
 import atexit
 
+import logger
 from analysis import analize
 from creator import create
 from integration import integrate
 from omtool.analysis import AnalysisConfig
 from omtool.creation import CreationConfig
-from omtool.datamodel import BaseConfig, logger, task_profiler
+from omtool.datamodel import BaseConfig, task_profiler
 from omtool.integration import IntegrationConfig
 
 if __name__ == '__main__':
@@ -31,12 +32,7 @@ if __name__ == '__main__':
             logger.info(f'{key} worked {val:.02f} seconds on average')
 
     baseConfig = BaseConfig.from_yaml(args.inputparams[0])
-    
-    for log in baseConfig.logging:
-        if log.handler_type == 'console':
-            logger.add_console_handler(**log.args)
-        elif log.handler_type == 'file':
-            logger.add_file_handler(**log.args)
+    logger.initialize(baseConfig.logger)
 
     if args.mode == 'create':
         create(CreationConfig.from_yaml(args.inputparams[0]))

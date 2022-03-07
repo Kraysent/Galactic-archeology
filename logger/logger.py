@@ -28,14 +28,3 @@ def add_file_handler(format: str, filename: str, datefmt: str = '%H:%M:%S'):
     handler.setFormatter(formatter)
     get_instance().addHandler(handler)
 
-def info(msg: str):
-    get_instance().info(msg)
-
-def debug(msg: str):
-    get_instance().debug(msg)
-
-def warning(msg: str):
-    get_instance().warning(msg)
-
-def error(msg: str):
-    get_instance().error(msg)

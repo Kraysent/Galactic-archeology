@@ -11,15 +11,16 @@ title: 'Time: {time:.02f} Myr'
 
 # You can specify list of logging handlers
 logging:
-  - handler_type: console
-    args:
-      format: '[%(levelname)s] %(asctime)s | %(message)s'
-      stream: stdout
-  - handler_type: file
-    args: 
-      format: '[%(levelname)s] %(asctime)s | %(message)s'
-      filename: !env '{WORKING_DIR}/test_log.txt'
-      datefmt: '%H:%M:%S'
+  handlers:
+    - handler_type: console
+      args:
+        format: '[%(levelname)s] %(asctime)s | %(message)s'
+        stream: stdout
+    - handler_type: file
+      args: 
+        format: '[%(levelname)s] %(asctime)s | %(message)s'
+        filename: !env '{WORKING_DIR}/test_log.txt'
+        datefmt: '%H:%M:%S'
 
 # figure size in inches
 figsize: [20, 11]

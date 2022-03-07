@@ -45,28 +45,35 @@
       "description": "Title template. Use {time} to get time in Myr. One can use standart python formatters to format number of digits, rounding, etc."
     },
     "logging": {
-      "type": "array",
-      "description": "List of logging handlers.",
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "handler_type",
-          "args"
-        ],
-        "properties": {
-          "handler_type": {
-            "type": "string",
-            "description": "Type of handler that processes the logging message.",
-            "enum": [
-              "console",
-              "file"
-            ]
-          },
-          "args": {
+      "type": "object",
+      "description": "Object that stores configuration for logger.",
+      "additionalProperties": false,
+      "properties": {
+        "handlers": {
+          "type": "array",
+          "description": "List of logging handlers",
+          "items": {
             "type": "object",
-            "description": "Arguments to handler constructor.",
-            "additionalProperties": true
+            "additionalProperties": false,
+            "required": [
+              "handler_type",
+              "args"
+            ],
+            "properties": {
+              "handler_type": {
+                "type": "string",
+                "description": "Type of handler that processes the logging message.",
+                "enum": [
+                  "console",
+                  "file"
+                ]
+              },
+              "args": {
+                "type": "object",
+                "description": "Arguments to handler constructor.",
+                "additionalProperties": true
+              }
+            }
           }
         }
       }

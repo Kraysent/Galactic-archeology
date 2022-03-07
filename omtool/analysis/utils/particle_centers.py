@@ -1,9 +1,9 @@
 from typing import Callable
 
+import logger
 import numpy as np
 from amuse.lab import Particles, VectorQuantity, units
 from omtool.analysis.utils import pyfalcon_analizer
-from omtool.datamodel import logger
 
 
 def center_of_mass(particles: Particles) -> VectorQuantity:
