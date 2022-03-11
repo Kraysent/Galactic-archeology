@@ -17,8 +17,8 @@ class VisualizerService:
         for panel in config.panels:
             self.visualizer.add_axes(panel)
 
-    def plot(self, data: Tuple[np.ndarray, np.ndarray], draw_parameters: dict):
-        draw_parameters = DrawParameters(**draw_parameters)
+    def run_handler(self, data: Tuple[np.ndarray, np.ndarray], parameters: dict):
+        draw_parameters = DrawParameters(**parameters)
         self.visualizer.plot(data, draw_parameters)
 
     def save(self, iteration_dict: dict):

@@ -1,14 +1,22 @@
+# you can use YAML anchors to substitute some values that repeat several times over the yaml
+host_slice: &host_slice
+  - 0
+  - 1000001
+host_color: &host_clr b
+
+sat_slice: &sat_slice
+  - 1000001
+  - 1500002
+sat_color: &sat_clr r
+
+all_color: &all_clr y
+
 # file with a set of snapshots
 input_file: 
   format: fits
   filenames: 
     - !env '{WORKING_DIR}/test_out.fits'
-# directory to store output pictures. It must exist
-output_dir: !env '{WORKING_DIR}/analysis'
-
-# Title template. Use "time" to get time in Myr. To format it you can use standart python formatters.
-title: 'Time: {time:.02f} Myr'
-
+    
 # You can specify list of logging handlers
 logging:
   handlers:
@@ -22,284 +30,297 @@ logging:
         filename: !env '{WORKING_DIR}/test_log.txt'
         datefmt: '%H:%M:%S'
 
-# figure size in inches
-figsize: [20, 11]
+# visualizer service configuration. It specifies list of panels
+visualizer:
+  output_dir: !env '{WORKING_DIR}/analysis'
+  title: 'Time: {time:07.01f} Myr'
+  figsize: [20, 11]
+  pic_filename: 'img-{i:03d}.png'
+  panels:
+    - id: zy_plane
+      coords: [0, 0.35, 0.35, 0.6]
+      params: 
+        xlim: [-45, 45]
+        ylim: [-40, 40]
+        xlabel: 'z, kpc'
+        ylabel: 'y, kpc'
+        xticks: [0, 10]
+        yticks: [0, 10]
+    - id: xy_plane
+      coords: [0.33, 0.35, 0.35, 0.6]
+      params: 
+        xlim: [-45, 45]
+        ylim: [-40, 40]
+        xlabel: 'x, kpc'
+        yticks: []
+        xticks: [0, 10]
+    - id: potential_dist_plane
+      coords: [0.72, 0.66, 0.14, 0.3]
+      params: 
+        xlim: [0, 50]
+        ylim: [0, 3]
+        xlabel: '$r$, kpc'
+        ylabel: 'Potential, portion of the average'
+        grid: True
+    - id: bound_mass_evolution_plane
+      coords: [0.72, 0.33, 0.14, 0.3]
+      params:
+        xlim: [0, 10000]
+        ylim: [0, 3.e+11]
+        xlabel: 'Time, Myr'
+        ylabel: 'Bound mass, MSun'
+        grid: True
+    - id: separation_evolution_panel
+      coords: [0, 0, 0.14, 0.3]
+      params: 
+        xlim: [0, 10000]
+        ylim: [0, 150]
+        xlabel: 'Time, Myr'
+        ylabel: 'Separation, kpc'
+        grid: True
+    - id: velocity_profile_panel
+      coords: [0.18, 0, 0.32, 0.3]
+      params: 
+        xlim: [0, 15]
+        ylim: [0, 400]
+        xlabel: '$r$, kpc'
+        ylabel: '$v$, km/s'
+        grid: True
+    - id: mass_profile_panel
+      coords: [0.54, 0, 0.32, 0.3]
+      params: 
+        xlim: [0, 50]
+        ylim: [0, 4.e+11]
+        xlabel: '$r$, kpc'
+        ylabel: '$M$, MSun'
+        grid: True
 
-# this slice would be applied to the range(number_of_snapshots). If given iteration is in the resulting array, it would be drawn to the disk.
-plot_interval: [0, null, 1]
-# pictures will be saved in output_dir with this filename. i is iteration number.
-pic_filename: 'img-{i:03d}.png'
+# list of tasks. Each one describes arguments to its constructor, slice it operates on and list of handlers.
+tasks:
+  - name: ScatterTask
+    args:
+      x_expr: 'z'
+      y_expr: 'y'
+      x_unit: !q [1, kpc]
+      y_unit: !q [1, kpc]
+    slice: *host_slice
+    handlers:
+      visualizer:
+        id: zy_plane
+        is_density_plot: True
+        resolution: 700
+        extent: [-45, 45, -40, 40]
+        channel: *host_clr
+  - name: ScatterTask
+    args:
+      x_expr: 'z'
+      y_expr: 'y'
+      x_unit: !q [1, kpc]
+      y_unit: !q [1, kpc]
+    slice: *sat_slice
+    handlers:
+      visualizer:
+        id: zy_plane
+        is_density_plot: True
+        resolution: 700
+        extent: [-45, 45, -40, 40]
+        channel: *sat_clr
+  - name: ScatterTask
+    args:
+      x_expr: 'z'
+      y_expr: 'y'
+      x_unit: !q [1, kpc]
+      y_unit: !q [1, kpc]
+    slice: [0, 1]
+    handlers:
+      visualizer:
+        id: zy_plane
+        linestyle: solid
+        color: *host_clr
+        marker: o
+        markersize: 5
+  - name: ScatterTask
+    args:
+      x_expr: 'z'
+      y_expr: 'y'
+      x_unit: !q [1, kpc]
+      y_unit: !q [1, kpc]
+    slice: [1000001, 1000002]
+    handlers:
+      visualizer:
+        id: zy_plane
+        linestyle: solid
+        color: *sat_clr
+        marker: o
+        markersize: 5
 
-# description of plots layout in following format:
-# - coords: [x, y, width, height]
-#   params: 
-#      attr: value
-#   tasks:
-#       - task 1
-#       - task 2
-#
-# params should be given the same names as ones in matplotlib.pyplot (and proper values) as most of them are just passed along to it
+  - name: ScatterTask
+    args:
+      x_expr: 'x'
+      y_expr: 'y'
+      x_unit: !q [1, kpc]
+      y_unit: !q [1, kpc]
+    slice: *host_slice
+    handlers:
+      visualizer:
+        id: xy_plane
+        is_density_plot: True
+        resolution: 700
+        extent: [-45, 45, -40, 40]
+        channel: *host_clr
+  - name: ScatterTask
+    args:
+      x_expr: 'x'
+      y_expr: 'y'
+      x_unit: !q [1, kpc]
+      y_unit: !q [1, kpc]
+    slice: *sat_slice
+    handlers:
+      visualizer:
+        id: xy_plane
+        is_density_plot: True
+        resolution: 700
+        extent: [-45, 45, -40, 40]
+        channel: *sat_clr
+  - name: ScatterTask
+    args:
+      x_expr: 'x'
+      y_expr: 'y'
+      x_unit: !q [1, kpc]
+      y_unit: !q [1, kpc]
+    slice: [0, 1]
+    handlers:
+      visualizer:
+        id: xy_plane
+        linestyle: solid
+        color: *host_clr
+        marker: o
+        markersize: 5
+  - name: ScatterTask
+    args:
+      x_expr: 'x'
+      y_expr: 'y'
+      x_unit: !q [1, kpc]
+      y_unit: !q [1, kpc]
+    slice: [1000001, 1000002]
+    handlers:
+      visualizer:
+        id: xy_plane
+        linestyle: solid
+        color: *sat_clr
+        marker: o
+        markersize: 5
 
-# you can also use YAML anchors to substitute some values that repeat several times over the yaml
-host_slice: &host_slice
-  - 0
-  - 1000001
-host_color: &host_clr b
+  - name: PotentialTask
+    args: 
+      center_type: potential
+    slice: *host_slice
+    handlers:
+      visualizer:
+        id: potential_dist_plane
+        linestyle: None
+        color: *host_clr
+        label: host
+  - name: PotentialTask
+    args: 
+      center_type: potential
+    slice: *sat_slice
+    handlers:
+      visualizer:
+        id: potential_dist_plane
+        linestyle: None
+        color: *sat_clr
+        label: satellite
+  - name: PotentialTask
+    args: 
+      center_type: potential
+    handlers:
+      visualizer:
+        id: potential_dist_plane
+        linestyle: None
+        color: *all_clr
+        label: all
 
-sat_slice: &sat_slice
-  - 1000001
-  - 1500002
-sat_color: &sat_clr r
+  - name: BoundMassTask
+    args: 
+      number_of_iterations: 5
+    slice: [1000001, 1500002]
+    handlers:
+      visualizer:
+        id: bound_mass_evolution_plane
+        linestyle: solid
+        color: r
 
-all_color: &all_clr y
+  - name: DistanceTask
+    args: { start_id: 0, end_id: 1000001 }
+    handlers:
+      visualizer:
+        id: separation_evolution_panel
+        linestyle: solid
+        color: r
 
-plots: 
-  # Left coordinate plot
-  - coords: [0, 0.35, 0.35, 0.6]
-    params: 
-      xlim: [-45, 45]
-      ylim: [-40, 40]
-      xlabel: 'z, kpc'
-      ylabel: 'y, kpc'
-      xticks: [0, 10]
-      yticks: [0, 10]
-    tasks:
-      - name: ScatterTask
-        args:
-          x_expr: 'z'
-          y_expr: 'y'
-          x_unit: !q [1, kpc]
-          y_unit: !q [1, kpc]
-        slice: *host_slice
-        display: 
-          is_density_plot: True
-          resolution: 700
-          extent: [-45, 45, -40, 40]
-          channel: *host_clr
-      - name: ScatterTask
-        args:
-          x_expr: 'z'
-          y_expr: 'y'
-          x_unit: !q [1, kpc]
-          y_unit: !q [1, kpc]
-        slice: *sat_slice
-        display: 
-          is_density_plot: True
-          resolution: 700
-          extent: [-45, 45, -40, 40]
-          channel: *sat_clr
-      - name: ScatterTask
-        args:
-          x_expr: 'z'
-          y_expr: 'y'
-          x_unit: !q [1, kpc]
-          y_unit: !q [1, kpc]
-        slice: [0, 1]
-        display: 
-          linestyle: solid
-          color: *host_clr
-          marker: o
-          markersize: 5
-      - name: ScatterTask
-        args:
-          x_expr: 'z'
-          y_expr: 'y'
-          x_unit: !q [1, kpc]
-          y_unit: !q [1, kpc]
-        slice: [1000001, 1000002]
-        display: 
-          linestyle: solid
-          color: *sat_clr
-          marker: o
-          markersize: 5
-      
-  # Right coordinate plot
-  - coords: [0.33, 0.35, 0.35, 0.6]
-    params: 
-      xlim: [-45, 45]
-      ylim: [-40, 40]
-      xlabel: 'x, kpc'
-      yticks: []
-      xticks: [0, 10]
-    tasks:
-      - name: ScatterTask
-        args:
-          x_expr: 'x'
-          y_expr: 'y'
-          x_unit: !q [1, kpc]
-          y_unit: !q [1, kpc]
-        slice: *host_slice
-        display: 
-          is_density_plot: True
-          resolution: 700
-          extent: [-45, 45, -40, 40]
-          channel: *host_clr
-      - name: ScatterTask
-        args:
-          x_expr: 'x'
-          y_expr: 'y'
-          x_unit: !q [1, kpc]
-          y_unit: !q [1, kpc]
-        slice: *sat_slice
-        display: 
-          is_density_plot: True
-          resolution: 700
-          extent: [-45, 45, -40, 40]
-          channel: *sat_clr
-      - name: ScatterTask
-        args:
-          x_expr: 'x'
-          y_expr: 'y'
-          x_unit: !q [1, kpc]
-          y_unit: !q [1, kpc]
-        slice: [0, 1]
-        display: 
-          linestyle: solid
-          color: *host_clr
-          marker: o
-          markersize: 5
-      - name: ScatterTask
-        args:
-          x_expr: 'x'
-          y_expr: 'y'
-          x_unit: !q [1, kpc]
-          y_unit: !q [1, kpc]
-        slice: [1000001, 1000002]
-        display: 
-          linestyle: solid
-          color: *sat_clr
-          marker: o
-          markersize: 5
+  - name: VelocityProfileTask
+    args:
+      center_type: potential
+    slice: *host_slice
+    handlers:
+      visualizer:
+        id: velocity_profile_panel
+        markersize: 0.5
+        linestyle: None
+        color: *host_clr
+        label: host
+  - name: VelocityProfileTask
+    args: 
+      center_type: potential
+    slice: *sat_slice
+    handlers:
+      visualizer:
+        id: velocity_profile_panel
+        markersize: 0.5
+        linestyle: None
+        color: *sat_clr
+        label: satellite
+  - name: VelocityProfileTask
+    args: 
+      center_type: potential
+    handlers:
+      visualizer:
+        id: velocity_profile_panel
+        markersize: 0.5
+        linestyle: None
+        color: *all_clr
+        label: all
 
-  # Potential profile plot
-  - coords: [0.72, 0.66, 0.14, 0.3]
-    params: 
-      xlim: [0, 50]
-      ylim: [0, 3]
-      xlabel: '$r$, kpc'
-      ylabel: 'Potential, portion of the average'
-      grid: True
-    tasks:
-      - name: PotentialTask
-        args:
-          center_type: potential
-        slice: *host_slice
-        display:
-          linestyle: None
-          color: *host_clr
-          label: host
-      - name: PotentialTask
-        args: 
-          center_type: potential
-        slice: *sat_slice
-        display:
-          linestyle: None
-          color: *sat_clr
-          label: satellite
-      - name: PotentialTask
-        args: 
-          center_type: potential
-        display:
-          linestyle: None
-          color: *all_clr
-          label: all
-
-  # Kinetic energy plot
-  - coords: [0.72, 0.33, 0.14, 0.3]
-    params:
-      xlim: [0, 10000]
-      ylim: [0, 3.e+52]
-      xlabel: 'Time, Myr'
-      ylabel: 'Kinetic energy, J'
-      grid: True
-    tasks:
-      - name: TimeEvolutionTask
-        args: 
-          expr: 'm * (vx ** 2 + vy ** 2 + vz ** 2) / 2'
-          function: 'sum'
-          time_unit: !q [1, Myr]
-          value_unit: !q [1, J]
-        display: 
-          linestyle: solid
-          color: r
-
-  # Separation plot
-  - coords: [0, 0, 0.14, 0.3]
-    params: 
-      xlim: [0, 10000]
-      ylim: [0, 150]
-      xlabel: 'Time, Myr'
-      ylabel: 'Separation, kpc'
-      grid: True
-    tasks: 
-      - name: DistanceTask
-        args: { start_id: 0, end_id: 1000001 }
-        display: 
-          linestyle: solid
-          color: r
-
-  # Velocity profile plot
-  - coords: [0.18, 0, 0.32, 0.3]
-    params: 
-      xlim: [0, 15]
-      ylim: [0, 400]
-      xlabel: '$r$, kpc'
-      ylabel: '$v$, km/s'
-      grid: True
-    tasks:
-      - name: VelocityProfileTask
-        args: {}
-        slice: *host_slice
-        display:
-          markersize: 0.5
-          linestyle: None
-          color: *host_clr
-          label: host
-      - name: VelocityProfileTask
-        args: {}
-        slice: *sat_slice
-        display:
-          markersize: 0.5
-          linestyle: None
-          color: *sat_clr
-          label: satellite
-      - name: VelocityProfileTask
-        args: {}
-        display:
-          markersize: 0.5
-          linestyle: None
-          color: *all_clr
-          label: all
-
-  # Mass profile plot
-  - coords: [0.54, 0, 0.32, 0.3]
-    params: 
-      xlim: [0, 50]
-      ylim: [0, 4.e+11]
-      xlabel: '$r$, kpc'
-      ylabel: '$M$, MSun'
-      grid: True
-    tasks:
-      - name: MassProfileTask
-        args: {}
-        slice: *host_slice
-        display: 
-          markersize: 0.5
-          linestyle: None
-          color: *host_clr
-          label: host
-      - name: MassProfileTask
-        args: {}
-        slice: *sat_slice
-        display: 
-          markersize: 0.5
-          linestyle: None
-          color: *sat_clr
-          label: satellite
-      - name: MassProfileTask
-        args: {}
-        display: 
-          markersize: 0.5
-          linestyle: None
-          color: *all_clr
-          label: all
+  - name: MassProfileTask
+    args:
+      center_type: potential
+    slice: *host_slice
+    handlers:
+      visualizer:
+        id: mass_profile_panel
+        markersize: 0.5
+        linestyle: None
+        color: *host_clr
+        label: host
+  - name: MassProfileTask
+    args: 
+      center_type: potential
+    slice: *sat_slice
+    handlers:
+      visualizer: 
+        id: mass_profile_panel
+        markersize: 0.5
+        linestyle: None
+        color: *sat_clr
+        label: satellite
+  - name: MassProfileTask
+    args: 
+      center_type: potential
+    handlers:
+      visualizer:
+        id: mass_profile_panel
+        markersize: 0.5
+        linestyle: None
+        color: *all_clr
+        label: all

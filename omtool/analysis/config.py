@@ -10,32 +10,17 @@ from omtool.datamodel import required_get, yaml_loader
 class TaskConfig:
     slice: slice
     abstract_task: Any # AbstractTask actually
-    display: dict
+    handlers: dict
     
     @staticmethod
     def from_dict(input: dict) -> 'TaskConfig':
         res = TaskConfig()
         res.slice = slice(*input.get('slice', [0, None, 1]))
-        res.display = input.get('display', { })
+        res.handlers = input.get('handlers', { })
         res.abstract_task = get_task(
             required_get(input, 'name'), 
             input.get('args', { })
         )
-
-        return res
-
-class Plot:
-    @staticmethod
-    def from_dict(input: dict) -> 'Plot':
-        res = Plot()
-        res.coords = tuple(input.get('coords', [0, 1, 1, 1]))
-        res.params = input.get('params', {
-            'xlim': [0, 1],
-            'ylim': [0, 1]
-        })
-        res.tasks = [
-            TaskConfig.from_dict(task) for task in input.get('tasks', [])
-        ]
 
         return res
 

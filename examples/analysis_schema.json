@@ -147,7 +147,7 @@
         "required": [
           "name",
           "args",
-          "display"
+          "handlers"
         ],
         "properties": {
           "name": {
@@ -164,9 +164,15 @@
             "minItems": 2,
             "maxItems": 3
           },
-          "display": {
+          "handlers": {
             "type": "object",
-            "description": "Parameters of the display of the result of this task. They should be given the same names as ones in matplotlib.pyplot (and proper values) as most of them are just passed along to it."
+            "description": "List of handlers that would run some function on every single result of the task.",
+            "additionalProperties": true,
+            "properties": {
+              "visualizer": {
+                "description": "Parameters of the display of the result of this task. They should be given the same names as ones in matplotlib.pyplot (and proper values) as most of them are just passed along to it."
+              }
+            }
           }
         }
       }

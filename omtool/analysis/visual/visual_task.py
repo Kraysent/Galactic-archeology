@@ -6,12 +6,12 @@ class VisualTask:
         axes_id: int, 
         task: AbstractTask,
         part = slice(0, None),
-        draw_params: dict = {}
+        handlers: dict = {}
     ):
         self.axes_id = axes_id
         self.task = task
         self.part = part
-        self.draw_params = draw_params
+        self.handlers = handlers
 
     def get_active_snapshot(self, snapshot: Snapshot):
         return snapshot[self.part]

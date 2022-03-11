@@ -16,11 +16,15 @@ def analize(config: AnalysisConfig):
     input_service = io_service.InputService(config.input_file)
     visualizer_service = visualizer.VisualizerService(config.visualizer)
 
+    handlers = {
+        "visualizer": visualizer_service.run_handler
+    }
+
     task_manager = TaskManager()
 
     for i, task in enumerate(config.tasks):
         visual_task = VisualTask(
-            i, task.abstract_task, task.slice, task.display
+            i, task.abstract_task, task.slice, task.handlers
         )
 
         task_manager.add_tasks(visual_task)
@@ -38,7 +42,9 @@ def analize(config: AnalysisConfig):
             data = vtask.run(snapshot)
 
             if iteration in plot_indexes:
-                visualizer_service.plot(data, vtask.draw_params)
+                for key in vtask.handlers:
+                    if key in handlers:
+                        handlers[key](data, vtask.handlers[key])
 
     @profiler('Saving stage')
     def loop_saving_stage(iteration: int, time: ScalarQuantity):
