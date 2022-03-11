@@ -4,7 +4,7 @@ import numpy as np
 from amuse.lab import ScalarQuantity, VectorQuantity
 from omtool.analysis.tasks import AbstractTask
 from omtool.datamodel import Snapshot, profiler
-from physical_evaluator import Parser
+from py_expression_eval import Parser
 
 
 class TimeEvolutionTask(AbstractTask):
