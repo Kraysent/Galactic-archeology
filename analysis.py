@@ -17,7 +17,8 @@ def analize(config: AnalysisConfig):
     visualizer_service = visualizer.VisualizerService(config.visualizer)
 
     handlers = {
-        "visualizer": visualizer_service.run_handler
+        'visualizer': visualizer_service.run_handler,
+        'logging': logger.run_handler
     }
 
     task_manager = TaskManager()
@@ -45,6 +46,8 @@ def analize(config: AnalysisConfig):
                 for key in vtask.handlers:
                     if key in handlers:
                         handlers[key](data, vtask.handlers[key])
+                    else:
+                        logger.error(f'{key} handler not found.')
 
     @profiler('Saving stage')
     def loop_saving_stage(iteration: int, time: ScalarQuantity):

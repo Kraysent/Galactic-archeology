@@ -250,6 +250,8 @@ tasks:
         id: bound_mass_evolution_plane
         linestyle: solid
         color: r
+      logging: 
+        print_last: True
 
   - name: DistanceTask
     args: { start_id: 0, end_id: 1000001 }

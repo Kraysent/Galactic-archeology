@@ -1,5 +1,7 @@
+from typing import Tuple
 import logger.logger as logger
 from logger.config import Config
+import numpy as np
 
 
 def initialize(config: Config):
@@ -20,3 +22,9 @@ def warning(msg: str):
 
 def error(msg: str):
     logger.get_instance().error(msg)
+
+def run_handler(data: Tuple[np.ndarray, np.ndarray], parameters: dict = {}):
+    if parameters['print_last']:
+        info(f'x: {data[0].tolist()[-1]}, y: {data[1].tolist()[-1]}')
+    else:
+        info(f'x: {data[0].tolist()}, y: {data[1].tolist()}')
