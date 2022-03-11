@@ -10,6 +10,8 @@ def initialize(config: Config):
             logger.add_console_handler(**log.args)
         elif log.handler_type == 'file':
             logger.add_file_handler(**log.args)
+        elif log.handler_type == 'json':
+            logger.add_json_handler(**log.args)
 
 def info(msg: str):
     logger.get_instance().info(msg)

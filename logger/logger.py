@@ -1,5 +1,6 @@
 import logging
 import sys
+import json
 
 _instance = None
 
@@ -27,4 +28,17 @@ def add_file_handler(format: str, filename: str, datefmt: str = '%H:%M:%S'):
     formatter = logging.Formatter(format, datefmt)
     handler.setFormatter(formatter)
     get_instance().addHandler(handler)
+
+def add_json_handler(filename: str, datefmt: str = '%H:%M:%S'):
+    handler = logging.FileHandler(filename)
+    format_dict = {
+        'time': '%(asctime)s',
+        'level': '%(levelname)s',
+        'message': '%(message)s'
+    }
+    formatter = logging.Formatter(json.dumps(format_dict), datefmt)
+    handler.setFormatter(formatter)
+    get_instance().addHandler(handler)
+
+
 

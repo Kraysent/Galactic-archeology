@@ -69,6 +69,6 @@ class BaseConfig:
     @staticmethod
     def from_dict(data: dict) -> 'BaseConfig':
         res = BaseConfig()
-        res.logger = logger.Config.from_dict(data.get('logger', {}))
+        res.logger = logger.Config.from_dict(data.get('logging', {}))
 
         return res

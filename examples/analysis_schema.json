@@ -125,7 +125,8 @@
                 "description": "Type of handler that processes the logging message.",
                 "enum": [
                   "console",
-                  "file"
+                  "file",
+                  "json"
                 ]
               },
               "args": {
