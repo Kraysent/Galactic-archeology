@@ -22,5 +22,6 @@ class VisualizerService:
         self.visualizer.plot(data, draw_parameters)
 
     def save(self, iteration_dict: dict):
-        self.visualizer.set_title(self.title_template.format(iteration_dict))
-        self.visualizer.save(self.pic_filename_template.format(iteration_dict))
+        self.visualizer.set_title(self.title_template.format(**iteration_dict))
+        self.visualizer.save(self.pic_filename_template.format(**iteration_dict))
+        

@@ -10,7 +10,6 @@ def required_get(data: dict, field: str):
 
 @dataclass
 class PlotParameters:
-    id: str
     grid: bool = False
     xlim: Tuple[int, int] = (None, None)
     ylim: Tuple[int, int] = (None, None)

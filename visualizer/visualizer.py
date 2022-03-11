@@ -26,7 +26,7 @@ class Visualizer:
         self.figure.set_size_inches(width, height)
 
     def add_axes(self, panel_config: PanelConfig):
-        self.figure.add_axes(*panel_config.coords)
+        self.figure.add_axes(panel_config.coords)
         self.axes_ids[panel_config.id] = len(self.figure.axes) - 1
 
         # need to refactor this, axes can be obtained directly from add_axes method

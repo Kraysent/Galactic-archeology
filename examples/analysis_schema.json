@@ -6,8 +6,8 @@
   "additionalProperties": true,
   "required": [
     "input_file",
-    "output_dir",
-    "plots"
+    "visualizer",
+    "tasks"
   ],
   "properties": {
     "input_file": {
@@ -36,13 +36,73 @@
         }
       }
     },
-    "output_dir": {
-      "type": "string",
-      "description": "Directory where the result of analysis would be saved."
-    },
-    "title": {
-      "type": "string",
-      "description": "Title template. Use {time} to get time in Myr. One can use standart python formatters to format number of digits, rounding, etc."
+    "visualizer": {
+      "type": "object",
+      "description": "Configuration of visualizer microservice",
+      "additionalProperties": false,
+      "required": [
+        "output_dir",
+        "panels"
+      ],
+      "properties": {
+        "plot_interval": {
+          "type": "array",
+          "description": "Slice that represents how frequently should the pictures be drawn.",
+          "minItems": 2,
+          "maxItems": 3
+        },
+        "output_dir": {
+          "type": "string",
+          "description": "Directory for the output pictures to be saved to."
+        },
+        "pic_filename": {
+          "type": "string",
+          "description": "Pictures will be saved in output_dir with this filename. i is iteration number."
+        },
+        "title": {
+          "type": "string",
+          "description": "Title template. Use {time} to get time in Myr. One can use standart python formatters to format number of digits, rounding, etc."
+        },
+        "figsize": {
+          "type": "array",
+          "description": "Figure size in inches",
+          "items": {
+            "type": "integer"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "panels": {
+          "type": "array",
+          "description": "List of panels, their layouts and properties.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Id of the panel. Should be unique."
+              },
+              "coords": {
+                "type": "array",
+                "description": "Position and size of the graph in form of [x, y, width, height]",
+                "items": {
+                  "type": "number"
+                },
+                "maxItems": 4,
+                "minItems": 4
+              },
+              "params": {
+                "type": "object",
+                "description": "Parameters of the graph box. They should be given the same names as ones in matplotlib.pyplot (and proper values) as most of them are just passed along to it."
+              }
+            }
+          }
+        }
+      }
     },
     "logging": {
       "type": "object",
@@ -78,82 +138,35 @@
         }
       }
     },
-    "figsize": {
+    "tasks": {
       "type": "array",
-      "description": "Figure size in inches",
-      "items": {
-        "type": "integer"
-      },
-      "minItems": 2,
-      "maxItems": 2
-    },
-    "plot_interval": {
-      "type": "array",
-      "description": "This slice would be applied to the range(number_of_snapshots). If given iteration is in the resulting array, it would be writen to the disk.",
-      "minItems": 2,
-      "maxItems": 3
-    },
-    "pic_filename": {
-      "type": "string",
-      "description": "Pictures will be saved in output_dir with this filename. i is iteration number."
-    },
-    "plots": {
-      "type": "array",
-      "description": "List of plots with their paramaters and tasks inside them.",
+      "description": "List of the tasks that belong to this particular plot.",
       "items": {
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "coords",
-          "params",
-          "tasks"
+          "name",
+          "args",
+          "display"
         ],
         "properties": {
-          "coords": {
-            "type": "array",
-            "description": "Position and size of the graph in form of [x, y, width, height]",
-            "items": {
-              "type": "number"
-            },
-            "maxItems": 4,
-            "minItems": 4
+          "name": {
+            "type": "string",
+            "description": "Name of the task to run."
           },
-          "params": {
+          "args": {
             "type": "object",
-            "description": "Parameters of the graph box. They should be given the same names as ones in matplotlib.pyplot (and proper values) as most of them are just passed along to it."
+            "description": "Arguments to the constructor of the task."
           },
-          "tasks": {
+          "slice": {
             "type": "array",
-            "description": "List of the tasks that belong to this particular plot.",
-            "items": {
-              "type": "object",
-              "additionalProperties": false,
-              "required": [
-                "name",
-                "args",
-                "display"
-              ],
-              "properties": {
-                "name": {
-                  "type": "string",
-                  "description": "Name of the task to run."
-                },
-                "args": {
-                  "type": "object",
-                  "description": "Arguments to the constructor of the task."
-                },
-                "slice": {
-                  "type": "array",
-                  "description": "Slice of the snapshot that would participate in the calculations.",
-                  "minItems": 2,
-                  "maxItems": 3
-                },
-                "display": {
-                  "type": "object",
-                  "description": "Parameters of the display of the result of this task. They should be given the same names as ones in matplotlib.pyplot (and proper values) as most of them are just passed along to it."
-                }
-              }
-            }
+            "description": "Slice of the snapshot that would participate in the calculations.",
+            "minItems": 2,
+            "maxItems": 3
+          },
+          "display": {
+            "type": "object",
+            "description": "Parameters of the display of the result of this task. They should be given the same names as ones in matplotlib.pyplot (and proper values) as most of them are just passed along to it."
           }
         }
       }
