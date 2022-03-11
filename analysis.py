@@ -26,25 +26,29 @@ def analize(config: AnalysisConfig):
         task_manager.add_tasks(visual_task)
 
     number_of_snapshots = input_service.get_number_of_snapshots()
+    plot_indexes = range(number_of_snapshots)[config.plot_interval]
     snapshots = input_service.get_snapshot_generator()
 
     logger.info('i\tT, Myr\tTcomp\tTsave')
 
     @profiler('Analysis stage')
-    def loop_analysis_stage(snapshot: Snapshot):
+    def loop_analysis_stage(snapshot: Snapshot, iteration: int):
         vtask: VisualTask
         for vtask in task_manager.get_tasks():
             data = vtask.run(snapshot)
-            visualizer_service.plot(data, vtask.draw_params)
+
+            if iteration in plot_indexes:
+                visualizer_service.plot(data, vtask.draw_params)
 
     @profiler('Saving stage')
     def loop_saving_stage(iteration: int, time: ScalarQuantity):
-        visualizer_service.save({"i": iteration, "time": time.value_in(units.Myr)})
+        if iteration in plot_indexes:
+            visualizer_service.save({"i": iteration, "time": time.value_in(units.Myr)})
 
     for (i, snapshot) in enumerate(snapshots):
         snapshot = Snapshot(*snapshot) # convert iterator element to actual snapshot object
         start_comp = time.time()
-        loop_analysis_stage(snapshot)
+        loop_analysis_stage(snapshot, i)
         start_save = time.time()
         loop_saving_stage(i, snapshot.timestamp)
         end = time.time()

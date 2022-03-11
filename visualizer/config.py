@@ -39,7 +39,6 @@ class PanelConfig:
         return res
 
 class Config:
-    plot_interval: slice
     output_dir: str
     title: str
     figsize: Tuple[int, int]
@@ -49,7 +48,6 @@ class Config:
     @staticmethod
     def from_dict(data: dict) -> 'Config':
         res = Config()
-        res.plot_interval = slice(*data.get('plot_interval', [0, None, 1]))
         res.output_dir = required_get(data, 'output_dir')
         res.title = data.get('title', '')
         res.figsize = tuple(data.get('figsize', [16, 9]))
