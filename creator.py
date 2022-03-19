@@ -1,3 +1,7 @@
+'''
+Creation module for OMTool. Used to create and load models from
+files and export them into sdingle file.
+'''
 from pathlib import Path
 
 import logger
@@ -6,6 +10,10 @@ from omtool.datamodel import Snapshot, profiler
 
 
 def create(config: CreationConfig):
+    '''
+    Creation mode for the OMTool. Used to create and load models from
+    files and export them into sdingle file.
+    '''
     builder = SnapshotBuilder()
 
     if not config.overwrite:
@@ -13,20 +21,20 @@ def create(config: CreationConfig):
             raise Exception(f'Output file ({config.output_file}) exists and "overwrite" option in creation config file is false (default)')
 
     @profiler('Creation')
-    def loop_creation_stage(object: Object):
-        if object.type == Type.CSV:
-            curr_snapshot = Snapshot.from_csv(object.path, object.delimeter)
-        elif object.type == Type.BODY:
-            curr_snapshot = Snapshot.from_mass(object.mass)
-        
-        curr_snapshot.particles.position += object.position
-        curr_snapshot.particles.velocity += object.velocity
+    def loop_creation_stage(body: Object):
+        if body.type == Type.CSV:
+            curr_snapshot = Snapshot.from_csv(body.path, body.delimeter)
+        elif body.type == Type.BODY:
+            curr_snapshot = Snapshot.from_mass(body.mass)
+
+        curr_snapshot.particles.position += body.position
+        curr_snapshot.particles.velocity += body.velocity
 
         logger.info(f'Adding snapshot of {len(curr_snapshot.particles)} particles.')
         builder.add_snapshot(curr_snapshot)
         logger.info('Snapshot added.')
 
-    for object in config.objects:
-        loop_creation_stage(object)
+    for body in config.objects:
+        loop_creation_stage(body)
 
     builder.to_fits(config.output_file)

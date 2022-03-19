@@ -13,8 +13,8 @@ from omtool.integration import IntegrationConfig
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        'mode', 
-        help = 'Mode of the program to run', 
+        'mode',
+        help = 'Mode of the program to run',
         choices = ['create', 'integrate', 'analize', 'test'])
     parser.add_argument(
         'inputparams',

@@ -1,3 +1,9 @@
+'''
+Struct that holds together particle set and timestamp that it describes.
+'''
+# pylint: disable=no-member
+# Need this because the code has dynamically read fields
+# which results in false-positive during pylint check.
 import numpy as np
 import pandas
 from amuse.datamodel.particles import Particles
@@ -7,15 +13,18 @@ from astropy.io import fits
 
 
 class Snapshot:
+    '''
+    Struct that holds together particle set and timestamp that it describes.
+    '''
     fields = {
         'x': units.kpc, 'y': units.kpc, 'z': units.kpc,
         'vx': units.kms, 'vy': units.kms, 'vz': units.kms,
-        'mass': units.MSun, 
+        'mass': units.MSun,
         'is_barion': None
     }
-    
-    def __init__(self, 
-        particles: Particles = Particles(), 
+
+    def __init__(self,
+        particles: Particles = Particles(),
         timestamp: ScalarQuantity = 0 | units.Myr
     ):
         self.particles = particles
@@ -25,19 +34,19 @@ class Snapshot:
         return Snapshot(self.particles[value], self.timestamp)
 
     def __add__(self, other: 'Snapshot') -> 'Snapshot':
-        if self.timestamp == other.timestamp:
-            particles = Particles()
-            particles.add_particles(self.particles)
-            particles.add_particles(other.particles)
-
-            return Snapshot(particles, self.timestamp)
-        else:
+        if self.timestamp != other.timestamp:
             raise RuntimeError('Tried to sum snapshots with different timestamps.')
+
+        particles = Particles()
+        particles.add_particles(self.particles)
+        particles.add_particles(other.particles)
+
+        return Snapshot(particles, self.timestamp)
 
     def add(self, other: 'Snapshot', ignore_timestamp = False):
         '''
-        Adds other snapshot to this one. If ignore_timestamps is False, 
-        does not change timestamp. Otherwise RuntimeError would be thrown if 
+        Adds other snapshot to this one. If ignore_timestamps is False,
+        does not change timestamp. Otherwise RuntimeError would be thrown if
         timestamps are different.
         '''
         if not ignore_timestamp and (self.timestamp != other.timestamp):
@@ -46,6 +55,9 @@ class Snapshot:
         self.particles.add_particles(other.particles)
 
     def to_fits(self, filename: str, append: bool = False):
+        '''
+        Writes the snapshot into FITS file.
+        '''
         cols = []
 
         for (key, val) in Snapshot.fields.items():
@@ -58,8 +70,8 @@ class Snapshot:
 
             col = fits.Column(
                 name = key,
-                unit = str(Snapshot.fields[key]), 
-                format = fmt, 
+                unit = str(val),
+                format = fmt,
                 array = array
             )
             cols.append(col)
@@ -78,6 +90,10 @@ class Snapshot:
 
     @staticmethod
     def from_csv(filename: str, delimiter: str = ',') -> 'Snapshot':
+        '''
+        Read the list of particles from the CSV file on form
+        x,y,z,vx,vy,vz,m,is_barion
+        '''
         table = pandas.read_csv(filename, delimiter = delimiter, index_col = False)
         table['barion'].map({ 'True': True, 'False': False })
         particles = Particles(len(table.iloc[:, 0]))
@@ -93,9 +109,12 @@ class Snapshot:
         snapshot = Snapshot(particles, 0 | units.Myr)
 
         return snapshot
-            
+
     @staticmethod
     def from_mass(mass: ScalarQuantity) -> 'Snapshot':
+        '''
+        Create snapshot from the single mass value at the origin.
+        '''
         particles = Particles(1)
         particles[0].position = [0, 0, 0] | units.kpc
         particles[0].velocity = [0, 0, 0] | units.kms

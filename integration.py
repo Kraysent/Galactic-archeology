@@ -1,3 +1,7 @@
+'''
+Integration module for OMTool. Used to integrate existing model
+from the file and write it to another file.
+'''
 import os
 from pathlib import Path
 
@@ -11,6 +15,10 @@ from omtool.integration.config import IntegrationConfig
 
 
 def integrate(config: IntegrationConfig):
+    '''
+    Integration mode for the OMTool. Used to integrate existing model
+    from the file and write it to another file.
+    '''
     input_service = io_service.InputService(config.input_file)
     snapshot = next(input_service.get_snapshot_generator())
     snapshot = Snapshot(*snapshot) # convert iterator element to actual snapshot object 

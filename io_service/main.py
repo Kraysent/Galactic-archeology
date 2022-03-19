@@ -2,7 +2,7 @@ from typing import Iterator, Tuple
 
 from amuse.lab import Particles, ScalarQuantity
 
-import io_service.readers as readers
+from io_service import readers
 from io_service.config import Config
 
 

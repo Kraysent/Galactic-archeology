@@ -1,3 +1,7 @@
+'''
+Analysis module for OMTool. It is used for the data
+analysis of existing models and the export of their parameters.
+'''
 import time
 
 from amuse.lab import units, ScalarQuantity
@@ -13,6 +17,10 @@ import visualizer
 
 
 def analize(config: AnalysisConfig):
+    '''
+    Analysis mode for the OMTool. It is used for the data
+    analysis of existing models and the export of their parameters.
+    '''
     input_service = io_service.InputService(config.input_file)
     visualizer_service = visualizer.VisualizerService(config.visualizer)
 
@@ -50,9 +58,9 @@ def analize(config: AnalysisConfig):
                         logger.error(f'{key} handler not found.')
 
     @profiler('Saving stage')
-    def loop_saving_stage(iteration: int, time: ScalarQuantity):
+    def loop_saving_stage(iteration: int, timestamp: ScalarQuantity):
         if iteration in plot_indexes:
-            visualizer_service.save({"i": iteration, "time": time.value_in(units.Myr)})
+            visualizer_service.save({"i": iteration, "time": timestamp.value_in(units.Myr)})
 
     for (i, snapshot) in enumerate(snapshots):
         snapshot = Snapshot(*snapshot) # convert iterator element to actual snapshot object

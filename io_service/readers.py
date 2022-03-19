@@ -9,7 +9,7 @@ from astropy.io.fits.hdu.table import BinTableHDU
 fields = {
     'x': units.kpc, 'y': units.kpc, 'z': units.kpc,
     'vx': units.kms, 'vy': units.kms, 'vz': units.kms,
-    'mass': units.MSun, 
+    'mass': units.MSun,
     'is_barion': None
 }
 
