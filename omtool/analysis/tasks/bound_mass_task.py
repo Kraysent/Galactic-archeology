@@ -35,8 +35,11 @@ class BoundMassTask(AbstractTimeTask):
             bound_particles = _get_bound_particles(bound_particles)
             prev_len = curr_len
             curr_len = len(bound_particles)
+
+            if prev_len == 0:
+                break
+
             change = (prev_len - curr_len) / prev_len
-            print(change, prev_len, curr_len)
             i += 1
 
             if i >= self.number_of_iterations:
