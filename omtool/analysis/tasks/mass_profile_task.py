@@ -1,3 +1,6 @@
+'''
+Task that computes radial distribution of cumulative mass.
+'''
 from typing import Tuple
 
 import numpy as np
@@ -8,6 +11,10 @@ from omtool.datamodel import Snapshot, profiler
 
 
 class MassProfileTask(AbstractTask):
+    '''
+    Task that computes radial distribution of cumulative mass.
+    '''
+
     def __init__(self, center_type: str = 'mass') -> None:
         super().__init__()
         self.center_func = particle_centers.get(center_type)
@@ -25,7 +32,7 @@ class MassProfileTask(AbstractTask):
         number_of_chunks = (len(r) // resolution) * resolution
 
         r = r[0:number_of_chunks:resolution]
-        m = m[0:number_of_chunks].reshape((-1, resolution)).sum(axis = 1)
+        m = m[0:number_of_chunks].reshape((-1, resolution)).sum(axis=1)
         m = np.cumsum(m)
 
         return (r.value_in(units.kpc), m.value_in(units.MSun))

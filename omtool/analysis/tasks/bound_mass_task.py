@@ -1,3 +1,6 @@
+'''
+Task that computes bound mass of the system.
+'''
 from typing import Tuple
 
 import numpy as np
@@ -7,17 +10,22 @@ from omtool.analysis.utils import math, pyfalcon_analizer
 from omtool.datamodel import Snapshot
 from omtool.datamodel import profiler
 
+
 def _get_bound_particles(particles):
     potentials = pyfalcon_analizer.get_potentials(particles, 0.2 | units.kpc)
-    velocities = math.get_lengths(particles.velocity - particles.center_of_mass_velocity())
+    velocities = math.get_lengths(
+        particles.velocity - particles.center_of_mass_velocity()
+    )
     full_specific_energies = potentials + velocities ** 2 / 2
 
     return particles[full_specific_energies < (0 | units.J / units.MSun)]
+
 
 class BoundMassTask(AbstractTimeTask):
     '''
     Task that computes bound mass of the system.
     '''
+
     def __init__(self, number_of_iterations: int = 3, change_threshold: float = 0.05):
         super().__init__()
         self.number_of_iterations = number_of_iterations
@@ -45,6 +53,7 @@ class BoundMassTask(AbstractTimeTask):
             if i >= self.number_of_iterations:
                 break
 
-        self._append_value(snapshot, bound_particles.total_mass().value_in(units.MSun))
+        self._append_value(
+            snapshot, bound_particles.total_mass().value_in(units.MSun))
 
         return self._as_tuple()

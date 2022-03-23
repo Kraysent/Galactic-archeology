@@ -1,3 +1,6 @@
+'''
+Module that describes all of the tasks.
+'''
 from omtool.analysis.tasks.abstract_task import *
 from omtool.analysis.tasks.bound_mass_task import BoundMassTask
 from omtool.analysis.tasks.distance_task import DistanceTask
@@ -10,6 +13,9 @@ from omtool.analysis.tasks.velocity_profile_task import VelocityProfileTask
 
 
 def get_task(task_name: str, args: dict) -> AbstractTask:
+    '''
+    Creates instance of the specific task with argumets that were provided in args dict
+    '''
     task_map = {
         'ScatterTask': ScatterTask,
         'TimeEvolutionTask': TimeEvolutionTask,
