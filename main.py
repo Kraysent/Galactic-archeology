@@ -25,7 +25,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     @atexit.register
-    def print_times():
+    def _print_times():
         res = task_profiler.dump_times()
 
         for key, val in res.items():

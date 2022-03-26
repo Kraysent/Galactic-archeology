@@ -44,7 +44,7 @@ class BoundMassTask(AbstractTimeTask):
             prev_len = curr_len
             curr_len = len(bound_particles)
 
-            if prev_len == 0:
+            if curr_len == 0 or prev_len == 0:
                 break
 
             change = (prev_len - curr_len) / prev_len
