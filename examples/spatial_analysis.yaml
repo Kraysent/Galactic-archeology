@@ -1,0 +1,153 @@
+host_slice: &host_slice
+  - 0
+  - 1000001
+host_color: &host_clr b
+
+sat_slice: &sat_slice
+  - 1000001
+  - 1500002
+sat_color: &sat_clr r
+
+input_file: 
+  format: fits
+  filenames: 
+    - !env '{WORKING_DIR}/test_out.fits'
+
+visualizer:
+  output_dir: !env '{WORKING_DIR}/analysis'
+  title: ''
+  figsize: [20, 10]
+  pic_filename: 'img-{i:03d}.png'
+  panels:
+    - id: zy_plane
+      coords: [0, 0.6, 0.6, 1]
+      params: 
+        xlim: [-45, 45]
+        ylim: [-40, 40]
+        xlabel: 'z, kpc'
+        ylabel: 'y, kpc'
+        xticks: [0, 10]
+        yticks: [0, 10]
+    - id: xy_plane
+      coords: [0.55, 0.6, 0.6, 1]
+      params: 
+        xlim: [-45, 45]
+        ylim: [-40, 40]
+        xlabel: 'x, kpc'
+        yticks: []
+        xticks: [0, 10]
+
+tasks:
+  - name: ScatterTask
+    args:
+      x_expr: 'z'
+      y_expr: 'y'
+      x_unit: !q [1, kpc]
+      y_unit: !q [1, kpc]
+    slice: *host_slice
+    handlers:
+      visualizer:
+        id: zy_plane
+        is_density_plot: True
+        resolution: 700
+        extent: [-45, 45, -40, 40]
+        channel: *host_clr
+  - name: ScatterTask
+    args:
+      x_expr: 'z'
+      y_expr: 'y'
+      x_unit: !q [1, kpc]
+      y_unit: !q [1, kpc]
+    slice: *sat_slice
+    handlers:
+      visualizer:
+        id: zy_plane
+        is_density_plot: True
+        resolution: 700
+        extent: [-45, 45, -40, 40]
+        channel: *sat_clr
+  - name: ScatterTask
+    args:
+      x_expr: 'z'
+      y_expr: 'y'
+      x_unit: !q [1, kpc]
+      y_unit: !q [1, kpc]
+    slice: [0, 1]
+    handlers:
+      visualizer:
+        id: zy_plane
+        linestyle: solid
+        color: *host_clr
+        marker: o
+        markersize: 5
+  - name: ScatterTask
+    args:
+      x_expr: 'z'
+      y_expr: 'y'
+      x_unit: !q [1, kpc]
+      y_unit: !q [1, kpc]
+    slice: [1000001, 1000002]
+    handlers:
+      visualizer:
+        id: zy_plane
+        linestyle: solid
+        color: *sat_clr
+        marker: o
+        markersize: 5
+
+  - name: ScatterTask
+    args:
+      x_expr: 'x'
+      y_expr: 'y'
+      x_unit: !q [1, kpc]
+      y_unit: !q [1, kpc]
+    slice: *host_slice
+    handlers:
+      visualizer:
+        id: xy_plane
+        is_density_plot: True
+        resolution: 700
+        extent: [-45, 45, -40, 40]
+        channel: *host_clr
+  - name: ScatterTask
+    args:
+      x_expr: 'x'
+      y_expr: 'y'
+      x_unit: !q [1, kpc]
+      y_unit: !q [1, kpc]
+    slice: *sat_slice
+    handlers:
+      visualizer:
+        id: xy_plane
+        is_density_plot: True
+        resolution: 700
+        extent: [-45, 45, -40, 40]
+        channel: *sat_clr
+  - name: ScatterTask
+    args:
+      x_expr: 'x'
+      y_expr: 'y'
+      x_unit: !q [1, kpc]
+      y_unit: !q [1, kpc]
+    slice: [0, 1]
+    handlers:
+      visualizer:
+        id: xy_plane
+        linestyle: solid
+        color: *host_clr
+        marker: o
+        markersize: 5
+  - name: ScatterTask
+    args:
+      x_expr: 'x'
+      y_expr: 'y'
+      x_unit: !q [1, kpc]
+      y_unit: !q [1, kpc]
+    slice: [1000001, 1000002]
+    handlers:
+      visualizer:
+        id: xy_plane
+        linestyle: solid
+        color: *sat_clr
+        marker: o
+        markersize: 5

@@ -1,0 +1,131 @@
+host_slice: &host_slice
+  - 0
+  - 1000001
+host_color: &host_clr b
+
+sat_slice: &sat_slice
+  - 1000001
+  - 1500002
+sat_color: &sat_clr r
+
+all_color: &all_clr y
+
+input_file: 
+  format: fits
+  filenames: 
+    - !env '{WORKING_DIR}/test_out.fits'
+
+visualizer:
+  output_dir: !env '{WORKING_DIR}/analysis'
+  title: '{time:07.01f} Myr'
+  figsize: [20, 10]
+  pic_filename: 'img-{i:03d}.png'
+  panels:
+    - id: xy_panel
+      coords: [0, 0.4, 1, 0.6]
+      params: 
+        xlim: [-60, 60]
+        ylim: [-24, 24]
+        xlabel: 'x, kpc'
+        ylabel: 'y, kpc'
+        xticks: [0, 10]
+        yticks: [0, 10]
+    - id: density_profile_panel
+      coords: [0, 0, 1, 0.3]
+      params:
+        xlim: [0, 40]
+        ylim: [0, 4.e+8]
+        xlabel: '$r$, kpc'
+        ylabel: '$\rho$, MSun / kpc ** 3'
+        grid: True
+
+tasks: 
+  - name: ScatterTask
+    args:
+      x_expr: 'x'
+      y_expr: 'y'
+      x_unit: !q [1, kpc]
+      y_unit: !q [1, kpc]
+    slice: *host_slice
+    handlers:
+      visualizer:
+        id: xy_panel
+        is_density_plot: True
+        resolution: 1000
+        extent: [-60, 60, -24, 24]
+        channel: *host_clr
+  - name: ScatterTask
+    args:
+      x_expr: 'x'
+      y_expr: 'y'
+      x_unit: !q [1, kpc]
+      y_unit: !q [1, kpc]
+    slice: *sat_slice
+    handlers:
+      visualizer:
+        id: xy_panel
+        is_density_plot: True
+        resolution: 1000
+        extent: [-60, 60, -24, 24]
+        channel: *sat_clr
+  - name: ScatterTask
+    args:
+      x_expr: 'x'
+      y_expr: 'y'
+      x_unit: !q [1, kpc]
+      y_unit: !q [1, kpc]
+    slice: [0, 1]
+    handlers:
+      visualizer:
+        id: xy_panel
+        linestyle: solid
+        color: *host_clr
+        marker: o
+        markersize: 5
+  - name: ScatterTask
+    args:
+      x_expr: 'x'
+      y_expr: 'y'
+      x_unit: !q [1, kpc]
+      y_unit: !q [1, kpc]
+    slice: [1000001, 1000002]
+    handlers:
+      visualizer:
+        id: xy_panel
+        linestyle: solid
+        color: *sat_clr
+        marker: o
+        markersize: 5
+  
+  - name: DensityProfileTask
+    args:
+      center_type: potential
+    slice: *host_slice
+    handlers:
+      visualizer:
+        id: density_profile_panel
+        markersize: 0.5
+        linestyle: None
+        color: *host_clr
+        label: host
+  - name: DensityProfileTask
+    args: 
+      center_type: potential
+    slice: *sat_slice
+    handlers:
+      visualizer: 
+        id: density_profile_panel
+        markersize: 0.5
+        linestyle: None
+        color: *sat_clr
+        label: satellite
+  - name: DensityProfileTask
+    args: 
+      center_type: potential
+    handlers:
+      visualizer:
+        id: density_profile_panel
+        markersize: 0.5
+        linestyle: None
+        color: *all_clr
+        label: all

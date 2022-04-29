@@ -15,9 +15,10 @@ class PotentialTask(AbstractTask):
     Task that computes radial distribution of the potential.
     '''
 
-    def __init__(self, center_type: str = 'mass') -> None:
+    def __init__(self, center_type: str = 'mass', resolution: int = 1000) -> None:
         super().__init__()
         self.center_func = particle_centers.get(center_type)
+        self.resolution = resolution
 
     @profiler('Potential task')
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
@@ -29,12 +30,11 @@ class PotentialTask(AbstractTask):
             snapshot.particles, 0.2 | units.kpc)
         (r, potentials) = math.sort_with(r, potentials)
 
-        resolution = 1000
-        number_of_chunks = (len(r) // resolution) * resolution
+        number_of_chunks = (len(r) // self.resolution) * self.resolution
 
-        r = r[0:number_of_chunks:resolution]
+        r = r[0:number_of_chunks:self.resolution]
         potentials = potentials[0:number_of_chunks].reshape(
-            (-1, resolution)).mean(axis=1)
+            (-1, self.resolution)).mean(axis=1)
         potentials = potentials / potentials.mean()
 
         return (r.value_in(units.kpc), potentials)

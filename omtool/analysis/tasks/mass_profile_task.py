@@ -15,9 +15,10 @@ class MassProfileTask(AbstractTask):
     Task that computes radial distribution of cumulative mass.
     '''
 
-    def __init__(self, center_type: str = 'mass') -> None:
+    def __init__(self, center_type: str = 'mass', resolution: int = 1000) -> None:
         super().__init__()
         self.center_func = particle_centers.get(center_type)
+        self.resolution = resolution
 
     @profiler('Mass profile task')
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
@@ -28,11 +29,10 @@ class MassProfileTask(AbstractTask):
         m = particles.mass
         (r, m) = math.sort_with(r, m)
 
-        resolution = 1000
-        number_of_chunks = (len(r) // resolution) * resolution
+        number_of_chunks = (len(r) // self.resolution) * self.resolution
 
-        r = r[0:number_of_chunks:resolution]
-        m = m[0:number_of_chunks].reshape((-1, resolution)).sum(axis=1)
+        r = r[0:number_of_chunks:self.resolution]
+        m = m[0:number_of_chunks].reshape((-1, self.resolution)).sum(axis=1)
         m = np.cumsum(m)
 
         return (r.value_in(units.kpc), m.value_in(units.MSun))

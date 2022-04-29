@@ -13,10 +13,11 @@ class VelocityProfileTask(AbstractTask):
     Task that computes radial velocity distribution. 
     '''
 
-    def __init__(self, center_type: str = 'mass') -> None:
+    def __init__(self, center_type: str = 'mass', resolution: int = 1000) -> None:
         super().__init__()
         self.center_func = particle_centers.get(center_type)
         self.center_vel_func = particle_centers.get_velocity(center_type)
+        self.resolution = resolution
 
     @profiler('Velocity profile task')
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
@@ -29,9 +30,8 @@ class VelocityProfileTask(AbstractTask):
         v = math.get_lengths(particles.velocity - center_vel)
         (r, v) = math.sort_with(r, v)
 
-        resolution = 1000
-        number_of_chunks = (len(r) // resolution) * resolution
-        r = r[0:number_of_chunks:resolution]
-        v = v[0:number_of_chunks].reshape((-1, resolution)).mean(axis=1)
+        number_of_chunks = (len(r) // self.resolution) * self.resolution
+        r = r[0:number_of_chunks:self.resolution]
+        v = v[0:number_of_chunks].reshape((-1, self.resolution)).mean(axis=1)
 
         return (r.value_in(units.kpc), v.value_in(units.kms))

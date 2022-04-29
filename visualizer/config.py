@@ -6,7 +6,7 @@ def required_get(data: dict, field: str):
     try:
         return data[field]
     except KeyError as e:
-        raise Exception(f'No required key {field} found in visualizer configuration.') from e
+        raise Exception(f'No required key "{field}" found in visualizer configuration.') from e
 
 @dataclass
 class PlotParameters:
