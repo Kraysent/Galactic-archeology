@@ -1,6 +1,6 @@
 from typing import Callable
 
-import logger
+import json_logger as logger
 import numpy as np
 from amuse.lab import Particles, VectorQuantity, units
 from omtool.analysis.utils import pyfalcon_analizer
