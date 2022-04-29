@@ -138,7 +138,7 @@ class Visualizer:
 
             self.get_axes(axes_id).imshow(
                 rgb_map,
-                extent = params[axes_id].extent
+                extent = params[axes_id].extent, interpolation='nearest', aspect='auto'
             )
 
     def save(self, filename: str, dpi: int = 120):
