@@ -7,30 +7,51 @@ def initialize(config: Config):
     '''
     logger.add_json_handler(config.filename)
 
-
-def info(msg: str):
+def info(msg: str = '', message_type: str = 'msg', payload: dict = None):
     '''
     Push log message of the INFO level.
     '''
-    logger.get_instance().info(msg)
+    if payload is None:
+        payload = {}
+
+    if message_type == 'msg':
+        payload['message'] = msg
+
+    logger.get_instance().info('', extra = {'message_type': message_type, 'data': payload})
 
 
-def debug(msg: str):
+def debug(msg: str = '', message_type: str = 'msg', payload: dict = None):
     '''
     Push log message of the DEBUG level.
     '''
-    logger.get_instance().debug(msg)
+    if payload is None:
+        payload = {}
 
+    if message_type == 'msg':
+        payload['message'] = msg
 
-def warning(msg: str):
+    logger.get_instance().debug('', extra = {'message_type': message_type, 'data': payload})
+
+def warning(msg: str = '', message_type: str = 'msg', payload: dict = None):
     '''
     Push log message of the WARNING level.
     '''
-    logger.get_instance().warning(msg)
+    if payload is None:
+        payload = {}
 
+    if message_type == 'msg':
+        payload['message'] = msg
 
-def error(msg: str):
+    logger.get_instance().warning('', extra = {'message_type': message_type, 'data': payload})
+
+def error(msg: str = '', message_type: str = 'msg', payload: dict = None):
     '''
     Push log message of the ERROR level.
     '''
-    logger.get_instance().error(msg)
+    if payload is None:
+        payload = {}
+
+    if message_type == 'msg':
+        payload['message'] = msg
+
+    logger.get_instance().error('', extra = {'message_type': message_type, 'data': payload})

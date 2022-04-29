@@ -26,7 +26,8 @@ def add_json_handler(filename: str = '', datefmt: str = '%H:%M:%S', stream: str 
     format_dict = {
         'time': '%(asctime)s',
         'level': '%(levelname)s',
-        'message': '%(message)s'
+        'message_type': '%(message_type)s',
+        'data': '%(data)s'
     }
 
     if filename != '':

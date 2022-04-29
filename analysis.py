@@ -26,9 +26,21 @@ def logger_handler(data: Tuple[np.ndarray, np.ndarray], parameters: dict = None)
         parameters = {}
 
     if parameters['print_last']:
-        logger.info(f'x: {data[0].tolist()[-1]}, y: {data[1].tolist()[-1]}')
+        logger.info(
+            message_type=parameters['id'],
+            payload={
+                'x': data[0].tolist()[-1],
+                'y': data[1].tolist()[-1]
+            }
+        )
     else:
-        logger.info(f'x: {data[0].tolist()}, y: {data[1].tolist()}')
+        logger.info(
+            message_type=parameters['id'],
+            payload={
+                'x': data[0].tolist(),
+                'y': data[1].tolist()
+            }
+        )
 
 
 def analize(config: AnalysisConfig):
@@ -57,8 +69,6 @@ def analize(config: AnalysisConfig):
     plot_indexes = range(number_of_snapshots)[config.plot_interval]
     snapshots = input_service.get_snapshot_generator()
 
-    logger.info('i\tT, Myr\tTcomp\tTsave')
-
     @profiler('Analysis stage')
     def loop_analysis_stage(snapshot: Snapshot, iteration: int):
         vtask: VisualTask
@@ -76,7 +86,10 @@ def analize(config: AnalysisConfig):
     def loop_saving_stage(iteration: int, timestamp: ScalarQuantity):
         if iteration in plot_indexes:
             visualizer_service.save(
-                {"i": iteration, "time": timestamp.value_in(units.Myr)})
+                {'i': iteration, 'time': timestamp.value_in(units.Myr)}
+            )
+
+    logger.info('Analysis started')
 
     for (i, snapshot) in enumerate(snapshots):
         # convert iterator element to actual snapshot object
@@ -88,4 +101,11 @@ def analize(config: AnalysisConfig):
         end = time.time()
 
         logger.info(
-            f'{i:03d}\t{snapshot.timestamp.value_in(units.Myr):.01f}\t{start_save - start_comp:.01f}\t{end - start_save:.01f}')
+            message_type='time_info',
+            payload={
+                'i': f'{i:03d}',
+                'timestamp_Myr': f'{snapshot.timestamp.value_in(units.Myr):.01f}',
+                'computation_time_s': f'{start_save - start_comp:.01f}',
+                'saving_time_s': f'{end - start_save:.01f}'
+            }
+        )

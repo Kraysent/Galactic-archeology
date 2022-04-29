@@ -35,7 +35,7 @@ def integrate(config: IntegrationConfig):
     if Path(config.output_file).is_file():
         os.remove(config.output_file)
 
-    logger.info('T, Myr')
+    logger.info('Integration started')
     i = 0
 
     points_to_track = { x.point_id: x.filename for x in config.logs }
@@ -63,7 +63,12 @@ def integrate(config: IntegrationConfig):
                 T = integrator.timestamp.value_in(units.Myr)
                 stream.write(f'{T} {x} {y} {z} {vx} {vy} {vz} {m}\n')
 
-        logger.info(f'{integrator.timestamp.value_in(units.Myr):.01f}')
+        logger.info(
+            message_type='integration_timing',
+            payload={
+                'timestamp': f'{integrator.timestamp.value_in(units.Myr):.01f}'
+            }
+        )
 
     while integrator.timestamp < config.model_time:
         loop_integration_stage()

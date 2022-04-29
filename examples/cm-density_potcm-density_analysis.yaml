@@ -15,6 +15,9 @@ input_file:
   filenames:
     - !env "{WORKING_DIR}/test_out.fits"
 
+logging:
+  filename: !env "{WORKING_DIR}/test_json_log.txt"
+
 visualizer:
   output_dir: !env "{WORKING_DIR}/analysis"
   title: "{time:07.01f} Myr"
@@ -51,6 +54,7 @@ tasks:
         label: host
       logging:
         print_last: true
+        id: density_profile
   - name: DensityProfileTask
     args: {}
     slice: *sat_slice
