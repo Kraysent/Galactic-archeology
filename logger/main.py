@@ -47,16 +47,3 @@ def error(msg: str):
     Push log message of the ERROR level.
     '''
     logger.get_instance().error(msg)
-
-
-def run_handler(data: Tuple[np.ndarray, np.ndarray], parameters: dict = None):
-    '''
-    Handler that logs ndarrays to the INFO level.
-    '''
-    if parameters is None:
-        parameters = {}
-
-    if parameters['print_last']:
-        info(f'x: {data[0].tolist()[-1]}, y: {data[1].tolist()[-1]}')
-    else:
-        info(f'x: {data[0].tolist()}, y: {data[1].tolist()}')

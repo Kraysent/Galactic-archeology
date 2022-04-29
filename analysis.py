@@ -3,8 +3,10 @@ Analysis module for OMTool. It is used for the data
 analysis of existing models and the export of their parameters.
 '''
 import time
+from typing import Tuple
 
 from amuse.lab import units, ScalarQuantity
+import numpy as np
 
 import io_service
 import logger
@@ -16,6 +18,19 @@ from omtool.datamodel.task_profiler import profiler
 import visualizer
 
 
+def logger_handler(data: Tuple[np.ndarray, np.ndarray], parameters: dict = None):
+    '''
+    Handler that logs ndarrays to the INFO level.
+    '''
+    if parameters is None:
+        parameters = {}
+
+    if parameters['print_last']:
+        logger.info(f'x: {data[0].tolist()[-1]}, y: {data[1].tolist()[-1]}')
+    else:
+        logger.info(f'x: {data[0].tolist()}, y: {data[1].tolist()}')
+
+
 def analize(config: AnalysisConfig):
     '''
     Analysis mode for the OMTool. It is used for the data
@@ -25,8 +40,8 @@ def analize(config: AnalysisConfig):
     visualizer_service = visualizer.VisualizerService(config.visualizer)
 
     handlers = {
-        'visualizer': visualizer_service.run_handler,
-        'logging': logger.run_handler
+        'visualizer': visualizer_service.plot,
+        'logging': logger_handler
     }
 
     task_manager = TaskManager()
@@ -60,14 +75,17 @@ def analize(config: AnalysisConfig):
     @profiler('Saving stage')
     def loop_saving_stage(iteration: int, timestamp: ScalarQuantity):
         if iteration in plot_indexes:
-            visualizer_service.save({"i": iteration, "time": timestamp.value_in(units.Myr)})
+            visualizer_service.save(
+                {"i": iteration, "time": timestamp.value_in(units.Myr)})
 
     for (i, snapshot) in enumerate(snapshots):
-        snapshot = Snapshot(*snapshot) # convert iterator element to actual snapshot object
+        # convert iterator element to actual snapshot object
+        snapshot = Snapshot(*snapshot)
         start_comp = time.time()
         loop_analysis_stage(snapshot, i)
         start_save = time.time()
         loop_saving_stage(i, snapshot.timestamp)
         end = time.time()
 
-        logger.info(f'{i:03d}\t{snapshot.timestamp.value_in(units.Myr):.01f}\t{start_save - start_comp:.01f}\t{end - start_save:.01f}')
+        logger.info(
+            f'{i:03d}\t{snapshot.timestamp.value_in(units.Myr):.01f}\t{start_save - start_comp:.01f}\t{end - start_save:.01f}')
