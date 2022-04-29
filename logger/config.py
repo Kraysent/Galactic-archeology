@@ -53,7 +53,7 @@ class Config:
                 {
                     'handler_type': 'console',
                     'args': {
-                        'format': '[%(levelname)s] %(asctime)s | %(message)s'
+                        'fmt': '[%(levelname)s] %(asctime)s | %(message)s'
                     }
                 }
             ])]
