@@ -5,7 +5,7 @@ def initialize(config: Config):
     '''
     Initialize JSON logger with paramaters.
     '''
-    logger.add_json_handler(config.filename)
+    logger.add_json_handler(config.filename, datefmt=config.datefmt)
 
 def info(msg: str = '', message_type: str = 'msg', payload: dict = None):
     '''

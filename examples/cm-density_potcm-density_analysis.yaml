@@ -17,6 +17,7 @@ input_file:
 
 logging:
   filename: !env "{WORKING_DIR}/test_json_log.txt"
+  datefmt: '%d.%m.%Y %H:%M:%S'
 
 visualizer:
   output_dir: !env "{WORKING_DIR}/analysis"

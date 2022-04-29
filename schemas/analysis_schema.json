@@ -112,6 +112,10 @@
         "filename": {
           "type": "string",
           "description": "Filename where JSON logs would be stored."
+        },
+        "datefmt": {
+          "type": "string",
+          "description": "Format of the date provided to logging module."
         }
       }
     },

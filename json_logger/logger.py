@@ -19,7 +19,7 @@ def get_instance() -> logging.Logger:
 
     return _instance
 
-def add_json_handler(filename: str = '', datefmt: str = '%H:%M:%S', stream: str = 'stderr'):
+def add_json_handler(filename: str = '', datefmt: str = '%Y-%m-%d %H:%M:%S', stream: str = 'stderr'):
     '''
     Add new handler that saves logs into the JSON file.
     '''
