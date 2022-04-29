@@ -4,7 +4,7 @@ files and export them into sdingle file.
 '''
 from pathlib import Path
 
-import logger
+import json_logger as logger
 from omtool.creation import CreationConfig, Object, SnapshotBuilder, Type
 from omtool.datamodel import Snapshot, profiler
 
@@ -12,7 +12,7 @@ from omtool.datamodel import Snapshot, profiler
 def create(config: CreationConfig):
     '''
     Creation mode for the OMTool. Used to create and load models from
-    files and export them into sdingle file.
+    files and export them into single file.
     '''
     builder = SnapshotBuilder()
 

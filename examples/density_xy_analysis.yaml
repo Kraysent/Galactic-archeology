@@ -10,24 +10,24 @@ sat_color: &sat_clr r
 
 all_color: &all_clr y
 
-input_file: 
+input_file:
   format: fits
-  filenames: 
-    - !env '{WORKING_DIR}/test_out.fits'
+  filenames:
+    - !env "{WORKING_DIR}/test_out.fits"
 
 visualizer:
-  output_dir: !env '{WORKING_DIR}/analysis'
-  title: '{time:07.01f} Myr'
+  output_dir: !env "{WORKING_DIR}/analysis"
+  title: "{time:07.01f} Myr"
   figsize: [20, 10]
-  pic_filename: 'img-{i:03d}.png'
+  pic_filename: "img-{i:03d}.png"
   panels:
     - id: xy_panel
       coords: [0, 0.4, 1, 0.6]
-      params: 
+      params:
         xlim: [-60, 60]
         ylim: [-24, 24]
-        xlabel: 'x, kpc'
-        ylabel: 'y, kpc'
+        xlabel: "x, kpc"
+        ylabel: "y, kpc"
         xticks: [0, 10]
         yticks: [0, 10]
     - id: density_profile_panel
@@ -35,15 +35,15 @@ visualizer:
       params:
         xlim: [0, 40]
         ylim: [0, 4.e+8]
-        xlabel: '$r$, kpc'
+        xlabel: "$r$, kpc"
         ylabel: '$\rho$, MSun / kpc ** 3'
         grid: True
 
-tasks: 
+tasks:
   - name: ScatterTask
     args:
-      x_expr: 'x'
-      y_expr: 'y'
+      x_expr: "x"
+      y_expr: "y"
       x_unit: !q [1, kpc]
       y_unit: !q [1, kpc]
     slice: *host_slice
@@ -56,8 +56,8 @@ tasks:
         channel: *host_clr
   - name: ScatterTask
     args:
-      x_expr: 'x'
-      y_expr: 'y'
+      x_expr: "x"
+      y_expr: "y"
       x_unit: !q [1, kpc]
       y_unit: !q [1, kpc]
     slice: *sat_slice
@@ -70,8 +70,8 @@ tasks:
         channel: *sat_clr
   - name: ScatterTask
     args:
-      x_expr: 'x'
-      y_expr: 'y'
+      x_expr: "x"
+      y_expr: "y"
       x_unit: !q [1, kpc]
       y_unit: !q [1, kpc]
     slice: [0, 1]
@@ -84,8 +84,8 @@ tasks:
         markersize: 5
   - name: ScatterTask
     args:
-      x_expr: 'x'
-      y_expr: 'y'
+      x_expr: "x"
+      y_expr: "y"
       x_unit: !q [1, kpc]
       y_unit: !q [1, kpc]
     slice: [1000001, 1000002]
@@ -96,7 +96,7 @@ tasks:
         color: *sat_clr
         marker: o
         markersize: 5
-  
+
   - name: DensityProfileTask
     args:
       center_type: potential
@@ -109,18 +109,18 @@ tasks:
         color: *host_clr
         label: host
   - name: DensityProfileTask
-    args: 
+    args:
       center_type: potential
     slice: *sat_slice
     handlers:
-      visualizer: 
+      visualizer:
         id: density_profile_panel
         markersize: 0.5
         linestyle: None
         color: *sat_clr
         label: satellite
   - name: DensityProfileTask
-    args: 
+    args:
       center_type: potential
     handlers:
       visualizer:

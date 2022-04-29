@@ -109,33 +109,9 @@
       "description": "Object that stores configuration for logger.",
       "additionalProperties": false,
       "properties": {
-        "handlers": {
-          "type": "array",
-          "description": "List of logging handlers",
-          "items": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "handler_type",
-              "args"
-            ],
-            "properties": {
-              "handler_type": {
-                "type": "string",
-                "description": "Type of handler that processes the logging message.",
-                "enum": [
-                  "console",
-                  "file",
-                  "json"
-                ]
-              },
-              "args": {
-                "type": "object",
-                "description": "Arguments to handler constructor.",
-                "additionalProperties": true
-              }
-            }
-          }
+        "filename": {
+          "type": "string",
+          "description": "Filename where JSON logs would be stored."
         }
       }
     },

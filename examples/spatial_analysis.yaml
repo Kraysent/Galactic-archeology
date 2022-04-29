@@ -8,40 +8,40 @@ sat_slice: &sat_slice
   - 1500002
 sat_color: &sat_clr r
 
-input_file: 
+input_file:
   format: fits
-  filenames: 
-    - !env '{WORKING_DIR}/test_out.fits'
+  filenames:
+    - !env "{WORKING_DIR}/test_out.fits"
 
 visualizer:
-  output_dir: !env '{WORKING_DIR}/analysis'
-  title: ''
+  output_dir: !env "{WORKING_DIR}/analysis"
+  title: ""
   figsize: [20, 10]
-  pic_filename: 'img-{i:03d}.png'
+  pic_filename: "img-{i:03d}.png"
   panels:
     - id: zy_plane
       coords: [0, 0.6, 0.6, 1]
-      params: 
+      params:
         xlim: [-45, 45]
         ylim: [-40, 40]
-        xlabel: 'z, kpc'
-        ylabel: 'y, kpc'
+        xlabel: "z, kpc"
+        ylabel: "y, kpc"
         xticks: [0, 10]
         yticks: [0, 10]
     - id: xy_plane
       coords: [0.55, 0.6, 0.6, 1]
-      params: 
+      params:
         xlim: [-45, 45]
         ylim: [-40, 40]
-        xlabel: 'x, kpc'
+        xlabel: "x, kpc"
         yticks: []
         xticks: [0, 10]
 
 tasks:
   - name: ScatterTask
     args:
-      x_expr: 'z'
-      y_expr: 'y'
+      x_expr: "z"
+      y_expr: "y"
       x_unit: !q [1, kpc]
       y_unit: !q [1, kpc]
     slice: *host_slice
@@ -54,8 +54,8 @@ tasks:
         channel: *host_clr
   - name: ScatterTask
     args:
-      x_expr: 'z'
-      y_expr: 'y'
+      x_expr: "z"
+      y_expr: "y"
       x_unit: !q [1, kpc]
       y_unit: !q [1, kpc]
     slice: *sat_slice
@@ -68,8 +68,8 @@ tasks:
         channel: *sat_clr
   - name: ScatterTask
     args:
-      x_expr: 'z'
-      y_expr: 'y'
+      x_expr: "z"
+      y_expr: "y"
       x_unit: !q [1, kpc]
       y_unit: !q [1, kpc]
     slice: [0, 1]
@@ -82,8 +82,8 @@ tasks:
         markersize: 5
   - name: ScatterTask
     args:
-      x_expr: 'z'
-      y_expr: 'y'
+      x_expr: "z"
+      y_expr: "y"
       x_unit: !q [1, kpc]
       y_unit: !q [1, kpc]
     slice: [1000001, 1000002]
@@ -97,8 +97,8 @@ tasks:
 
   - name: ScatterTask
     args:
-      x_expr: 'x'
-      y_expr: 'y'
+      x_expr: "x"
+      y_expr: "y"
       x_unit: !q [1, kpc]
       y_unit: !q [1, kpc]
     slice: *host_slice
@@ -111,8 +111,8 @@ tasks:
         channel: *host_clr
   - name: ScatterTask
     args:
-      x_expr: 'x'
-      y_expr: 'y'
+      x_expr: "x"
+      y_expr: "y"
       x_unit: !q [1, kpc]
       y_unit: !q [1, kpc]
     slice: *sat_slice
@@ -125,8 +125,8 @@ tasks:
         channel: *sat_clr
   - name: ScatterTask
     args:
-      x_expr: 'x'
-      y_expr: 'y'
+      x_expr: "x"
+      y_expr: "y"
       x_unit: !q [1, kpc]
       y_unit: !q [1, kpc]
     slice: [0, 1]
@@ -139,8 +139,8 @@ tasks:
         markersize: 5
   - name: ScatterTask
     args:
-      x_expr: 'x'
-      y_expr: 'y'
+      x_expr: "x"
+      y_expr: "y"
       x_unit: !q [1, kpc]
       y_unit: !q [1, kpc]
     slice: [1000001, 1000002]

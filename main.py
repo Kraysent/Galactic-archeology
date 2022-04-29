@@ -1,7 +1,10 @@
+'''
+Entry point of the program.
+'''
 import argparse
 import atexit
 
-import logger
+import json_logger as logger
 from analysis import analize
 from creator import create
 from integration import integrate

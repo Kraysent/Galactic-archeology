@@ -2,37 +2,28 @@
 input_file:
   format: fits
   filenames:
-    - !env '{WORKING_DIR}/test.fits'
+    - !env "{WORKING_DIR}/test.fits"
 # file where output model would be written
-output_file: !env '{WORKING_DIR}/test_out.fits'
+output_file: !env "{WORKING_DIR}/test_out.fits"
 # what to do if output file or any of log files already exist
 overwrite: True
 # time until which model would be integrated
 model_time: !q [1.e+4, Myr]
-# interval between to consecutive snapshots to write to output file 
+# interval between to consecutive snapshots to write to output file
 snapshot_interval: 2
 # timestep coefficient (actual timestep is model_time * e^(-timestep))
 timestep: 7
 # softening distance
 eps: !q [0.2, kpc]
 
-# You can specify list of logging handlers
+# You can specify filename where JSON logs would be saved
 logging:
-  handlers:
-    - handler_type: console
-      args:
-        fmt: '[%(levelname)s] %(asctime)s | %(message)s'
-        stream: stdout
-    - handler_type: file
-      args: 
-        fmt: '[%(levelname)s] %(asctime)s | %(message)s'
-        filename: !env '{WORKING_DIR}/test_log.txt'
-        datefmt: '%H:%M:%S'
+  filename: !env "{WORKING_DIR}/test_json_log.txt"
 
 # list of files and points to log.
 # Note that for now each point should have separate log file.
-logs: 
-  - filename: !env '{WORKING_DIR}/host_pos_log.csv'
+logs:
+  - filename: !env "{WORKING_DIR}/host_pos_log.csv"
     point_id: 0
-  - filename: !env '{WORKING_DIR}/sat_pos_log.csv'
+  - filename: !env "{WORKING_DIR}/sat_pos_log.csv"
     point_id: 1

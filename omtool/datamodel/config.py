@@ -8,7 +8,7 @@ import numpy as np
 import yaml
 from amuse.lab import ScalarQuantity, VectorQuantity, units
 from amuse.units.core import named_unit
-import logger
+import json_logger as logger
 
 
 def str_to_unit(name: str) -> named_unit:

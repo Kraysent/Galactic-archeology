@@ -9,7 +9,7 @@ from amuse.lab import units, ScalarQuantity
 import numpy as np
 
 import io_service
-import logger
+import json_logger as logger
 from omtool.analysis.config import AnalysisConfig
 from omtool.analysis.visual.task_manager import TaskManager
 from omtool.analysis.visual.visual_task import VisualTask

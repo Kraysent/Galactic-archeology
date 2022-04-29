@@ -49,6 +49,8 @@ tasks:
         linestyle: None
         color: *host_clr
         label: host
+      logging:
+        print_last: true
   - name: DensityProfileTask
     args: {}
     slice: *sat_slice

@@ -10,23 +10,23 @@ sat_color: &sat_clr r
 
 all_color: &all_clr y
 
-input_file: 
+input_file:
   format: fits
-  filenames: 
-    - !env '{WORKING_DIR}/test_out.fits'
+  filenames:
+    - !env "{WORKING_DIR}/test_out.fits"
 
 visualizer:
-  output_dir: !env '{WORKING_DIR}/analysis'
-  title: '{time:07.01f} Myr'
+  output_dir: !env "{WORKING_DIR}/analysis"
+  title: "{time:07.01f} Myr"
   figsize: [20, 10]
-  pic_filename: 'img-{i:03d}.png'
+  pic_filename: "img-{i:03d}.png"
   panels:
     - id: density_profile_panel
       coords: [0, 0.66, 1, 0.3]
       params:
         xlim: [0, 15]
         ylim: [0, 1.e+9]
-        xlabel: '$r$, kpc'
+        xlabel: "$r$, kpc"
         ylabel: '$\rho$, MSun / kpc ** 3'
         grid: True
     - id: potential_profile_panel
@@ -34,7 +34,7 @@ visualizer:
       params:
         xlim: [0, 15]
         ylim: [0, 4]
-        xlabel: '$r$, kpc'
+        xlabel: "$r$, kpc"
         ylabel: '$\varphi$, portions of average'
         grid: True
     - id: velocity_profile_panel
@@ -42,7 +42,7 @@ visualizer:
       params:
         xlim: [0, 15]
         ylim: [0, 400]
-        xlabel: '$r$, kpc'
+        xlabel: "$r$, kpc"
         ylabel: '$\rho$, MSun / kpc ** 3'
         grid: True
 
@@ -59,18 +59,18 @@ tasks:
         color: *host_clr
         label: host
   - name: DensityProfileTask
-    args: 
+    args:
       center_type: potential
     slice: *sat_slice
     handlers:
-      visualizer: 
+      visualizer:
         id: density_profile_panel
         markersize: 0.5
         linestyle: None
         color: *sat_clr
         label: satellite
   - name: DensityProfileTask
-    args: 
+    args:
       center_type: potential
     handlers:
       visualizer:
@@ -92,18 +92,18 @@ tasks:
         color: *host_clr
         label: host
   - name: PotentialTask
-    args: 
+    args:
       center_type: potential
     slice: *sat_slice
     handlers:
-      visualizer: 
+      visualizer:
         id: potential_profile_panel
         markersize: 0.5
         linestyle: None
         color: *sat_clr
         label: satellite
   - name: PotentialTask
-    args: 
+    args:
       center_type: potential
     handlers:
       visualizer:
@@ -125,7 +125,7 @@ tasks:
         color: *host_clr
         label: host
   - name: VelocityProfileTask
-    args: 
+    args:
       center_type: potential
     slice: *sat_slice
     handlers:
@@ -136,7 +136,7 @@ tasks:
         color: *sat_clr
         label: satellite
   - name: VelocityProfileTask
-    args: 
+    args:
       center_type: potential
     handlers:
       visualizer:

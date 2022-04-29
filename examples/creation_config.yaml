@@ -1,33 +1,24 @@
 # output model would be written in this file
-output_file: !env '{WORKING_DIR}/test.fits'
+output_file: !env "{WORKING_DIR}/test.fits"
 # what to do if output file already exists
 overwrite: True
 
 # You can specify list of logging handlers
 logging:
-  handlers:
-    - handler_type: console
-      args:
-        fmt: '[%(levelname)s] %(asctime)s | %(message)s'
-        stream: stdout
-    - handler_type: file
-      args: 
-        fmt: '[%(levelname)s] %(asctime)s | %(message)s'
-        filename: !env '{WORKING_DIR}/test_log.txt'
-        datefmt: '%H:%M:%S'
+  filename: !env "{WORKING_DIR}/test_json_log.txt"
 
 # list of objects; they can be either read from csv files or given directly using masses and positions.
-objects: 
+objects:
   # host black hole
   - type: body
-    # use !q tag and sequence of 2 elements to denote a quantity 
+    # use !q tag and sequence of 2 elements to denote a quantity
     mass: !q [4.e+8, MSun]
     position: !q [[0, 0, 0], kpc]
     velocity: !q [[0, 0, 0], kms]
   # host galaxy
   - type: csv
-    delimeter: ' '
-    path: !env '{DATA_DIR}/host.csv'
+    delimeter: " "
+    path: !env "{DATA_DIR}/host.csv"
     position: !q [[0, 0, 0], kpc]
     velocity: !q [[0, 0, 0], kms]
   # satellite black hole
@@ -37,7 +28,7 @@ objects:
     velocity: !q [[0, 100, 0], kms]
   # satellite galaxy
   - type: csv
-    delimeter: ' '
-    path: !env '{DATA_DIR}/sat.csv'
+    delimeter: " "
+    path: !env "{DATA_DIR}/sat.csv"
     position: !q [[20, 0, 0], kpc]
     velocity: !q [[0, 100, 0], kms]

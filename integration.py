@@ -8,7 +8,7 @@ from pathlib import Path
 from amuse.lab import units
 
 import io_service
-import logger
+import json_logger as logger
 from omtool.datamodel import Snapshot, profiler
 from omtool.integration import PyfalconIntegrator
 from omtool.integration.config import IntegrationConfig
