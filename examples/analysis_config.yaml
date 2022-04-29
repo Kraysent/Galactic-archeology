@@ -26,7 +26,7 @@ logging:
         stream: stdout
     - handler_type: file
       args: 
-        format: '[%(levelname)s] %(asctime)s | %(message)s'
+        fmt: '[%(levelname)s] %(asctime)s | %(message)s'
         filename: !env '{WORKING_DIR}/test_log.txt'
         datefmt: '%H:%M:%S'
 
@@ -86,13 +86,13 @@ visualizer:
         xlabel: '$r$, kpc'
         ylabel: '$v$, km/s'
         grid: True
-    - id: mass_profile_panel
+    - id: density_profile_panel
       coords: [0.54, 0, 0.32, 0.3]
       params: 
         xlim: [0, 50]
-        ylim: [0, 4.e+11]
+        ylim: [0, 4.e+8]
         xlabel: '$r$, kpc'
-        ylabel: '$M$, MSun'
+        ylabel: '$\rho$, MSun / kpc ** 3'
         grid: True
 
 # list of tasks. Each one describes arguments to its constructor, slice it operates on and list of handlers.
@@ -294,34 +294,34 @@ tasks:
         color: *all_clr
         label: all
 
-  - name: MassProfileTask
+  - name: DensityProfileTask
     args:
       center_type: potential
     slice: *host_slice
     handlers:
       visualizer:
-        id: mass_profile_panel
+        id: density_profile_panel
         markersize: 0.5
         linestyle: None
         color: *host_clr
         label: host
-  - name: MassProfileTask
+  - name: DensityProfileTask
     args: 
       center_type: potential
     slice: *sat_slice
     handlers:
       visualizer: 
-        id: mass_profile_panel
+        id: density_profile_panel
         markersize: 0.5
         linestyle: None
         color: *sat_clr
         label: satellite
-  - name: MassProfileTask
+  - name: DensityProfileTask
     args: 
       center_type: potential
     handlers:
       visualizer:
-        id: mass_profile_panel
+        id: density_profile_panel
         markersize: 0.5
         linestyle: None
         color: *all_clr

@@ -3,6 +3,7 @@ Module that describes all of the tasks.
 '''
 from omtool.analysis.tasks.abstract_task import *
 from omtool.analysis.tasks.bound_mass_task import BoundMassTask
+from omtool.analysis.tasks.density_profile_task import DensityProfileTask
 from omtool.analysis.tasks.distance_task import DistanceTask
 from omtool.analysis.tasks.eccentricity_task import EccentricityTask
 from omtool.analysis.tasks.mass_profile_task import MassProfileTask
@@ -22,6 +23,7 @@ def get_task(task_name: str, args: dict) -> AbstractTask:
         'DistanceTask': DistanceTask,
         'VelocityProfileTask': VelocityProfileTask,
         'MassProfileTask': MassProfileTask,
+        'DensityProfileTask': DensityProfileTask,
         'EccentricityTask': EccentricityTask,
         'PotentialTask': PotentialTask,
         'BoundMassTask': BoundMassTask
