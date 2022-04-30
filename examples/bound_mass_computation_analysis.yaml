@@ -1,0 +1,24 @@
+input_file:
+  format: fits
+  filenames:
+    - !env "{WORKING_DIR}/test_out.fits"
+
+logging:
+  filename: !env "{WORKING_DIR}/test_json_log.txt"
+  datefmt: '%Y-%m-%d %H:%M:%S'
+
+# Do not need visualizer during the computation so it would produce dummy images
+visualizer:
+  output_dir: !env '{WORKING_DIR}/analysis'
+  pic_filename: 'img-test.png'
+  panels: []
+
+tasks:
+  - name: BoundMassTask
+    args:
+      number_of_iterations: 5
+    slice: [1000001, 1500002]
+    handlers:
+      logging:
+        print_last: True
+        id: bound_mass_data
