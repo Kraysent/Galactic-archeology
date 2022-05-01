@@ -248,7 +248,9 @@ tasks:
         id: bound_mass_data
 
   - name: DistanceTask
-    args: { start_id: 0, end_id: 1000001 }
+    args:
+      start_id: 0
+      relative_to: 1000001
     handlers:
       visualizer:
         id: separation_evolution_panel

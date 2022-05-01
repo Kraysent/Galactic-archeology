@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from typing import Tuple
 
 import numpy as np
-from amuse.lab import Particles, units
+from amuse.lab import Particles, units, ScalarQuantity
 from omtool.core.datamodel import Snapshot
 
 
@@ -51,14 +51,19 @@ class AbstractTimeTask(AbstractTask):
     Base class for all tasks that show evolution of some value over time.
     '''
 
-    def __init__(self):
-        self.time_unit = units.Myr
+    def __init__(
+        self,
+        value_unit: ScalarQuantity,
+        time_unit: ScalarQuantity = 1 | units.Myr
+    ):
+        self.time_unit = time_unit
+        self.value_unit = value_unit
         self.times = []
         self.values = []
 
     def _append_value(self, snapshot, value):
-        self.times.append(snapshot.timestamp.value_in(self.time_unit))
-        self.values.append(value)
+        self.times.append(snapshot.timestamp / self.time_unit)
+        self.values.append(value / self.value_unit)
 
     def _as_tuple(self) -> Tuple[np.ndarray, np.ndarray]:
         return (np.array(self.times), np.array(self.values))

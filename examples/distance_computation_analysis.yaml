@@ -14,11 +14,12 @@ visualizer:
   panels: []
 
 tasks:
-  - name: BoundMassTask
+  - name: DistanceTask
     args:
-      number_of_iterations: 5
-    slice: [1000001, 1500002]
+      start_id: 1000001
+      end_coords: !q [[0, 0, 0], kpc]
+      relative_to: potential
     handlers:
       logging:
         print_last: True
-        id: bound_mass_data
+        id: distance_data

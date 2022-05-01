@@ -4,7 +4,7 @@ Task that computes bound mass of the system.
 from typing import Tuple
 
 import numpy as np
-from amuse.lab import units
+from amuse.lab import units, ScalarQuantity
 from omtool.core.analysis.tasks import AbstractTimeTask
 from omtool.core.analysis.utils import math, pyfalcon_analizer
 from omtool.core.datamodel import Snapshot
@@ -26,10 +26,17 @@ class BoundMassTask(AbstractTimeTask):
     Task that computes bound mass of the system.
     '''
 
-    def __init__(self, number_of_iterations: int = 3, change_threshold: float = 0.05):
-        super().__init__()
+    def __init__(
+        self,
+        time_unit: ScalarQuantity = 1 | units.Myr,
+        mass_unit: ScalarQuantity = 1 | units.MSun,
+        number_of_iterations: int = 3,
+        change_threshold: float = 0.05
+    ):
         self.number_of_iterations = number_of_iterations
         self.change_threshold = change_threshold
+
+        super().__init__(time_unit=time_unit, value_unit=mass_unit)
 
     @profiler('Bound mass task')
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
@@ -53,6 +60,6 @@ class BoundMassTask(AbstractTimeTask):
             if i >= self.number_of_iterations:
                 break
 
-        self._append_value(snapshot, bound_particles.total_mass().value_in(units.MSun))
+        self._append_value(snapshot, bound_particles.total_mass())
 
         return self._as_tuple()
