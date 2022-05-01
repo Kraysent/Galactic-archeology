@@ -4,9 +4,9 @@ files and export them into sdingle file.
 '''
 from pathlib import Path
 
-import json_logger as logger
-from omtool.creation import CreationConfig, Object, SnapshotBuilder, Type
-from omtool.datamodel import Snapshot, profiler
+from omtool import json_logger as logger
+from omtool.core.creation import CreationConfig, Object, SnapshotBuilder, Type
+from omtool.core.datamodel import Snapshot, profiler
 
 
 def create(config: CreationConfig):

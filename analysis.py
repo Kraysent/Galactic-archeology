@@ -8,14 +8,14 @@ from typing import Tuple
 from amuse.lab import units, ScalarQuantity
 import numpy as np
 
-import io_service
-import json_logger as logger
-from omtool.analysis.config import AnalysisConfig
-from omtool.analysis.visual.task_manager import TaskManager
-from omtool.analysis.visual.visual_task import VisualTask
-from omtool.datamodel import Snapshot
-from omtool.datamodel.task_profiler import profiler
-import visualizer
+from omtool import visualizer
+from omtool import json_logger as logger
+from omtool import io_service
+from omtool.core.analysis.config import AnalysisConfig
+from omtool.core.analysis.visual.task_manager import TaskManager
+from omtool.core.analysis.visual.visual_task import VisualTask
+from omtool.core.datamodel import Snapshot
+from omtool.core.datamodel.task_profiler import profiler
 
 
 def logger_handler(data: Tuple[np.ndarray, np.ndarray], parameters: dict = None):

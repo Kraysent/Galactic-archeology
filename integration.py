@@ -7,11 +7,11 @@ from pathlib import Path
 
 from amuse.lab import units
 
-import io_service
-import json_logger as logger
-from omtool.datamodel import Snapshot, profiler
-from omtool.integration import PyfalconIntegrator
-from omtool.integration.config import IntegrationConfig
+from omtool import io_service
+from omtool import json_logger as logger
+from omtool.core.datamodel import Snapshot, profiler
+from omtool.core.integration import PyfalconIntegrator
+from omtool.core.integration.config import IntegrationConfig
 
 
 def integrate(config: IntegrationConfig):

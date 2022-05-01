@@ -4,14 +4,14 @@ Entry point of the program.
 import argparse
 import atexit
 
-import json_logger as logger
+from omtool import json_logger as logger
 from analysis import analize
 from creator import create
 from integration import integrate
-from omtool.analysis import AnalysisConfig
-from omtool.creation import CreationConfig
-from omtool.datamodel import BaseConfig, task_profiler
-from omtool.integration import IntegrationConfig
+from omtool.core.analysis import AnalysisConfig
+from omtool.core.creation import CreationConfig
+from omtool.core.datamodel import BaseConfig, task_profiler
+from omtool.core.integration import IntegrationConfig
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
