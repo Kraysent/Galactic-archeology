@@ -18,13 +18,19 @@ class ScatterTask(AbstractTask):
     plots the points in the corresponding way.
     '''
 
-    def __init__(self, x_expr: str, y_expr: str, x_unit: ScalarQuantity, y_unit: ScalarQuantity):
+    def __init__(
+        self,
+        x_expr: str,
+        y_expr: str,
+        x_unit: ScalarQuantity,
+        y_unit: ScalarQuantity
+    ):
         parser = Parser()
 
-        self.x_unit = x_unit
-        self.y_unit = y_unit
         self.x_expr = parser.parse(x_expr)
         self.y_expr = parser.parse(y_expr)
+        self.x_unit = x_unit
+        self.y_unit = y_unit
 
     @profiler('Scatter task')
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:

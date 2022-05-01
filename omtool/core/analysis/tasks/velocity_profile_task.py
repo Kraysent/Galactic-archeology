@@ -1,7 +1,10 @@
+'''
+Task that computes radial velocity distribution.
+'''
 from typing import Tuple
 
 import numpy as np
-from amuse.lab import units
+from amuse.lab import units, ScalarQuantity
 from omtool.core.analysis.tasks import AbstractTask
 from omtool.core.analysis.tasks.abstract_task import filter_barion_particles
 from omtool.core.analysis.utils import math, particle_centers
@@ -10,14 +13,22 @@ from omtool.core.datamodel import Snapshot, profiler
 
 class VelocityProfileTask(AbstractTask):
     '''
-    Task that computes radial velocity distribution. 
+    Task that computes radial velocity distribution.
     '''
 
-    def __init__(self, center_type: str = 'mass', resolution: int = 1000) -> None:
+    def __init__(
+        self,
+        center_type: str = 'mass',
+        resolution: int = 1000,
+        r_unit: ScalarQuantity = 1 | units.kpc,
+        v_unit: ScalarQuantity = 1 | units.kms
+    ) -> None:
         super().__init__()
         self.center_func = particle_centers.get(center_type)
         self.center_vel_func = particle_centers.get_velocity(center_type)
         self.resolution = resolution
+        self.r_unit = r_unit
+        self.v_unit = v_unit
 
     @profiler('Velocity profile task')
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
@@ -26,12 +37,12 @@ class VelocityProfileTask(AbstractTask):
 
         particles = filter_barion_particles(snapshot)
 
-        r = math.get_lengths(particles.position - center)
-        v = math.get_lengths(particles.velocity - center_vel)
-        (r, v) = math.sort_with(r, v)
+        radii = math.get_lengths(particles.position - center)
+        velocities = math.get_lengths(particles.velocity - center_vel)
+        radii, velocities = math.sort_with(radii, velocities)
 
-        number_of_chunks = (len(r) // self.resolution) * self.resolution
-        r = r[0:number_of_chunks:self.resolution]
-        v = v[0:number_of_chunks].reshape((-1, self.resolution)).mean(axis=1)
+        number_of_chunks = (len(radii) // self.resolution) * self.resolution
+        radii = radii[0:number_of_chunks:self.resolution]
+        velocities = velocities[0:number_of_chunks].reshape((-1, self.resolution)).mean(axis=1)
 
-        return (r.value_in(units.kpc), v.value_in(units.kms))
+        return (radii / self.r_unit, velocities / self.v_unit)

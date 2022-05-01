@@ -53,7 +53,6 @@ class BoundMassTask(AbstractTimeTask):
             if i >= self.number_of_iterations:
                 break
 
-        self._append_value(
-            snapshot, bound_particles.total_mass().value_in(units.MSun))
+        self._append_value(snapshot, bound_particles.total_mass().value_in(units.MSun))
 
         return self._as_tuple()
