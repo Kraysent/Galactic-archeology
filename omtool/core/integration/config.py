@@ -8,7 +8,7 @@ from omtool import io_service
 from omtool.core.datamodel import required_get, yaml_loader
 
 
-class LogParams:
+class LogParamsConfig:
     '''
     Configuration of logging parameters for particles.
     '''
@@ -16,15 +16,35 @@ class LogParams:
     point_id: int
 
     @staticmethod
-    def from_dict(data: dict) -> 'LogParams':
+    def from_dict(data: dict) -> 'LogParamsConfig':
         '''
         Loads this type from dictionary.
         '''
-        res = LogParams()
+        res = LogParamsConfig()
         res.filename = required_get(data, 'filename')
         res.point_id = required_get(data, 'point_id')
 
         return res
+
+
+class IntegratorConfig:
+    '''
+    Configuration for the particular integrator.
+    '''
+    name: str
+    args: dict
+
+    @staticmethod
+    def from_dict(data: dict) -> 'IntegratorConfig':
+        '''
+        Loads this type from dictionary.
+        '''
+        res = IntegratorConfig()
+        res.name = required_get(data, 'name')
+        res.args = data.get('args', {})
+
+        return res
+
 
 class IntegrationConfig:
     '''
@@ -35,9 +55,8 @@ class IntegrationConfig:
     overwrite: bool
     model_time: ScalarQuantity
     snapshot_interval: int
-    timestep: int
-    eps: ScalarQuantity
-    logs: List[LogParams]
+    integrator: IntegratorConfig
+    logs: List[LogParamsConfig]
 
     @staticmethod
     def from_yaml(filename: str) -> 'IntegrationConfig':
@@ -46,8 +65,8 @@ class IntegrationConfig:
         '''
         data = {}
 
-        with open(filename, 'r', encoding = 'utf-8') as stream:
-            data = yaml.load(stream, Loader = yaml_loader())
+        with open(filename, 'r', encoding='utf-8') as stream:
+            data = yaml.load(stream, Loader=yaml_loader())
 
         return IntegrationConfig.from_dict(data)
 
@@ -57,15 +76,16 @@ class IntegrationConfig:
         Loads this type from dictionary.
         '''
         res = IntegrationConfig()
-        res.input_file = io_service.Config.from_dict(required_get(data, 'input_file'))
+        res.input_file = io_service.Config.from_dict(
+            required_get(data, 'input_file'))
         res.output_file = required_get(data, 'output_file')
         res.overwrite = data.get('overwrite', False)
         res.model_time = required_get(data, 'model_time')
         res.snapshot_interval = data.get('snapshot_interval', 1)
-        res.timestep = required_get(data, 'timestep')
-        res.eps = required_get(data, 'eps')
+        res.integrator = IntegratorConfig.from_dict(
+            required_get(data, 'integrator'))
         res.logs = [
-            LogParams.from_dict(log) for log in data.get('logs', [])
+            LogParamsConfig.from_dict(log) for log in data.get('logs', [])
         ]
 
         return res

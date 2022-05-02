@@ -19,7 +19,8 @@ class PyfalconIntegrator:
         'T': units.Gyr
     }
 
-    def __init__(self,
+    def __init__(
+        self,
         snapshot: Snapshot,
         eps: ScalarQuantity,
         kmax: float

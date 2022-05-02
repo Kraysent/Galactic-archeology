@@ -55,13 +55,19 @@
       "type": "integer",
       "description": "Interval between to consecutive snapshots to write to output file"
     },
-    "timestep": {
-      "type": "integer",
-      "description": "Timestep coefficient (actual timestep is model_time * e^(-timestep))."
-    },
-    "eps": {
-      "type": "array",
-      "description": "Softening distance of the integrator."
+    "integrator": {
+      "type": "object",
+      "description": "Object that stores infromation about the integration algorithm.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Identifier of the algorithm."
+        },
+        "args": {
+          "type": "object",
+          "description": "Dictionary that stores arguments that would be passed to integrator constructor."
+        }
+      }
     },
     "logging": {
       "type": "object",

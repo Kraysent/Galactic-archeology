@@ -15,7 +15,7 @@ from omtool.core.analysis.tasks.velocity_profile_task import VelocityProfileTask
 
 def get_task(task_name: str, args: dict) -> AbstractTask:
     '''
-    Creates instance of the specific task with argumets that were provided in args dict
+    Creates instance of the specific task with arguments that were provided in args dict.
     '''
     task_map = {
         'ScatterTask': ScatterTask,

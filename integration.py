@@ -10,7 +10,7 @@ from amuse.lab import units
 from omtool import io_service
 from omtool import json_logger as logger
 from omtool.core.datamodel import Snapshot, profiler
-from omtool.core.integration import PyfalconIntegrator
+from omtool.core.integration.integrators import get_integrator
 from omtool.core.integration.config import IntegrationConfig
 
 
@@ -21,13 +21,15 @@ def integrate(config: IntegrationConfig):
     '''
     input_service = io_service.InputService(config.input_file)
     snapshot = next(input_service.get_snapshot_generator())
-    snapshot = Snapshot(*snapshot) # convert iterator element to actual snapshot object 
-    integrator = PyfalconIntegrator(snapshot, config.eps, config.timestep)
+    # convert iterator element to actual snapshot object
+    snapshot = Snapshot(*snapshot)
+    integrator = get_integrator(
+        config.integrator.name, snapshot, config.integrator.args)
 
     if not config.overwrite:
         if Path(config.output_file).is_file():
             raise Exception(f'Output file ({config.output_file}) exists and "overwrite" option in integration config file is false (default)')
-        
+
         for x in config.logs:
             if Path(x.filename).is_file():
                 raise Exception(f'Log output file ({x.filename}) exists and "overwrite" option in integration config file is false (default)')
@@ -38,7 +40,7 @@ def integrate(config: IntegrationConfig):
     logger.info('Integration started')
     i = 0
 
-    points_to_track = { x.point_id: x.filename for x in config.logs }
+    points_to_track = {x.point_id: x.filename for x in config.logs}
 
     for (_, name) in points_to_track.items():
         with open(name, 'w') as stream:
@@ -52,7 +54,7 @@ def integrate(config: IntegrationConfig):
     def loop_saving_stage(iteration: int):
         if iteration % config.snapshot_interval == 0:
             snapshot = integrator.get_snapshot()
-            snapshot.to_fits(config.output_file, append = True)
+            snapshot.to_fits(config.output_file, append=True)
 
         for (point_id, name) in points_to_track.items():
             with open(name, 'a') as stream:
@@ -73,5 +75,5 @@ def integrate(config: IntegrationConfig):
     while integrator.timestamp < config.model_time:
         loop_integration_stage()
         loop_saving_stage(i)
-        
+
         i += 1
