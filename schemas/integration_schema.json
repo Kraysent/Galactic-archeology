@@ -86,18 +86,18 @@
     },
     "logs": {
       "type": "array",
-      "description": "List of points to log to file. Note that for now each point should have separate log file.",
+      "description": "List of points to log to file.",
       "items": {
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "filename",
+          "logger_id",
           "point_id"
         ],
         "properties": {
-          "filename": {
+          "logger_id": {
             "type": "string",
-            "description": "Path to file where particles parameters would be stored."
+            "description": "Message type id in log file."
           },
           "point_id": {
             "type": "integer",

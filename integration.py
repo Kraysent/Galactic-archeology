@@ -20,31 +20,20 @@ def integrate(config: IntegrationConfig):
     from the file and write it to another file.
     '''
     input_service = io_service.InputService(config.input_file)
-    snapshot = next(input_service.get_snapshot_generator())
-    # convert iterator element to actual snapshot object
-    snapshot = Snapshot(*snapshot)
     integrator = get_integrator(
-        config.integrator.name, snapshot, config.integrator.args)
+        config.integrator.name,
+        Snapshot(*next(input_service.get_snapshot_generator())),
+        config.integrator.args
+    )
 
-    if not config.overwrite:
+    if config.overwrite:
         if Path(config.output_file).is_file():
-            raise Exception(f'Output file ({config.output_file}) exists and "overwrite" option in integration config file is false (default)')
-
-        for x in config.logs:
-            if Path(x.filename).is_file():
-                raise Exception(f'Log output file ({x.filename}) exists and "overwrite" option in integration config file is false (default)')
-
-    if Path(config.output_file).is_file():
-        os.remove(config.output_file)
-
-    logger.info('Integration started')
-    i = 0
-
-    points_to_track = {x.point_id: x.filename for x in config.logs}
-
-    for (_, name) in points_to_track.items():
-        with open(name, 'w') as stream:
-            stream.write('T x y z vx vy vz m\n')
+            os.remove(config.output_file)
+    else:
+        if Path(config.output_file).is_file():
+            raise Exception(
+                f'Output file ({config.output_file}) exists and "overwrite" option in integration config file is false (default)'
+            )
 
     @profiler('Integration stage')
     def loop_integration_stage():
@@ -56,14 +45,18 @@ def integrate(config: IntegrationConfig):
             snapshot = integrator.get_snapshot()
             snapshot.to_fits(config.output_file, append=True)
 
-        for (point_id, name) in points_to_track.items():
-            with open(name, 'a') as stream:
-                particle = integrator.get_particle(point_id)
-                x, y, z = particle.position.value_in(units.kpc)
-                vx, vy, vz = particle.velocity.value_in(units.kms)
-                m = particle.mass.value_in(units.MSun)
-                T = integrator.timestamp.value_in(units.Myr)
-                stream.write(f'{T} {x} {y} {z} {vx} {vy} {vz} {m}\n')
+        for log in config.logs:
+            particle = integrator.get_particle(log.point_id)
+            logger.info(message_type=log.logger_id, payload={
+                'timestamp': integrator.timestamp.value_in(units.Myr),
+                'x': particle.x.value_in(units.kpc),
+                'y': particle.y.value_in(units.kpc),
+                'z': particle.z.value_in(units.kpc),
+                'vx': particle.vx.value_in(units.kms),
+                'vy': particle.vy.value_in(units.kms),
+                'vz': particle.vz.value_in(units.kms),
+                'm': particle.mass.value_in(units.MSun)
+            })
 
         logger.info(
             message_type='integration_timing',
@@ -71,6 +64,9 @@ def integrate(config: IntegrationConfig):
                 'timestamp': f'{integrator.timestamp.value_in(units.Myr):.01f}'
             }
         )
+
+    logger.info('Integration started')
+    i = 0
 
     while integrator.timestamp < config.model_time:
         loop_integration_stage()

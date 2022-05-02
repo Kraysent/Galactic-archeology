@@ -12,8 +12,8 @@ class LogParamsConfig:
     '''
     Configuration of logging parameters for particles.
     '''
-    filename: str
     point_id: int
+    logger_id: str
 
     @staticmethod
     def from_dict(data: dict) -> 'LogParamsConfig':
@@ -21,8 +21,8 @@ class LogParamsConfig:
         Loads this type from dictionary.
         '''
         res = LogParamsConfig()
-        res.filename = required_get(data, 'filename')
         res.point_id = required_get(data, 'point_id')
+        res.logger_id = required_get(data, 'logger_id')
 
         return res
 
@@ -82,8 +82,7 @@ class IntegrationConfig:
         res.overwrite = data.get('overwrite', False)
         res.model_time = required_get(data, 'model_time')
         res.snapshot_interval = data.get('snapshot_interval', 1)
-        res.integrator = IntegratorConfig.from_dict(
-            required_get(data, 'integrator'))
+        res.integrator = IntegratorConfig.from_dict(required_get(data, 'integrator'))
         res.logs = [
             LogParamsConfig.from_dict(log) for log in data.get('logs', [])
         ]
