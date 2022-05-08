@@ -56,6 +56,6 @@ This module is responsible for the visualization of file with snapshots (for exa
 
 If done right it should produce a lot of pictures (the same amount as number of timestamps in the input file) similar to this one: 
 
-.. image:: images/image.png
+.. image:: docs/source/images/image.png
 
 **This program is under heavy development so some things (or all of them) might work not as expected or not work at all.**
