@@ -7,9 +7,7 @@
   "required": [
     "input_file",
     "output_file",
-    "model_time",
-    "timestep",
-    "eps"
+    "model_time"
   ],
   "properties": {
     "input_file": {

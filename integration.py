@@ -61,7 +61,7 @@ def integrate(config: IntegrationConfig):
         logger.info(
             message_type='integration_timing',
             payload={
-                'timestamp': f'{integrator.timestamp.value_in(units.Myr):.01f}'
+                'timestamp': integrator.timestamp.value_in(units.Myr)
             }
         )
 
