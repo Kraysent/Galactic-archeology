@@ -8,5 +8,8 @@ help:
 
 .PHONY: help Makefile
 
+clean:
+	rm -rf build
+
 %: Makefile
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
