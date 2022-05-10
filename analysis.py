@@ -57,30 +57,26 @@ def analize(config: AnalysisConfig):
         for task in config.tasks
     ]
 
-    number_of_snapshots = input_service.get_number_of_snapshots()
-    plot_indexes = range(number_of_snapshots)[config.plot_interval]
     snapshots = input_service.get_snapshot_generator()
 
     @profiler("Analysis stage")
-    def loop_analysis_stage(snapshot: Snapshot, iteration: int):
+    def loop_analysis_stage(snapshot: Snapshot):
         vtask: VisualTask
         for vtask in tasks:
             data = vtask.run(snapshot)
 
-            if iteration in plot_indexes:
-                for key in vtask.handlers:
-                    if key in handlers:
-                        handlers[key](data, vtask.handlers[key])
-                    else:
-                        logger.error(f"{key} handler not found.")
+            for key in vtask.handlers:
+                if key in handlers:
+                    handlers[key](data, vtask.handlers[key])
+                else:
+                    logger.error(f"{key} handler not found.")
 
     @profiler("Saving stage")
     def loop_saving_stage(iteration: int, timestamp: ScalarQuantity):
-        if iteration in plot_indexes:
-            if not visualizer_service is None:
-                visualizer_service.save(
-                    {"i": iteration, "time": timestamp.value_in(units.Myr)}
-                )
+        if not visualizer_service is None:
+            visualizer_service.save(
+                {"i": iteration, "time": timestamp.value_in(units.Myr)}
+            )
 
     logger.info("Analysis started")
 
@@ -88,7 +84,7 @@ def analize(config: AnalysisConfig):
         # convert iterator element to actual snapshot object
         snapshot = Snapshot(*snapshot)
         start_comp = time.time()
-        loop_analysis_stage(snapshot, i)
+        loop_analysis_stage(snapshot)
         start_save = time.time()
         loop_saving_stage(i, snapshot.timestamp)
         end = time.time()

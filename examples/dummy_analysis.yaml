@@ -7,8 +7,6 @@ logging:
   filename: !env "{WORKING_DIR}/test_json_log.txt"
   datefmt: '%Y-%m-%d %H:%M:%S'
 
-plot_interval: [0, null, 2]
-
 visualizer:
   output_dir: !env '{WORKING_DIR}/analysis'
   figsize: [20, 11]

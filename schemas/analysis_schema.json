@@ -34,12 +34,6 @@
         }
       }
     },
-    "plot_interval": {
-      "type": "array",
-      "description": "Slice that represents how frequently should the pictures be drawn.",
-      "minItems": 2,
-      "maxItems": 3
-    },
     "visualizer": {
       "type": "object",
       "description": "Configuration of visualizer microservice",

@@ -39,7 +39,6 @@ class AnalysisConfig:
     input_file: io_service.Config
     visualizer: visualizer.Config
     tasks: List[TaskConfig]
-    plot_interval: slice
 
     @staticmethod
     def from_yaml(filename: str) -> "AnalysisConfig":
@@ -60,7 +59,6 @@ class AnalysisConfig:
         """
         res = AnalysisConfig()
         res.tasks = [TaskConfig.from_dict(task) for task in data.get("tasks", [])]
-        res.plot_interval = slice(*data.get("plot_interval", [0, None, 1]))
 
         res.visualizer = data.get("visualizer", None)
         if not res.visualizer is None:
