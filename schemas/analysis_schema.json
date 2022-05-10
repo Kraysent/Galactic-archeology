@@ -5,8 +5,7 @@
   "type": "object",
   "additionalProperties": true,
   "required": [
-    "input_file",
-    "visualizer"
+    "input_file"
   ],
   "properties": {
     "input_file": {

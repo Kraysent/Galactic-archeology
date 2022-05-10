@@ -7,12 +7,6 @@ logging:
   filename: !env "{WORKING_DIR}/test_json_log.txt"
   datefmt: "%Y-%m-%d %H:%M:%S"
 
-# Do not need visualizer during the computation so it would produce dummy images
-visualizer:
-  output_dir: !env "{WORKING_DIR}/analysis"
-  pic_filename: "img-test.png"
-  panels: []
-
 tasks:
   - name: BoundMassTask
     args:
