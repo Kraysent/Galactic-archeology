@@ -1,34 +1,12 @@
 """
 Configuration classes for analysis tool.
 """
-from typing import Any, List
+from typing import List
 
 import yaml
 from omtool import io_service, visualizer
-from omtool.tasks import get_task
+from omtool import tasks
 from omtool.core.datamodel import required_get, yaml_loader
-
-
-class TaskConfig:
-    """
-    Configuration for each particular task.
-    """
-
-    slice: slice
-    abstract_task: Any  # AbstractTask actually
-    handlers: dict
-
-    @staticmethod
-    def from_dict(data: dict) -> "TaskConfig":
-        """
-        Construct this object from dictionary.
-        """
-        res = TaskConfig()
-        res.slice = slice(*data.get("slice", [0, None, 1]))
-        res.handlers = data.get("handlers", {})
-        res.abstract_task = get_task(required_get(data, "name"), data.get("args", {}))
-
-        return res
 
 
 class AnalysisConfig:
@@ -38,7 +16,7 @@ class AnalysisConfig:
 
     input_file: io_service.Config
     visualizer: visualizer.Config
-    tasks: List[TaskConfig]
+    tasks: List[tasks.Config]
 
     @staticmethod
     def from_yaml(filename: str) -> "AnalysisConfig":
@@ -58,7 +36,7 @@ class AnalysisConfig:
         Construct this object from dictionary.
         """
         res = AnalysisConfig()
-        res.tasks = [TaskConfig.from_dict(task) for task in data.get("tasks", [])]
+        res.tasks = [tasks.Config.from_dict(task) for task in data.get("tasks", [])]
 
         res.visualizer = data.get("visualizer", None)
         if not res.visualizer is None:

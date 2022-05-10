@@ -4,8 +4,7 @@ Confuration objects' description for integration module.
 from typing import List
 import yaml
 from amuse.lab import ScalarQuantity
-from omtool import io_service
-from omtool.core.analysis.config import TaskConfig
+from omtool import io_service, tasks
 from omtool.core.datamodel import required_get, yaml_loader
 from omtool import visualizer
 
@@ -63,7 +62,7 @@ class IntegrationConfig:
     integrator: IntegratorConfig
     logs: List[LogParamsConfig]
     visualizer: visualizer.Config
-    tasks: List[TaskConfig]
+    tasks: List[tasks.Config]
 
     @staticmethod
     def from_yaml(filename: str) -> "IntegrationConfig":
@@ -90,7 +89,7 @@ class IntegrationConfig:
         res.snapshot_interval = data.get("snapshot_interval", 1)
         res.integrator = IntegratorConfig.from_dict(required_get(data, "integrator"))
         res.logs = [LogParamsConfig.from_dict(log) for log in data.get("logs", [])]
-        res.tasks = [TaskConfig.from_dict(task) for task in data.get("tasks", [])]
+        res.tasks = [tasks.Config.from_dict(task) for task in data.get("tasks", [])]
 
         res.visualizer = data.get("visualizer", None)
         if not res.visualizer is None:
