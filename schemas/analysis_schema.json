@@ -6,8 +6,7 @@
   "additionalProperties": true,
   "required": [
     "input_file",
-    "visualizer",
-    "tasks"
+    "visualizer"
   ],
   "properties": {
     "input_file": {
