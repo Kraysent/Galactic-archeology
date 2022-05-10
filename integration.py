@@ -4,10 +4,8 @@ from the file and write it to another file.
 """
 import os
 from pathlib import Path
-from typing import Tuple
 
 from amuse.lab import units
-import numpy as np
 
 from omtool import io_service, visualizer
 from omtool import json_logger as logger
@@ -15,25 +13,7 @@ from omtool.core.analysis.visual import VisualTask
 from omtool.core.datamodel import Snapshot, profiler
 from omtool.core.integration.integrators import get_integrator
 from omtool.core.integration.config import IntegrationConfig
-
-
-def logger_handler(data: Tuple[np.ndarray, np.ndarray], parameters: dict = None):
-    """
-    Handler that logs ndarrays to the INFO level.
-    """
-    if parameters is None:
-        parameters = {}
-
-    if parameters["print_last"]:
-        logger.info(
-            message_type=parameters["id"],
-            payload={"x": data[0].tolist()[-1], "y": data[1].tolist()[-1]},
-        )
-    else:
-        logger.info(
-            message_type=parameters["id"],
-            payload={"x": data[0].tolist(), "y": data[1].tolist()},
-        )
+from omtool.handlers import logger_handler
 
 
 def integrate(config: IntegrationConfig):

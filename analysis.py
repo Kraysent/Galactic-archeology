@@ -3,10 +3,8 @@ Analysis module for OMTool. It is used for the data
 analysis of existing models and the export of their parameters.
 """
 import time
-from typing import Tuple
 
 from amuse.lab import units, ScalarQuantity
-import numpy as np
 
 from omtool import visualizer
 from omtool import json_logger as logger
@@ -15,25 +13,7 @@ from omtool.core.analysis.config import AnalysisConfig
 from omtool.core.analysis.visual import VisualTask
 from omtool.core.datamodel import Snapshot
 from omtool.core.datamodel.task_profiler import profiler
-
-
-def logger_handler(data: Tuple[np.ndarray, np.ndarray], parameters: dict = None):
-    """
-    Handler that logs ndarrays to the INFO level.
-    """
-    if parameters is None:
-        parameters = {}
-
-    if parameters["print_last"]:
-        logger.info(
-            message_type=parameters["id"],
-            payload={"x": data[0].tolist()[-1], "y": data[1].tolist()[-1]},
-        )
-    else:
-        logger.info(
-            message_type=parameters["id"],
-            payload={"x": data[0].tolist(), "y": data[1].tolist()},
-        )
+from omtool.handlers import logger_handler
 
 
 def analize(config: AnalysisConfig):
@@ -57,9 +37,11 @@ def analize(config: AnalysisConfig):
             task.abstract_task,
             task.slice,
             [
-                lambda data, key=key, handler_params=value: handlers[key](data, handler_params)
+                lambda data, key=key, handler_params=value: handlers[key](
+                    data, handler_params
+                )
                 for key, value in task.handlers.items()
-            ]
+            ],
         )
         for task in config.tasks
     ]
