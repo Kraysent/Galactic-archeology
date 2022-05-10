@@ -1,0 +1,43 @@
+# File with input model.
+input_file:
+  format: fits
+  filenames:
+    - !env "{WORKING_DIR}/test.fits"
+# File where output model would be written.
+output_file: !env "{WORKING_DIR}/test_out.fits"
+# What to do if output file already exists.
+overwrite: True
+# Time until which model would be integrated.
+model_time: !q [1.e+4, Myr]
+# Interval between to consecutive snapshots to write to output file.
+snapshot_interval: 2
+
+# Algorithm which would perform integration and its constructor arguments.
+integrator:
+  name: pyfalcon
+  args:
+    kmax: 7
+    eps: !q [0.2, kpc]
+
+# You can specify filename where JSON logs would be saved.
+logging:
+  filename: !env "{WORKING_DIR}/test_json_log.txt"
+
+# List of files and points to log to file.
+logs:
+  - point_id: 0
+    logger_id: host_params
+  - point_id: 1000001
+    logger_id: satellite_params
+
+# List of tasks that would operate on each integration step. 
+# You can also specify visualizer similar to analysis step.
+tasks:
+  - name: BoundMassTask
+    args:
+      number_of_iterations: 5
+    slice: [1000001, 1500002]
+    handlers:
+      logging:
+        print_last: True
+        id: bound_mass_data

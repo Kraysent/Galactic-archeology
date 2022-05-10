@@ -5,7 +5,7 @@ input_file:
     - !env "{WORKING_DIR}/test.fits"
 # file where output model would be written
 output_file: !env "{WORKING_DIR}/test_out.fits"
-# what to do if output file or any of log files already exist
+# what to do if output file already exists
 overwrite: True
 # time until which model would be integrated
 model_time: !q [1.e+4, Myr]
@@ -23,7 +23,7 @@ integrator:
 logging:
   filename: !env "{WORKING_DIR}/test_json_log.txt"
 
-# List of files and points to log file.
+# List of files and points to log to file.
 logs:
   - point_id: 0
     logger_id: host_params
