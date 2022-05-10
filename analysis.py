@@ -46,30 +46,28 @@ def analize(config: AnalysisConfig):
     handlers = {}
     handlers["logging"] = logger_handler
 
+    visualizer_service = None
+
     if not config.visualizer is None:
         visualizer_service = visualizer.VisualizerService(config.visualizer)
         handlers["visualizer"] = visualizer_service.plot
-    else:
-        visualizer_service = None
 
     tasks = [
-        VisualTask(task.abstract_task, task.slice, task.handlers)
+        VisualTask(
+            task.abstract_task,
+            task.slice,
+            [
+                lambda data, key=key, handler_params=value: handlers[key](data, handler_params)
+                for key, value in task.handlers.items()
+            ]
+        )
         for task in config.tasks
     ]
 
-    snapshots = input_service.get_snapshot_generator()
-
     @profiler("Analysis stage")
     def loop_analysis_stage(snapshot: Snapshot):
-        vtask: VisualTask
         for vtask in tasks:
-            data = vtask.run(snapshot)
-
-            for key in vtask.handlers:
-                if key in handlers:
-                    handlers[key](data, vtask.handlers[key])
-                else:
-                    logger.error(f"{key} handler not found.")
+            vtask.run(snapshot)
 
     @profiler("Saving stage")
     def loop_saving_stage(iteration: int, timestamp: ScalarQuantity):
@@ -79,6 +77,8 @@ def analize(config: AnalysisConfig):
             )
 
     logger.info("Analysis started")
+
+    snapshots = input_service.get_snapshot_generator()
 
     for (i, snapshot) in enumerate(snapshots):
         # convert iterator element to actual snapshot object

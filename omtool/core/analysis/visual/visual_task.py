@@ -1,3 +1,9 @@
+"""
+Struct that holds abstract_task, its part and handlers.
+"""
+from typing import Callable, Tuple
+
+import numpy as np
 from omtool.core.analysis.tasks import AbstractTask
 from omtool.core.datamodel import Snapshot
 
@@ -11,10 +17,10 @@ class VisualTask:
         self,
         task: AbstractTask,
         part=slice(0, None),
-        handlers: dict = None,
+        handlers: list[Callable[[Tuple[np.ndarray, np.ndarray]], None]] = None,
     ):
         if handlers is None:
-            handlers = {}
+            handlers = []
 
         self.task = task
         self.part = part
@@ -24,4 +30,7 @@ class VisualTask:
         """
         Launch the task and return its value
         """
-        return self.task.run(snapshot[self.part])
+        data = self.task.run(snapshot[self.part])
+
+        for handler in self.handlers:
+            handler(data)
