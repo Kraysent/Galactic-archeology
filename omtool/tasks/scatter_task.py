@@ -1,29 +1,24 @@
-'''
+"""
 Task that computes arbitrary expression against another arbitrary expression and
 plots the points in the corresponding way.
-'''
+"""
 from typing import Tuple
 
 import numpy as np
 from amuse.lab import ScalarQuantity
 from py_expression_eval import Parser
-from omtool.core.analysis.tasks import AbstractTask
-from omtool.core.analysis.tasks.abstract_task import filter_barion_particles, get_sliced_parameters
+from omtool.tasks import AbstractTask, filter_barion_particles, get_sliced_parameters
 from omtool.core.datamodel import Snapshot, profiler
 
 
 class ScatterTask(AbstractTask):
-    '''
+    """
     Task that computes arbitrary expression against another arbitrary expression and
     plots the points in the corresponding way.
-    '''
+    """
 
     def __init__(
-        self,
-        x_expr: str,
-        y_expr: str,
-        x_unit: ScalarQuantity,
-        y_unit: ScalarQuantity
+        self, x_expr: str, y_expr: str, x_unit: ScalarQuantity, y_unit: ScalarQuantity
     ):
         parser = Parser()
 
@@ -32,7 +27,7 @@ class ScatterTask(AbstractTask):
         self.x_unit = x_unit
         self.y_unit = y_unit
 
-    @profiler('Scatter task')
+    @profiler("Scatter task")
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         particles = filter_barion_particles(snapshot)
         params = get_sliced_parameters(particles)

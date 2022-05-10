@@ -1,27 +1,26 @@
-'''
+"""
 Task that computes radial velocity distribution.
-'''
+"""
 from typing import Tuple
 
 import numpy as np
 from amuse.lab import units, ScalarQuantity
-from omtool.core.analysis.tasks import AbstractTask
-from omtool.core.analysis.tasks.abstract_task import filter_barion_particles
+from omtool.tasks import AbstractTask, filter_barion_particles
 from omtool.core.analysis.utils import math, particle_centers
 from omtool.core.datamodel import Snapshot, profiler
 
 
 class VelocityProfileTask(AbstractTask):
-    '''
+    """
     Task that computes radial velocity distribution.
-    '''
+    """
 
     def __init__(
         self,
-        center_type: str = 'mass',
+        center_type: str = "mass",
         resolution: int = 1000,
         r_unit: ScalarQuantity = 1 | units.kpc,
-        v_unit: ScalarQuantity = 1 | units.kms
+        v_unit: ScalarQuantity = 1 | units.kms,
     ) -> None:
         super().__init__()
         self.center_func = particle_centers.get(center_type)
@@ -30,7 +29,7 @@ class VelocityProfileTask(AbstractTask):
         self.r_unit = r_unit
         self.v_unit = v_unit
 
-    @profiler('Velocity profile task')
+    @profiler("Velocity profile task")
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         center = self.center_func(snapshot.particles)
         center_vel = self.center_vel_func(snapshot.particles)
@@ -42,7 +41,9 @@ class VelocityProfileTask(AbstractTask):
         radii, velocities = math.sort_with(radii, velocities)
 
         number_of_chunks = (len(radii) // self.resolution) * self.resolution
-        radii = radii[0:number_of_chunks:self.resolution]
-        velocities = velocities[0:number_of_chunks].reshape((-1, self.resolution)).mean(axis=1)
+        radii = radii[0 : number_of_chunks : self.resolution]
+        velocities = (
+            velocities[0:number_of_chunks].reshape((-1, self.resolution)).mean(axis=1)
+        )
 
         return (radii / self.r_unit, velocities / self.v_unit)

@@ -1,11 +1,11 @@
-'''
+"""
 Task that computes bound mass of the system.
-'''
+"""
 from typing import Tuple
 
 import numpy as np
 from amuse.lab import units, ScalarQuantity
-from omtool.core.analysis.tasks import AbstractTimeTask
+from omtool.tasks import AbstractTimeTask
 from omtool.core.analysis.utils import math, pyfalcon_analizer
 from omtool.core.datamodel import Snapshot
 from omtool.core.datamodel import profiler
@@ -16,29 +16,29 @@ def _get_bound_particles(particles):
     velocities = math.get_lengths(
         particles.velocity - particles.center_of_mass_velocity()
     )
-    full_specific_energies = potentials + velocities ** 2 / 2
+    full_specific_energies = potentials + velocities**2 / 2
 
     return particles[full_specific_energies < (0 | units.J / units.MSun)]
 
 
 class BoundMassTask(AbstractTimeTask):
-    '''
+    """
     Task that computes bound mass of the system.
-    '''
+    """
 
     def __init__(
         self,
         time_unit: ScalarQuantity = 1 | units.Myr,
         mass_unit: ScalarQuantity = 1 | units.MSun,
         number_of_iterations: int = 3,
-        change_threshold: float = 0.05
+        change_threshold: float = 0.05,
     ):
         self.number_of_iterations = number_of_iterations
         self.change_threshold = change_threshold
 
         super().__init__(time_unit=time_unit, value_unit=mass_unit)
 
-    @profiler('Bound mass task')
+    @profiler("Bound mass task")
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         bound_particles = snapshot.particles
         curr_len = len(bound_particles)

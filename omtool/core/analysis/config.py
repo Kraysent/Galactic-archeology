@@ -5,7 +5,7 @@ from typing import Any, List
 
 import yaml
 from omtool import io_service, visualizer
-from omtool.core.analysis.tasks import get_task
+from omtool.tasks import get_task
 from omtool.core.datamodel import required_get, yaml_loader
 
 
