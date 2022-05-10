@@ -12,8 +12,7 @@ from omtool import visualizer
 from omtool import json_logger as logger
 from omtool import io_service
 from omtool.core.analysis.config import AnalysisConfig
-from omtool.core.analysis.visual.task_manager import TaskManager
-from omtool.core.analysis.visual.visual_task import VisualTask
+from omtool.core.analysis.visual import VisualTask
 from omtool.core.datamodel import Snapshot
 from omtool.core.datamodel.task_profiler import profiler
 
@@ -53,12 +52,10 @@ def analize(config: AnalysisConfig):
     else:
         visualizer_service = None
 
-    task_manager = TaskManager()
-
-    for i, task in enumerate(config.tasks):
-        visual_task = VisualTask(i, task.abstract_task, task.slice, task.handlers)
-
-        task_manager.add_tasks(visual_task)
+    tasks = [
+        VisualTask(task.abstract_task, task.slice, task.handlers)
+        for task in config.tasks
+    ]
 
     number_of_snapshots = input_service.get_number_of_snapshots()
     plot_indexes = range(number_of_snapshots)[config.plot_interval]
@@ -67,7 +64,7 @@ def analize(config: AnalysisConfig):
     @profiler("Analysis stage")
     def loop_analysis_stage(snapshot: Snapshot, iteration: int):
         vtask: VisualTask
-        for vtask in task_manager.get_tasks():
+        for vtask in tasks:
             data = vtask.run(snapshot)
 
             if iteration in plot_indexes:
