@@ -6,7 +6,7 @@ from typing import Tuple
 
 import numpy as np
 from amuse.lab import Particles, units, ScalarQuantity
-from omtool.core.datamodel import Snapshot
+from omtool.core.datamodel.snapshot import Snapshot
 
 
 def get_sliced_parameters(particles: Particles) -> dict:

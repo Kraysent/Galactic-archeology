@@ -9,8 +9,7 @@ from amuse.lab import units
 
 from omtool import io_service, visualizer
 from omtool import json_logger as logger
-from omtool.core.analysis.visual import VisualTask
-from omtool.core.datamodel import Snapshot, profiler
+from omtool.core.datamodel import HandlerTask, Snapshot, profiler
 from omtool.core.integration.integrators import get_integrator
 from omtool.core.integration.config import IntegrationConfig
 from omtool.handlers import logger_handler
@@ -38,7 +37,7 @@ def integrate(config: IntegrationConfig):
         handlers["visualizer"] = visualizer_service.plot
 
     tasks = [
-        VisualTask(
+        HandlerTask(
             task.abstract_task,
             task.slice,
             [

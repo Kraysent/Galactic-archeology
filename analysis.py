@@ -6,13 +6,10 @@ import time
 
 from amuse.lab import units, ScalarQuantity
 
-from omtool import visualizer
+from omtool import visualizer, io_service
 from omtool import json_logger as logger
-from omtool import io_service
 from omtool.core.analysis.config import AnalysisConfig
-from omtool.core.analysis.visual import VisualTask
-from omtool.core.datamodel import Snapshot
-from omtool.core.datamodel.task_profiler import profiler
+from omtool.core.datamodel import HandlerTask, Snapshot, profiler
 from omtool.handlers import logger_handler
 
 
@@ -33,7 +30,7 @@ def analize(config: AnalysisConfig):
         handlers["visualizer"] = visualizer_service.plot
 
     tasks = [
-        VisualTask(
+        HandlerTask(
             task.abstract_task,
             task.slice,
             [

@@ -5,9 +5,13 @@ from typing import Tuple
 
 import numpy as np
 from amuse.lab import units, ScalarQuantity
-from omtool.tasks import AbstractTask, filter_barion_particles
-from omtool.core.analysis.utils import math, particle_centers
-from omtool.core.datamodel import Snapshot, profiler
+from omtool.core.utils import math, particle_centers
+from omtool.core.datamodel import (
+    AbstractTask,
+    filter_barion_particles,
+    Snapshot,
+    profiler,
+)
 
 
 class VelocityProfileTask(AbstractTask):

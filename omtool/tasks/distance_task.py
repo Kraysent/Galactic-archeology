@@ -6,9 +6,8 @@ from typing import Tuple, Union
 
 import numpy as np
 from amuse.lab import units, VectorQuantity, ScalarQuantity
-from omtool.tasks import AbstractTimeTask
-from omtool.core.analysis.utils import particle_centers
-from omtool.core.datamodel import Snapshot, profiler
+from omtool.core.datamodel import AbstractTimeTask, Snapshot, profiler
+from omtool.core.utils import particle_centers
 
 
 class DistanceTask(AbstractTimeTask):

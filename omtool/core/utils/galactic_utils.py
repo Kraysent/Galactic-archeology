@@ -14,14 +14,14 @@ def get_galactic_basis(snapshot: Snapshot):
     r = r - cm
     v = v - cm_vel
     L = m[:, np.newaxis] * np.cross(v, r)
-    e1 = np.sum(L, axis = 0)
-    e1 = e1 / (e1 ** 2).sum() ** 0.5
-    
+    e1 = np.sum(L, axis=0)
+    e1 = e1 / (e1**2).sum() ** 0.5
+
     e2 = np.empty(e1.shape)
     e2[0] = 1
     e2[1] = 0
-    e2[2] = - e2[0] * e1[0] / e1[2] - e2[1] * e1[1] / e1[2] 
-    e2 = e2 / (e2 ** 2).sum() ** 0.5
+    e2[2] = -e2[0] * e1[0] / e1[2] - e2[1] * e1[1] / e1[2]
+    e2 = e2 / (e2**2).sum() ** 0.5
 
     e3 = np.cross(e1, e2)
 

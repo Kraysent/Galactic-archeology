@@ -4,11 +4,11 @@ Struct that holds abstract_task, its part and handlers.
 from typing import Callable, Tuple
 
 import numpy as np
-from omtool.tasks import AbstractTask
-from omtool.core.datamodel import Snapshot
+from omtool.core.datamodel.abstract_task import AbstractTask
+from omtool.core.datamodel.snapshot import Snapshot
 
 
-class VisualTask:
+class HandlerTask:
     """
     Struct that holds abstract_task, its part and handlers.
     """

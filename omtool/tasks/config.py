@@ -1,6 +1,6 @@
-from omtool.tasks.abstract_task import AbstractTask
+from omtool.core.datamodel import AbstractTask
 from omtool.tasks.get_task import get_task
-from omtool.core.datamodel import required_get
+from omtool.core.utils import required_get
 
 class Config:
     """

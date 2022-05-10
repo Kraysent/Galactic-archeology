@@ -6,8 +6,7 @@ from typing import List
 
 import yaml
 from amuse.lab import units, VectorQuantity, ScalarQuantity
-from omtool.core.datamodel import yaml_loader
-from omtool.core.datamodel.config import required_get
+from omtool.core.utils import yaml_loader, required_get
 
 
 class Type(Enum):

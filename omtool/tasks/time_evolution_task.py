@@ -6,8 +6,12 @@ from typing import Tuple
 import numpy as np
 from amuse.lab import ScalarQuantity, VectorQuantity
 from py_expression_eval import Parser
-from omtool.tasks import AbstractTask, get_sliced_parameters
-from omtool.core.datamodel import Snapshot, profiler
+from omtool.core.datamodel import (
+    AbstractTask,
+    get_sliced_parameters,
+    Snapshot,
+    profiler,
+)
 
 
 class TimeEvolutionTask(AbstractTask):

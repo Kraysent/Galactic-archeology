@@ -1,4 +1,4 @@
-from omtool.tasks.abstract_task import AbstractTask
+from omtool.core.datamodel import AbstractTask
 from omtool.tasks.bound_mass_task import BoundMassTask
 from omtool.tasks.density_profile_task import DensityProfileTask
 from omtool.tasks.distance_task import DistanceTask

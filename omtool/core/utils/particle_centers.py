@@ -3,7 +3,7 @@ from typing import Callable
 import numpy as np
 from amuse.lab import Particles, VectorQuantity, units
 from omtool import json_logger as logger
-from omtool.core.analysis.utils import pyfalcon_analizer
+from omtool.core.utils import pyfalcon_analizer
 
 
 def center_of_mass(particles: Particles) -> VectorQuantity:
@@ -29,9 +29,9 @@ def potential_center(particles: Particles) -> VectorQuantity:
     potentials = pyfalcon_analizer.get_potentials(particles, eps)
     perm = potentials.argsort()
     positions = particles.position[perm]
-    positions = positions[:int(len(positions) * top_percent)]
+    positions = positions[: int(len(positions) * top_percent)]
     masses = particles.mass[perm]
-    masses = masses[:int(len(masses) * top_percent)]
+    masses = masses[: int(len(masses) * top_percent)]
 
     return np.sum(positions * masses[:, np.newaxis], axis=0) / np.sum(masses)
 
@@ -43,36 +43,36 @@ def potential_center_velocity(particles: Particles) -> VectorQuantity:
     potentials = pyfalcon_analizer.get_potentials(particles, eps)
     perm = potentials.argsort()
     velocities = particles.velocity[perm]
-    velocities = velocities[:int(len(velocities) * top_percent)]
+    velocities = velocities[: int(len(velocities) * top_percent)]
     masses = particles.mass[perm]
-    masses = masses[:int(len(masses) * top_percent)]
+    masses = masses[: int(len(masses) * top_percent)]
 
     return np.sum(velocities * masses[:, np.newaxis], axis=0) / np.sum(masses)
 
 
 def get(func_name: str) -> Callable[[Particles], VectorQuantity]:
-    names = {
-        'mass': center_of_mass,
-        'origin': at_origin,
-        'potential': potential_center
-    }
+    names = {"mass": center_of_mass, "origin": at_origin, "potential": potential_center}
 
     if not func_name in names:
-        logger.warning(f'Unknown center name "{func_name}", falling back to center of mass.')
-        func_name = 'mass'
+        logger.warning(
+            f'Unknown center name "{func_name}", falling back to center of mass.'
+        )
+        func_name = "mass"
 
     return names[func_name]
 
 
 def get_velocity(func_name: str) -> Callable[[Particles], VectorQuantity]:
     names = {
-        'mass': center_of_mass_velocity,
-        'origin': at_origin_velocity,
-        'potential': potential_center_velocity
+        "mass": center_of_mass_velocity,
+        "origin": at_origin_velocity,
+        "potential": potential_center_velocity,
     }
 
     if not func_name in names:
-        logger.warning(f'Unknown center velocity name "{func_name}", falling back to center of mass velocity.')
-        func_name = 'mass'
+        logger.warning(
+            f'Unknown center velocity name "{func_name}", falling back to center of mass velocity.'
+        )
+        func_name = "mass"
 
     return names[func_name]

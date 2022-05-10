@@ -3,10 +3,7 @@ from typing import Tuple
 import numpy as np
 from amuse.lab import units
 from numpy import linalg
-from omtool.tasks import AbstractTask
-from omtool.core.datamodel import Snapshot
-from omtool.core.datamodel import profiler
-
+from omtool.core.datamodel import AbstractTask, Snapshot, profiler
 
 # Not implemented correctly yet
 class EccentricityTask(AbstractTask):

@@ -3,9 +3,10 @@ Confuration objects' description for integration module.
 """
 from typing import List
 import yaml
+
 from amuse.lab import ScalarQuantity
 from omtool import io_service, tasks
-from omtool.core.datamodel import required_get, yaml_loader
+from omtool.core.utils import required_get, yaml_loader
 from omtool import visualizer
 
 

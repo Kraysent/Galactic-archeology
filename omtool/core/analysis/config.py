@@ -6,7 +6,7 @@ from typing import List
 import yaml
 from omtool import io_service, visualizer
 from omtool import tasks
-from omtool.core.datamodel import required_get, yaml_loader
+from omtool.core.utils import required_get, yaml_loader
 
 
 class AnalysisConfig:

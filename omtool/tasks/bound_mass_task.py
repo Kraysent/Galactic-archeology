@@ -5,10 +5,8 @@ from typing import Tuple
 
 import numpy as np
 from amuse.lab import units, ScalarQuantity
-from omtool.tasks import AbstractTimeTask
-from omtool.core.analysis.utils import math, pyfalcon_analizer
-from omtool.core.datamodel import Snapshot
-from omtool.core.datamodel import profiler
+from omtool.core.datamodel import AbstractTimeTask, Snapshot, profiler
+from omtool.core.utils import math, pyfalcon_analizer
 
 
 def _get_bound_particles(particles):
