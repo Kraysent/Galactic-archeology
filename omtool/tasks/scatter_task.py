@@ -23,18 +23,31 @@ class ScatterTask(AbstractTask):
     """
 
     def __init__(
-        self, x_expr: str, y_expr: str, x_unit: ScalarQuantity, y_unit: ScalarQuantity
+        self,
+        x_expr: str,
+        y_expr: str,
+        x_unit: ScalarQuantity,
+        y_unit: ScalarQuantity,
+        filter_barion: bool = True,
     ):
         parser = Parser()
+
+        if x_expr == "" or y_expr == "":
+            raise RuntimeError("Expression in scatter task was empty.")
 
         self.x_expr = parser.parse(x_expr)
         self.y_expr = parser.parse(y_expr)
         self.x_unit = x_unit
         self.y_unit = y_unit
+        self.filter_barion = filter_barion
 
     @profiler("Scatter task")
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
-        particles = filter_barion_particles(snapshot)
+        particles = snapshot.particles
+
+        if self.filter_barion:
+            particles = filter_barion_particles(snapshot)
+
         params = get_sliced_parameters(particles)
 
         x_value = self.x_expr.evaluate(params)

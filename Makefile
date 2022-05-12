@@ -8,5 +8,5 @@ build-docs-pdf:
 	cd docs && make latexpdf
 
 clean:
-	rm -rf __pycache__ build *.egg-info
+	rm -rf __pycache__ build *.egg-info .mypy_cache
 	cd docs && make clean
