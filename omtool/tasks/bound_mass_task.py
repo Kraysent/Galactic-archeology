@@ -4,16 +4,15 @@ Task that computes bound mass of the system.
 from typing import Tuple
 
 import numpy as np
-from amuse.lab import units, ScalarQuantity
+from amuse.lab import ScalarQuantity, units
+
 from omtool.core.datamodel import AbstractTimeTask, Snapshot, profiler
 from omtool.core.utils import math, pyfalcon_analizer
 
 
 def _get_bound_particles(particles):
     potentials = pyfalcon_analizer.get_potentials(particles, 0.2 | units.kpc)
-    velocities = math.get_lengths(
-        particles.velocity - particles.center_of_mass_velocity()
-    )
+    velocities = math.get_lengths(particles.velocity - particles.center_of_mass_velocity())
     full_specific_energies = potentials + velocities**2 / 2
 
     return particles[full_specific_energies < (0 | units.J / units.MSun)]
@@ -41,7 +40,7 @@ class BoundMassTask(AbstractTimeTask):
         bound_particles = snapshot.particles
         curr_len = len(bound_particles)
         prev_len = 0
-        change = 1
+        change = 1.0
         i = 0
 
         while change >= self.change_threshold:

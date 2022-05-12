@@ -3,11 +3,13 @@ Analysis module for OMTool. It is used for the data
 analysis of existing models and the export of their parameters.
 """
 import time
+from typing import Callable
 
-from amuse.lab import units, ScalarQuantity
+from amuse.lab import ScalarQuantity, units
 
-from omtool import visualizer, io_service
+from omtool import io_service
 from omtool import json_logger as logger
+from omtool import visualizer
 from omtool.core.analysis.config import AnalysisConfig
 from omtool.core.datamodel import HandlerTask, Snapshot, profiler
 from omtool.handlers import logger_handler
@@ -20,28 +22,28 @@ def analize(config: AnalysisConfig):
     """
     input_service = io_service.InputService(config.input_file)
 
-    handlers = {}
+    handlers: dict[str, Callable] = {}
     handlers["logging"] = logger_handler
 
     visualizer_service = None
 
-    if not config.visualizer is None:
+    if config.visualizer is not None:
         visualizer_service = visualizer.VisualizerService(config.visualizer)
         handlers["visualizer"] = visualizer_service.plot
 
-    tasks = [
-        HandlerTask(
-            task.abstract_task,
-            task.slice,
-            [
-                lambda data, key=key, handler_params=value: handlers[key](
-                    data, handler_params
-                )
-                for key, value in task.handlers.items()
-            ],
-        )
-        for task in config.tasks
-    ]
+    tasks = []
+
+    for task in config.tasks:
+        curr_task = HandlerTask(task.abstract_task, task.slice)
+
+        for handler_name, handler_params in task.handlers.items():
+
+            def handler(data, name=handler_name, params=handler_params):
+                return handlers[name](data, params)
+
+            curr_task.handlers.append(handler)
+
+        tasks.append(curr_task)
 
     @profiler("Analysis stage")
     def loop_analysis_stage(snapshot: Snapshot):
@@ -50,18 +52,16 @@ def analize(config: AnalysisConfig):
 
     @profiler("Saving stage")
     def loop_saving_stage(iteration: int, timestamp: ScalarQuantity):
-        if not visualizer_service is None:
-            visualizer_service.save(
-                {"i": iteration, "time": timestamp.value_in(units.Myr)}
-            )
+        if visualizer_service is not None:
+            visualizer_service.save({"i": iteration, "time": timestamp.value_in(units.Myr)})
 
     logger.info("Analysis started")
 
     snapshots = input_service.get_snapshot_generator()
 
-    for (i, snapshot) in enumerate(snapshots):
+    for (i, snapshot_tuple) in enumerate(snapshots):
         # convert iterator element to actual snapshot object
-        snapshot = Snapshot(*snapshot)
+        snapshot = Snapshot(*snapshot_tuple)
         start_comp = time.time()
         loop_analysis_stage(snapshot)
         start_save = time.time()

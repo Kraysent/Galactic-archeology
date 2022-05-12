@@ -3,6 +3,7 @@ import unittest
 import numpy as np
 from amuse.lab import Particles, units
 from amuse.units.core import IncompatibleUnitsException
+
 from omtool.core.datamodel import Snapshot
 from omtool.tasks import ScatterTask
 

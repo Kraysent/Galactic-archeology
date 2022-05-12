@@ -7,11 +7,12 @@ from typing import Tuple
 import numpy as np
 from amuse.lab import ScalarQuantity
 from py_expression_eval import Parser
+
 from omtool.core.datamodel import (
     AbstractTask,
+    Snapshot,
     filter_barion_particles,
     get_sliced_parameters,
-    Snapshot,
     profiler,
 )
 

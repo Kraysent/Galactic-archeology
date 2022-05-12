@@ -2,7 +2,6 @@ from omtool.core.datamodel import AbstractTask
 from omtool.tasks.bound_mass_task import BoundMassTask
 from omtool.tasks.density_profile_task import DensityProfileTask
 from omtool.tasks.distance_task import DistanceTask
-from omtool.tasks.eccentricity_task import EccentricityTask
 from omtool.tasks.mass_profile_task import MassProfileTask
 from omtool.tasks.potential_task import PotentialTask
 from omtool.tasks.scatter_task import ScatterTask
@@ -21,7 +20,6 @@ def get_task(task_name: str, args: dict) -> AbstractTask:
         "VelocityProfileTask": VelocityProfileTask,
         "MassProfileTask": MassProfileTask,
         "DensityProfileTask": DensityProfileTask,
-        "EccentricityTask": EccentricityTask,
         "PotentialTask": PotentialTask,
         "BoundMassTask": BoundMassTask,
     }

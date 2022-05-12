@@ -4,14 +4,15 @@ Task that computes radial velocity distribution.
 from typing import Tuple
 
 import numpy as np
-from amuse.lab import units, ScalarQuantity
-from omtool.core.utils import math, particle_centers
+from amuse.lab import ScalarQuantity, units
+
 from omtool.core.datamodel import (
     AbstractTask,
-    filter_barion_particles,
     Snapshot,
+    filter_barion_particles,
     profiler,
 )
+from omtool.core.utils import math, particle_centers
 
 
 class VelocityProfileTask(AbstractTask):
@@ -46,8 +47,6 @@ class VelocityProfileTask(AbstractTask):
 
         number_of_chunks = (len(radii) // self.resolution) * self.resolution
         radii = radii[0 : number_of_chunks : self.resolution]
-        velocities = (
-            velocities[0:number_of_chunks].reshape((-1, self.resolution)).mean(axis=1)
-        )
+        velocities = velocities[0:number_of_chunks].reshape((-1, self.resolution)).mean(axis=1)
 
         return (radii / self.r_unit, velocities / self.v_unit)

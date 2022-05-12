@@ -5,7 +5,8 @@ Task that computes distance between point and some specified position.
 from typing import Tuple, Union
 
 import numpy as np
-from amuse.lab import units, VectorQuantity, ScalarQuantity
+from amuse.lab import ScalarQuantity, VectorQuantity, units
+
 from omtool.core.datamodel import AbstractTimeTask, Snapshot, profiler
 from omtool.core.utils import particle_centers
 
@@ -41,6 +42,7 @@ class DistanceTask(AbstractTimeTask):
             end_pos = snapshot.particles[self.relative_to].position
         else:
             end_pos = self.relative_to(snapshot.particles)
+
         end_pos += self.end_coords
 
         dist = (end_pos - start_pos).length()

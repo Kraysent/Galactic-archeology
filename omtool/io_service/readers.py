@@ -1,6 +1,6 @@
-'''
+"""
 Functions to read different types of files and load them into snapshots.
-'''
+"""
 from typing import Iterator, List, Tuple
 
 import numpy as np
@@ -10,26 +10,29 @@ from astropy.io import fits
 from astropy.io.fits.hdu.table import BinTableHDU
 
 fields = {
-    'x': units.kpc, 'y': units.kpc, 'z': units.kpc,
-    'vx': units.kms, 'vy': units.kms, 'vz': units.kms,
-    'mass': units.MSun,
-    'is_barion': None
+    "x": units.kpc,
+    "y": units.kpc,
+    "z": units.kpc,
+    "vx": units.kms,
+    "vy": units.kms,
+    "vz": units.kms,
+    "mass": units.MSun,
+    "is_barion": None,
 }
 
 
 def from_logged_csvs(
-    filenames: List[str], delimiter: str = ','
+    filenames: List[str], delimiter: str = ","
 ) -> Iterator[Tuple[Particles, ScalarQuantity]]:
-    '''
+    """
     Loads snapshots from csv file in the following form: T,x,y,z,vx,vy,vz
 
     Implementation is not lazy, iterators exist only for the convinience.
-    '''
+    """
     tables = []
 
     for filename in filenames:
-        tables.append(pandas.read_csv(
-            filename, delimiter=delimiter, index_col=False))
+        tables.append(pandas.read_csv(filename, delimiter=delimiter, index_col=False))
 
     tables = [table.iterrows() for table in tables]
 
@@ -41,27 +44,27 @@ def from_logged_csvs(
         for row in rows:
             particle = Particle()
             # probably need to use fields dict
-            particle.position = [row['x'], row['y'], row['z']] | units.kpc
-            particle.velocity = [row['vx'], row['vy'], row['vz']] | units.kms
-            particle.mass = row['m'] | units.MSun
+            particle.position = [row["x"], row["y"], row["z"]] | units.kpc
+            particle.velocity = [row["vx"], row["vy"], row["vz"]] | units.kms
+            particle.mass = row["m"] | units.MSun
             particle.is_barion = 1
 
             particles.add_particle(particle)
 
-        yield particles, rows[0]['T'] | units.Myr
+        yield particles, rows[0]["T"] | units.Myr
 
 
 def from_fits(filename: str) -> Iterator[Tuple[Particles, ScalarQuantity]]:
-    '''
+    """
     Loads snapshots from the FITS file where each HDU stores binary table with one timestamp.
-    '''
+    """
     hdul = fits.open(filename, memmap=True)
 
     for frame in range(len(hdul) - 1):
         table: BinTableHDU = hdul[frame + 1]
         number_of_particles = len(table.data[list(fields.keys())[0]])
 
-        timestamp = table.header['TIME'] | units.Myr
+        timestamp = table.header["TIME"] | units.Myr
         particles = Particles(number_of_particles)
 
         for (key, val) in fields.items():
@@ -75,9 +78,9 @@ def from_fits(filename: str) -> Iterator[Tuple[Particles, ScalarQuantity]]:
 
 
 def fits_file_info(filename: str) -> int:
-    '''
+    """
     Returns number of snapshots in the FITS file.
-    '''
+    """
     hdul = fits.open(filename, memmap=True)
 
     number_of_snaps = len(hdul) - 1

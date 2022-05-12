@@ -1,3 +1,22 @@
+check-isort:
+	isort --check-only --profile black .
+
+check-flake8:
+	flake8 --max-line-length=100 --ignore=E203 --per-file-ignores="__init__.py:F401" .
+
+check-mypy:
+	mypy --ignore-missing-imports .
+
+check-style: check-isort check-flake8 check-mypy
+
+fix-isort:
+	isort --profile black .
+
+fix-black:
+	black --line-length 100 .
+
+fix-style: fix-isort fix-black
+
 build-pip:
 	python3 -m pip install . --upgrade
 

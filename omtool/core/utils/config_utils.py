@@ -39,21 +39,19 @@ def unit_constructor(
     return data[0] | str_to_unit(data[1])
 
 
-def env_constructor(loader: yaml.SafeLoader, node: yaml.nodes.Node) -> str:
+def env_constructor(loader: yaml.SafeLoader, node: yaml.nodes.ScalarNode) -> str:
     """
     Processes the !env tag
     """
     data = loader.construct_scalar(node)
 
     if not isinstance(data, str):
-        raise RuntimeError(
-            f"Tried to paste environment variable into not-string: {data}"
-        )
+        raise RuntimeError(f"Tried to paste environment variable into not-string: {data}")
 
     return data.format(**os.environ)
 
 
-def yaml_loader() -> yaml.Loader:
+def yaml_loader() -> yaml.SafeLoader:
     """
     Loader that processes all the tags.
     """

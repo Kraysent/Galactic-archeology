@@ -4,8 +4,8 @@ Configuration classes for analysis tool.
 from typing import List
 
 import yaml
-from omtool import io_service, visualizer
-from omtool import tasks
+
+from omtool import io_service, tasks, visualizer
 from omtool.core.utils import required_get, yaml_loader
 
 
@@ -39,7 +39,7 @@ class AnalysisConfig:
         res.tasks = [tasks.Config.from_dict(task) for task in data.get("tasks", [])]
 
         res.visualizer = data.get("visualizer", None)
-        if not res.visualizer is None:
+        if res.visualizer is not None:
             res.visualizer = visualizer.Config.from_dict(res.visualizer)
 
         res.input_file = io_service.Config.from_dict(required_get(data, "input_file"))

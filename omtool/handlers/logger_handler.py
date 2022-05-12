@@ -1,11 +1,11 @@
-from typing import Tuple
+from typing import Optional, Tuple
 
 import numpy as np
 
 import omtool.json_logger as logger
 
 
-def logger_handler(data: Tuple[np.ndarray, np.ndarray], parameters: dict = None):
+def logger_handler(data: Tuple[np.ndarray, np.ndarray], parameters: Optional[dict] = None):
     """
     Handler that logs ndarrays to the INFO level.
     """

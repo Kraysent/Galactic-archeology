@@ -2,8 +2,10 @@
 Common methods and base class for all the configurations.
 """
 import yaml
+
 from omtool import json_logger as logger
 from omtool.core.utils import yaml_loader
+
 
 class BaseConfig:
     """

@@ -1,5 +1,6 @@
 import numpy as np
 from amuse.lab import units
+
 from omtool.core.datamodel import Snapshot
 
 

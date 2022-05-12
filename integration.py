@@ -7,11 +7,12 @@ from pathlib import Path
 
 from amuse.lab import units
 
-from omtool import io_service, visualizer
+from omtool import io_service
 from omtool import json_logger as logger
+from omtool import visualizer
 from omtool.core.datamodel import HandlerTask, Snapshot, profiler
-from omtool.core.integration.integrators import get_integrator
 from omtool.core.integration.config import IntegrationConfig
+from omtool.core.integration.integrators import get_integrator
 from omtool.handlers import logger_handler
 
 
@@ -32,23 +33,23 @@ def integrate(config: IntegrationConfig):
 
     visualizer_service = None
 
-    if not config.visualizer is None:
+    if config.visualizer is not None:
         visualizer_service = visualizer.VisualizerService(config.visualizer)
         handlers["visualizer"] = visualizer_service.plot
 
-    tasks = [
-        HandlerTask(
-            task.abstract_task,
-            task.slice,
-            [
-                lambda data, key=key, handler_params=value: handlers[key](
-                    data, handler_params
-                )
-                for key, value in task.handlers.items()
-            ],
-        )
-        for task in config.tasks
-    ]
+    tasks = []
+
+    for task in config.tasks:
+        curr_task = HandlerTask(task.abstract_task, task.slice)
+
+        for handler_name, handler_params in task.handlers.items():
+
+            def handler(data, name=handler_name, params=handler_params):
+                return handlers[name](data, params)
+
+            curr_task.handlers.append(handler)
+
+        tasks.append(curr_task)
 
     if config.overwrite:
         if Path(config.output_file).is_file():
@@ -56,7 +57,8 @@ def integrate(config: IntegrationConfig):
     else:
         if Path(config.output_file).is_file():
             raise Exception(
-                f'Output file ({config.output_file}) exists and "overwrite" option in integration config file is false (default)'
+                f'Output file ({config.output_file}) exists and "overwrite" '
+                "option in integration config file is false (default)"
             )
 
     @profiler("Integration stage")
@@ -70,7 +72,7 @@ def integrate(config: IntegrationConfig):
         for vtask in tasks:
             vtask.run(snapshot)
 
-        if not visualizer_service is None:
+        if visualizer_service is not None:
             visualizer_service.save(
                 {"i": iteration, "time": snapshot.timestamp.value_in(units.Myr)}
             )

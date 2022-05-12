@@ -1,15 +1,16 @@
 """
 Task that computes evolution of arbitrary expression over time.
 """
-from typing import Tuple
+from typing import Callable, Tuple
 
 import numpy as np
 from amuse.lab import ScalarQuantity, VectorQuantity
 from py_expression_eval import Parser
+
 from omtool.core.datamodel import (
     AbstractTask,
-    get_sliced_parameters,
     Snapshot,
+    get_sliced_parameters,
     profiler,
 )
 
@@ -19,7 +20,11 @@ class TimeEvolutionTask(AbstractTask):
     Task that computes evolution of arbitrary expression over time.
     """
 
-    functions = {"sum": np.sum, "mean": np.mean, "none": lambda x: x}
+    functions: dict[str, Callable[[VectorQuantity], ScalarQuantity]] = {
+        "sum": np.sum,
+        "mean": np.mean,
+        "none": lambda x: x,
+    }
 
     def __init__(
         self,

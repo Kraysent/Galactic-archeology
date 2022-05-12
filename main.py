@@ -1,28 +1,29 @@
-'''
+"""
 Entry point of the program.
-'''
+"""
 import argparse
 import atexit
 
-from omtool import json_logger as logger
 from analysis import analize
 from creator import create
 from integration import integrate
+from omtool import json_logger as logger
 from omtool.core.analysis import AnalysisConfig
 from omtool.core.creation import CreationConfig
 from omtool.core.datamodel import BaseConfig, task_profiler
 from omtool.core.integration import IntegrationConfig
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        'mode',
-        help = 'Mode of the program to run',
-        choices = ['create', 'integrate', 'analize', 'test'])
+        "mode",
+        help="Mode of the program to run",
+        choices=["create", "integrate", "analize", "test"],
+    )
     parser.add_argument(
-        'inputparams',
-        help = 'input parameters for particular mode (for example, path to config file)',
-        nargs = argparse.REMAINDER
+        "inputparams",
+        help="input parameters for particular mode (for example, path to config file)",
+        nargs=argparse.REMAINDER,
     )
 
     args = parser.parse_args()
@@ -32,14 +33,14 @@ if __name__ == '__main__':
         res = task_profiler.dump_times()
 
         for key, val in res.items():
-            logger.info(f'{key} worked {val:.02f} seconds on average')
+            logger.info(f"{key} worked {val:.02f} seconds on average")
 
     baseConfig = BaseConfig.from_yaml(args.inputparams[0])
     logger.initialize(baseConfig.logger)
 
-    if args.mode == 'create':
+    if args.mode == "create":
         create(CreationConfig.from_yaml(args.inputparams[0]))
-    elif args.mode == 'integrate':
+    elif args.mode == "integrate":
         integrate(IntegrationConfig.from_yaml(args.inputparams[0]))
-    elif args.mode == 'analize':
+    elif args.mode == "analize":
         analize(AnalysisConfig.from_yaml(args.inputparams[0]))
