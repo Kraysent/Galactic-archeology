@@ -1,3 +1,5 @@
+PYTHON := python3
+
 check-isort:
 	isort --check-only --profile black .
 
@@ -9,6 +11,7 @@ check-mypy:
 
 check-style: check-isort check-flake8 check-mypy
 
+
 fix-isort:
 	isort --profile black .
 
@@ -17,14 +20,19 @@ fix-black:
 
 fix-style: fix-isort fix-black
 
+
 build-pip:
-	python3 -m pip install . --upgrade
+	$(PYTHON) -m pip install . --upgrade
 
 build-docs-html:
 	cd docs && make html
 
 build-docs-pdf:
 	cd docs && make latexpdf
+
+run-tests:
+	$(PYTHON) -m unittest -v tests.tasks
+
 
 clean:
 	rm -rf __pycache__ build *.egg-info .mypy_cache
