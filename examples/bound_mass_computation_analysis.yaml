@@ -14,7 +14,7 @@ tasks:
     actions_before:
       - type: slice
         part: [1000001, 1500002]
-    handlers:
+    actions_after:
       - type: logging
         print_last: True
         id: bound_mass_data

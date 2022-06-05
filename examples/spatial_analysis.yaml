@@ -47,7 +47,7 @@ tasks:
     actions_before:
       - type: slice
         part: *host_slice
-    handlers:
+    actions_after:
       - type: visualizer
         id: zy_plane
         is_density_plot: True
@@ -63,7 +63,7 @@ tasks:
     actions_before:
       - type: slice
         part: *sat_slice
-    handlers:
+    actions_after:
       - type: visualizer
         id: zy_plane
         is_density_plot: True
@@ -79,7 +79,7 @@ tasks:
     actions_before:
       - type: slice
         part: [0, 1]
-    handlers:
+    actions_after:
       - type: visualizer
         id: zy_plane
         linestyle: solid
@@ -95,7 +95,7 @@ tasks:
     actions_before:
       - type: slice
         part: [1000001, 1000002]
-    handlers:
+    actions_after:
       - type: visualizer
         id: zy_plane
         linestyle: solid
@@ -112,7 +112,7 @@ tasks:
     actions_before:
       - type: slice
         part: *host_slice
-    handlers:
+    actions_after:
       - type: visualizer
         id: xy_plane
         is_density_plot: True
@@ -128,7 +128,7 @@ tasks:
     actions_before:
       - type: slice
         part: *sat_slice
-    handlers:
+    actions_after:
       - type: visualizer
         id: xy_plane
         is_density_plot: True
@@ -144,7 +144,7 @@ tasks:
     actions_before:
       - type: slice
         part: [0, 1]
-    handlers:
+    actions_after:
       - type: visualizer
         id: xy_plane
         linestyle: solid
@@ -160,7 +160,7 @@ tasks:
     actions_before:
       - type: slice
         part: [1000001, 1000002]
-    handlers:
+    actions_after:
       - type: visualizer
         id: xy_plane
         linestyle: solid

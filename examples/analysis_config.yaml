@@ -88,7 +88,7 @@ visualizer:
         ylabel: '$\rho$, MSun / kpc ** 3'
         grid: True
 
-# list of tasks. Each one describes arguments to its constructor, slice it operates on and list of handlers.
+# list of tasks. Each one describes arguments to its constructor, slice it operates on and list of actions.
 tasks:
   - name: ScatterTask
     args:
@@ -99,7 +99,7 @@ tasks:
     actions_before:
       - type: slice
         part: *host_slice
-    handlers:
+    actions_after:
       - type: visualizer
         id: zy_plane
         is_density_plot: True
@@ -115,7 +115,7 @@ tasks:
     actions_before:
       - type: slice
         part: *sat_slice
-    handlers:
+    actions_after:
       - type: visualizer
         id: zy_plane
         is_density_plot: True
@@ -131,7 +131,7 @@ tasks:
     actions_before:
       - type: slice
         part: [0, 1]
-    handlers:
+    actions_after:
       - type: visualizer
         id: zy_plane
         linestyle: solid
@@ -147,7 +147,7 @@ tasks:
     actions_before:
       - type: slice
         part: [1000001, 1000002]
-    handlers:
+    actions_after:
       - type: visualizer
         id: zy_plane
         linestyle: solid
@@ -164,7 +164,7 @@ tasks:
     actions_before:
       - type: slice
         part: *host_slice
-    handlers:
+    actions_after:
       - type: visualizer
         id: xy_plane
         is_density_plot: True
@@ -180,7 +180,7 @@ tasks:
     actions_before:
       - type: slice
         part: *sat_slice
-    handlers:
+    actions_after:
       - type: visualizer
         id: xy_plane
         is_density_plot: True
@@ -196,7 +196,7 @@ tasks:
     actions_before:
       - type: slice
         part: [0, 1]
-    handlers:
+    actions_after:
       - type: visualizer
         id: xy_plane
         linestyle: solid
@@ -212,7 +212,7 @@ tasks:
     actions_before:
       - type: slice
         part: [1000001, 1000002]
-    handlers:
+    actions_after:
       - type: visualizer
         id: xy_plane
         linestyle: solid
@@ -226,7 +226,7 @@ tasks:
     actions_before:
       - type: slice
         part: *host_slice
-    handlers:
+    actions_after:
       - type: visualizer
         id: potential_dist_plane
         linestyle: None
@@ -238,7 +238,7 @@ tasks:
     actions_before:
       - type: slice
         part: *sat_slice
-    handlers:
+    actions_after:
       - type: visualizer
         id: potential_dist_plane
         linestyle: None
@@ -247,7 +247,7 @@ tasks:
   - name: PotentialTask
     args:
       center_type: potential
-    handlers:
+    actions_after:
       - type: visualizer
         id: potential_dist_plane
         linestyle: None
@@ -260,7 +260,7 @@ tasks:
     actions_before:
       - type: slice
         part: *sat_slice
-    handlers:
+    actions_after:
       - type: visualizer
         id: bound_mass_evolution_plane
         linestyle: solid
@@ -273,7 +273,7 @@ tasks:
     args:
       start_id: 0
       relative_to: 1000001
-    handlers:
+    actions_after:
       - type: visualizer
         id: separation_evolution_panel
         linestyle: solid
@@ -285,7 +285,7 @@ tasks:
     actions_before:
       - type: slice
         part: *host_slice
-    handlers:
+    actions_after:
       - type: visualizer
         id: velocity_profile_panel
         markersize: 0.5
@@ -298,7 +298,7 @@ tasks:
     actions_before:
       - type: slice
         part: *sat_slice
-    handlers:
+    actions_after:
       - type: visualizer
         id: velocity_profile_panel
         markersize: 0.5
@@ -308,7 +308,7 @@ tasks:
   - name: VelocityProfileTask
     args:
       center_type: potential
-    handlers:
+    actions_after:
       - type: visualizer
         id: velocity_profile_panel
         markersize: 0.5
@@ -322,7 +322,7 @@ tasks:
     actions_before:
       - type: slice
         part: *host_slice
-    handlers:
+    actions_after:
       - type: visualizer
         id: density_profile_panel
         markersize: 0.5
@@ -335,7 +335,7 @@ tasks:
     actions_before:
       - type: slice
         part: *sat_slice
-    handlers:
+    actions_after:
       - type: visualizer
         id: density_profile_panel
         markersize: 0.5
@@ -345,7 +345,7 @@ tasks:
   - name: DensityProfileTask
     args:
       center_type: potential
-    handlers:
+    actions_after:
       - type: visualizer
         id: density_profile_panel
         markersize: 0.5

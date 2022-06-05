@@ -12,7 +12,7 @@ from omtool import json_logger as logger
 from omtool import visualizer
 from omtool.core.analysis.config import AnalysisConfig
 from omtool.core.datamodel import HandlerTask, Snapshot, profiler
-from omtool.handlers import logger_handler
+from omtool.actions_after import logger_handler
 
 
 def analize(config: AnalysisConfig):
@@ -42,13 +42,15 @@ def analize(config: AnalysisConfig):
 
             if action_name is None:
                 logger.error(
-                    f"action_before type {action_name} of the task {type(curr_task.task)} is not specified, skipping."
+                    f"action_before type {action_name} of the task "
+                    f"{type(curr_task.task)} is not specified, skipping."
                 )
                 continue
 
             if action_name not in actions_before:
                 logger.error(
-                    f"action_before type {action_name} of the task {type(curr_task.task)} is unknown, skipping."
+                    f"action_before type {action_name} of the task "
+                    f"{type(curr_task.task)} is unknown, skipping."
                 )
                 continue
 
@@ -57,25 +59,27 @@ def analize(config: AnalysisConfig):
 
             curr_task.actions_before.append(action)
 
-        for handler_params in task.handlers:
+        for handler_params in task.actions_after:
             handler_name = handler_params.pop("type", None)
 
             if handler_name is None:
                 logger.error(
-                    f"Handler type {handler_name} of the task {type(curr_task.task)} is not specified, skipping."
+                    f"Handler type {handler_name} of the task "
+                    f"{type(curr_task.task)} is not specified, skipping."
                 )
                 continue
 
             if handler_name not in actions_after:
                 logger.error(
-                    f"Handler type {handler_name} of the task {type(curr_task.task)} is unknown, skipping."
+                    f"Handler type {handler_name} of the task "
+                    f"{type(curr_task.task)} is unknown, skipping."
                 )
                 continue
 
             def handler(data, name=handler_name, params=handler_params):
                 return actions_after[name](data, params)
 
-            curr_task.handlers.append(handler)
+            curr_task.actions_after.append(handler)
 
         tasks.append(curr_task)
 

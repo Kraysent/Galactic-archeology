@@ -38,7 +38,7 @@ class Config:
 
     abstract_task: AbstractTask
     actions_before: list[dict]
-    handlers: list[dict]
+    actions_after: list[dict]
 
     @staticmethod
     def from_dict(data: dict) -> "Config":
@@ -47,7 +47,7 @@ class Config:
         """
         res = Config()
         res.actions_before = data.get("actions_before", [])
-        res.handlers = data.get("handlers", [])
+        res.actions_after = data.get("actions_after", [])
         res.abstract_task = get_task(required_get(data, "name"), data.get("args", {}))
 
         return res

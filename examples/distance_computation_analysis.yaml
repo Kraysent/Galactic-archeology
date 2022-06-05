@@ -13,7 +13,7 @@ tasks:
       start_id: 1000001
       end_coords: !q [[0, 0, 0], kpc]
       relative_to: potential
-    handlers:
+    actions_after:
       - type: logging
         print_last: True
         id: distance_data

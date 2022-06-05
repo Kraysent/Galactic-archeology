@@ -120,7 +120,7 @@
         "required": [
           "name",
           "args",
-          "handlers"
+          "actions_after"
         ],
         "properties": {
           "name": {
@@ -145,9 +145,9 @@
               }
             }
           },
-          "handlers": {
+          "actions_after": {
             "type": "array",
-            "description": "List of handlers that would run some function on every single result of the task.",
+            "description": "List of actions that would run some function on every single result of the task.",
             "additionalProperties": true,
             "items": {
               "type": "object",

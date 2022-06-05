@@ -49,7 +49,7 @@ tasks:
     actions_before:
       - type: slice
         part: *host_slice
-    handlers:
+    actions_after:
       - type: visualizer
         id: xy_panel
         is_density_plot: True
@@ -65,7 +65,7 @@ tasks:
     actions_before:
       - type: slice
         part: *sat_slice
-    handlers:
+    actions_after:
       - type: visualizer
         id: xy_panel
         is_density_plot: True
@@ -81,7 +81,7 @@ tasks:
     actions_before:
       - type: slice
         part: [0, 1]
-    handlers:
+    actions_after:
       - type: visualizer
         id: xy_panel
         linestyle: solid
@@ -97,7 +97,7 @@ tasks:
     actions_before:
       - type: slice
         part: [1000001, 1000002]
-    handlers:
+    actions_after:
       - type: visualizer
         id: xy_panel
         linestyle: solid
@@ -111,7 +111,7 @@ tasks:
     actions_before:
       - type: slice
         part: *host_slice
-    handlers:
+    actions_after:
       - type: visualizer
         id: density_profile_panel
         markersize: 0.5
@@ -124,7 +124,7 @@ tasks:
     actions_before:
       - type: slice
         part: *sat_slice
-    handlers:
+    actions_after:
       - type: visualizer
         id: density_profile_panel
         markersize: 0.5
@@ -134,7 +134,7 @@ tasks:
   - name: DensityProfileTask
     args:
       center_type: potential
-    handlers:
+    actions_after:
       - type: visualizer
         id: density_profile_panel
         markersize: 0.5

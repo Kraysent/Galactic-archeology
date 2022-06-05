@@ -48,7 +48,7 @@ tasks:
     actions_before:
       - type: slice
         part: *host_slice
-    handlers:
+    actions_after:
       - type: visualizer
         id: cm_density_profile_panel
         markersize: 0.5
@@ -63,7 +63,7 @@ tasks:
     actions_before:
       - type: slice
         part: *sat_slice
-    handlers:
+    actions_after:
       - type: visualizer
         id: cm_density_profile_panel
         markersize: 0.5
@@ -72,7 +72,7 @@ tasks:
         label: satellite
   - name: DensityProfileTask
     args: {}
-    handlers:
+    actions_after:
       - type: visualizer
         id: cm_density_profile_panel
         markersize: 0.5
@@ -86,7 +86,7 @@ tasks:
     actions_before:
       - type: slice
         part: *host_slice
-    handlers:
+    actions_after:
       - type: visualizer
         id: potential_cm_density_profile_panel
         markersize: 0.5
@@ -99,7 +99,7 @@ tasks:
     actions_before:
       - type: slice
         part: *sat_slice
-    handlers:
+    actions_after:
       - type: visualizer
         id: potential_cm_density_profile_panel
         markersize: 0.5
@@ -109,7 +109,7 @@ tasks:
   - name: DensityProfileTask
     args:
       center_type: potential
-    handlers:
+    actions_after:
       - type: visualizer
         id: potential_cm_density_profile_panel
         markersize: 0.5

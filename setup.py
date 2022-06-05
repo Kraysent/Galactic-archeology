@@ -17,7 +17,7 @@ setup(
         "omtool.core.creation",
         "omtool.core.integration",
         "omtool.core.analysis",
-        "omtool.handlers",
+        "omtool.actions_after",
         "omtool.tasks",
         "omtool.io_service",
         "omtool.json_logger",

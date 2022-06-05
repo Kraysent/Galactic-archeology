@@ -1,5 +1,5 @@
 """
-Struct that holds abstract_task, its part and handlers.
+Struct that holds abstract_task, its part and actions.
 """
 from typing import Callable, Tuple
 
@@ -11,24 +11,24 @@ from omtool.core.datamodel.snapshot import Snapshot
 
 class HandlerTask:
     """
-    Struct that holds abstract_task, its part and handlers.
+    Struct that holds abstract_task, its part and actions.
     """
 
     def __init__(
         self,
         task: AbstractTask,
         actions_before: list[Callable[[Snapshot], Snapshot]] = None,
-        handlers: list[Callable[[Tuple[np.ndarray, np.ndarray]], None]] = None,
+        actions_after: list[Callable[[Tuple[np.ndarray, np.ndarray]], None]] = None,
     ):
         if actions_before is None:
             actions_before = []
 
-        if handlers is None:
-            handlers = []
+        if actions_after is None:
+            actions_after = []
 
         self.task = task
         self.actions_before = actions_before
-        self.handlers = handlers
+        self.actions_after = actions_after
 
     def run(self, snapshot: Snapshot):
         """
@@ -39,5 +39,5 @@ class HandlerTask:
 
         data = self.task.run(snapshot)
 
-        for handler in self.handlers:
+        for handler in self.actions_after:
             handler(data)
