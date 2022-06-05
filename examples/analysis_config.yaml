@@ -96,7 +96,9 @@ tasks:
       y_expr: "y"
       x_unit: !q [1, kpc]
       y_unit: !q [1, kpc]
-    slice: *host_slice
+    actions_before:
+      - type: slice
+        part: *host_slice
     handlers:
       - type: visualizer
         id: zy_plane
@@ -110,7 +112,9 @@ tasks:
       y_expr: "y"
       x_unit: !q [1, kpc]
       y_unit: !q [1, kpc]
-    slice: *sat_slice
+    actions_before:
+      - type: slice
+        part: *sat_slice
     handlers:
       - type: visualizer
         id: zy_plane
@@ -124,7 +128,9 @@ tasks:
       y_expr: "y"
       x_unit: !q [1, kpc]
       y_unit: !q [1, kpc]
-    slice: [0, 1]
+    actions_before:
+      - type: slice
+        part: [0, 1]
     handlers:
       - type: visualizer
         id: zy_plane
@@ -138,7 +144,9 @@ tasks:
       y_expr: "y"
       x_unit: !q [1, kpc]
       y_unit: !q [1, kpc]
-    slice: [1000001, 1000002]
+    actions_before:
+      - type: slice
+        part: [1000001, 1000002]
     handlers:
       - type: visualizer
         id: zy_plane
@@ -153,7 +161,9 @@ tasks:
       y_expr: "y"
       x_unit: !q [1, kpc]
       y_unit: !q [1, kpc]
-    slice: *host_slice
+    actions_before:
+      - type: slice
+        part: *host_slice
     handlers:
       - type: visualizer
         id: xy_plane
@@ -167,7 +177,9 @@ tasks:
       y_expr: "y"
       x_unit: !q [1, kpc]
       y_unit: !q [1, kpc]
-    slice: *sat_slice
+    actions_before:
+      - type: slice
+        part: *sat_slice
     handlers:
       - type: visualizer
         id: xy_plane
@@ -181,7 +193,9 @@ tasks:
       y_expr: "y"
       x_unit: !q [1, kpc]
       y_unit: !q [1, kpc]
-    slice: [0, 1]
+    actions_before:
+      - type: slice
+        part: [0, 1]
     handlers:
       - type: visualizer
         id: xy_plane
@@ -195,7 +209,9 @@ tasks:
       y_expr: "y"
       x_unit: !q [1, kpc]
       y_unit: !q [1, kpc]
-    slice: [1000001, 1000002]
+    actions_before:
+      - type: slice
+        part: [1000001, 1000002]
     handlers:
       - type: visualizer
         id: xy_plane
@@ -207,7 +223,9 @@ tasks:
   - name: PotentialTask
     args:
       center_type: potential
-    slice: *host_slice
+    actions_before:
+      - type: slice
+        part: *host_slice
     handlers:
       - type: visualizer
         id: potential_dist_plane
@@ -217,7 +235,9 @@ tasks:
   - name: PotentialTask
     args:
       center_type: potential
-    slice: *sat_slice
+    actions_before:
+      - type: slice
+        part: *sat_slice
     handlers:
       - type: visualizer
         id: potential_dist_plane
@@ -237,7 +257,9 @@ tasks:
   - name: BoundMassTask
     args:
       number_of_iterations: 5
-    slice: [1000001, 1500002]
+    actions_before:
+      - type: slice
+        part: *sat_slice
     handlers:
       - type: visualizer
         id: bound_mass_evolution_plane
@@ -260,7 +282,9 @@ tasks:
   - name: VelocityProfileTask
     args:
       center_type: potential
-    slice: *host_slice
+    actions_before:
+      - type: slice
+        part: *host_slice
     handlers:
       - type: visualizer
         id: velocity_profile_panel
@@ -271,7 +295,9 @@ tasks:
   - name: VelocityProfileTask
     args:
       center_type: potential
-    slice: *sat_slice
+    actions_before:
+      - type: slice
+        part: *sat_slice
     handlers:
       - type: visualizer
         id: velocity_profile_panel
@@ -293,7 +319,9 @@ tasks:
   - name: DensityProfileTask
     args:
       center_type: potential
-    slice: *host_slice
+    actions_before:
+      - type: slice
+        part: *host_slice
     handlers:
       - type: visualizer
         id: density_profile_panel
@@ -304,7 +332,9 @@ tasks:
   - name: DensityProfileTask
     args:
       center_type: potential
-    slice: *sat_slice
+    actions_before:
+      - type: slice
+        part: *sat_slice
     handlers:
       - type: visualizer
         id: density_profile_panel

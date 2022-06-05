@@ -36,8 +36,8 @@ class Config:
     Configuration for each particular task.
     """
 
-    slice: slice
     abstract_task: AbstractTask
+    actions_before: list[dict]
     handlers: list[dict]
 
     @staticmethod
@@ -46,7 +46,7 @@ class Config:
         Construct this object from dictionary.
         """
         res = Config()
-        res.slice = slice(*data.get("slice", [0, None, 1]))
+        res.actions_before = data.get("actions_before", [])
         res.handlers = data.get("handlers", [])
         res.abstract_task = get_task(required_get(data, "name"), data.get("args", {}))
 

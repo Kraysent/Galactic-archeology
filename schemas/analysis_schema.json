@@ -131,11 +131,19 @@
             "type": "object",
             "description": "Arguments to the constructor of the task."
           },
-          "slice": {
+          "actions_before": {
             "type": "array",
-            "description": "Slice of the snapshot that would participate in the calculations.",
-            "minItems": 2,
-            "maxItems": 3
+            "description": "List of actions that would run some function on a given snapshot before running the task.",
+            "additionalProperties": true,
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "Type of the action that would run on snapshot before the task."
+                }
+              }
+            }
           },
           "handlers": {
             "type": "array",

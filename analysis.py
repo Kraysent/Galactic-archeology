@@ -20,35 +20,60 @@ def analize(config: AnalysisConfig):
     Analysis mode for the OMTool. It is used for the data
     analysis of existing models and the export of their parameters.
     """
-    input_service = io_service.InputService(config.input_file)
-
-    handlers: dict[str, Callable] = {}
-    handlers["logging"] = logger_handler
+    actions_after: dict[str, Callable] = {}
+    actions_after["logging"] = logger_handler
 
     visualizer_service = None
 
     if config.visualizer is not None:
         visualizer_service = visualizer.VisualizerService(config.visualizer)
-        handlers["visualizer"] = visualizer_service.plot
+        actions_after["visualizer"] = visualizer_service.plot
+
+    actions_before: dict[str, Callable] = {}
+    actions_before["slice"] = lambda snapshot, part: snapshot[slice(*part)]
 
     tasks = []
 
     for task in config.tasks:
-        curr_task = HandlerTask(task.abstract_task, task.slice)
+        curr_task = HandlerTask(task.abstract_task)
+
+        for action_params in task.actions_before:
+            action_name = action_params.pop("type", None)
+
+            if action_name is None:
+                logger.error(
+                    f"action_before type {action_name} of the task {type(curr_task.task)} is not specified, skipping."
+                )
+                continue
+
+            if action_name not in actions_before:
+                logger.error(
+                    f"action_before type {action_name} of the task {type(curr_task.task)} is unknown, skipping."
+                )
+                continue
+
+            def action(snapshot, name=action_name, params=action_params):
+                return actions_before[name](snapshot, **params)
+
+            curr_task.actions_before.append(action)
 
         for handler_params in task.handlers:
             handler_name = handler_params.pop("type", None)
 
             if handler_name is None:
-                logger.error(f"Handler type {handler_name} of the task {type(curr_task.task)} is not specified, skipping.")
+                logger.error(
+                    f"Handler type {handler_name} of the task {type(curr_task.task)} is not specified, skipping."
+                )
                 continue
 
-            if handler_name not in handlers:
-                logger.error(f"Handler type {handler_name} of the task {type(curr_task.task)} is unknown, skipping.")
+            if handler_name not in actions_after:
+                logger.error(
+                    f"Handler type {handler_name} of the task {type(curr_task.task)} is unknown, skipping."
+                )
                 continue
 
             def handler(data, name=handler_name, params=handler_params):
-                return handlers[name](data, params)
+                return actions_after[name](data, params)
 
             curr_task.handlers.append(handler)
 
@@ -66,6 +91,7 @@ def analize(config: AnalysisConfig):
 
     logger.info("Analysis started")
 
+    input_service = io_service.InputService(config.input_file)
     snapshots = input_service.get_snapshot_generator()
 
     for (i, snapshot_tuple) in enumerate(snapshots):

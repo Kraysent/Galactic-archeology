@@ -15,11 +15,11 @@ input_file:
   filenames:
     - !env "{WORKING_DIR}/test_out.fits"
 
-- type: logging
+logging:
   filename: !env "{WORKING_DIR}/test_json_log.txt"
   datefmt: '%d.%m.%Y %H:%M:%S'
 
-- type: visualizer
+visualizer:
   output_dir: !env "{WORKING_DIR}/analysis"
   title: "{time:07.01f} Myr"
   figsize: [20, 10]
@@ -45,7 +45,9 @@ input_file:
 tasks:
   - name: DensityProfileTask
     args: {}
-    slice: *host_slice
+    actions_before:
+      - type: slice
+        part: *host_slice
     handlers:
       - type: visualizer
         id: cm_density_profile_panel
@@ -58,7 +60,9 @@ tasks:
         id: density_profile
   - name: DensityProfileTask
     args: {}
-    slice: *sat_slice
+    actions_before:
+      - type: slice
+        part: *sat_slice
     handlers:
       - type: visualizer
         id: cm_density_profile_panel
@@ -79,7 +83,9 @@ tasks:
   - name: DensityProfileTask
     args:
       center_type: potential
-    slice: *host_slice
+    actions_before:
+      - type: slice
+        part: *host_slice
     handlers:
       - type: visualizer
         id: potential_cm_density_profile_panel
@@ -90,7 +96,9 @@ tasks:
   - name: DensityProfileTask
     args:
       center_type: potential
-    slice: *sat_slice
+    actions_before:
+      - type: slice
+        part: *sat_slice
     handlers:
       - type: visualizer
         id: potential_cm_density_profile_panel

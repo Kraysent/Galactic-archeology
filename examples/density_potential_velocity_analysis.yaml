@@ -50,7 +50,9 @@ tasks:
   - name: DensityProfileTask
     args:
       center_type: potential
-    slice: *host_slice
+    actions_before:
+      - type: slice
+        part: *host_slice
     handlers:
       - type: visualizer
         id: density_profile_panel
@@ -61,7 +63,9 @@ tasks:
   - name: DensityProfileTask
     args:
       center_type: potential
-    slice: *sat_slice
+    actions_before:
+      - type: slice
+        part: *sat_slice
     handlers:
       - type: visualizer
         id: density_profile_panel
@@ -83,7 +87,9 @@ tasks:
   - name: PotentialTask
     args:
       center_type: potential
-    slice: *host_slice
+    actions_before:
+      - type: slice
+        part: *host_slice
     handlers:
       - type: visualizer
         id: potential_profile_panel
@@ -94,7 +100,9 @@ tasks:
   - name: PotentialTask
     args:
       center_type: potential
-    slice: *sat_slice
+    actions_before:
+      - type: slice
+        part: *sat_slice
     handlers:
       - type: visualizer
         id: potential_profile_panel
@@ -116,7 +124,9 @@ tasks:
   - name: VelocityProfileTask
     args:
       center_type: potential
-    slice: *host_slice
+    actions_before:
+      - type: slice
+        part: *host_slice
     handlers:
       - type: visualizer
         id: velocity_profile_panel
@@ -127,7 +137,9 @@ tasks:
   - name: VelocityProfileTask
     args:
       center_type: potential
-    slice: *sat_slice
+    actions_before:
+      - type: slice
+        part: *sat_slice
     handlers:
       - type: visualizer
         id: velocity_profile_panel

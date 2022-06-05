@@ -44,7 +44,9 @@ tasks:
       y_expr: "y"
       x_unit: !q [1, kpc]
       y_unit: !q [1, kpc]
-    slice: *host_slice
+    actions_before:
+      - type: slice
+        part: *host_slice
     handlers:
       - type: visualizer
         id: zy_plane
@@ -58,7 +60,9 @@ tasks:
       y_expr: "y"
       x_unit: !q [1, kpc]
       y_unit: !q [1, kpc]
-    slice: *sat_slice
+    actions_before:
+      - type: slice
+        part: *sat_slice
     handlers:
       - type: visualizer
         id: zy_plane
@@ -72,7 +76,9 @@ tasks:
       y_expr: "y"
       x_unit: !q [1, kpc]
       y_unit: !q [1, kpc]
-    slice: [0, 1]
+    actions_before:
+      - type: slice
+        part: [0, 1]
     handlers:
       - type: visualizer
         id: zy_plane
@@ -86,7 +92,9 @@ tasks:
       y_expr: "y"
       x_unit: !q [1, kpc]
       y_unit: !q [1, kpc]
-    slice: [1000001, 1000002]
+    actions_before:
+      - type: slice
+        part: [1000001, 1000002]
     handlers:
       - type: visualizer
         id: zy_plane
@@ -101,7 +109,9 @@ tasks:
       y_expr: "y"
       x_unit: !q [1, kpc]
       y_unit: !q [1, kpc]
-    slice: *host_slice
+    actions_before:
+      - type: slice
+        part: *host_slice
     handlers:
       - type: visualizer
         id: xy_plane
@@ -115,7 +125,9 @@ tasks:
       y_expr: "y"
       x_unit: !q [1, kpc]
       y_unit: !q [1, kpc]
-    slice: *sat_slice
+    actions_before:
+      - type: slice
+        part: *sat_slice
     handlers:
       - type: visualizer
         id: xy_plane
@@ -129,7 +141,9 @@ tasks:
       y_expr: "y"
       x_unit: !q [1, kpc]
       y_unit: !q [1, kpc]
-    slice: [0, 1]
+    actions_before:
+      - type: slice
+        part: [0, 1]
     handlers:
       - type: visualizer
         id: xy_plane
@@ -143,7 +157,9 @@ tasks:
       y_expr: "y"
       x_unit: !q [1, kpc]
       y_unit: !q [1, kpc]
-    slice: [1000001, 1000002]
+    actions_before:
+      - type: slice
+        part: [1000001, 1000002]
     handlers:
       - type: visualizer
         id: xy_plane

@@ -11,7 +11,9 @@ tasks:
   - name: BoundMassTask
     args:
       number_of_iterations: 5
-    slice: [1000001, 1500002]
+    actions_before:
+      - type: slice
+        part: [1000001, 1500002]
     handlers:
       - type: logging
         print_last: True

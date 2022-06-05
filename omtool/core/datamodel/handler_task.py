@@ -17,21 +17,27 @@ class HandlerTask:
     def __init__(
         self,
         task: AbstractTask,
-        part=slice(0, None),
+        actions_before: list[Callable[[Snapshot], Snapshot]] = None,
         handlers: list[Callable[[Tuple[np.ndarray, np.ndarray]], None]] = None,
     ):
+        if actions_before is None:
+            actions_before = []
+
         if handlers is None:
             handlers = []
 
         self.task = task
-        self.part = part
+        self.actions_before = actions_before
         self.handlers = handlers
 
     def run(self, snapshot: Snapshot):
         """
         Launch the task and return its value
         """
-        data = self.task.run(snapshot[self.part])
+        for action in self.actions_before:
+            snapshot = action(snapshot)
+
+        data = self.task.run(snapshot)
 
         for handler in self.handlers:
             handler(data)
