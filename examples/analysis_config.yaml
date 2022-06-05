@@ -88,7 +88,7 @@ visualizer:
         ylabel: '$\rho$, MSun / kpc ** 3'
         grid: True
 
-# list of tasks. Each one describes arguments to its constructor, slice it operates on and list of actions.
+# list of tasks. Each one describes arguments to its constructor and list of actions.
 tasks:
   - name: ScatterTask
     args:
@@ -130,7 +130,7 @@ tasks:
       y_unit: !q [1, kpc]
     actions_before:
       - type: slice
-        part: [0, 1]
+        id: 0
     actions_after:
       - type: visualizer
         id: zy_plane
@@ -146,7 +146,7 @@ tasks:
       y_unit: !q [1, kpc]
     actions_before:
       - type: slice
-        part: [1000001, 1000002]
+        id: 1000001
     actions_after:
       - type: visualizer
         id: zy_plane
@@ -195,7 +195,7 @@ tasks:
       y_unit: !q [1, kpc]
     actions_before:
       - type: slice
-        part: [0, 1]
+        id: 0
     actions_after:
       - type: visualizer
         id: xy_plane
@@ -211,7 +211,7 @@ tasks:
       y_unit: !q [1, kpc]
     actions_before:
       - type: slice
-        part: [1000001, 1000002]
+        id: 1000001
     actions_after:
       - type: visualizer
         id: xy_plane

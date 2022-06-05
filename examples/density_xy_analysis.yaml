@@ -80,7 +80,7 @@ tasks:
       y_unit: !q [1, kpc]
     actions_before:
       - type: slice
-        part: [0, 1]
+        id: 0
     actions_after:
       - type: visualizer
         id: xy_panel
@@ -96,7 +96,7 @@ tasks:
       y_unit: !q [1, kpc]
     actions_before:
       - type: slice
-        part: [1000001, 1000002]
+        id: 1000001
     actions_after:
       - type: visualizer
         id: xy_panel
