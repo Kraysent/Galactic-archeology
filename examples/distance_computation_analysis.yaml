@@ -14,6 +14,6 @@ tasks:
       end_coords: !q [[0, 0, 0], kpc]
       relative_to: potential
     handlers:
-      logging:
+      - type: logging
         print_last: True
         id: distance_data

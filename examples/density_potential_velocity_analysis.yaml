@@ -52,7 +52,7 @@ tasks:
       center_type: potential
     slice: *host_slice
     handlers:
-      visualizer:
+      - type: visualizer
         id: density_profile_panel
         markersize: 0.5
         linestyle: None
@@ -63,7 +63,7 @@ tasks:
       center_type: potential
     slice: *sat_slice
     handlers:
-      visualizer:
+      - type: visualizer
         id: density_profile_panel
         markersize: 0.5
         linestyle: None
@@ -73,7 +73,7 @@ tasks:
     args:
       center_type: potential
     handlers:
-      visualizer:
+      - type: visualizer
         id: density_profile_panel
         markersize: 0.5
         linestyle: None
@@ -85,7 +85,7 @@ tasks:
       center_type: potential
     slice: *host_slice
     handlers:
-      visualizer:
+      - type: visualizer
         id: potential_profile_panel
         markersize: 0.5
         linestyle: None
@@ -96,7 +96,7 @@ tasks:
       center_type: potential
     slice: *sat_slice
     handlers:
-      visualizer:
+      - type: visualizer
         id: potential_profile_panel
         markersize: 0.5
         linestyle: None
@@ -106,7 +106,7 @@ tasks:
     args:
       center_type: potential
     handlers:
-      visualizer:
+      - type: visualizer
         id: potential_profile_panel
         markersize: 0.5
         linestyle: None
@@ -118,7 +118,7 @@ tasks:
       center_type: potential
     slice: *host_slice
     handlers:
-      visualizer:
+      - type: visualizer
         id: velocity_profile_panel
         markersize: 0.5
         linestyle: None
@@ -129,7 +129,7 @@ tasks:
       center_type: potential
     slice: *sat_slice
     handlers:
-      visualizer:
+      - type: visualizer
         id: velocity_profile_panel
         markersize: 0.5
         linestyle: None
@@ -139,7 +139,7 @@ tasks:
     args:
       center_type: potential
     handlers:
-      visualizer:
+      - type: visualizer
         id: velocity_profile_panel
         markersize: 0.5
         linestyle: None

@@ -38,6 +38,6 @@ tasks:
       number_of_iterations: 5
     slice: [1000001, 1500002]
     handlers:
-      logging:
+      - type: logging
         print_last: True
         id: bound_mass_data

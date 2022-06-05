@@ -46,7 +46,7 @@ tasks:
       y_unit: !q [1, kpc]
     slice: *host_slice
     handlers:
-      visualizer:
+      - type: visualizer
         id: zy_plane
         is_density_plot: True
         resolution: 700
@@ -60,7 +60,7 @@ tasks:
       y_unit: !q [1, kpc]
     slice: *sat_slice
     handlers:
-      visualizer:
+      - type: visualizer
         id: zy_plane
         is_density_plot: True
         resolution: 700
@@ -74,7 +74,7 @@ tasks:
       y_unit: !q [1, kpc]
     slice: [0, 1]
     handlers:
-      visualizer:
+      - type: visualizer
         id: zy_plane
         linestyle: solid
         color: *host_clr
@@ -88,7 +88,7 @@ tasks:
       y_unit: !q [1, kpc]
     slice: [1000001, 1000002]
     handlers:
-      visualizer:
+      - type: visualizer
         id: zy_plane
         linestyle: solid
         color: *sat_clr
@@ -103,7 +103,7 @@ tasks:
       y_unit: !q [1, kpc]
     slice: *host_slice
     handlers:
-      visualizer:
+      - type: visualizer
         id: xy_plane
         is_density_plot: True
         resolution: 700
@@ -117,7 +117,7 @@ tasks:
       y_unit: !q [1, kpc]
     slice: *sat_slice
     handlers:
-      visualizer:
+      - type: visualizer
         id: xy_plane
         is_density_plot: True
         resolution: 700
@@ -131,7 +131,7 @@ tasks:
       y_unit: !q [1, kpc]
     slice: [0, 1]
     handlers:
-      visualizer:
+      - type: visualizer
         id: xy_plane
         linestyle: solid
         color: *host_clr
@@ -145,7 +145,7 @@ tasks:
       y_unit: !q [1, kpc]
     slice: [1000001, 1000002]
     handlers:
-      visualizer:
+      - type: visualizer
         id: xy_plane
         linestyle: solid
         color: *sat_clr

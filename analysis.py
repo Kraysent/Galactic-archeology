@@ -36,7 +36,16 @@ def analize(config: AnalysisConfig):
     for task in config.tasks:
         curr_task = HandlerTask(task.abstract_task, task.slice)
 
-        for handler_name, handler_params in task.handlers.items():
+        for handler_params in task.handlers:
+            handler_name = handler_params.pop("type", None)
+
+            if handler_name is None:
+                logger.error(f"Handler type {handler_name} of the task {type(curr_task.task)} is not specified, skipping.")
+                continue
+
+            if handler_name not in handlers:
+                logger.error(f"Handler type {handler_name} of the task {type(curr_task.task)} is unknown, skipping.")
+                continue
 
             def handler(data, name=handler_name, params=handler_params):
                 return handlers[name](data, params)

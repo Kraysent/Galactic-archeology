@@ -21,7 +21,7 @@ input_file:
 # You can specify filename where JSON logs would be saved
 logging:
   filename: !env "{WORKING_DIR}/test_json_log.txt"
-  datefmt: '%Y-%m-%d %H:%M:%S'
+  datefmt: "%Y-%m-%d %H:%M:%S"
 
 # visualizer service configuration. It specifies list of panels
 visualizer:
@@ -98,7 +98,7 @@ tasks:
       y_unit: !q [1, kpc]
     slice: *host_slice
     handlers:
-      visualizer:
+      - type: visualizer
         id: zy_plane
         is_density_plot: True
         resolution: 700
@@ -112,7 +112,7 @@ tasks:
       y_unit: !q [1, kpc]
     slice: *sat_slice
     handlers:
-      visualizer:
+      - type: visualizer
         id: zy_plane
         is_density_plot: True
         resolution: 700
@@ -126,7 +126,7 @@ tasks:
       y_unit: !q [1, kpc]
     slice: [0, 1]
     handlers:
-      visualizer:
+      - type: visualizer
         id: zy_plane
         linestyle: solid
         color: *host_clr
@@ -140,7 +140,7 @@ tasks:
       y_unit: !q [1, kpc]
     slice: [1000001, 1000002]
     handlers:
-      visualizer:
+      - type: visualizer
         id: zy_plane
         linestyle: solid
         color: *sat_clr
@@ -155,7 +155,7 @@ tasks:
       y_unit: !q [1, kpc]
     slice: *host_slice
     handlers:
-      visualizer:
+      - type: visualizer
         id: xy_plane
         is_density_plot: True
         resolution: 700
@@ -169,7 +169,7 @@ tasks:
       y_unit: !q [1, kpc]
     slice: *sat_slice
     handlers:
-      visualizer:
+      - type: visualizer
         id: xy_plane
         is_density_plot: True
         resolution: 700
@@ -183,7 +183,7 @@ tasks:
       y_unit: !q [1, kpc]
     slice: [0, 1]
     handlers:
-      visualizer:
+      - type: visualizer
         id: xy_plane
         linestyle: solid
         color: *host_clr
@@ -197,7 +197,7 @@ tasks:
       y_unit: !q [1, kpc]
     slice: [1000001, 1000002]
     handlers:
-      visualizer:
+      - type: visualizer
         id: xy_plane
         linestyle: solid
         color: *sat_clr
@@ -209,7 +209,7 @@ tasks:
       center_type: potential
     slice: *host_slice
     handlers:
-      visualizer:
+      - type: visualizer
         id: potential_dist_plane
         linestyle: None
         color: *host_clr
@@ -219,7 +219,7 @@ tasks:
       center_type: potential
     slice: *sat_slice
     handlers:
-      visualizer:
+      - type: visualizer
         id: potential_dist_plane
         linestyle: None
         color: *sat_clr
@@ -228,7 +228,7 @@ tasks:
     args:
       center_type: potential
     handlers:
-      visualizer:
+      - type: visualizer
         id: potential_dist_plane
         linestyle: None
         color: *all_clr
@@ -239,11 +239,11 @@ tasks:
       number_of_iterations: 5
     slice: [1000001, 1500002]
     handlers:
-      visualizer:
+      - type: visualizer
         id: bound_mass_evolution_plane
         linestyle: solid
         color: r
-      logging:
+      - type: logging
         print_last: True
         id: bound_mass_data
 
@@ -252,7 +252,7 @@ tasks:
       start_id: 0
       relative_to: 1000001
     handlers:
-      visualizer:
+      - type: visualizer
         id: separation_evolution_panel
         linestyle: solid
         color: r
@@ -262,7 +262,7 @@ tasks:
       center_type: potential
     slice: *host_slice
     handlers:
-      visualizer:
+      - type: visualizer
         id: velocity_profile_panel
         markersize: 0.5
         linestyle: None
@@ -273,7 +273,7 @@ tasks:
       center_type: potential
     slice: *sat_slice
     handlers:
-      visualizer:
+      - type: visualizer
         id: velocity_profile_panel
         markersize: 0.5
         linestyle: None
@@ -283,7 +283,7 @@ tasks:
     args:
       center_type: potential
     handlers:
-      visualizer:
+      - type: visualizer
         id: velocity_profile_panel
         markersize: 0.5
         linestyle: None
@@ -295,7 +295,7 @@ tasks:
       center_type: potential
     slice: *host_slice
     handlers:
-      visualizer:
+      - type: visualizer
         id: density_profile_panel
         markersize: 0.5
         linestyle: None
@@ -306,7 +306,7 @@ tasks:
       center_type: potential
     slice: *sat_slice
     handlers:
-      visualizer:
+      - type: visualizer
         id: density_profile_panel
         markersize: 0.5
         linestyle: None
@@ -316,7 +316,7 @@ tasks:
     args:
       center_type: potential
     handlers:
-      visualizer:
+      - type: visualizer
         id: density_profile_panel
         markersize: 0.5
         linestyle: None

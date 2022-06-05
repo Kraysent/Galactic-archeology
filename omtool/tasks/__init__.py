@@ -38,7 +38,7 @@ class Config:
 
     slice: slice
     abstract_task: AbstractTask
-    handlers: dict
+    handlers: list[dict]
 
     @staticmethod
     def from_dict(data: dict) -> "Config":
@@ -47,7 +47,7 @@ class Config:
         """
         res = Config()
         res.slice = slice(*data.get("slice", [0, None, 1]))
-        res.handlers = data.get("handlers", {})
+        res.handlers = data.get("handlers", [])
         res.abstract_task = get_task(required_get(data, "name"), data.get("args", {}))
 
         return res

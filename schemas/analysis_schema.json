@@ -138,12 +138,16 @@
             "maxItems": 3
           },
           "handlers": {
-            "type": "object",
+            "type": "array",
             "description": "List of handlers that would run some function on every single result of the task.",
             "additionalProperties": true,
-            "properties": {
-              "visualizer": {
-                "description": "Parameters of the display of the result of this task. They should be given the same names as ones in matplotlib.pyplot (and proper values) as most of them are just passed along to it."
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "Type of the handler that would run on data after the task."
+                }
               }
             }
           }
