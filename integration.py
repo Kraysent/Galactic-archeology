@@ -11,10 +11,10 @@ from amuse.lab import units
 from omtool import io_service
 from omtool import json_logger as logger
 from omtool import visualizer
+from omtool.actions_after import logger_action, VisualizerAction
 from omtool.core.datamodel import HandlerTask, Snapshot, profiler
 from omtool.core.integration.config import IntegrationConfig
 from omtool.core.integration.integrators import get_integrator
-from omtool.actions_after import logger_handler
 
 
 def integrate(config: IntegrationConfig):
@@ -23,13 +23,13 @@ def integrate(config: IntegrationConfig):
     from the file and write it to another file.
     """
     actions_after: dict[str, Callable] = {}
-    actions_after["logging"] = logger_handler
+    actions_after["logging"] = logger_action
 
     visualizer_service = None
 
     if config.visualizer is not None:
         visualizer_service = visualizer.VisualizerService(config.visualizer)
-        actions_after["visualizer"] = visualizer_service.plot
+        actions_after["visualizer"] = VisualizerAction(visualizer_service)
 
     actions_before: dict[str, Callable] = {}
     actions_before["slice"] = lambda snapshot, part: snapshot[slice(*part)]
@@ -84,7 +84,6 @@ def integrate(config: IntegrationConfig):
             curr_task.actions_after.append(handler)
 
         tasks.append(curr_task)
-
 
     if config.overwrite:
         if Path(config.output_file).is_file():

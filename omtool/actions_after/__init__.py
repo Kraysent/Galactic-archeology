@@ -1,1 +1,2 @@
-from omtool.actions_after.logger_handler import logger_handler
+from omtool.actions_after.logger_action import logger_action
+from omtool.actions_after.visualizer_action import VisualizerAction

@@ -8,6 +8,8 @@ import numpy as np
 from omtool.core.datamodel.abstract_task import AbstractTask
 from omtool.core.datamodel.snapshot import Snapshot
 
+DataType = Tuple[np.ndarray, np.ndarray]
+
 
 class HandlerTask:
     """
@@ -18,7 +20,7 @@ class HandlerTask:
         self,
         task: AbstractTask,
         actions_before: list[Callable[[Snapshot], Snapshot]] = None,
-        actions_after: list[Callable[[Tuple[np.ndarray, np.ndarray]], None]] = None,
+        actions_after: list[Callable[[DataType], DataType]] = None,
     ):
         if actions_before is None:
             actions_before = []
@@ -32,7 +34,7 @@ class HandlerTask:
 
     def run(self, snapshot: Snapshot):
         """
-        Launch the task and return its value
+        Run actions before, launch task, run actions after.
         """
         for action in self.actions_before:
             snapshot = action(snapshot)
@@ -40,4 +42,4 @@ class HandlerTask:
         data = self.task.run(snapshot)
 
         for handler in self.actions_after:
-            handler(data)
+            data = handler(data)

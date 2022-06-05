@@ -10,9 +10,9 @@ from amuse.lab import ScalarQuantity, units
 from omtool import io_service
 from omtool import json_logger as logger
 from omtool import visualizer
+from omtool.actions_after import VisualizerAction, logger_action
 from omtool.core.analysis.config import AnalysisConfig
 from omtool.core.datamodel import HandlerTask, Snapshot, profiler
-from omtool.actions_after import logger_handler
 
 
 def analize(config: AnalysisConfig):
@@ -21,13 +21,13 @@ def analize(config: AnalysisConfig):
     analysis of existing models and the export of their parameters.
     """
     actions_after: dict[str, Callable] = {}
-    actions_after["logging"] = logger_handler
+    actions_after["logging"] = logger_action
 
     visualizer_service = None
 
     if config.visualizer is not None:
         visualizer_service = visualizer.VisualizerService(config.visualizer)
-        actions_after["visualizer"] = visualizer_service.plot
+        actions_after["visualizer"] = VisualizerAction(visualizer_service)
 
     actions_before: dict[str, Callable] = {}
     actions_before["slice"] = lambda snapshot, part: snapshot[slice(*part)]

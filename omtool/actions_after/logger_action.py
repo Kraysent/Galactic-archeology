@@ -5,7 +5,9 @@ import numpy as np
 import omtool.json_logger as logger
 
 
-def logger_handler(data: Tuple[np.ndarray, np.ndarray], parameters: Optional[dict] = None):
+def logger_action(
+    data: Tuple[np.ndarray, np.ndarray], parameters: Optional[dict] = None
+) -> Tuple[np.ndarray, np.ndarray]:
     """
     Handler that logs ndarrays to the INFO level.
     """
@@ -22,3 +24,5 @@ def logger_handler(data: Tuple[np.ndarray, np.ndarray], parameters: Optional[dic
             message_type=parameters["id"],
             payload={"x": data[0].tolist(), "y": data[1].tolist()},
         )
+
+    return data
