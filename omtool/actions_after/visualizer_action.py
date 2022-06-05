@@ -10,7 +10,7 @@ class VisualizerAction:
         self.service = service
 
     def __call__(
-        self, data: Tuple[np.ndarray, np.ndarray], parameters: Optional[dict] = None
+        self, data: Tuple[np.ndarray, np.ndarray], **parameters
     ) -> Tuple[np.ndarray, np.ndarray]:
         self.service.plot(data, parameters)
 

@@ -11,7 +11,7 @@ from amuse.lab import units
 from omtool import io_service
 from omtool import json_logger as logger
 from omtool import visualizer
-from omtool.actions_after import logger_action, VisualizerAction
+from omtool.actions_after import VisualizerAction, logger_action
 from omtool.core.datamodel import HandlerTask, Snapshot, profiler
 from omtool.core.integration.config import IntegrationConfig
 from omtool.core.integration.integrators import get_integrator
@@ -79,7 +79,7 @@ def integrate(config: IntegrationConfig):
                 continue
 
             def handler(data, name=handler_name, params=handler_params):
-                return actions_after[name](data, params)
+                return actions_after[name](data, **params)
 
             curr_task.actions_after.append(handler)
 

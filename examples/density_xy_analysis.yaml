@@ -112,6 +112,8 @@ tasks:
       - type: slice
         part: *host_slice
     actions_after:
+      - type: fit
+        degree: 1
       - type: visualizer
         id: density_profile_panel
         markersize: 0.5
@@ -125,6 +127,8 @@ tasks:
       - type: slice
         part: *sat_slice
     actions_after:
+      - type: fit
+        degree: 1
       - type: visualizer
         id: density_profile_panel
         markersize: 0.5
@@ -135,6 +139,8 @@ tasks:
     args:
       center_type: potential
     actions_after:
+      - type: fit
+        degree: 1
       - type: visualizer
         id: density_profile_panel
         markersize: 0.5

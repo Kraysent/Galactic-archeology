@@ -1,2 +1,3 @@
+from omtool.actions_after.fit_action import fit_action
 from omtool.actions_after.logger_action import logger_action
 from omtool.actions_after.visualizer_action import VisualizerAction

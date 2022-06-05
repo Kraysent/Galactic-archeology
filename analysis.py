@@ -10,7 +10,7 @@ from amuse.lab import ScalarQuantity, units
 from omtool import io_service
 from omtool import json_logger as logger
 from omtool import visualizer
-from omtool.actions_after import VisualizerAction, logger_action
+from omtool.actions_after import VisualizerAction, fit_action, logger_action
 from omtool.core.analysis.config import AnalysisConfig
 from omtool.core.datamodel import HandlerTask, Snapshot, profiler
 
@@ -22,6 +22,7 @@ def analize(config: AnalysisConfig):
     """
     actions_after: dict[str, Callable] = {}
     actions_after["logging"] = logger_action
+    actions_after["fit"] = fit_action
 
     visualizer_service = None
 
@@ -77,7 +78,7 @@ def analize(config: AnalysisConfig):
                 continue
 
             def handler(data, name=handler_name, params=handler_params):
-                return actions_after[name](data, params)
+                return actions_after[name](data, **params)
 
             curr_task.actions_after.append(handler)
 
