@@ -3,7 +3,7 @@ Analysis module for OMTool. It is used for the data
 analysis of existing models and the export of their parameters.
 """
 import time
-from typing import Callable
+from typing import Callable, Dict
 
 from amuse.lab import ScalarQuantity, units
 
@@ -21,7 +21,7 @@ def analize(config: AnalysisConfig):
     Analysis mode for the OMTool. It is used for the data
     analysis of existing models and the export of their parameters.
     """
-    actions_after: dict[str, Callable] = {}
+    actions_after: Dict[str, Callable] = {}
     actions_after["logging"] = logger_action
     actions_after["fit"] = fit_action
 
@@ -31,7 +31,7 @@ def analize(config: AnalysisConfig):
         visualizer_service = visualizer.VisualizerService(config.visualizer)
         actions_after["visualizer"] = VisualizerAction(visualizer_service)
 
-    actions_before: dict[str, Callable] = {}
+    actions_before: Dict[str, Callable] = {}
     actions_before["slice"] = slice_action
 
     tasks = []

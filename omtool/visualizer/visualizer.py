@@ -1,4 +1,4 @@
-from typing import Any, Callable, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -13,7 +13,7 @@ class Visualizer:
         plt.style.use(style)
         self.figure = plt.figure()
         self.pictures: List[tuple[tuple[np.ndarray, np.ndarray], DrawParameters]] = []
-        self.axes_ids: dict[str, int] = {}
+        self.axes_ids: Dict[str, int] = {}
 
     @property
     def number_of_axes(self):
@@ -134,8 +134,8 @@ class Visualizer:
 
     def _draw_images(
         self,
-        lst: List[Tuple[str, dict[str, np.ndarray]]],
-        params: dict[str, DrawParameters],
+        lst: List[Tuple[str, Dict[str, np.ndarray]]],
+        params: Dict[str, DrawParameters],
         background_color=1,
     ):
         for (axes_id, channels) in lst:
@@ -153,7 +153,7 @@ class Visualizer:
             )
 
     def save(self, filename: str, dpi: int = 120):
-        images: dict[str, dict[str, np.ndarray]] = {}
+        images: Dict[str, Dict[str, np.ndarray]] = {}
         imparams = {}
 
         for (data, params) in self.pictures:

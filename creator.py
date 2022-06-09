@@ -3,7 +3,7 @@ Creation module for OMTool. Used to create and load models from
 files and export them into single file.
 """
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Dict
 
 from omtool import json_logger as logger
 from omtool.core.creation import (
@@ -32,7 +32,7 @@ def create(config: CreationConfig):
 
     @profiler("Creation")
     def loop_creation_stage(body: Object):
-        type_map: dict[Type, Callable[..., Snapshot]] = {
+        type_map: Dict[Type, Callable[..., Snapshot]] = {
             Type.CSV: SnapshotCreator.construct_from_csv,
             Type.BODY: SnapshotCreator.construct_single_particle,
             Type.PLUMMER_SPHERE: SnapshotCreator.construct_plummer_sphere,

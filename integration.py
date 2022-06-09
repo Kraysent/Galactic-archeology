@@ -4,7 +4,7 @@ from the file and write it to another file.
 """
 import os
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Dict
 
 from amuse.lab import units
 
@@ -22,7 +22,7 @@ def integrate(config: IntegrationConfig):
     Integration mode for the OMTool. Used to integrate existing model
     from the file and write it to another file.
     """
-    actions_after: dict[str, Callable] = {}
+    actions_after: Dict[str, Callable] = {}
     actions_after["logging"] = logger_action
 
     visualizer_service = None
@@ -31,7 +31,7 @@ def integrate(config: IntegrationConfig):
         visualizer_service = visualizer.VisualizerService(config.visualizer)
         actions_after["visualizer"] = VisualizerAction(visualizer_service)
 
-    actions_before: dict[str, Callable] = {}
+    actions_before: Dict[str, Callable] = {}
     actions_before["slice"] = lambda snapshot, part: snapshot[slice(*part)]
 
     tasks = []

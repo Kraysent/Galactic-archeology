@@ -2,7 +2,7 @@
 Configuration objects' description of the creation module.
 """
 from enum import Enum
-from typing import Any, List
+from typing import Any, Dict, List
 
 import yaml
 from amuse.lab import VectorQuantity, units
@@ -39,7 +39,7 @@ class Object:
     Body or CSV file configuration.
     """
 
-    args: dict[str, Any]
+    args: Dict[str, Any]
     position: VectorQuantity
     velocity: VectorQuantity
     type: Type
