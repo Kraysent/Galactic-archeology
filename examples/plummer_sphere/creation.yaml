@@ -8,7 +8,14 @@ objects:
   - type: plummer_sphere
     args:
       number_of_particles: 100000
-      mass: !q [1.e+8, MSun]
+      mass: !q [1.e+11, MSun]
       radius: !q [10, kpc]
     position: !q [[0, 0, 0], kpc]
     velocity: !q [[0, 0, 0], kms]
+  - type: plummer_sphere
+    args:
+      number_of_particles: 50000
+      mass: !q [5.e+10, MSun]
+      radius: !q [8, kpc]
+    position: !q [[30, 0, 0], kpc]
+    velocity: !q [[-100, 20, 0], kms]

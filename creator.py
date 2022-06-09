@@ -1,6 +1,6 @@
 """
 Creation module for OMTool. Used to create and load models from
-files and export them into sdingle file.
+files and export them into single file.
 """
 from pathlib import Path
 from typing import Callable

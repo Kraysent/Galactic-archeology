@@ -48,12 +48,13 @@
             "description": "Type of object.",
             "enum": [
               "body",
-              "csv"
+              "csv",
+              "plummer_sphere"
             ]
           },
-          "mass": {
-            "type": "array",
-            "description": "Mass of the object if its type is 'body'. Should be denoted with !q tag."
+          "args": {
+            "type": "object",
+            "description": "Parameters to the constructor of the model."
           },
           "position": {
             "type": "array",
@@ -62,14 +63,6 @@
           "velocity": {
             "type": "array",
             "description": "Initial velocity of the system. Should be denoted with !q tag."
-          },
-          "path": {
-            "type": "string",
-            "description": "Path to the file with model if its type is 'csv'."
-          },
-          "delimeter": {
-            "type": "string",
-            "description": "Delimeter thet would be used when reading the csv file."
           }
         }
       }

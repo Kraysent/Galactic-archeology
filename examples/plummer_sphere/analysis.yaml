@@ -1,3 +1,10 @@
+object1_slice: &object1_slice
+  - 0
+  - 100000
+object2_slice: &object2_slice
+  - 100001
+  - 180000
+
 input_file:
   format: fits
   filenames:
@@ -34,6 +41,9 @@ tasks:
       y_expr: "y"
       x_unit: !q [1, kpc]
       y_unit: !q [1, kpc]
+    actions_before:
+      - type: slice
+        part: *object1_slice
     actions_after:
       - type: visualizer
         id: zy_plane
@@ -41,6 +51,22 @@ tasks:
         resolution: 700
         extent: [-45, 45, -40, 40]
         channel: b
+  - name: ScatterTask
+    args:
+      x_expr: "z"
+      y_expr: "y"
+      x_unit: !q [1, kpc]
+      y_unit: !q [1, kpc]
+    actions_before:
+      - type: slice
+        part: *object2_slice
+    actions_after:
+      - type: visualizer
+        id: zy_plane
+        is_density_plot: True
+        resolution: 700
+        extent: [-45, 45, -40, 40]
+        channel: r
 
   - name: ScatterTask
     args:
@@ -48,6 +74,9 @@ tasks:
       y_expr: "y"
       x_unit: !q [1, kpc]
       y_unit: !q [1, kpc]
+    actions_before:
+      - type: slice
+        part: *object1_slice
     actions_after:
       - type: visualizer
         id: xy_plane
@@ -55,3 +84,19 @@ tasks:
         resolution: 700
         extent: [-45, 45, -40, 40]
         channel: b
+  - name: ScatterTask
+    args:
+      x_expr: "x"
+      y_expr: "y"
+      x_unit: !q [1, kpc]
+      y_unit: !q [1, kpc]
+    actions_before:
+      - type: slice
+        part: *object2_slice
+    actions_after:
+      - type: visualizer
+        id: xy_plane
+        is_density_plot: True
+        resolution: 700
+        extent: [-45, 45, -40, 40]
+        channel: r
