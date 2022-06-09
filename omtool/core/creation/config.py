@@ -5,14 +5,14 @@ from enum import Enum
 from typing import Any, List
 
 import yaml
-from amuse.lab import ScalarQuantity, VectorQuantity, units
+from amuse.lab import VectorQuantity, units
 
 from omtool.core.utils import required_get, yaml_loader
 
 
 class Type(Enum):
     """
-    Lists types of the object that dould be added.
+    Lists types of the object that should be added.
     """
 
     BODY = 1
@@ -39,13 +39,10 @@ class Object:
     Body or CSV file configuration.
     """
 
-    delimeter: str
     args: dict[str, Any]
     position: VectorQuantity
     velocity: VectorQuantity
     type: Type
-    path: str
-    mass: ScalarQuantity
 
     @staticmethod
     def from_dict(data: dict) -> "Object":
@@ -53,16 +50,10 @@ class Object:
         Loads this type from dictionary.
         """
         res = Object()
-        res.delimeter = data.get("delimeter", ",")
         res.position = data.get("position", [0, 0, 0] | units.kpc)
         res.velocity = data.get("velocity", [0, 0, 0] | units.kms)
         res.type = Type.from_string(required_get(data, "type"))
         res.args = data.get("args", {})
-
-        if res.type == Type.CSV:
-            res.path = required_get(data, "path")
-        elif res.type == Type.BODY:
-            res.mass = required_get(data, "mass")
 
         return res
 
