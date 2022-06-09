@@ -5,7 +5,7 @@ files and export them into sdingle file.
 from pathlib import Path
 
 from omtool import json_logger as logger
-from omtool.core.creation import CreationConfig, Object, SnapshotBuilder, Type
+from omtool.core.creation import CreationConfig, Object, SnapshotBuilder, Type, SnapshotCreator
 from omtool.core.datamodel import Snapshot, profiler
 
 
@@ -29,6 +29,8 @@ def create(config: CreationConfig):
             curr_snapshot = Snapshot.from_csv(body.path, body.delimeter)
         elif body.type == Type.BODY:
             curr_snapshot = Snapshot.from_mass(body.mass)
+        elif body.type == Type.PLUMMER_SPHERE:
+            curr_snapshot = SnapshotCreator.construct_plummer_sphere(**body.args)
 
         curr_snapshot.particles.position += body.position
         curr_snapshot.particles.velocity += body.velocity

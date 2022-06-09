@@ -2,7 +2,7 @@
 Configuration objects' description of the creation module.
 """
 from enum import Enum
-from typing import List
+from typing import Any, List
 
 import yaml
 from amuse.lab import ScalarQuantity, VectorQuantity, units
@@ -17,6 +17,7 @@ class Type(Enum):
 
     BODY = 1
     CSV = 2
+    PLUMMER_SPHERE = 3
 
     @staticmethod
     def from_string(string: str) -> "Type":
@@ -27,6 +28,8 @@ class Type(Enum):
             return Type.BODY
         elif string.lower() == "csv":
             return Type.CSV
+        elif string.lower() == "plummer_sphere":
+            return Type.PLUMMER_SPHERE
         else:
             raise Exception(f'Unknown object type "{string}"')
 
@@ -37,6 +40,7 @@ class Object:
     """
 
     delimeter: str
+    args: dict[str, Any]
     position: VectorQuantity
     velocity: VectorQuantity
     type: Type
@@ -53,6 +57,7 @@ class Object:
         res.position = data.get("position", [0, 0, 0] | units.kpc)
         res.velocity = data.get("velocity", [0, 0, 0] | units.kms)
         res.type = Type.from_string(required_get(data, "type"))
+        res.args = data.get("args", {})
 
         if res.type == Type.CSV:
             res.path = required_get(data, "path")
@@ -64,7 +69,7 @@ class Object:
 
 class CreationConfig:
     """
-    The highes level of creation configuration
+    The highest level of creation configuration.
     """
 
     output_file: str

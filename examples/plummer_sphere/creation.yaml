@@ -1,0 +1,14 @@
+output_file: !env "{WORKING_DIR}/test.fits"
+overwrite: True
+
+logging:
+  filename: !env "{WORKING_DIR}/test_json_log.txt"
+
+objects:
+  - type: plummer_sphere
+    args:
+      number_of_particles: 100000
+      mass: !q [1.e+8, MSun]
+      radius: !q [10, kpc]
+    position: !q [[0, 0, 0], kpc]
+    velocity: !q [[0, 0, 0], kms]
