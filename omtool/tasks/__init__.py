@@ -1,6 +1,8 @@
 """
 Module that describes all of the tasks.
 """
+from typing import List
+
 from omtool.core.datamodel import AbstractTask
 from omtool.core.utils import required_get
 from omtool.tasks.bound_mass_task import BoundMassTask
@@ -37,8 +39,8 @@ class Config:
     """
 
     abstract_task: AbstractTask
-    actions_before: list[dict]
-    actions_after: list[dict]
+    actions_before: List[dict]
+    actions_after: List[dict]
 
     @staticmethod
     def from_dict(data: dict) -> "Config":

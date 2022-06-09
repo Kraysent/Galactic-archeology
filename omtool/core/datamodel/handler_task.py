@@ -1,7 +1,7 @@
 """
 Struct that holds abstract_task, its part and actions.
 """
-from typing import Callable, Tuple
+from typing import Callable, List, Tuple
 
 import numpy as np
 
@@ -19,8 +19,8 @@ class HandlerTask:
     def __init__(
         self,
         task: AbstractTask,
-        actions_before: list[Callable[[Snapshot], Snapshot]] = None,
-        actions_after: list[Callable[[DataType], DataType]] = None,
+        actions_before: List[Callable[[Snapshot], Snapshot]] = None,
+        actions_after: List[Callable[[DataType], DataType]] = None,
     ):
         if actions_before is None:
             actions_before = []

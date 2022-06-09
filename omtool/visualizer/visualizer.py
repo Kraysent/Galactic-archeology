@@ -1,4 +1,4 @@
-from typing import Any, Callable, Optional, Tuple
+from typing import Any, Callable, List, Optional, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -12,7 +12,7 @@ class Visualizer:
     def __init__(self, style: str = "ggplot"):
         plt.style.use(style)
         self.figure = plt.figure()
-        self.pictures: list[tuple[tuple[np.ndarray, np.ndarray], DrawParameters]] = []
+        self.pictures: List[tuple[tuple[np.ndarray, np.ndarray], DrawParameters]] = []
         self.axes_ids: dict[str, int] = {}
 
     @property
@@ -134,7 +134,7 @@ class Visualizer:
 
     def _draw_images(
         self,
-        lst: list[Tuple[str, dict[str, np.ndarray]]],
+        lst: List[Tuple[str, dict[str, np.ndarray]]],
         params: dict[str, DrawParameters],
         background_color=1,
     ):

@@ -2,7 +2,7 @@
 Abstract tasks' classes. Import this if you want to create your own task.
 """
 from abc import ABC, abstractmethod
-from typing import Tuple
+from typing import List, Tuple
 
 import numpy as np
 from amuse.lab import Particles, ScalarQuantity, units
@@ -54,8 +54,8 @@ class AbstractTimeTask(AbstractTask):
     def __init__(self, value_unit: ScalarQuantity, time_unit: ScalarQuantity = 1 | units.Myr):
         self.time_unit = time_unit
         self.value_unit = value_unit
-        self.times: list[ScalarQuantity] = []
-        self.values: list[ScalarQuantity] = []
+        self.times: List[ScalarQuantity] = []
+        self.values: List[ScalarQuantity] = []
 
     def _append_value(self, snapshot, value):
         self.times.append(snapshot.timestamp / self.time_unit)
