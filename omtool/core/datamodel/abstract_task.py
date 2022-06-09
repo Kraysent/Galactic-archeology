@@ -10,7 +10,7 @@ from amuse.lab import Particles, ScalarQuantity, units
 from omtool.core.datamodel.snapshot import Snapshot
 
 
-def get_sliced_parameters(particles: Particles) -> dict:
+def get_parameters(particles: Particles) -> dict:
     """
     Returns parameters of the particle set that can be used in expression evaluation.
     """

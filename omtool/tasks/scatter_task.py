@@ -12,7 +12,7 @@ from omtool.core.datamodel import (
     AbstractTask,
     Snapshot,
     filter_barion_particles,
-    get_sliced_parameters,
+    get_parameters,
     profiler,
 )
 
@@ -34,7 +34,7 @@ class ScatterTask(AbstractTask):
         parser = Parser()
 
         if x_expr == "" or y_expr == "":
-            raise RuntimeError("Expression in scatter task was empty.")
+            raise RuntimeError("Expression was empty.")
 
         self.x_expr = parser.parse(x_expr)
         self.y_expr = parser.parse(y_expr)
@@ -49,7 +49,7 @@ class ScatterTask(AbstractTask):
         if self.filter_barion:
             particles = filter_barion_particles(snapshot)
 
-        params = get_sliced_parameters(particles)
+        params = get_parameters(particles)
 
         x_value = self.x_expr.evaluate(params)
         y_value = self.y_expr.evaluate(params)

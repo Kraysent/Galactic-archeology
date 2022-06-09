@@ -6,7 +6,7 @@ from omtool.core.datamodel.abstract_task import (
     AbstractTimeTask,
     Snapshot,
     filter_barion_particles,
-    get_sliced_parameters,
+    get_parameters,
 )
 from omtool.core.datamodel.config import BaseConfig
 from omtool.core.datamodel.handler_task import HandlerTask
