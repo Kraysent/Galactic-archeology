@@ -41,11 +41,15 @@ visualizer:
 
 tasks:
   - name: ScatterTask
-    args:
-      x_expr: "x"
-      y_expr: "y"
-      x_unit: !q [1, kpc]
-      y_unit: !q [1, kpc]
+    args: &x_args
+      expressions:
+        x: "x"
+        y: "y"
+        m: "m"
+      units:
+        x: !q [1, kpc]
+        y: !q [1, kpc]
+        m: !q [1, MSun]
     actions_before:
       - type: slice
         part: *host_slice
@@ -56,12 +60,9 @@ tasks:
         resolution: 1000
         extent: [-60, 60, -24, 24]
         channel: *host_clr
+        weights: m
   - name: ScatterTask
-    args:
-      x_expr: "x"
-      y_expr: "y"
-      x_unit: !q [1, kpc]
-      y_unit: !q [1, kpc]
+    args: *x_args
     actions_before:
       - type: slice
         part: *sat_slice
@@ -72,12 +73,9 @@ tasks:
         resolution: 1000
         extent: [-60, 60, -24, 24]
         channel: *sat_clr
+        weights: m
   - name: ScatterTask
-    args:
-      x_expr: "x"
-      y_expr: "y"
-      x_unit: !q [1, kpc]
-      y_unit: !q [1, kpc]
+    args: *x_args
     actions_before:
       - type: slice
         id: 0
@@ -88,12 +86,9 @@ tasks:
         color: *host_clr
         marker: o
         markersize: 5
+        weights: m
   - name: ScatterTask
-    args:
-      x_expr: "x"
-      y_expr: "y"
-      x_unit: !q [1, kpc]
-      y_unit: !q [1, kpc]
+    args: *x_args
     actions_before:
       - type: slice
         id: 1000001
@@ -104,6 +99,7 @@ tasks:
         color: *sat_clr
         marker: o
         markersize: 5
+        weights: m
 
   - name: DensityProfileTask
     args:

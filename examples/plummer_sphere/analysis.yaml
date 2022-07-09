@@ -36,11 +36,15 @@ visualizer:
 
 tasks:
   - name: ScatterTask
-    args:
-      x_expr: "z"
-      y_expr: "y"
-      x_unit: !q [1, kpc]
-      y_unit: !q [1, kpc]
+    args: &z_args
+      expressions:
+        x: "z"
+        y: "y"
+        m: "m"
+      units:
+        x: !q [1, kpc]
+        y: !q [1, kpc]
+        m: !q [1, MSun]
     actions_before:
       - type: slice
         part: *object1_slice
@@ -52,11 +56,7 @@ tasks:
         extent: [-45, 45, -40, 40]
         channel: b
   - name: ScatterTask
-    args:
-      x_expr: "z"
-      y_expr: "y"
-      x_unit: !q [1, kpc]
-      y_unit: !q [1, kpc]
+    args: *z_args
     actions_before:
       - type: slice
         part: *object2_slice
@@ -69,11 +69,15 @@ tasks:
         channel: r
 
   - name: ScatterTask
-    args:
-      x_expr: "x"
-      y_expr: "y"
-      x_unit: !q [1, kpc]
-      y_unit: !q [1, kpc]
+    args: &x_args
+      expressions:
+        x: "x"
+        y: "y"
+        m: "m"
+      units:
+        x: !q [1, kpc]
+        y: !q [1, kpc]
+        m: !q [1, MSun]
     actions_before:
       - type: slice
         part: *object1_slice
@@ -85,11 +89,7 @@ tasks:
         extent: [-45, 45, -40, 40]
         channel: b
   - name: ScatterTask
-    args:
-      x_expr: "x"
-      y_expr: "y"
-      x_unit: !q [1, kpc]
-      y_unit: !q [1, kpc]
+    args: *x_args
     actions_before:
       - type: slice
         part: *object2_slice

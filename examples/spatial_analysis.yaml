@@ -39,11 +39,15 @@ visualizer:
 
 tasks:
   - name: ScatterTask
-    args: &args
-      x_expr: "z"
-      y_expr: "y"
-      x_unit: !q [1, kpc]
-      y_unit: !q [1, kpc]
+    args: &z_args
+      expressions:
+        x: "z"
+        y: "y"
+        m: "m"
+      units:
+        x: !q [1, kpc]
+        y: !q [1, kpc]
+        m: !q [1, MSun]
     actions_before:
       - <<: *host_slice
     actions_after:
@@ -55,7 +59,7 @@ tasks:
         channel: *host_clr
         weights: m
   - name: ScatterTask
-    args: *args
+    args: *z_args
     actions_before:
       - <<: *sat_slice
     actions_after:
@@ -67,7 +71,7 @@ tasks:
         channel: *sat_clr
         weights: m
   - name: ScatterTask
-    args: *args
+    args: *z_args
     actions_before:
       - type: slice
         id: 0
@@ -79,7 +83,7 @@ tasks:
         marker: o
         markersize: 5
   - name: ScatterTask
-    args: *args
+    args: *z_args
     actions_before:
       - type: slice
         id: 1000001
@@ -92,9 +96,15 @@ tasks:
         markersize: 5
 
   - name: ScatterTask
-    args:
-      <<: *args
-      x_expr: "x"
+    args: &x_args
+      expressions:
+        x: "x"
+        y: "y"
+        m: "m"
+      units:
+        x: !q [1, kpc]
+        y: !q [1, kpc]
+        m: !q [1, MSun]
     actions_before:
       - <<: *host_slice
     actions_after:
@@ -106,9 +116,7 @@ tasks:
         channel: *host_clr
         weights: m
   - name: ScatterTask
-    args:
-      <<: *args
-      x_expr: "x"
+    args: *x_args
     actions_before:
       - <<: *sat_slice
     actions_after:
@@ -120,9 +128,7 @@ tasks:
         channel: *sat_clr
         weights: m
   - name: ScatterTask
-    args:
-      <<: *args
-      x_expr: "x"
+    args: *x_args
     actions_before:
       - type: slice
         id: 0
@@ -134,9 +140,7 @@ tasks:
         marker: o
         markersize: 5
   - name: ScatterTask
-    args:
-      <<: *args
-      x_expr: "x"
+    args: *x_args
     actions_before:
       - type: slice
         id: 1000001

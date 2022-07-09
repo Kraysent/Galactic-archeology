@@ -91,11 +91,15 @@ visualizer:
 # list of tasks. Each one describes arguments to its constructor and list of actions.
 tasks:
   - name: ScatterTask
-    args:
-      x_expr: "z"
-      y_expr: "y"
-      x_unit: !q [1, kpc]
-      y_unit: !q [1, kpc]
+    args: &z_args
+      expressions:
+        x: "z"
+        y: "y"
+        m: "m"
+      units:
+        x: !q [1, kpc]
+        y: !q [1, kpc]
+        m: !q [1, MSun]
     actions_before:
       - type: slice
         part: *host_slice
@@ -106,12 +110,9 @@ tasks:
         resolution: 700
         extent: [-45, 45, -40, 40]
         channel: *host_clr
+        weights: m
   - name: ScatterTask
-    args:
-      x_expr: "z"
-      y_expr: "y"
-      x_unit: !q [1, kpc]
-      y_unit: !q [1, kpc]
+    args: *z_args
     actions_before:
       - type: slice
         part: *sat_slice
@@ -122,12 +123,9 @@ tasks:
         resolution: 700
         extent: [-45, 45, -40, 40]
         channel: *sat_clr
+        weights: m
   - name: ScatterTask
-    args:
-      x_expr: "z"
-      y_expr: "y"
-      x_unit: !q [1, kpc]
-      y_unit: !q [1, kpc]
+    args: *z_args
     actions_before:
       - type: slice
         id: 0
@@ -139,11 +137,7 @@ tasks:
         marker: o
         markersize: 5
   - name: ScatterTask
-    args:
-      x_expr: "z"
-      y_expr: "y"
-      x_unit: !q [1, kpc]
-      y_unit: !q [1, kpc]
+    args: *z_args
     actions_before:
       - type: slice
         id: 1000001
@@ -156,11 +150,15 @@ tasks:
         markersize: 5
 
   - name: ScatterTask
-    args:
-      x_expr: "x"
-      y_expr: "y"
-      x_unit: !q [1, kpc]
-      y_unit: !q [1, kpc]
+    args: &x_args
+      expressions:
+        x: "x"
+        y: "y"
+        m: "m"
+      units:
+        x: !q [1, kpc]
+        y: !q [1, kpc]
+        m: !q [1, MSun]
     actions_before:
       - type: slice
         part: *host_slice
@@ -171,12 +169,9 @@ tasks:
         resolution: 700
         extent: [-45, 45, -40, 40]
         channel: *host_clr
+        weights: m
   - name: ScatterTask
-    args:
-      x_expr: "x"
-      y_expr: "y"
-      x_unit: !q [1, kpc]
-      y_unit: !q [1, kpc]
+    args: *x_args
     actions_before:
       - type: slice
         part: *sat_slice
@@ -187,12 +182,9 @@ tasks:
         resolution: 700
         extent: [-45, 45, -40, 40]
         channel: *sat_clr
+        weights: m
   - name: ScatterTask
-    args:
-      x_expr: "x"
-      y_expr: "y"
-      x_unit: !q [1, kpc]
-      y_unit: !q [1, kpc]
+    args: *x_args
     actions_before:
       - type: slice
         id: 0
@@ -204,11 +196,7 @@ tasks:
         marker: o
         markersize: 5
   - name: ScatterTask
-    args:
-      x_expr: "x"
-      y_expr: "y"
-      x_unit: !q [1, kpc]
-      y_unit: !q [1, kpc]
+    args: *x_args
     actions_before:
       - type: slice
         id: 1000001

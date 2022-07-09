@@ -2,7 +2,7 @@
 Task that computes arbitrary expression against another arbitrary expression and
 plots the points in the corresponding way.
 """
-from typing import Tuple
+from typing import List, Tuple
 
 import numpy as np
 from amuse.lab import ScalarQuantity, units
@@ -26,21 +26,14 @@ class ScatterTask(AbstractTask):
 
     def __init__(
         self,
-        x_expr: str,
-        y_expr: str,
-        x_unit: ScalarQuantity,
-        y_unit: ScalarQuantity,
+        expressions: dict[str, str],
+        units: dict[str, ScalarQuantity],
         filter_barion: bool = True,
     ):
         parser = Parser()
 
-        if x_expr == "" or y_expr == "":
-            raise RuntimeError("Expression was empty.")
-
-        self.x_expr = parser.parse(x_expr)
-        self.y_expr = parser.parse(y_expr)
-        self.x_unit = x_unit
-        self.y_unit = y_unit
+        self.expressions = {id: parser.parse(expr) for id, expr in expressions.items()}
+        self.units = units
         self.filter_barion = filter_barion
 
     @profiler("Scatter task")
@@ -53,11 +46,8 @@ class ScatterTask(AbstractTask):
 
         params = get_parameters(particles)
 
-        x_value = self.x_expr.evaluate(params)
-        y_value = self.y_expr.evaluate(params)
+        res = {}
+        for id, expr in self.expressions.items():
+            res[id] = expr.evaluate(params) / self.units[id]
 
-        return {
-            "x": x_value / self.x_unit,
-            "y": y_value / self.y_unit,
-            "m": particles.mass / (1 | units.MSun),
-        }
+        return res
