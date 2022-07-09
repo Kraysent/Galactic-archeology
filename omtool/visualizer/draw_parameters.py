@@ -20,3 +20,4 @@ class DrawParameters:
     channel: str = "b"
     x: str = "x"
     y: str = "y"
+    weights: Optional[str] = None

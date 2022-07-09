@@ -53,6 +53,7 @@ tasks:
         resolution: 700
         extent: [-45, 45, -40, 40]
         channel: *host_clr
+        weights: m
   - name: ScatterTask
     args: *args
     actions_before:
@@ -64,6 +65,7 @@ tasks:
         resolution: 700
         extent: [-45, 45, -40, 40]
         channel: *sat_clr
+        weights: m
   - name: ScatterTask
     args: *args
     actions_before:
@@ -102,6 +104,7 @@ tasks:
         resolution: 700
         extent: [-45, 45, -40, 40]
         channel: *host_clr
+        weights: m
   - name: ScatterTask
     args:
       <<: *args
@@ -115,6 +118,7 @@ tasks:
         resolution: 700
         extent: [-45, 45, -40, 40]
         channel: *sat_clr
+        weights: m
   - name: ScatterTask
     args:
       <<: *args

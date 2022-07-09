@@ -5,7 +5,7 @@ plots the points in the corresponding way.
 from typing import Tuple
 
 import numpy as np
-from amuse.lab import ScalarQuantity
+from amuse.lab import ScalarQuantity, units
 from py_expression_eval import Parser
 
 from omtool.core.datamodel import (
@@ -56,4 +56,8 @@ class ScatterTask(AbstractTask):
         x_value = self.x_expr.evaluate(params)
         y_value = self.y_expr.evaluate(params)
 
-        return {"x": x_value / self.x_unit, "y": y_value / self.y_unit}
+        return {
+            "x": x_value / self.x_unit,
+            "y": y_value / self.y_unit,
+            "m": particles.mass / (1 | units.MSun),
+        }

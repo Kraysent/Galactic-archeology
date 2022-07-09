@@ -99,8 +99,14 @@ class Visualizer:
         x2: np.ndarray,
         resolution: int,
         extent: Tuple[float, float, float, float],
+        weights: Optional[np.ndarray] = None,
     ) -> np.ndarray:
-        hist, _, _ = np.histogram2d(x1, x2, resolution, range=[extent[:2], extent[2:]])
+        if weights is None:
+            hist, _, _ = np.histogram2d(x1, x2, resolution, range=[extent[:2], extent[2:]])
+        else:
+            hist, _, _ = np.histogram2d(
+                x1, x2, resolution, range=[extent[:2], extent[2:]], weights=weights, normed=True
+            )
         hist = np.flip(hist.T, axis=0)
 
         return hist
@@ -152,7 +158,11 @@ class Visualizer:
                 self._scatter_points(data, params)
             else:
                 hist = self._get_hist(
-                    data[params.x], data[params.y], params.resolution, params.extent
+                    data[params.x],
+                    data[params.y],
+                    params.resolution,
+                    params.extent,
+                    None if params.weights is None else data[params.weights],
                 )
 
                 if not (params.id in images.keys()):
@@ -169,7 +179,7 @@ class Visualizer:
 
         self.figure.savefig(filename, dpi=dpi, bbox_inches="tight")
 
-        def delete_all(axes: Axes):
+        def clear(axes: Axes):
             while len(axes.artists) != 0:
                 axes.artists[0].remove()
 
@@ -180,4 +190,4 @@ class Visualizer:
                 axes.images[0].remove()
 
         self.pictures.clear()
-        self._do_for_all_axes(delete_all)
+        self._do_for_all_axes(clear)
