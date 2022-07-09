@@ -12,7 +12,7 @@ class Visualizer:
     def __init__(self, style: str = "ggplot"):
         plt.style.use(style)
         self.figure = plt.figure()
-        self.pictures: List[tuple[tuple[np.ndarray, np.ndarray], DrawParameters]] = []
+        self.pictures: List[tuple[dict[str, np.ndarray], DrawParameters]] = []
         self.axes_ids: Dict[str, int] = {}
 
     @property
@@ -72,12 +72,13 @@ class Visualizer:
 
         return results
 
-    def plot(self, data, params: DrawParameters):
+    def plot(self, data: dict[str, np.ndarray], params: DrawParameters):
         self.pictures.append((data, params))
 
-    def _scatter_points(self, data: Tuple[np.ndarray, np.ndarray], params: DrawParameters):
+    def _scatter_points(self, data: dict[str, np.ndarray], params: DrawParameters):
         axes = self.get_axes(params.id)
-        (x, y) = data
+        x = data[params.x]
+        y = data[params.y]
 
         plot_kwargs = {
             "marker": params.marker,
@@ -150,7 +151,9 @@ class Visualizer:
             if not params.is_density_plot:
                 self._scatter_points(data, params)
             else:
-                hist = self._get_hist(data[0], data[1], params.resolution, params.extent)
+                hist = self._get_hist(
+                    data[params.x], data[params.y], params.resolution, params.extent
+                )
 
                 if not (params.id in images.keys()):
                     images[params.id] = {

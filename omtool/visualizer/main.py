@@ -21,7 +21,7 @@ class VisualizerService:
         for panel in config.panels:
             self.visualizer.add_axes(panel)
 
-    def plot(self, data: Tuple[np.ndarray, np.ndarray], parameters: Optional[dict] = None):
+    def plot(self, data: dict[str, np.ndarray], parameters: Optional[dict] = None):
         """
         Add data to plot specified in parameters.
         """

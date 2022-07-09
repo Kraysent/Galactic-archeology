@@ -6,7 +6,7 @@ from typing import Tuple
 import numpy as np
 from amuse.lab import ScalarQuantity, units
 
-from omtool.core.datamodel import AbstractTask, Snapshot, profiler
+from omtool.core.datamodel import AbstractTask, Snapshot, profiler, DataType
 from omtool.core.utils import math, particle_centers
 
 
@@ -29,7 +29,7 @@ class MassProfileTask(AbstractTask):
         self.m_unit = m_unit
 
     @profiler("Mass profile task")
-    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
+    def run(self, snapshot: Snapshot) -> DataType:
         particles = snapshot.particles
         center = self.center_func(particles)
 
@@ -43,4 +43,4 @@ class MassProfileTask(AbstractTask):
         masses = masses[0:number_of_chunks].reshape((-1, self.resolution)).sum(axis=1)
         masses = np.cumsum(masses)
 
-        return (radii / self.r_unit, masses / self.m_unit)
+        return {"radii": radii / self.r_unit, "masses": masses / self.m_unit}

@@ -7,12 +7,7 @@ import numpy as np
 from amuse.lab import ScalarQuantity, VectorQuantity
 from py_expression_eval import Parser
 
-from omtool.core.datamodel import (
-    AbstractTask,
-    Snapshot,
-    get_parameters,
-    profiler,
-)
+from omtool.core.datamodel import AbstractTask, Snapshot, get_parameters, profiler
 
 
 class TimeEvolutionTask(AbstractTask):

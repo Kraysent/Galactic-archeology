@@ -18,3 +18,5 @@ class DrawParameters:
     cmapnorm: Any = mpl.colors.LogNorm()
     label: Optional[str] = None
     channel: str = "b"
+    x: str = "x"
+    y: str = "y"

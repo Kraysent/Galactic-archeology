@@ -11,6 +11,7 @@ from omtool.core.datamodel import (
     Snapshot,
     filter_barion_particles,
     profiler,
+    DataType,
 )
 from omtool.core.utils import math, particle_centers
 
@@ -35,7 +36,7 @@ class VelocityProfileTask(AbstractTask):
         self.v_unit = v_unit
 
     @profiler("Velocity profile task")
-    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
+    def run(self, snapshot: Snapshot) -> DataType:
         center = self.center_func(snapshot.particles)
         center_vel = self.center_vel_func(snapshot.particles)
 
@@ -49,4 +50,4 @@ class VelocityProfileTask(AbstractTask):
         radii = radii[0 : number_of_chunks : self.resolution]
         velocities = velocities[0:number_of_chunks].reshape((-1, self.resolution)).mean(axis=1)
 
-        return (radii / self.r_unit, velocities / self.v_unit)
+        return {"radii": radii / self.r_unit, "velocity": velocities / self.v_unit}

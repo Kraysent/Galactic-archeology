@@ -60,6 +60,8 @@ tasks:
         linestyle: None
         color: *host_clr
         label: host
+        x: radii
+        y: densities
   - name: DensityProfileTask
     args:
       center_type: potential
@@ -73,6 +75,8 @@ tasks:
         linestyle: None
         color: *sat_clr
         label: satellite
+        x: radii
+        y: densities
   - name: DensityProfileTask
     args:
       center_type: potential
@@ -83,6 +87,8 @@ tasks:
         linestyle: None
         color: *all_clr
         label: all
+        x: radii
+        y: densities
 
   - name: PotentialTask
     args:
@@ -97,6 +103,8 @@ tasks:
         linestyle: None
         color: *host_clr
         label: host
+        x: radii
+        y: potential
   - name: PotentialTask
     args:
       center_type: potential
@@ -110,6 +118,8 @@ tasks:
         linestyle: None
         color: *sat_clr
         label: satellite
+        x: radii
+        y: potential
   - name: PotentialTask
     args:
       center_type: potential
@@ -120,6 +130,8 @@ tasks:
         linestyle: None
         color: *all_clr
         label: all
+        x: radii
+        y: potential
 
   - name: VelocityProfileTask
     args:
@@ -134,6 +146,8 @@ tasks:
         linestyle: None
         color: *host_clr
         label: host
+        x: radii
+        y: velocity
   - name: VelocityProfileTask
     args:
       center_type: potential
@@ -147,6 +161,8 @@ tasks:
         linestyle: None
         color: *sat_clr
         label: satellite
+        x: radii
+        y: velocity
   - name: VelocityProfileTask
     args:
       center_type: potential
@@ -157,3 +173,5 @@ tasks:
         linestyle: None
         color: *all_clr
         label: all
+        x: radii
+        y: velocity

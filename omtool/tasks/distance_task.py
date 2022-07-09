@@ -7,7 +7,7 @@ from typing import Tuple, Union
 import numpy as np
 from amuse.lab import ScalarQuantity, VectorQuantity, units
 
-from omtool.core.datamodel import AbstractTimeTask, Snapshot, profiler
+from omtool.core.datamodel import AbstractTimeTask, Snapshot, profiler, DataType
 from omtool.core.utils import particle_centers
 
 
@@ -35,7 +35,7 @@ class DistanceTask(AbstractTimeTask):
         super().__init__(time_unit=time_unit, value_unit=dist_unit)
 
     @profiler("Distance task")
-    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
+    def run(self, snapshot: Snapshot) -> DataType:
         start_pos = snapshot.particles[self.start_id].position
 
         if isinstance(self.relative_to, int):
@@ -47,5 +47,6 @@ class DistanceTask(AbstractTimeTask):
 
         dist = (end_pos - start_pos).length()
         self._append_value(snapshot, dist)
+        result = self._as_tuple()
 
-        return self._as_tuple()
+        return {"times": result[0], "dist": result[1]}

@@ -6,7 +6,7 @@ from typing import Tuple
 import numpy as np
 from amuse.lab import ScalarQuantity, units
 
-from omtool.core.datamodel import AbstractTask, Snapshot, profiler
+from omtool.core.datamodel import AbstractTask, Snapshot, profiler, DataType
 from omtool.core.utils import math, particle_centers
 
 
@@ -29,7 +29,7 @@ class DensityProfileTask(AbstractTask):
         self.dens_unit = dens_unit
 
     @profiler("Density profile task")
-    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
+    def run(self, snapshot: Snapshot) -> DataType:
         particles = snapshot.particles
         center = self.center_func(particles)
 
@@ -45,4 +45,4 @@ class DensityProfileTask(AbstractTask):
         densities = masses / volume
         radii = radii[1:]
 
-        return (radii / self.r_unit, densities / self.dens_unit)
+        return {"radii": radii / self.r_unit, "densities": densities / self.dens_unit}

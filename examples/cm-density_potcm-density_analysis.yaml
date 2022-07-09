@@ -17,7 +17,7 @@ input_file:
 
 logging:
   filename: !env "{WORKING_DIR}/test_json_log.txt"
-  datefmt: '%d.%m.%Y %H:%M:%S'
+  datefmt: "%d.%m.%Y %H:%M:%S"
 
 visualizer:
   output_dir: !env "{WORKING_DIR}/analysis"
@@ -55,6 +55,8 @@ tasks:
         linestyle: None
         color: *host_clr
         label: host
+        x: radii
+        y: densities
       - type: logging
         print_last: true
         id: density_profile
@@ -70,6 +72,8 @@ tasks:
         linestyle: None
         color: *sat_clr
         label: satellite
+        x: radii
+        y: densities
   - name: DensityProfileTask
     args: {}
     actions_after:
@@ -79,6 +83,8 @@ tasks:
         linestyle: None
         color: *all_clr
         label: all
+        x: radii
+        y: densities
 
   - name: DensityProfileTask
     args:
@@ -93,6 +99,8 @@ tasks:
         linestyle: None
         color: *host_clr
         label: host
+        x: radii
+        y: densities
   - name: DensityProfileTask
     args:
       center_type: potential
@@ -106,6 +114,8 @@ tasks:
         linestyle: None
         color: *sat_clr
         label: satellite
+        x: radii
+        y: densities
   - name: DensityProfileTask
     args:
       center_type: potential
@@ -116,3 +126,5 @@ tasks:
         linestyle: None
         color: *all_clr
         label: all
+        x: radii
+        y: densities

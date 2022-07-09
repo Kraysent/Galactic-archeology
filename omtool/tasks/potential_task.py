@@ -6,7 +6,7 @@ from typing import Tuple
 import numpy as np
 from amuse.lab import ScalarQuantity, units
 
-from omtool.core.datamodel import AbstractTask, Snapshot, profiler
+from omtool.core.datamodel import AbstractTask, Snapshot, profiler, DataType
 from omtool.core.utils import math, particle_centers, pyfalcon_analizer
 
 
@@ -29,7 +29,7 @@ class PotentialTask(AbstractTask):
         self.pot_unit = pot_unit
 
     @profiler("Potential task")
-    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
+    def run(self, snapshot: Snapshot) -> DataType:
         center = self.center_func(snapshot.particles)
         particles = snapshot.particles
 
@@ -45,4 +45,4 @@ class PotentialTask(AbstractTask):
         if self.pot_unit is None:
             self.pot_unit = potentials.mean()
 
-        return (radii / self.r_unit, potentials / self.pot_unit)
+        return {"radii": radii / self.r_unit, "potential": potentials / self.pot_unit}

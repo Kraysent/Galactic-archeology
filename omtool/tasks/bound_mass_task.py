@@ -6,7 +6,7 @@ from typing import Tuple
 import numpy as np
 from amuse.lab import ScalarQuantity, units
 
-from omtool.core.datamodel import AbstractTimeTask, Snapshot, profiler
+from omtool.core.datamodel import AbstractTimeTask, Snapshot, profiler, DataType
 from omtool.core.utils import math, pyfalcon_analizer
 
 
@@ -36,7 +36,7 @@ class BoundMassTask(AbstractTimeTask):
         super().__init__(time_unit=time_unit, value_unit=mass_unit)
 
     @profiler("Bound mass task")
-    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
+    def run(self, snapshot: Snapshot) -> DataType:
         bound_particles = snapshot.particles
         curr_len = len(bound_particles)
         prev_len = 0
@@ -58,5 +58,6 @@ class BoundMassTask(AbstractTimeTask):
                 break
 
         self._append_value(snapshot, bound_particles.total_mass())
+        result = self._as_tuple()
 
-        return self._as_tuple()
+        return {"times": result[0], "bound_mass": result[1]}

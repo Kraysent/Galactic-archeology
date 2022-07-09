@@ -232,6 +232,8 @@ tasks:
         linestyle: None
         color: *host_clr
         label: host
+        x: radii
+        y: potential
   - name: PotentialTask
     args:
       center_type: potential
@@ -244,6 +246,8 @@ tasks:
         linestyle: None
         color: *sat_clr
         label: satellite
+        x: radii
+        y: potential
   - name: PotentialTask
     args:
       center_type: potential
@@ -253,6 +257,8 @@ tasks:
         linestyle: None
         color: *all_clr
         label: all
+        x: radii
+        y: potential
 
   - name: BoundMassTask
     args:
@@ -265,6 +271,8 @@ tasks:
         id: bound_mass_evolution_plane
         linestyle: solid
         color: r
+        x: times
+        y: bound_mass
       - type: logging
         print_last: True
         id: bound_mass_data
@@ -278,6 +286,8 @@ tasks:
         id: separation_evolution_panel
         linestyle: solid
         color: r
+        x: times
+        y: dist
 
   - name: VelocityProfileTask
     args:
@@ -292,6 +302,8 @@ tasks:
         linestyle: None
         color: *host_clr
         label: host
+        x: radii
+        y: velocity
   - name: VelocityProfileTask
     args:
       center_type: potential
@@ -305,6 +317,8 @@ tasks:
         linestyle: None
         color: *sat_clr
         label: satellite
+        x: radii
+        y: velocity
   - name: VelocityProfileTask
     args:
       center_type: potential
@@ -315,6 +329,8 @@ tasks:
         linestyle: None
         color: *all_clr
         label: all
+        x: radii
+        y: velocity
 
   - name: DensityProfileTask
     args:
@@ -329,6 +345,8 @@ tasks:
         linestyle: None
         color: *host_clr
         label: host
+        x: radii
+        y: densities
   - name: DensityProfileTask
     args:
       center_type: potential
@@ -342,6 +360,8 @@ tasks:
         linestyle: None
         color: *sat_clr
         label: satellite
+        x: radii
+        y: densities
   - name: DensityProfileTask
     args:
       center_type: potential
@@ -352,3 +372,5 @@ tasks:
         linestyle: None
         color: *all_clr
         label: all
+        x: radii
+        y: densities

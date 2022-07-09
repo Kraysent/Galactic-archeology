@@ -114,12 +114,16 @@ tasks:
     actions_after:
       - type: fit
         degree: 1
+        x: radii
+        y: densities
       - type: visualizer
         id: density_profile_panel
         markersize: 0.5
         linestyle: None
         color: *host_clr
         label: host
+        x: radii
+        y: densities
   - name: DensityProfileTask
     args:
       center_type: potential
@@ -129,21 +133,29 @@ tasks:
     actions_after:
       - type: fit
         degree: 1
+        x: radii
+        y: densities
       - type: visualizer
         id: density_profile_panel
         markersize: 0.5
         linestyle: None
         color: *sat_clr
         label: satellite
+        x: radii
+        y: densities
   - name: DensityProfileTask
     args:
       center_type: potential
     actions_after:
       - type: fit
         degree: 1
+        x: radii
+        y: densities
       - type: visualizer
         id: density_profile_panel
         markersize: 0.5
         linestyle: None
         color: *all_clr
         label: all
+        x: radii
+        y: densities

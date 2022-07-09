@@ -1,17 +1,9 @@
-# host_slice: &host_slice
-#   - 0
-#   - 1000001
 host_color: &host_clr b
-
-# sat_slice: &sat_slice
-#   - 1000001
-#   - 1500002
-sat_color: &sat_clr r
-
 host_slice: &host_slice
   type: slice
   part: [0, 1000001]
 
+sat_color: &sat_clr r
 sat_slice: &sat_slice
   type: slice
   part: [1000001, 1500002]

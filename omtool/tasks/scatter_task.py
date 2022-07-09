@@ -15,6 +15,7 @@ from omtool.core.datamodel import (
     get_parameters,
     profiler,
 )
+from omtool.core.datamodel import DataType
 
 
 class ScatterTask(AbstractTask):
@@ -43,7 +44,7 @@ class ScatterTask(AbstractTask):
         self.filter_barion = filter_barion
 
     @profiler("Scatter task")
-    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
+    def run(self, snapshot: Snapshot) -> DataType:
         particles = snapshot.particles
 
         # move to actions_before
@@ -55,4 +56,4 @@ class ScatterTask(AbstractTask):
         x_value = self.x_expr.evaluate(params)
         y_value = self.y_expr.evaluate(params)
 
-        return (x_value / self.x_unit, y_value / self.y_unit)
+        return {"x": x_value / self.x_unit, "y": y_value / self.y_unit}

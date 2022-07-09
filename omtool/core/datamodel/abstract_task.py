@@ -10,6 +10,9 @@ from amuse.lab import Particles, ScalarQuantity, units
 from omtool.core.datamodel.snapshot import Snapshot
 
 
+DataType = dict[str, np.ndarray]
+
+
 def get_parameters(particles: Particles) -> dict:
     """
     Returns parameters of the particle set that can be used in expression evaluation.
@@ -40,10 +43,11 @@ class AbstractTask(ABC):
     """
 
     @abstractmethod
-    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
+    def run(self, snapshot: Snapshot) -> DataType:
         """
         Runs the task on given snapshot.
         """
+        raise NotImplementedError
 
 
 class AbstractTimeTask(AbstractTask):
