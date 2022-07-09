@@ -46,6 +46,7 @@ class ScatterTask(AbstractTask):
     def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
         particles = snapshot.particles
 
+        # move to actions_before
         if self.filter_barion:
             particles = filter_barion_particles(snapshot)
 

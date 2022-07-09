@@ -26,12 +26,10 @@ class Visualizer:
         self.figure.set_size_inches(width, height)
 
     def add_axes(self, panel_config: PanelConfig):
-        self.figure.add_axes(panel_config.coords)
+        axes = self.figure.add_axes(panel_config.coords)
         self.axes_ids[panel_config.id] = len(self.figure.axes) - 1
 
-        # need to refactor this, axes can be obtained directly from add_axes method
         params = panel_config.params
-        axes = self.get_axes(panel_config.id)
 
         if params.xscale == "log":
             axes.set_xscale(params.xscale, base=params.basex)
@@ -81,25 +79,17 @@ class Visualizer:
         axes = self.get_axes(params.id)
         (x, y) = data
 
+        plot_kwargs = {
+            "marker": params.marker,
+            "color": params.color,
+            "markersize": params.markersize,
+            "linestyle": params.linestyle,
+        }
+
         if params.label is None:
-            axes.plot(
-                x,
-                y,
-                marker=params.marker,
-                color=params.color,
-                markersize=params.markersize,
-                linestyle=params.linestyle,
-            )
+            axes.plot(x, y, **plot_kwargs)
         else:
-            axes.plot(
-                x,
-                y,
-                marker=params.marker,
-                color=params.color,
-                markersize=params.markersize,
-                linestyle=params.linestyle,
-                label=params.label,
-            )
+            axes.plot(x, y, label=params.label, **plot_kwargs)
             axes.legend()
 
     def _get_hist(

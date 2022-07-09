@@ -3,7 +3,7 @@ Analysis module for OMTool. It is used for the data
 analysis of existing models and the export of their parameters.
 """
 import time
-from typing import Callable, Dict
+from typing import Callable, Dict, List
 
 from amuse.lab import ScalarQuantity, units
 
@@ -34,7 +34,7 @@ def analize(config: AnalysisConfig):
     actions_before: Dict[str, Callable] = {}
     actions_before["slice"] = slice_action
 
-    tasks = []
+    tasks: List[HandlerTask] = []
 
     for task in config.tasks:
         curr_task = HandlerTask(task.abstract_task)
