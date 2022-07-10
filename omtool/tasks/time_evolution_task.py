@@ -7,7 +7,7 @@ import numpy as np
 from amuse.lab import ScalarQuantity, VectorQuantity
 from py_expression_eval import Parser
 
-from omtool.core.datamodel import AbstractTask, Snapshot, get_parameters, profiler
+from omtool.core.datamodel import AbstractTask, Snapshot, get_parameters, profiler, DataType
 
 
 class TimeEvolutionTask(AbstractTask):
@@ -45,7 +45,7 @@ class TimeEvolutionTask(AbstractTask):
             self.values = np.array([])
 
     @profiler("Time evolution task")
-    def run(self, snapshot: Snapshot) -> Tuple[np.ndarray, np.ndarray]:
+    def run(self, snapshot: Snapshot) -> DataType:
         value = self.expr.evaluate(get_parameters(snapshot.particles))
         value = self.function(value)
 
@@ -56,4 +56,4 @@ class TimeEvolutionTask(AbstractTask):
         else:
             self.values.append(value)
 
-        return (self.times / self.time_unit, self.values / self.value_unit)
+        return {"times": self.times / self.time_unit, "values": self.values / self.value_unit}

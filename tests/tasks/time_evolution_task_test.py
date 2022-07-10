@@ -26,16 +26,20 @@ class TestTimeEvolutionTask(unittest.TestCase):
     def test_sum_function(self):
         task = TimeEvolutionTask("x", 1 | units.Myr, 1 | units.kpc, function="sum")
 
-        t, x = task.run(self._generate_snapshot())
+        actual = task.run(self._generate_snapshot())
 
-        self.assertTrue((x == np.array([1])).all() and (t == np.array([0])).all())
+        self.assertTrue(
+            (actual["times"] == np.array([0])).all() and (actual["values"] == np.array([1])).all()
+        )
 
     def test_mean_function(self):
         task = TimeEvolutionTask("x", 1 | units.Myr, 1 | units.kpc, function="mean")
 
-        t, x = task.run(self._generate_snapshot())
+        actual = task.run(self._generate_snapshot())
 
-        self.assertTrue((x == np.array([0.5])).all() and (t == np.array([0])).all())
+        self.assertTrue(
+            (actual["times"] == np.array([0])).all() and (actual["values"] == np.array([0.5])).all()
+        )
 
     def test_empty_particle_set(self):
         task = TimeEvolutionTask("x", 1 | units.Myr, 1 | units.kpc, function="sum")
@@ -44,16 +48,18 @@ class TestTimeEvolutionTask(unittest.TestCase):
         snapshot.particles.position = np.array([]) | units.kpc
         snapshot.particles.velocity = np.array([]) | units.kms
         snapshot.particles.mass = np.array([]) | units.MSun
-        t, x = task.run(snapshot)
+        actual = task.run(snapshot)
 
-        self.assertTrue((t == np.array([])).all() and (x == np.array([])).all())
+        self.assertTrue(
+            (actual["times"] == np.array([])).all() and (actual["values"] == np.array([])).all()
+        )
 
     def test_expression_without_vars(self):
         task = TimeEvolutionTask("1", 1 | units.Myr, 1, function="sum")
 
-        t, x = task.run(self._generate_snapshot())
+        actual = task.run(self._generate_snapshot())
 
-        self.assertTrue(t == np.array([0])) and (x == np.array([1]))
+        self.assertTrue(actual["times"] == np.array([0])) and (actual["values"] == np.array([1]))
 
     def test_empty_expressions(self):
         self.assertRaises(RuntimeError, TimeEvolutionTask, "", 1 | units.Myr, 1, function="sum")

@@ -24,34 +24,44 @@ class TestScatterTask(unittest.TestCase):
         return snapshot
 
     def test_run(self):
-        task = ScatterTask("x", "y", 1 | units.kpc, 1 | units.kpc, False)
+        exprs = {"x": "x", "y": "y"}
+        u = {"x": 1 | units.kpc, "y": 1 | units.kpc}
+        task = ScatterTask(exprs, u, filter_barion=False)
 
-        x, y = task.run(self._generate_snapshot())
+        actual = task.run(self._generate_snapshot())
 
-        self.assertTrue((x == np.array([0, 1])).all() and (y == np.array([0, 1])).all())
+        self.assertTrue(
+            (actual["x"] == np.array([0, 1])).all() and (actual["y"] == np.array([0, 1])).all()
+        )
 
     def test_empty_particle_set(self):
-        task = ScatterTask("x", "y", 1 | units.kpc, 1 | units.kpc, False)
+        exprs = {"x": "x", "y": "y"}
+        u = {"x": 1 | units.kpc, "y": 1 | units.kpc}
+        task = ScatterTask(exprs, u, filter_barion=False)
 
         snapshot = Snapshot()
         snapshot.particles.position = np.array([]) | units.kpc
         snapshot.particles.velocity = np.array([]) | units.kms
         snapshot.particles.mass = np.array([]) | units.MSun
-        x, y = task.run(snapshot)
+        actual = task.run(snapshot)
 
-        self.assertTrue((x == np.array([])).all() and (y == np.array([])).all())
+        self.assertTrue((actual["x"] == np.array([])).all() and (actual["y"] == np.array([])).all())
 
     def test_expressions_without_vars(self):
-        task = ScatterTask("1", "1", 1, 1, False)
+        exprs = {"x": "1", "y": "1"}
+        u = {"x": 1, "y": 1}
+        task = ScatterTask(exprs, u, False)
 
-        x, y = task.run(self._generate_snapshot())
+        actual = task.run(self._generate_snapshot())
 
-        self.assertTrue(x == 1) and (y == 1)
+        self.assertTrue(actual["x"] == 1) and (actual["y"] == 1)
 
     def test_empty_expressions(self):
-        self.assertRaises(RuntimeError, ScatterTask, "", "", 1, 1, False)
+        self.assertRaises(Exception, ScatterTask, {"x": "", "y": ""}, {"x": 1, "y": 1}, False)
 
     def test_incompatible_units(self):
-        task = ScatterTask("x + vx", "y", 1 | units.kms, 1 | units.kms, False)
+        exprs = {"x": "x + vx", "y": "y"}
+        u = {"x": 1 | units.kms, "y": 1 | units.kms}
+        task = ScatterTask(exprs, u, False)
 
         self.assertRaises(IncompatibleUnitsException, task.run, self._generate_snapshot())
