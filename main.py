@@ -12,8 +12,7 @@ from integration import integrate
 from omtool import json_logger as logger
 from omtool.core.analysis import AnalysisConfig
 from omtool.core.datamodel import BaseConfig, task_profiler
-from omtool.core.datamodel import CreationConfigSchema
-from omtool.core.integration import IntegrationConfig
+from omtool.core.configs import CreationConfigSchema, IntegrationConfigSchema
 from omtool.core.utils.config_utils import yaml_loader
 
 if __name__ == "__main__":
@@ -48,6 +47,10 @@ if __name__ == "__main__":
         schema = CreationConfigSchema()
         create(schema.load(data))
     elif args.mode == "integrate":
-        integrate(IntegrationConfig.from_yaml(args.inputparams[0]))
+        with open(args.inputparams[0], "r", encoding="utf-8") as stream:
+            data = yaml.load(stream, Loader=yaml_loader())
+
+        schema = IntegrationConfigSchema()
+        integrate(schema.load(data))
     elif args.mode == "analize":
         analize(AnalysisConfig.from_yaml(args.inputparams[0]))

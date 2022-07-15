@@ -2,7 +2,7 @@
 Module that describes all of the integrators.
 """
 from omtool.core.datamodel import Snapshot
-from omtool.core.integration.integrators.pyfalcon_integrator import PyfalconIntegrator
+from omtool.core.integrators.pyfalcon_integrator import PyfalconIntegrator
 
 
 def get_integrator(integrator_name: str, snapshot: Snapshot, args: dict):

@@ -13,8 +13,8 @@ from omtool import json_logger as logger
 from omtool import visualizer
 from omtool.actions_after import VisualizerAction, logger_action
 from omtool.core.datamodel import HandlerTask, Snapshot, profiler
-from omtool.core.integration.config import IntegrationConfig
-from omtool.core.integration.integrators import get_integrator
+from omtool.core.configs import IntegrationConfig
+from omtool.core.integrators import get_integrator
 
 
 def integrate(config: IntegrationConfig):
