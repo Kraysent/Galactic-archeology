@@ -21,6 +21,7 @@ def analize(config: AnalysisConfig):
     Analysis mode for the OMTool. It is used for the data
     analysis of existing models and the export of their parameters.
     """
+    logger.initialize(config.logging)
     actions_after: Dict[str, Callable] = {}
     actions_after["logging"] = logger_action
     actions_after["fit"] = fit_action
@@ -37,7 +38,7 @@ def analize(config: AnalysisConfig):
     tasks: List[HandlerTask] = []
 
     for task in config.tasks:
-        curr_task = HandlerTask(task.abstract_task)
+        curr_task = HandlerTask(task.name)
 
         for action_params in task.actions_before:
             action_name = action_params.pop("type", None)

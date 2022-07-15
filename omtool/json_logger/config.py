@@ -1,23 +1,18 @@
-"""
-General config for logger.
-"""
+from dataclasses import dataclass
+
+from marshmallow import Schema, fields, post_load
 
 
+@dataclass
 class Config:
-    """
-    General config for logger.
-    """
-
     filename: str
     datefmt: str
 
-    @staticmethod
-    def from_dict(data: dict):
-        """
-        Loads this type from dict.
-        """
-        res = Config()
-        res.filename = data.get("filename", "")
-        res.datefmt = data.get("datefmt", "%Y-%m-%d %H:%M:%S")
 
-        return res
+class ConfigSchema(Schema):
+    filename = fields.Str()
+    datefmt = fields.Str()
+
+    @post_load
+    def make(self, data: dict, **kwargs):
+        return Config(**data)

@@ -1,12 +1,7 @@
 from dataclasses import dataclass
 from typing import List, Optional, Tuple
 
-
-def required_get(data: dict, field: str):
-    try:
-        return data[field]
-    except KeyError as e:
-        raise Exception(f'No required key "{field}" found in visualizer configuration.') from e
+from marshmallow import Schema, fields, post_load
 
 
 @dataclass
@@ -26,21 +21,14 @@ class PlotParameters:
     basey = 10
 
 
+@dataclass
 class PanelConfig:
     id: str
     coords: Tuple[int, ...]
     params: PlotParameters
 
-    @staticmethod
-    def from_dict(data: dict) -> "PanelConfig":
-        res = PanelConfig()
-        res.id = required_get(data, "id")
-        res.coords = tuple(data.get("coords", [0, 1, 1, 1]))
-        res.params = PlotParameters(**required_get(data, "params"))
 
-        return res
-
-
+@dataclass
 class Config:
     output_dir: str
     title: str
@@ -48,13 +36,46 @@ class Config:
     pic_filename: str
     panels: List[PanelConfig]
 
-    @staticmethod
-    def from_dict(data: dict) -> "Config":
-        res = Config()
-        res.output_dir = required_get(data, "output_dir")
-        res.title = data.get("title", "")
-        res.figsize = tuple(data.get("figsize", [16, 9]))
-        res.pic_filename = data.get("pic_filename", "img-{i:03d}.png")
-        res.panels = [PanelConfig.from_dict(panel) for panel in required_get(data, "panels")]
 
-        return res
+class PlotParametersSchema(Schema):
+    grid = fields.Bool()
+    xlim = fields.Tuple((fields.Int(), fields.Int()))
+    ylim = fields.Tuple((fields.Int(), fields.Int()))
+    xlabel = fields.Str()
+    ylabel = fields.Str()
+    xticks = fields.List(fields.Int())
+    yticks = fields.List(fields.Int())
+    title = fields.Str()
+    ticks_direction = fields.Str()
+    xscale = fields.Str()
+    basex = fields.Int()
+    yscale = fields.Str()
+    basey = fields.Int()
+
+    @post_load
+    def make(self, data, **kwargs):
+        return PlotParameters(**data)
+
+
+class PanelSchema(Schema):
+    id = fields.Str(required=True)
+    coords = fields.Tuple(
+        (fields.Float(), fields.Float(), fields.Float(), fields.Float()), load_default=(0, 1, 1, 1)
+    )
+    params = fields.Nested(PlotParametersSchema)
+
+    @post_load
+    def make(self, data, **kwargs):
+        return PanelConfig(**data)
+
+
+class ConfigSchema(Schema):
+    output_dir = fields.Str(required=True)
+    title = fields.Str(load_default="")
+    figsize = fields.Tuple((fields.Int(), fields.Int()), load_default=(16, 9))
+    pic_filename = fields.Str(load_default="img-{i:03d}.png")
+    panels = fields.List(fields.Nested(PanelSchema), required=True)
+
+    @post_load
+    def make(self, data, **kwargs):
+        return Config(**data)

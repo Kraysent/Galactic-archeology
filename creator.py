@@ -16,6 +16,7 @@ def create(config: CreationConfig):
     Creation mode for the OMTool. Used to create and load models from
     files and export them into single file.
     """
+    logger.initialize(config.logging)
     builder = SnapshotBuilder()
 
     if not config.overwrite:

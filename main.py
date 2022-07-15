@@ -16,7 +16,7 @@ from omtool.core.configs import (
     CreationConfigSchema,
     IntegrationConfigSchema,
 )
-from omtool.core.datamodel import BaseConfig, task_profiler
+from omtool.core.datamodel import task_profiler
 from omtool.core.utils.config_utils import yaml_loader
 
 
@@ -41,9 +41,6 @@ def main():
 
         for key, val in res.items():
             logger.info(f"{key} worked {val:.02f} seconds on average")
-
-    baseConfig = BaseConfig.from_yaml(args.inputparams[0])
-    logger.initialize(baseConfig.logger)
 
     with open(args.inputparams[0], "r", encoding="utf-8") as stream:
         data = yaml.load(stream, Loader=yaml_loader())

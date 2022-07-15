@@ -6,6 +6,8 @@ from amuse.lab import VectorQuantity, units
 from marshmallow import Schema, fields, post_load
 from marshmallow_enum import EnumField
 
+import omtool.json_logger as logger
+
 
 class Type(Enum):
     BODY = "body"
@@ -26,7 +28,7 @@ class Object:
 class CreationConfig:
     output_file: str
     overwrite: bool
-    logging: dict[str, Any]
+    logging: logger.Config
     objects: list[Object]
 
 
@@ -38,16 +40,16 @@ class ObjectsSchema(Schema):
     downsample_to = fields.Int(load_default=None)
 
     @post_load
-    def make(self, data, **kwargs):
+    def make(self, data: dict, **kwargs):
         return Object(**data)
 
 
 class CreationConfigSchema(Schema):
     output_file = fields.Str(required=True)
     overwrite = fields.Bool(load_default=False)
-    logging = fields.Dict(fields.Str())
+    logging = fields.Nested(logger.ConfigSchema)
     objects = fields.Nested(ObjectsSchema, many=True, required=True)
 
     @post_load
-    def make(self, data, **kwargs):
+    def make(self, data: dict, **kwargs):
         return CreationConfig(**data)

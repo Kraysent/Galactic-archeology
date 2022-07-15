@@ -3,6 +3,7 @@ from typing import Optional
 
 from marshmallow import EXCLUDE, Schema, fields, post_load
 
+import omtool.json_logger as logger
 from omtool import io_service, tasks, visualizer
 
 
@@ -11,24 +12,18 @@ class AnalysisConfig:
     input_file: io_service.Config
     visualizer: Optional[visualizer.Config]
     tasks: list[tasks.Config]
+    logging: logger.Config
 
 
 class AnalysisConfigSchema(Schema):
     class Meta:
         unknown = EXCLUDE
 
-    input_file = fields.Dict(fields.Str(), required=True)
-    visualizer = fields.Dict(fields.Str(), load_default=None)
-    tasks = fields.List(fields.Dict(fields.Str()), load_default=[])
+    input_file = fields.Nested(io_service.ConfigSchema, required=True)
+    visualizer = fields.Nested(visualizer.ConfigSchema, load_default=None)
+    tasks = fields.List(fields.Nested(tasks.ConfigSchema), load_default=[])
+    logging = fields.Nested(logger.ConfigSchema)
 
     @post_load
-    def make(self, data, **kwargs):
-        if "visualizer" in data and data["visualizer"] is not None:
-            data["visualizer"] = visualizer.Config.from_dict(data["visualizer"])
-
-        if "tasks" in data:
-            data["tasks"] = [tasks.Config.from_dict(task) for task in data["tasks"]]
-
-        data["input_file"] = io_service.Config.from_dict(data["input_file"])
-
+    def make(self, data: dict, **kwargs):
         return AnalysisConfig(**data)

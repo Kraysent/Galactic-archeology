@@ -22,6 +22,7 @@ def integrate(config: IntegrationConfig):
     Integration mode for the OMTool. Used to integrate existing model
     from the file and write it to another file.
     """
+    logger.initialize(config.logging)
     actions_after: Dict[str, Callable] = {}
     actions_after["logging"] = logger_action
 
@@ -37,7 +38,7 @@ def integrate(config: IntegrationConfig):
     tasks = []
 
     for task in config.tasks:
-        curr_task = HandlerTask(task.abstract_task)
+        curr_task = HandlerTask(task.name)
 
         for action_params in task.actions_before:
             action_name = action_params.pop("type", None)

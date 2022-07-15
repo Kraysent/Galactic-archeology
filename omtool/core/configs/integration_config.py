@@ -4,6 +4,7 @@ from typing import Any, Optional
 from amuse.lab import ScalarQuantity
 from marshmallow import Schema, fields, post_load
 
+import omtool.json_logger as logger
 from omtool import io_service, tasks, visualizer
 
 
@@ -26,7 +27,7 @@ class IntegrationConfig:
     overwrite: bool
     model_time: ScalarQuantity
     integrator: Integrator
-    logging: dict[str, Any]
+    logging: logger.Config
     snapshot_interval: int
     visualizer: Optional[visualizer.Config]
     tasks: list[tasks.Config]
@@ -52,25 +53,17 @@ class LogParamsSchema(Schema):
 
 
 class IntegrationConfigSchema(Schema):
-    input_file = fields.Dict(fields.Str(), required=True)
+    input_file = fields.Nested(io_service.ConfigSchema, required=True)
     output_file = fields.Str(required=True)
     overwrite = fields.Bool(load_default=False)
     model_time = fields.Raw(required=True)
     integrator = fields.Nested(IntegratorSchema, required=True)
     snapshot_interval = fields.Int(load_default=1)
-    logging = fields.Dict(fields.Str())
-    visualizer = fields.Dict(fields.Str(), load_default=None)
-    tasks = fields.List(fields.Dict(fields.Str()), load_default=[])
+    logging = fields.Nested(logger.ConfigSchema)
+    visualizer = fields.Nested(visualizer.ConfigSchema, load_default=None)
+    tasks = fields.List(fields.Nested(tasks.ConfigSchema), load_default=[])
     logs = fields.List(fields.Nested(LogParamsSchema), load_default=[])
 
     @post_load
-    def make(self, data, **kwargs):
-        if "visualizer" in data and data["visualizer"] is not None:
-            data["visualizer"] = visualizer.Config.from_dict(data["visualizer"])
-
-        if "tasks" in data:
-            data["tasks"] = [tasks.Config.from_dict(task) for task in data["tasks"]]
-
-        data["input_file"] = io_service.Config.from_dict(data["input_file"])
-
+    def make(self, data: dict, **kwargs):
         return IntegrationConfig(**data)
