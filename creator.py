@@ -43,6 +43,11 @@ def create(config: CreationConfig):
         curr_snapshot.particles.position += body.position
         curr_snapshot.particles.velocity += body.velocity
 
+        if body.downsample_to is not None:
+            c = len(curr_snapshot.particles) / body.downsample_to
+            curr_snapshot.particles = curr_snapshot.particles[:: int(c)]
+            curr_snapshot.particles.mass *= c
+
         logger.info(f"Adding snapshot of {len(curr_snapshot.particles)} particles.")
         builder.add_snapshot(curr_snapshot)
         logger.info("Snapshot added.")

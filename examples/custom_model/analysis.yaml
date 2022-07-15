@@ -1,0 +1,312 @@
+host_slice: &host_slice
+  - 0
+  - 100000
+host_color: &host_clr b
+
+sat_slice: &sat_slice
+  - 100000
+  - 150000
+sat_color: &sat_clr r
+
+all_color: &all_clr y
+
+input_file:
+  format: fits
+  filenames:
+    - !env "{WORKING_DIR}/test_out.fits"
+
+logging:
+  filename: !env "{WORKING_DIR}/test_json_log.txt"
+  datefmt: "%Y-%m-%d %H:%M:%S"
+
+visualizer:
+  output_dir: !env "{WORKING_DIR}/analysis"
+  title: "Time: {time:07.01f} Myr"
+  figsize: [20, 11]
+  pic_filename: "img-{i:03d}.png"
+  panels:
+    - id: zy_plane
+      coords: [0, 0.35, 0.35, 0.6]
+      params:
+        xlim: [-45, 45]
+        ylim: [-40, 40]
+        xlabel: "z, kpc"
+        ylabel: "y, kpc"
+        xticks: [0, 10]
+        yticks: [0, 10]
+    - id: xy_plane
+      coords: [0.33, 0.35, 0.35, 0.6]
+      params:
+        xlim: [-45, 45]
+        ylim: [-40, 40]
+        xlabel: "x, kpc"
+        yticks: []
+        xticks: [0, 10]
+    - id: potential_dist_plane
+      coords: [0.72, 0.66, 0.14, 0.3]
+      params:
+        xlim: [0, 50]
+        ylim: [0, 3]
+        xlabel: "$r$, kpc"
+        ylabel: "Potential, portion of the average"
+        grid: True
+    - id: bound_mass_evolution_plane
+      coords: [0.72, 0.33, 0.14, 0.3]
+      params:
+        xlim: [0, 10000]
+        ylim: [0, 3.e+11]
+        xlabel: "Time, Myr"
+        ylabel: "Bound mass, MSun"
+        grid: True
+    - id: separation_evolution_panel
+      coords: [0, 0, 0.14, 0.3]
+      params:
+        xlim: [0, 10000]
+        ylim: [0, 150]
+        xlabel: "Time, Myr"
+        ylabel: "Separation, kpc"
+        grid: True
+    - id: velocity_profile_panel
+      coords: [0.18, 0, 0.32, 0.3]
+      params:
+        xlim: [0, 15]
+        ylim: [0, 400]
+        xlabel: "$r$, kpc"
+        ylabel: "$v$, km/s"
+        grid: True
+    - id: density_profile_panel
+      coords: [0.54, 0, 0.32, 0.3]
+      params:
+        xlim: [0, 50]
+        ylim: [0, 4.e+8]
+        xlabel: "$r$, kpc"
+        ylabel: '$\rho$, MSun / kpc ** 3'
+        grid: True
+
+tasks:
+  - name: ScatterTask
+    args: &z_args
+      expressions:
+        x: "z"
+        y: "y"
+        m: "m"
+      units:
+        x: !q [1, kpc]
+        y: !q [1, kpc]
+        m: !q [1, MSun]
+    actions_before:
+      - type: slice
+        part: *host_slice
+    actions_after:
+      - type: visualizer
+        id: zy_plane
+        is_density_plot: True
+        resolution: 700
+        extent: [-45, 45, -40, 40]
+        channel: *host_clr
+        weights: m
+  - name: ScatterTask
+    args: *z_args
+    actions_before:
+      - type: slice
+        part: *sat_slice
+    actions_after:
+      - type: visualizer
+        id: zy_plane
+        is_density_plot: True
+        resolution: 700
+        extent: [-45, 45, -40, 40]
+        channel: *sat_clr
+        weights: m
+
+  - name: ScatterTask
+    args: &x_args
+      expressions:
+        x: "x"
+        y: "y"
+        m: "m"
+      units:
+        x: !q [1, kpc]
+        y: !q [1, kpc]
+        m: !q [1, MSun]
+    actions_before:
+      - type: slice
+        part: *host_slice
+    actions_after:
+      - type: visualizer
+        id: xy_plane
+        is_density_plot: True
+        resolution: 700
+        extent: [-45, 45, -40, 40]
+        channel: *host_clr
+        weights: m
+  - name: ScatterTask
+    args: *x_args
+    actions_before:
+      - type: slice
+        part: *sat_slice
+    actions_after:
+      - type: visualizer
+        id: xy_plane
+        is_density_plot: True
+        resolution: 700
+        extent: [-45, 45, -40, 40]
+        channel: *sat_clr
+        weights: m
+
+  - name: PotentialTask
+    args:
+      center_type: potential
+    actions_before:
+      - type: slice
+        part: *host_slice
+    actions_after:
+      - type: visualizer
+        id: potential_dist_plane
+        linestyle: None
+        markersize: 1
+        color: *host_clr
+        label: host
+        x: radii
+        y: potential
+  - name: PotentialTask
+    args:
+      center_type: potential
+    actions_before:
+      - type: slice
+        part: *sat_slice
+    actions_after:
+      - type: visualizer
+        id: potential_dist_plane
+        markersize: 1
+        linestyle: None
+        color: *sat_clr
+        label: satellite
+        x: radii
+        y: potential
+  - name: PotentialTask
+    args:
+      center_type: potential
+    actions_after:
+      - type: visualizer
+        id: potential_dist_plane
+        markersize: 1
+        linestyle: None
+        color: *all_clr
+        label: all
+        x: radii
+        y: potential
+
+  - name: BoundMassTask
+    args:
+      number_of_iterations: 5
+    actions_before:
+      - type: slice
+        part: *sat_slice
+    actions_after:
+      - type: visualizer
+        id: bound_mass_evolution_plane
+        linestyle: solid
+        color: r
+        x: times
+        y: bound_mass
+
+  - name: DistanceTask
+    args:
+      start: potential
+      start_slice: !slice [0, 100000]
+      end: potential
+      end_slice: !slice [100000, 150000]
+    actions_after:
+      - type: visualizer
+        id: separation_evolution_panel
+        linestyle: solid
+        color: r
+        x: times
+        y: dist
+
+  - name: VelocityProfileTask
+    args:
+      center_type: potential
+    actions_before:
+      - type: slice
+        part: *host_slice
+    actions_after:
+      - type: visualizer
+        id: velocity_profile_panel
+        markersize: 1
+        linestyle: None
+        color: *host_clr
+        label: host
+        x: radii
+        y: velocity
+  - name: VelocityProfileTask
+    args:
+      center_type: potential
+    actions_before:
+      - type: slice
+        part: *sat_slice
+    actions_after:
+      - type: visualizer
+        id: velocity_profile_panel
+        markersize: 1
+        linestyle: None
+        color: *sat_clr
+        label: satellite
+        x: radii
+        y: velocity
+  - name: VelocityProfileTask
+    args:
+      center_type: potential
+    actions_after:
+      - type: visualizer
+        id: velocity_profile_panel
+        markersize: 1
+        linestyle: None
+        color: *all_clr
+        label: all
+        x: radii
+        y: velocity
+
+  - name: DensityProfileTask
+    args:
+      center_type: potential
+    actions_before:
+      - type: slice
+        part: *host_slice
+    actions_after:
+      - type: visualizer
+        id: density_profile_panel
+        markersize: 1
+        linestyle: None
+        color: *host_clr
+        label: host
+        x: radii
+        y: densities
+  - name: DensityProfileTask
+    args:
+      center_type: potential
+    actions_before:
+      - type: slice
+        part: *sat_slice
+    actions_after:
+      - type: visualizer
+        id: density_profile_panel
+        markersize: 1
+        linestyle: None
+        color: *sat_clr
+        label: satellite
+        x: radii
+        y: densities
+  - name: DensityProfileTask
+    args:
+      center_type: potential
+    actions_after:
+      - type: visualizer
+        id: density_profile_panel
+        markersize: 1
+        linestyle: None
+        color: *all_clr
+        label: all
+        x: radii
+        y: densities

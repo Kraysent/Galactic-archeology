@@ -1,0 +1,21 @@
+output_file: !env "{WORKING_DIR}/test.fits"
+overwrite: True
+
+logging:
+  filename: !env "{WORKING_DIR}/test_json_log.txt"
+
+objects:
+  - type: csv
+    args:
+      delimiter: " "
+      path: !env "{DATA_DIR}/host.csv"
+    position: !q [[0, 0, 0], kpc]
+    velocity: !q [[0, 0, 0], kms]
+    downsample_to: 100000
+  - type: csv
+    args:
+      delimiter: " "
+      path: !env "{DATA_DIR}/sat.csv"
+    position: !q [[100, 0, 0], kpc]
+    velocity: !q [[0, 100, 0], kms]
+    downsample_to: 50000

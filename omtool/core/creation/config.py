@@ -42,6 +42,7 @@ class Object:
     args: Dict[str, Any]
     position: VectorQuantity
     velocity: VectorQuantity
+    downsample_to: int
     type: Type
 
     @staticmethod
@@ -52,6 +53,7 @@ class Object:
         res = Object()
         res.position = data.get("position", [0, 0, 0] | units.kpc)
         res.velocity = data.get("velocity", [0, 0, 0] | units.kms)
+        res.downsample_to = data.get("downsample_to", None)
         res.type = Type.from_string(required_get(data, "type"))
         res.args = data.get("args", {})
 
