@@ -4,14 +4,17 @@ Entry point of the program.
 import argparse
 import atexit
 
+import yaml
+
 from analysis import analize
 from creator import create
 from integration import integrate
 from omtool import json_logger as logger
 from omtool.core.analysis import AnalysisConfig
-from omtool.core.creation import CreationConfig
 from omtool.core.datamodel import BaseConfig, task_profiler
+from omtool.core.datamodel import CreationConfigSchema
 from omtool.core.integration import IntegrationConfig
+from omtool.core.utils.config_utils import yaml_loader
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -39,7 +42,11 @@ if __name__ == "__main__":
     logger.initialize(baseConfig.logger)
 
     if args.mode == "create":
-        create(CreationConfig.from_yaml(args.inputparams[0]))
+        with open(args.inputparams[0], "r", encoding="utf-8") as stream:
+            data = yaml.load(stream, Loader=yaml_loader())
+
+        schema = CreationConfigSchema()
+        create(schema.load(data))
     elif args.mode == "integrate":
         integrate(IntegrationConfig.from_yaml(args.inputparams[0]))
     elif args.mode == "analize":
