@@ -7,7 +7,7 @@ host_color: &host_clr b
 
 sat_slice: &sat_slice
   - 1000001
-  - 1500002
+  - 1500001
 sat_color: &sat_clr r
 
 all_color: &all_clr y
@@ -266,9 +266,11 @@ tasks:
         id: bound_mass_data
 
   - name: DistanceTask
-    args:
-      start_id: 0
-      relative_to: 1000001
+    args: 
+      start: potential
+      start_slice: !slice [0, 1000001]
+      end: potential
+      end_slice: !slice [1000001, 1500001]
     actions_after:
       - type: visualizer
         id: separation_evolution_panel

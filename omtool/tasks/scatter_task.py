@@ -2,10 +2,7 @@
 Task that computes arbitrary expression against another arbitrary expression and
 plots the points in the corresponding way.
 """
-from typing import List, Tuple
-
-import numpy as np
-from amuse.lab import ScalarQuantity, units
+from amuse.lab import ScalarQuantity
 from py_expression_eval import Parser
 
 from omtool.core.datamodel import (
