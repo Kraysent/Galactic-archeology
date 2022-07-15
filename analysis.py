@@ -12,7 +12,7 @@ from omtool import json_logger as logger
 from omtool import visualizer
 from omtool.actions_after import VisualizerAction, fit_action, logger_action
 from omtool.actions_before import slice_action
-from omtool.core.analysis.config import AnalysisConfig
+from omtool.core.configs import AnalysisConfig
 from omtool.core.datamodel import HandlerTask, Snapshot, profiler
 
 

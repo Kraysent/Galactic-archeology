@@ -4,3 +4,4 @@ from omtool.core.configs.integration_config import (
     IntegrationConfig,
     Integrator,
 )
+from omtool.core.configs.analysis_config import AnalysisConfig, AnalysisConfigSchema

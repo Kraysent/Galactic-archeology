@@ -3,6 +3,7 @@ Entry point of the program.
 """
 import argparse
 import atexit
+import sys
 
 import yaml
 
@@ -10,12 +11,12 @@ from analysis import analize
 from creator import create
 from integration import integrate
 from omtool import json_logger as logger
-from omtool.core.analysis import AnalysisConfig
 from omtool.core.datamodel import BaseConfig, task_profiler
-from omtool.core.configs import CreationConfigSchema, IntegrationConfigSchema
+from omtool.core.configs import CreationConfigSchema, IntegrationConfigSchema, AnalysisConfigSchema
 from omtool.core.utils.config_utils import yaml_loader
 
-if __name__ == "__main__":
+
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "mode",
@@ -40,17 +41,19 @@ if __name__ == "__main__":
     baseConfig = BaseConfig.from_yaml(args.inputparams[0])
     logger.initialize(baseConfig.logger)
 
+    with open(args.inputparams[0], "r", encoding="utf-8") as stream:
+        data = yaml.load(stream, Loader=yaml_loader())
+
     if args.mode == "create":
-        with open(args.inputparams[0], "r", encoding="utf-8") as stream:
-            data = yaml.load(stream, Loader=yaml_loader())
-
-        schema = CreationConfigSchema()
-        create(schema.load(data))
+        create(CreationConfigSchema().load(data))
     elif args.mode == "integrate":
-        with open(args.inputparams[0], "r", encoding="utf-8") as stream:
-            data = yaml.load(stream, Loader=yaml_loader())
-
-        schema = IntegrationConfigSchema()
-        integrate(schema.load(data))
+        integrate(IntegrationConfigSchema().load(data))
     elif args.mode == "analize":
-        analize(AnalysisConfig.from_yaml(args.inputparams[0]))
+        analize(AnalysisConfigSchema().load(data))
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        sys.exit(0)

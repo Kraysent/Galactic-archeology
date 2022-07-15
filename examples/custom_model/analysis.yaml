@@ -124,11 +124,9 @@ tasks:
       expressions:
         x: "x"
         y: "y"
-        m: "m"
       units:
         x: !q [1, kpc]
         y: !q [1, kpc]
-        m: !q [1, MSun]
     actions_before:
       - type: slice
         part: *host_slice
@@ -139,7 +137,6 @@ tasks:
         resolution: 700
         extent: [-45, 45, -40, 40]
         channel: *host_clr
-        weights: m
   - name: ScatterTask
     args: *x_args
     actions_before:
@@ -152,7 +149,6 @@ tasks:
         resolution: 700
         extent: [-45, 45, -40, 40]
         channel: *sat_clr
-        weights: m
 
   - name: PotentialTask
     args:

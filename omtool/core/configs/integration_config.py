@@ -27,7 +27,7 @@ class IntegrationConfig:
     logging: dict[str]
     snapshot_interval: int
     visualizer: Optional[visualizer.Config]
-    tasks: Optional[tasks.Config]
+    tasks: Optional[list[tasks.Config]]
     logs: list[LogParams]
 
 
