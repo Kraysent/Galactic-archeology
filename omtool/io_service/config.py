@@ -10,7 +10,7 @@ class Config:
     filenames: List[str]
 
 
-class ConfigSchema(Schema):
+class IOConfigSchema(Schema):
     format = fields.Str(required=True)
     filenames = fields.List(fields.Str(), required=True)
 

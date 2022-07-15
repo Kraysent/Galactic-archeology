@@ -47,7 +47,7 @@ class ObjectsSchema(Schema):
 class CreationConfigSchema(Schema):
     output_file = fields.Str(required=True)
     overwrite = fields.Bool(load_default=False)
-    logging = fields.Nested(logger.ConfigSchema)
+    logging = fields.Nested(logger.LoggerConfigSchema)
     objects = fields.Nested(ObjectsSchema, many=True, required=True)
 
     @post_load

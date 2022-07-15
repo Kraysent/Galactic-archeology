@@ -53,15 +53,15 @@ class LogParamsSchema(Schema):
 
 
 class IntegrationConfigSchema(Schema):
-    input_file = fields.Nested(io_service.ConfigSchema, required=True)
+    input_file = fields.Nested(io_service.IOConfigSchema, required=True)
     output_file = fields.Str(required=True)
     overwrite = fields.Bool(load_default=False)
     model_time = fields.Raw(required=True)
     integrator = fields.Nested(IntegratorSchema, required=True)
     snapshot_interval = fields.Int(load_default=1)
-    logging = fields.Nested(logger.ConfigSchema)
-    visualizer = fields.Nested(visualizer.ConfigSchema, load_default=None)
-    tasks = fields.List(fields.Nested(tasks.ConfigSchema), load_default=[])
+    logging = fields.Nested(logger.LoggerConfigSchema)
+    visualizer = fields.Nested(visualizer.VisualizerConfigSchema, load_default=None)
+    tasks = fields.List(fields.Nested(tasks.TasksConfigSchema), load_default=[])
     logs = fields.List(fields.Nested(LogParamsSchema), load_default=[])
 
     @post_load

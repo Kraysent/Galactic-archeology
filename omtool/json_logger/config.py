@@ -9,7 +9,7 @@ class Config:
     datefmt: str
 
 
-class ConfigSchema(Schema):
+class LoggerConfigSchema(Schema):
     filename = fields.Str()
     datefmt = fields.Str()
 

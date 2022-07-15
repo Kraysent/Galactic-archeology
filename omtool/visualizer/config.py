@@ -69,7 +69,7 @@ class PanelSchema(Schema):
         return PanelConfig(**data)
 
 
-class ConfigSchema(Schema):
+class VisualizerConfigSchema(Schema):
     output_dir = fields.Str(required=True)
     title = fields.Str(load_default="")
     figsize = fields.Tuple((fields.Int(), fields.Int()), load_default=(16, 9))

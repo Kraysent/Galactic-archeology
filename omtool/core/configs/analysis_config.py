@@ -19,10 +19,10 @@ class AnalysisConfigSchema(Schema):
     class Meta:
         unknown = EXCLUDE
 
-    input_file = fields.Nested(io_service.ConfigSchema, required=True)
-    visualizer = fields.Nested(visualizer.ConfigSchema, load_default=None)
-    tasks = fields.List(fields.Nested(tasks.ConfigSchema), load_default=[])
-    logging = fields.Nested(logger.ConfigSchema)
+    input_file = fields.Nested(io_service.IOConfigSchema, required=True)
+    visualizer = fields.Nested(visualizer.VisualizerConfigSchema, load_default=None)
+    tasks = fields.List(fields.Nested(tasks.TasksConfigSchema), load_default=[])
+    logging = fields.Nested(logger.LoggerConfigSchema, description="Pictures will be saved in output_dir with this filename. i is iteration number.")
 
     @post_load
     def make(self, data: dict, **kwargs):

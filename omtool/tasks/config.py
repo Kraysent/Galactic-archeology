@@ -20,7 +20,7 @@ class Config:
     actions_after: list[dict]
 
 
-class ConfigSchema(Schema):
+class TasksConfigSchema(Schema):
     name = fields.Raw(required=True)
     actions_before = fields.List(fields.Dict(fields.Str()), load_default=[])
     actions_after = fields.List(fields.Dict(fields.Str()), load_default=[])
