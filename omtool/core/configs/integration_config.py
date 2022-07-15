@@ -1,8 +1,10 @@
 from dataclasses import dataclass
 from typing import Any, Optional
+
 from amuse.lab import ScalarQuantity
 from marshmallow import Schema, fields, post_load
-from omtool import io_service, visualizer, tasks
+
+from omtool import io_service, tasks, visualizer
 
 
 @dataclass
@@ -24,10 +26,10 @@ class IntegrationConfig:
     overwrite: bool
     model_time: ScalarQuantity
     integrator: Integrator
-    logging: dict[str]
+    logging: dict[str, Any]
     snapshot_interval: int
     visualizer: Optional[visualizer.Config]
-    tasks: Optional[list[tasks.Config]]
+    tasks: list[tasks.Config]
     logs: list[LogParams]
 
 

@@ -7,12 +7,12 @@ from py_expression_eval import Parser
 
 from omtool.core.datamodel import (
     AbstractTask,
+    DataType,
     Snapshot,
     filter_barion_particles,
     get_parameters,
     profiler,
 )
-from omtool.core.datamodel import DataType
 
 
 class ScatterTask(AbstractTask):

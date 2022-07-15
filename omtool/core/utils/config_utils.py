@@ -1,4 +1,6 @@
 import os
+from typing import Type
+
 import numpy as np
 import yaml
 from amuse.lab import ScalarQuantity, VectorQuantity, units
@@ -63,7 +65,7 @@ def slice_constructor(loader: yaml.SafeLoader, node: yaml.nodes.ScalarNode) -> s
         )
 
 
-def yaml_loader() -> yaml.SafeLoader:
+def yaml_loader() -> Type[yaml.SafeLoader]:
     """
     Loader that processes all the tags.
     """

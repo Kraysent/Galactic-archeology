@@ -4,8 +4,8 @@ Miscellaneous object and function declarations used across the OMTool
 from omtool.core.datamodel.abstract_task import (
     AbstractTask,
     AbstractTimeTask,
-    Snapshot,
     DataType,
+    Snapshot,
     filter_barion_particles,
     get_parameters,
 )

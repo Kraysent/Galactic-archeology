@@ -1,12 +1,9 @@
 """
 Task that computes bound mass of the system.
 """
-from typing import Tuple
-
-import numpy as np
 from amuse.lab import ScalarQuantity, units
 
-from omtool.core.datamodel import AbstractTimeTask, Snapshot, profiler, DataType
+from omtool.core.datamodel import AbstractTimeTask, DataType, Snapshot, profiler
 from omtool.core.utils import math, pyfalcon_analizer
 
 

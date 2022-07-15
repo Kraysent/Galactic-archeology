@@ -1,14 +1,14 @@
 """
 Struct that holds abstract_task, its part and actions.
 """
-from typing import Callable, List, Tuple
+from typing import Callable, List
 
 import numpy as np
 
 from omtool.core.datamodel.abstract_task import AbstractTask
 from omtool.core.datamodel.snapshot import Snapshot
 
-DataType = Tuple[np.ndarray, np.ndarray]
+DataType = dict[str, np.ndarray]
 
 
 class HandlerTask:
@@ -22,11 +22,8 @@ class HandlerTask:
         actions_before: List[Callable[[Snapshot], Snapshot]] = None,
         actions_after: List[Callable[[DataType], DataType]] = None,
     ):
-        if actions_before is None:
-            actions_before = []
-
-        if actions_after is None:
-            actions_after = []
+        actions_before = actions_before or []
+        actions_after = actions_after or []
 
         self.task = task
         self.actions_before = actions_before

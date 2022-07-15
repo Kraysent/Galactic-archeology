@@ -1,9 +1,9 @@
 """
 Task that computes distance between point and some specified position.
 """
-from amuse.lab import ScalarQuantity, VectorQuantity, units
+from amuse.lab import ScalarQuantity, units
 
-from omtool.core.datamodel import AbstractTimeTask, Snapshot, profiler, DataType
+from omtool.core.datamodel import AbstractTimeTask, DataType, Snapshot, profiler
 from omtool.core.utils import particle_centers
 
 
@@ -48,14 +48,14 @@ class DistanceTask(AbstractTimeTask):
         elif hasattr(self, "start_id"):
             start_pos = snapshot[self.start_slice].particles[self.start_id].position
         else:
-            raise RuntimeError(f"DistanceTask.start or DistanceTask.start_id are not defined")
+            raise RuntimeError("DistanceTask.start or DistanceTask.start_id are not defined")
 
         if hasattr(self, "end"):
             end_pos = self.end(snapshot[self.end_slice].particles)
         elif hasattr(self, "end_id"):
             end_pos = snapshot[self.end_slice].particles[self.end_id].position
         else:
-            raise RuntimeError(f"DistanceTask.end or DistanceTask.end_id are not defined")
+            raise RuntimeError("DistanceTask.end or DistanceTask.end_id are not defined")
 
         dist = (end_pos - start_pos).length()
         self._append_value(snapshot, dist)

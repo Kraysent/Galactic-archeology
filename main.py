@@ -11,8 +11,12 @@ from analysis import analize
 from creator import create
 from integration import integrate
 from omtool import json_logger as logger
+from omtool.core.configs import (
+    AnalysisConfigSchema,
+    CreationConfigSchema,
+    IntegrationConfigSchema,
+)
 from omtool.core.datamodel import BaseConfig, task_profiler
-from omtool.core.configs import CreationConfigSchema, IntegrationConfigSchema, AnalysisConfigSchema
 from omtool.core.utils.config_utils import yaml_loader
 
 

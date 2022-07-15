@@ -1,15 +1,16 @@
 from dataclasses import dataclass
-from typing import Any, Optional
+from typing import Optional
 
 from marshmallow import EXCLUDE, Schema, fields, post_load
-from omtool import io_service, visualizer, tasks
+
+from omtool import io_service, tasks, visualizer
 
 
 @dataclass
 class AnalysisConfig:
     input_file: io_service.Config
     visualizer: Optional[visualizer.Config]
-    tasks: Optional[list[tasks.Config]]
+    tasks: list[tasks.Config]
 
 
 class AnalysisConfigSchema(Schema):

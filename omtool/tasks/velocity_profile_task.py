@@ -1,17 +1,14 @@
 """
 Task that computes radial velocity distribution.
 """
-from typing import Tuple
-
-import numpy as np
 from amuse.lab import ScalarQuantity, units
 
 from omtool.core.datamodel import (
     AbstractTask,
+    DataType,
     Snapshot,
     filter_barion_particles,
     profiler,
-    DataType,
 )
 from omtool.core.utils import math, particle_centers
 

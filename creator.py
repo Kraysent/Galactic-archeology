@@ -6,9 +6,9 @@ from pathlib import Path
 from typing import Callable, Dict
 
 from omtool import json_logger as logger
+from omtool.core.configs import CreationConfig, Object, Type
 from omtool.core.creation import SnapshotBuilder, SnapshotCreator
 from omtool.core.datamodel import Snapshot, profiler
-from omtool.core.configs import CreationConfig, Object, Type
 
 
 def create(config: CreationConfig):

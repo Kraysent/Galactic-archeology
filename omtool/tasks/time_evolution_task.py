@@ -1,13 +1,19 @@
 """
 Task that computes evolution of arbitrary expression over time.
 """
-from typing import Callable, Dict, Tuple
+from typing import Callable, Dict
 
 import numpy as np
 from amuse.lab import ScalarQuantity, VectorQuantity
 from py_expression_eval import Parser
 
-from omtool.core.datamodel import AbstractTask, Snapshot, get_parameters, profiler, DataType
+from omtool.core.datamodel import (
+    AbstractTask,
+    DataType,
+    Snapshot,
+    get_parameters,
+    profiler,
+)
 
 
 class TimeEvolutionTask(AbstractTask):

@@ -12,8 +12,8 @@ from omtool import io_service
 from omtool import json_logger as logger
 from omtool import visualizer
 from omtool.actions_after import VisualizerAction, logger_action
-from omtool.core.datamodel import HandlerTask, Snapshot, profiler
 from omtool.core.configs import IntegrationConfig
+from omtool.core.datamodel import HandlerTask, Snapshot, profiler
 from omtool.core.integrators import get_integrator
 
 

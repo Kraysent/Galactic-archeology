@@ -9,7 +9,6 @@ from amuse.lab import Particles, ScalarQuantity, units
 
 from omtool.core.datamodel.snapshot import Snapshot
 
-
 DataType = dict[str, np.ndarray]
 
 
