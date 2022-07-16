@@ -26,7 +26,9 @@ jobs:
           python3 -m pip install amuse-framework
       - name: Install project deps
         run: |
-          python3 -m pip install marshmallow matplotlib pandas pyyaml types-pyyaml argparse astropy
+          python3 -m pip install marshmallow marshmallow_jsonschema marshmallow_enum matplotlib pandas pyyaml types-pyyaml argparse astropy py_expression_eval
+          git clone https://github.com/GalacticDynamics-Oxford/pyfalcon.git
+          cd pyfalcon && python3 setup.py install
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Run isort
@@ -35,3 +37,5 @@ jobs:
         run: make check-flake8
       - name: Run mypy
         run: make check-mypy
+      - name: Run tests
+        run: make-runtests

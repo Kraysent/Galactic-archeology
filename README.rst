@@ -11,7 +11,7 @@ It requires following packages to work:
 
 .. code-block:: bash
 
-   pip install marshmallow numpy matplotlib pandas pyyaml amuse-framework argparse astropy
+   pip install marshmallow marshmallow_jsonschema marshmallow_enum matplotlib pandas pyyaml types-pyyaml argparse astropy py_expression_eval amuse-framework
 
 You also need to install `pyfalcon <https://github.com/GalacticDynamics-Oxford/pyfalcon>`_ module which makes integration possible.
 
@@ -19,7 +19,7 @@ You might also need:
 
 .. code-block:: bash
 
-   pip install flake8 black
+   pip install flake8 isort mypy black types-pyyaml
 
 Usage
 ###############
