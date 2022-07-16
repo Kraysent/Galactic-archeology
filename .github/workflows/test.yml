@@ -1,17 +1,22 @@
 name: run-tests
 on: [push]
 jobs:
-  check-flake8-style:
+  check-style:
     runs-on: ubuntu-latest
     steps:
       - name: Install python
         uses: actions/setup-python@v4
-        with: 
-          python-version: '3.10'
+        with:
+          python-version: "3.10"
       - name: Install flake8
         run: |
           python3 -m pip install flake8
+      - name: Install isort
+        run: |
+          python3 -m pip install isort
       - name: Checkout code
         uses: actions/checkout@v3
+      - name: Run isort
+        run: make check-isort
       - name: Run flake8
         run: make check-flake8
