@@ -38,3 +38,10 @@ jobs:
         run: make check-flake8
       - name: Run mypy
         run: make check-mypy
+  project-statistics:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Number of python code lines
+        run: find . -name '*.py' | xargs wc -l
