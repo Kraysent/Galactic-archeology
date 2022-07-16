@@ -29,9 +29,9 @@ def create(config: CreationConfig):
     @profiler("Creation")
     def loop_creation_stage(body: Object):
         type_map: Dict[Type, Callable[..., Snapshot]] = {
-            Type.CSV: SnapshotCreator.construct_from_csv,
-            Type.BODY: SnapshotCreator.construct_single_particle,
-            Type.PLUMMER_SPHERE: SnapshotCreator.construct_plummer_sphere,
+            Type.csv: SnapshotCreator.construct_from_csv,
+            Type.body: SnapshotCreator.construct_single_particle,
+            Type.plummer_sphere: SnapshotCreator.construct_plummer_sphere,
         }
 
         curr_snapshot = type_map[body.type](**body.args)

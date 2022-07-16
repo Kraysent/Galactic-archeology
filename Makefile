@@ -21,6 +21,10 @@ fix-black:
 fix-style: fix-isort fix-black
 
 
+update-schemas:
+	$(PYTHON) main.py generate-schemas
+
+
 build-pip:
 	$(PYTHON) -m pip install . --upgrade
 

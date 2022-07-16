@@ -1,71 +1,98 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Creation config YAML schema",
-  "description": "YAML schema for creation configuration file of OMTool",
-  "type": "object",
-  "additionalProperties": true,
-  "required": [
-    "output_file",
-    "objects"
-  ],
-  "properties": {
-    "output_file": {
-      "type": "string",
-      "description": "Path to the file where the output model would be saved."
-    },
-    "overwrite": {
-      "type": "boolean",
-      "description": "Should the program overwrite model file if it already exists or not.",
-      "default": false
-    },
-    "logging": {
+  "definitions": {
+    "LoggerConfigSchema": {
       "type": "object",
-      "description": "Object that stores configuration for logger.",
-      "additionalProperties": false,
       "properties": {
-        "filename": {
-          "type": "string",
-          "description": "Filename where JSON logs would be stored."
-        },
         "datefmt": {
+          "title": "datefmt",
           "type": "string",
-          "description": "Format of the date provided to logging module."
+          "description": "Simple strftime() format of the date."
+        },
+        "filename": {
+          "title": "filename",
+          "type": "string",
+          "description": "Filename where the logs would be duplicated. If left empty, logs would be passed into stdout."
         }
-      }
+      },
+      "additionalProperties": false
     },
-    "objects": {
-      "type": "array",
-      "description": "List of objects that would be added to model.",
-      "items": {
-        "type": "object",
-        "additionalItems": true,
-        "required": [
-          "type"
-        ],
-        "properties": {
-          "type": {
-            "type": "string",
-            "description": "Type of object.",
-            "enum": [
-              "body",
-              "csv",
-              "plummer_sphere"
-            ]
-          },
-          "args": {
-            "type": "object",
-            "description": "Parameters to the constructor of the model."
-          },
-          "position": {
-            "type": "array",
-            "description": "Initial position of the system. Should be denoted with !q tag."
-          },
-          "velocity": {
-            "type": "array",
-            "description": "Initial velocity of the system. Should be denoted with !q tag."
-          }
+    "ObjectsSchema": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "args": {
+          "title": "args",
+          "type": "object",
+          "description": "Arguments that would be passed to to constructor of a given model.",
+          "additionalProperties": {}
+        },
+        "downsample_to": {
+          "title": "downsample_to",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Target length of downsampling. If one does not need all the particles from the model, they may decrease it to this number and increase the mass correspondingly."
+        },
+        "position": {
+          "title": "position",
+          "type": "array",
+          "description": "Initial offset of the whole model. If there is more than one particle, it would be applied to each particle."
+        },
+        "type": {
+          "title": "type",
+          "type": "string",
+          "enum": [
+            "body",
+            "csv",
+            "plummer_sphere"
+          ],
+          "description": "\n        Type of object to be created. Can either be 'csv', 'body' or 'plummer_sphere'.\n\n        csv - model listed in *.csv file with following format: 'x,y,z,vx,vy,vz,m'.\n        body - actual particles described by its mass.\n        plummer_sphere - model with given number of particles and mass described\n        by the Plummer model.\n        "
+        },
+        "velocity": {
+          "title": "velocity",
+          "type": "array",
+          "description": "Initial velocity of the whole model. If there is more than one particle, it would be applied to each particle."
         }
-      }
+      },
+      "additionalProperties": false
+    },
+    "CreationConfigSchema": {
+      "type": "object",
+      "required": [
+        "objects",
+        "output_file"
+      ],
+      "properties": {
+        "logging": {
+          "type": "object",
+          "$ref": "#/definitions/LoggerConfigSchema",
+          "description": "This field describes logging configuration."
+        },
+        "objects": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/ObjectsSchema",
+            "description": "This field list of objects. Each object is either a body or a model. Models can be loaded from *.csv in specific format or generated based on some function."
+          }
+        },
+        "output_file": {
+          "title": "output_file",
+          "type": "string",
+          "description": "Path to file where output model would be saved."
+        },
+        "overwrite": {
+          "title": "overwrite",
+          "type": "boolean",
+          "description": "Flag that shows whether to overwrite model if it already exists on given filepath."
+        }
+      },
+      "additionalProperties": true
     }
-  }
+  },
+  "$ref": "#/definitions/CreationConfigSchema"
 }

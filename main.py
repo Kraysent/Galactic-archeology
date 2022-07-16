@@ -25,14 +25,13 @@ def main():
     parser.add_argument(
         "mode",
         help="Mode of the program to run",
-        choices=["create", "integrate", "analize", "test"],
+        choices=["create", "integrate", "analize", "generate-schema"],
     )
     parser.add_argument(
         "inputparams",
         help="input parameters for particular mode (for example, path to config file)",
         nargs=argparse.REMAINDER,
     )
-
     args = parser.parse_args()
 
     @atexit.register
@@ -42,15 +41,26 @@ def main():
         for key, val in res.items():
             logger.info(f"{key} worked {val:.02f} seconds on average")
 
-    with open(args.inputparams[0], "r", encoding="utf-8") as stream:
-        data = yaml.load(stream, Loader=yaml_loader())
+    match args.mode:
+        case "create":
+            with open(args.inputparams[0], "r", encoding="utf-8") as stream:
+                data = yaml.load(stream, Loader=yaml_loader())
 
-    if args.mode == "create":
-        create(CreationConfigSchema().load(data))
-    elif args.mode == "integrate":
-        integrate(IntegrationConfigSchema().load(data))
-    elif args.mode == "analize":
-        analize(AnalysisConfigSchema().load(data))
+            create(CreationConfigSchema().load(data))
+        case "integrate":
+            with open(args.inputparams[0], "r", encoding="utf-8") as stream:
+                data = yaml.load(stream, Loader=yaml_loader())
+
+            integrate(IntegrationConfigSchema().load(data))
+        case "analize":
+            with open(args.inputparams[0], "r", encoding="utf-8") as stream:
+                data = yaml.load(stream, Loader=yaml_loader())
+
+            analize(AnalysisConfigSchema().load(data))
+        case "generate-schema":
+            CreationConfigSchema().dump_json("schemas/creation_schema.json", indent=2)
+            IntegrationConfigSchema().dump_json("schemas/integration_schema.json", indent=2)
+            AnalysisConfigSchema().dump_json("schemas/analysis_schema.json", indent=2)
 
 
 if __name__ == "__main__":

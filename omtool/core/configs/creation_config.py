@@ -1,3 +1,4 @@
+import json
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Optional
@@ -5,14 +6,15 @@ from typing import Any, Optional
 from amuse.lab import VectorQuantity, units
 from marshmallow import Schema, fields, post_load
 from marshmallow_enum import EnumField
+from marshmallow_jsonschema import JSONSchema
 
-import omtool.json_logger as logger
+from omtool.core.configs.base_config import BaseConfig, BaseSchema
 
 
 class Type(Enum):
-    BODY = "body"
-    CSV = "csv"
-    PLUMMER_SPHERE = "plummer_sphere"
+    body = 1
+    csv = 2
+    plummer_sphere = 3
 
 
 @dataclass
@@ -25,31 +27,75 @@ class Object:
 
 
 @dataclass
-class CreationConfig:
+class CreationConfig(BaseConfig):
     output_file: str
     overwrite: bool
-    logging: logger.Config
     objects: list[Object]
 
 
 class ObjectsSchema(Schema):
-    type = EnumField(Type, by_value=True, required=True)
-    args = fields.Dict(fields.Str())
-    position = fields.Raw(load_default=VectorQuantity([0, 0, 0], units.kms))
-    velocity = fields.Raw(load_default=VectorQuantity([0, 0, 0], units.kms))
-    downsample_to = fields.Int(load_default=None)
+    type = EnumField(
+        Type,
+        required=True,
+        description="""
+        Type of object to be created. Can either be 'csv', 'body' or 'plummer_sphere'.
+
+        csv - model listed in *.csv file with following format: 'x,y,z,vx,vy,vz,m'.
+        body - actual particles described by its mass.
+        plummer_sphere - model with given number of particles and mass described
+        by the Plummer model.
+        """,
+    )
+    args = fields.Dict(
+        fields.Str(),
+        description="Arguments that would be passed to to constructor of a given model.",
+    )
+    position = fields.Raw(
+        load_default=VectorQuantity([0, 0, 0], units.kms),
+        type="array",
+        description="Initial offset of the whole model. If there is more than one particle, "
+        "it would be applied to each particle.",
+    )
+    velocity = fields.Raw(
+        load_default=VectorQuantity([0, 0, 0], units.kms),
+        type="array",
+        description="Initial velocity of the whole model. If there is more than one particle, "
+        "it would be applied to each particle.",
+    )
+    downsample_to = fields.Int(
+        load_default=None,
+        description="Target length of downsampling. If one does not need all the particles from "
+        "the model, they may decrease it to this number and increase the mass correspondingly.",
+    )
 
     @post_load
     def make(self, data: dict, **kwargs):
         return Object(**data)
 
 
-class CreationConfigSchema(Schema):
-    output_file = fields.Str(required=True)
-    overwrite = fields.Bool(load_default=False)
-    logging = fields.Nested(logger.LoggerConfigSchema)
-    objects = fields.Nested(ObjectsSchema, many=True, required=True)
+class CreationConfigSchema(BaseSchema):
+    output_file = fields.Str(
+        required=True, description="Path to file where output model would be saved."
+    )
+    overwrite = fields.Bool(
+        load_default=False,
+        description="Flag that shows whether to overwrite model if it "
+        "already exists on given filepath.",
+    )
+    objects = fields.Nested(
+        ObjectsSchema,
+        many=True,
+        required=True,
+        description="This field list of objects. Each object is either a body or a model. Models "
+        "can be loaded from *.csv in specific format or generated based on some function.",
+    )
 
     @post_load
     def make(self, data: dict, **kwargs):
         return CreationConfig(**data)
+
+    def dump_json(self, filename: str, **kwargs):
+        json_schema = JSONSchema()
+
+        with open(filename, "w") as f:
+            json.dump(json_schema.dump(CreationConfigSchema()), f, **kwargs)
