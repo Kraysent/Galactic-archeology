@@ -40,6 +40,6 @@ def add_json_handler(
 
     stream_names = {"stderr": sys.stderr, "stdout": sys.stdout}
     console_handler = logging.StreamHandler(stream_names.get(stream, sys.stderr))
-    console_formatter = logging.Formatter(json.dumps(format_dict), datefmt)
+    console_formatter = logging.Formatter(json.dumps(format_dict, indent=2), datefmt)
     console_handler.setFormatter(console_formatter)
     get_instance().addHandler(console_handler)
