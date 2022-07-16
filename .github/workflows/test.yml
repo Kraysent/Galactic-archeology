@@ -1,0 +1,16 @@
+name: run-tests
+on: [push]
+jobs:
+  check-black-style:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install python
+        run: |
+          apt-get update & apt-get install python3
+      - name: Install flake8
+        run: |
+          python3 -m pip install flake8
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Run flake8
+        run: make check-flake8

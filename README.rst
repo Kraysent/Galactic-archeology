@@ -11,9 +11,15 @@ It requires following packages to work:
 
 .. code-block:: bash
 
-   pip install numpy matplotlib pandas pyyaml amuse-framework argparse astropy
+   pip install marshmallow numpy matplotlib pandas pyyaml amuse-framework argparse astropy
 
 You also need to install `pyfalcon <https://github.com/GalacticDynamics-Oxford/pyfalcon>`_ module which makes integration possible.
+
+You might also need:
+
+.. code-block:: bash
+
+   pip install flake8 black
 
 Usage
 ###############
