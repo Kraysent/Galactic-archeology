@@ -2,7 +2,6 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "definitions": {
     "LoggerConfigSchema": {
-      "type": "object",
       "properties": {
         "datefmt": {
           "title": "datefmt",
@@ -15,13 +14,10 @@
           "description": "Filename where the logs would be duplicated. If left empty, logs would be passed into stdout."
         }
       },
+      "type": "object",
       "additionalProperties": false
     },
     "ObjectsSchema": {
-      "type": "object",
-      "required": [
-        "type"
-      ],
       "properties": {
         "args": {
           "title": "args",
@@ -58,14 +54,13 @@
           "description": "Initial velocity of the whole model. If there is more than one particle, it would be applied to each particle."
         }
       },
+      "type": "object",
+      "required": [
+        "type"
+      ],
       "additionalProperties": false
     },
     "CreationConfigSchema": {
-      "type": "object",
-      "required": [
-        "objects",
-        "output_file"
-      ],
       "properties": {
         "logging": {
           "type": "object",
@@ -91,8 +86,15 @@
           "description": "Flag that shows whether to overwrite model if it already exists on given filepath."
         }
       },
+      "type": "object",
+      "required": [
+        "objects",
+        "output_file"
+      ],
       "additionalProperties": true
     }
   },
-  "$ref": "#/definitions/CreationConfigSchema"
+  "$ref": "#/definitions/CreationConfigSchema",
+  "title": "Creation config schema",
+  "description": "Schema for creation configuration file for OMTool."
 }

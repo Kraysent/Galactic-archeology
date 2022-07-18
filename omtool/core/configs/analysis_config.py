@@ -1,9 +1,7 @@
-import json
 from dataclasses import dataclass
 from typing import Optional
 
 from marshmallow import fields, post_load
-from marshmallow_jsonschema import JSONSchema
 
 from omtool import io_service, tasks, visualizer
 from omtool.core.configs.base_config import BaseConfig, BaseSchema
@@ -39,8 +37,10 @@ class AnalysisConfigSchema(BaseSchema):
     def make(self, data: dict, **kwargs):
         return AnalysisConfig(**data)
 
-    def dump_json(self, filename: str, **kwargs):
-        json_schema = JSONSchema()
-
-        with open(filename, "w") as f:
-            json.dump(json_schema.dump(AnalysisConfigSchema()), f, **kwargs)
+    def dump_schema(self, filename: str, **kwargs):
+        super().dump_json(
+            filename,
+            "Analysis config schema",
+            "Schema for analysis configuration file for OMTool.",
+            **kwargs
+        )

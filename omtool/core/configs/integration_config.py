@@ -1,10 +1,8 @@
-import json
 from dataclasses import dataclass
 from typing import Any, Optional
 
 from amuse.lab import ScalarQuantity
 from marshmallow import Schema, fields, post_load
-from marshmallow_jsonschema import JSONSchema
 
 from omtool import io_service, tasks, visualizer
 from omtool.core.configs.base_config import BaseConfig, BaseSchema
@@ -108,8 +106,10 @@ class IntegrationConfigSchema(BaseSchema):
     def make(self, data: dict, **kwargs):
         return IntegrationConfig(**data)
 
-    def dump_json(self, filename: str, **kwargs):
-        json_schema = JSONSchema()
-
-        with open(filename, "w") as f:
-            json.dump(json_schema.dump(IntegrationConfigSchema()), f, **kwargs)
+    def dump_schema(self, filename: str, **kwargs):
+        super().dump_json(
+            filename,
+            "Integration config schema",
+            "Schema for integration configuration file for OMTool.",
+            **kwargs
+        )

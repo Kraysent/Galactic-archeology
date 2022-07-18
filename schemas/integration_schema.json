@@ -2,11 +2,6 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "definitions": {
     "IOConfigSchema": {
-      "type": "object",
-      "required": [
-        "filenames",
-        "format"
-      ],
       "properties": {
         "filenames": {
           "title": "filenames",
@@ -23,14 +18,14 @@
           "description": "Format of the input file. Can be 'csv' or 'fits'."
         }
       },
+      "type": "object",
+      "required": [
+        "filenames",
+        "format"
+      ],
       "additionalProperties": false
     },
     "IntegratorSchema": {
-      "type": "object",
-      "required": [
-        "args",
-        "name"
-      ],
       "properties": {
         "args": {
           "title": "args",
@@ -44,10 +39,14 @@
           "description": "Name of the integrator."
         }
       },
+      "type": "object",
+      "required": [
+        "args",
+        "name"
+      ],
       "additionalProperties": false
     },
     "LoggerConfigSchema": {
-      "type": "object",
       "properties": {
         "datefmt": {
           "title": "datefmt",
@@ -60,14 +59,10 @@
           "description": "Filename where the logs would be duplicated. If left empty, logs would be passed into stdout."
         }
       },
+      "type": "object",
       "additionalProperties": false
     },
     "LogParamsSchema": {
-      "type": "object",
-      "required": [
-        "logger_id",
-        "point_id"
-      ],
       "properties": {
         "logger_id": {
           "title": "logger_id",
@@ -80,13 +75,14 @@
           "description": "ID of particle from the model."
         }
       },
+      "type": "object",
+      "required": [
+        "logger_id",
+        "point_id"
+      ],
       "additionalProperties": false
     },
     "TasksConfigSchema": {
-      "type": "object",
-      "required": [
-        "name"
-      ],
       "properties": {
         "actions_after": {
           "title": "actions_after",
@@ -120,14 +116,13 @@
           "description": "Name of the task."
         }
       },
+      "type": "object",
+      "required": [
+        "name"
+      ],
       "additionalProperties": false
     },
     "VisualizerConfigSchema": {
-      "type": "object",
-      "required": [
-        "output_dir",
-        "panels"
-      ],
       "properties": {
         "figsize": {
           "title": "figsize",
@@ -163,13 +158,14 @@
           "description": "Title template. Use {time} to get time in Myr. One can use standart python formatters to format number of digits, rounding, etc."
         }
       },
+      "type": "object",
+      "required": [
+        "output_dir",
+        "panels"
+      ],
       "additionalProperties": false
     },
     "PanelSchema": {
-      "type": "object",
-      "required": [
-        "id"
-      ],
       "properties": {
         "coords": {
           "title": "coords",
@@ -192,10 +188,13 @@
           "description": "Parameters of the graph box. They should be given the same names as ones in matplotlib.pyplot (and proper values) as most of them are just passed along to it."
         }
       },
+      "type": "object",
+      "required": [
+        "id"
+      ],
       "additionalProperties": false
     },
     "PlotParametersSchema": {
-      "type": "object",
       "properties": {
         "basex": {
           "title": "basex",
@@ -270,16 +269,10 @@
           }
         }
       },
+      "type": "object",
       "additionalProperties": false
     },
     "IntegrationConfigSchema": {
-      "type": "object",
-      "required": [
-        "input_file",
-        "integrator",
-        "model_time",
-        "output_file"
-      ],
       "properties": {
         "input_file": {
           "type": "object",
@@ -340,8 +333,17 @@
           "description": "Visualizer is responsible for the matplotlib's plots, their layout and format of the data. This fields describes layout; format of the data is specified inside tasks."
         }
       },
+      "type": "object",
+      "required": [
+        "input_file",
+        "integrator",
+        "model_time",
+        "output_file"
+      ],
       "additionalProperties": true
     }
   },
-  "$ref": "#/definitions/IntegrationConfigSchema"
+  "$ref": "#/definitions/IntegrationConfigSchema",
+  "title": "Integration config schema",
+  "description": "Schema for integration configuration file for OMTool."
 }

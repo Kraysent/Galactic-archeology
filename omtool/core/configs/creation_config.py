@@ -1,4 +1,3 @@
-import json
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Optional
@@ -6,7 +5,6 @@ from typing import Any, Optional
 from amuse.lab import VectorQuantity, units
 from marshmallow import Schema, fields, post_load
 from marshmallow_enum import EnumField
-from marshmallow_jsonschema import JSONSchema
 
 from omtool.core.configs.base_config import BaseConfig, BaseSchema
 
@@ -94,8 +92,10 @@ class CreationConfigSchema(BaseSchema):
     def make(self, data: dict, **kwargs):
         return CreationConfig(**data)
 
-    def dump_json(self, filename: str, **kwargs):
-        json_schema = JSONSchema()
-
-        with open(filename, "w") as f:
-            json.dump(json_schema.dump(CreationConfigSchema()), f, **kwargs)
+    def dump_schema(self, filename: str, **kwargs):
+        super().dump_json(
+            filename,
+            "Creation config schema",
+            "Schema for creation configuration file for OMTool.",
+            **kwargs
+        )

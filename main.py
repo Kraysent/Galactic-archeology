@@ -58,9 +58,9 @@ def main():
 
             analize(AnalysisConfigSchema().load(data))
         case "generate-schema":
-            CreationConfigSchema().dump_json("schemas/creation_schema.json", indent=2)
-            IntegrationConfigSchema().dump_json("schemas/integration_schema.json", indent=2)
-            AnalysisConfigSchema().dump_json("schemas/analysis_schema.json", indent=2)
+            CreationConfigSchema().dump_schema("schemas/creation_schema.json", indent=2)
+            IntegrationConfigSchema().dump_schema("schemas/integration_schema.json", indent=2)
+            AnalysisConfigSchema().dump_schema("schemas/analysis_schema.json", indent=2)
 
 
 if __name__ == "__main__":
