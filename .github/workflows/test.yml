@@ -31,7 +31,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Run tests
-        run: make run-tests
+        run: make test
       - name: Run isort
         run: make check-isort
       - name: Run flake8

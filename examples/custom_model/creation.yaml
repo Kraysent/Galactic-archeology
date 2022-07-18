@@ -16,6 +16,6 @@ objects:
     args:
       delimiter: " "
       path: !env "{DATA_DIR}/sat.csv"
-    position: !q [[100, 0, 0], kpc]
-    velocity: !q [[0, 100, 0], kms]
+    position: !qs [[50, 0, 1.57], kpc]
+    velocity: !q [[0, 50, 0], kms]
     downsample_to: 50000

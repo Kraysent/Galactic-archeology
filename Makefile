@@ -9,7 +9,10 @@ check-flake8:
 check-mypy:
 	$(PYTHON) -m mypy --python-version 3.10 --ignore-missing-imports .
 
-check-style: check-isort check-flake8 check-mypy
+test:
+	$(PYTHON) -m unittest -v tests.tasks
+
+check: check-isort check-flake8 check-mypy test
 
 
 fix-isort:
@@ -18,7 +21,7 @@ fix-isort:
 fix-black:
 	black --line-length 100 .
 
-fix-style: fix-isort fix-black
+fix: fix-isort fix-black
 
 
 update-schemas:
@@ -33,9 +36,6 @@ build-docs-html:
 
 build-docs-pdf:
 	cd docs && make latexpdf
-
-run-tests:
-	$(PYTHON) -m unittest -v tests.tasks
 
 
 clean:
