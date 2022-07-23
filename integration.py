@@ -4,17 +4,19 @@ from the file and write it to another file.
 """
 import os
 from pathlib import Path
-from typing import Callable, Dict
+from typing import Callable
 
 from amuse.lab import units
 from zlog import logger
 
 from omtool import io_service, visualizer
-from omtool.actions_after import VisualizerAction, logger_action
+from omtool.actions_after import initialize_actions_after
+from omtool.actions_before import initialize_actions_before
 from omtool.core.configs import IntegrationConfig
-from omtool.core.datamodel import HandlerTask, Snapshot, profiler
+from omtool.core.datamodel import Snapshot, profiler
 from omtool.core.integrators import get_integrator
 from omtool.core.utils import initialize_logger
+from omtool.tasks import initialize_tasks
 
 
 def integrate(config: IntegrationConfig):
@@ -23,69 +25,14 @@ def integrate(config: IntegrationConfig):
     from the file and write it to another file.
     """
     initialize_logger(**config.logging)
-    actions_after: Dict[str, Callable] = {}
-    actions_after["logging"] = logger_action
+    visualizer_service = (
+        visualizer.VisualizerService(config.visualizer) if config.visualizer is not None else None
+    )
+    actions_after: dict[str, Callable] = initialize_actions_after(visualizer_service)
+    actions_before = initialize_actions_before()
+    tasks = initialize_tasks(config.tasks, actions_before, actions_after)
 
-    visualizer_service = None
-
-    if config.visualizer is not None:
-        visualizer_service = visualizer.VisualizerService(config.visualizer)
-        actions_after["visualizer"] = VisualizerAction(visualizer_service)
-
-    actions_before: Dict[str, Callable] = {}
-    actions_before["slice"] = lambda snapshot, part: snapshot[slice(*part)]
-
-    tasks = []
-
-    for task in config.tasks:
-        curr_task = HandlerTask(task.name)
-
-        for action_params in task.actions_before:
-            action_name = action_params.pop("type", None)
-
-            if action_name is None:
-                logger.error().msg(
-                    f"action_before type {action_name} of the task "
-                    f"{type(curr_task.task)} is not specified, skipping."
-                )
-                continue
-
-            if action_name not in actions_before:
-                logger.error().msg(
-                    f"action_before type {action_name} of the task "
-                    f"{type(curr_task.task)} is unknown, skipping."
-                )
-                continue
-
-            def action(snapshot, name=action_name, params=action_params):
-                return actions_before[name](snapshot, **params)
-
-            curr_task.actions_before.append(action)
-
-        for handler_params in task.actions_after:
-            handler_name = handler_params.pop("type", None)
-
-            if handler_name is None:
-                logger.error().msg(
-                    f"Handler type {handler_name} of the task "
-                    f"{type(curr_task.task)} is not specified, skipping."
-                )
-                continue
-
-            if handler_name not in actions_after:
-                logger.error().msg(
-                    f"Handler type {handler_name} of the task "
-                    f"{type(curr_task.task)} is unknown, skipping."
-                )
-                continue
-
-            def handler(data, name=handler_name, params=handler_params):
-                return actions_after[name](data, **params)
-
-            curr_task.actions_after.append(handler)
-
-        tasks.append(curr_task)
-
+    # TODO: move this logic to config schemas
     if config.overwrite:
         if Path(config.output_file).is_file():
             os.remove(config.output_file)
@@ -133,10 +80,10 @@ def integrate(config: IntegrationConfig):
                 .float("x", particle.x.value_in(units.kpc))
                 .float("y", particle.y.value_in(units.kpc))
                 .float("z", particle.z.value_in(units.kpc))
-                .float("vx", particle.vx.value_in(units.kpc))
-                .float("vy", particle.vy.value_in(units.kpc))
-                .float("vz", particle.vz.value_in(units.kpc))
-            )
+                .float("vx", particle.vx.value_in(units.kms))
+                .float("vy", particle.vy.value_in(units.kms))
+                .float("vz", particle.vz.value_in(units.kms))
+            ).send()
 
         logger.info().string("id", "integration_timing").float(
             "timestamp", integrator.timestamp.value_in(units.Myr)

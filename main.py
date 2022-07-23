@@ -36,7 +36,7 @@ def main():
         res = task_profiler.dump_times()
 
         for key, val in res.items():
-            logger.info().string("stage", key).float("t", val).msg("Timing")
+            logger.debug().string("stage", key).float("t", val).msg("Timing")
 
     match args.mode:
         case "create":

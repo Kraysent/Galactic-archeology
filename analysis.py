@@ -3,17 +3,18 @@ Analysis module for OMTool. It is used for the data
 analysis of existing models and the export of their parameters.
 """
 import time
-from typing import Callable, Dict, List
+from typing import Callable
 
 from amuse.lab import ScalarQuantity, units
 from zlog import logger
 
 from omtool import io_service, visualizer
-from omtool.actions_after import VisualizerAction, fit_action, logger_action
-from omtool.actions_before import barion_filter_action, slice_action
+from omtool.actions_after import initialize_actions_after
+from omtool.actions_before import initialize_actions_before
 from omtool.core.configs import AnalysisConfig
-from omtool.core.datamodel import HandlerTask, Snapshot, profiler
+from omtool.core.datamodel import Snapshot, profiler
 from omtool.core.utils import initialize_logger
+from omtool.tasks import initialize_tasks
 
 
 def analize(config: AnalysisConfig):
@@ -22,70 +23,12 @@ def analize(config: AnalysisConfig):
     analysis of existing models and the export of their parameters.
     """
     initialize_logger(**config.logging)
-    actions_after: Dict[str, Callable] = {}
-    actions_after["logging"] = logger_action
-    actions_after["fit"] = fit_action
-
-    visualizer_service = None
-
-    if config.visualizer is not None:
-        visualizer_service = visualizer.VisualizerService(config.visualizer)
-        actions_after["visualizer"] = VisualizerAction(visualizer_service)
-
-    actions_before: Dict[str, Callable] = {}
-    actions_before["slice"] = slice_action
-    actions_before["barion_filter"] = barion_filter_action
-
-    tasks: List[HandlerTask] = []
-
-    for task in config.tasks:
-        curr_task = HandlerTask(task.name)
-
-        for action_params in task.actions_before:
-            action_name = action_params.pop("type", None)
-
-            if action_name is None:
-                logger.error().msg(
-                    f"action_before type {action_name} of the task "
-                    f"{type(curr_task.task)} is not specified, skipping."
-                )
-                continue
-
-            if action_name not in actions_before:
-                logger.error().msg(
-                    f"action_before type {action_name} of the task "
-                    f"{type(curr_task.task)} is unknown, skipping."
-                )
-                continue
-
-            def action(snapshot, name=action_name, params=action_params):
-                return actions_before[name](snapshot, **params)
-
-            curr_task.actions_before.append(action)
-
-        for handler_params in task.actions_after:
-            handler_name = handler_params.pop("type", None)
-
-            if handler_name is None:
-                logger.error().msg(
-                    f"Handler type {handler_name} of the task "
-                    f"{type(curr_task.task)} is not specified, skipping."
-                )
-                continue
-
-            if handler_name not in actions_after:
-                logger.error().msg(
-                    f"Handler type {handler_name} of the task "
-                    f"{type(curr_task.task)} is unknown, skipping."
-                )
-                continue
-
-            def handler(data, name=handler_name, params=handler_params):
-                return actions_after[name](data, **params)
-
-            curr_task.actions_after.append(handler)
-
-        tasks.append(curr_task)
+    visualizer_service = (
+        visualizer.VisualizerService(config.visualizer) if config.visualizer is not None else None
+    )
+    actions_after: dict[str, Callable] = initialize_actions_after(visualizer_service)
+    actions_before = initialize_actions_before()
+    tasks = initialize_tasks(config.tasks, actions_before, actions_after)
 
     @profiler("Analysis stage")
     def loop_analysis_stage(snapshot: Snapshot):

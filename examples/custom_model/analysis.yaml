@@ -16,6 +16,7 @@ input_file:
     - !env "{WORKING_DIR}/test_out.fits"
 
 logging:
+  level: debug
   filename: !env "{WORKING_DIR}/test_json_log.txt"
   datefmt: "%Y-%m-%d %H:%M:%S"
 

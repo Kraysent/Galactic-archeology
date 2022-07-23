@@ -20,6 +20,7 @@ input_file:
 
 # You can specify filename where JSON logs would be saved
 logging:
+  level: debug
   filename: !env "{WORKING_DIR}/test_json_log.txt"
   datefmt: "%Y-%m-%d %H:%M:%S"
 
