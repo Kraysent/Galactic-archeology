@@ -35,9 +35,7 @@ class SnapshotCreator:
         particles.mass = np.array(table["m"]) | 232500 * units.MSun
         particles.is_barion = table["barion"]
 
-        snapshot = Snapshot(particles, 0 | units.Myr)
-
-        return snapshot
+        return Snapshot(particles, 0 | units.Myr)
 
     @staticmethod
     def construct_single_particle(mass: ScalarQuantity) -> Snapshot:
@@ -50,6 +48,4 @@ class SnapshotCreator:
         particles[0].mass = mass
         particles[0].is_barion = True
 
-        snapshot = Snapshot(particles, 0 | units.Myr)
-
-        return snapshot
+        return Snapshot(particles, 0 | units.Myr)

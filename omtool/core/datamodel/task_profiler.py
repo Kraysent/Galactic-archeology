@@ -38,12 +38,7 @@ def dump_times() -> Dict[Any, float]:
     Average out all the values and return them as a dictionary.
     """
     instance = _get_instance()
-    res = {}
-
-    for key, val in instance.times.items():
-        res[key] = np.average(val)
-
-    return res
+    return {key: np.average(val) for key, val in instance.times.items()}
 
 
 class profiler:

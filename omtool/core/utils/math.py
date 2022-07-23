@@ -13,9 +13,6 @@ def sort_with(values1: VectorQuantity, *values: List[VectorQuantity]) -> List[Ve
     """
     perm = values1.argsort()
     sorted_values1 = values1[perm]
-    sorted_values = []
-
-    for value in values:
-        sorted_values.append(value[perm])
+    sorted_values = [value[perm] for value in values]
 
     return [sorted_values1, *sorted_values]

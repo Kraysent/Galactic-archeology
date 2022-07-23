@@ -83,7 +83,7 @@ def slice_constructor(loader: yaml.SafeLoader, node: yaml.nodes.ScalarNode) -> s
     """
     data = loader.construct_sequence(node)
 
-    if len(data) == 1 or len(data) == 2 or len(data) == 3:
+    if len(data) in {1, 2, 3}:
         return slice(*data)
     else:
         raise ValueError(
@@ -112,4 +112,4 @@ def required_get(data: dict, field: str):
     try:
         return data[field]
     except KeyError as ex:
-        raise Exception(f"no required key {field} found") from ex
+        raise ValueError(f"no required key {field} found") from ex

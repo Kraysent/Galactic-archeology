@@ -59,18 +59,10 @@ class Visualizer:
         axes.tick_params(axis="y", direction=params.ticks_direction)
 
     def get_axes(self, id: Optional[str] = None) -> Axes:
-        if id is None:
-            return self.figure.axes
-        else:
-            return self.figure.axes[self.axes_ids[id]]
+        return self.figure.axes if id is None else self.figure.axes[self.axes_ids[id]]
 
     def _do_for_all_axes(self, action: Callable[[Axes], Any]):
-        results = []
-
-        for ax in self.get_axes():
-            results.append(action(ax))
-
-        return results
+        return [action(ax) for ax in self.get_axes()]
 
     def plot(self, data: dict[str, np.ndarray], params: DrawParameters):
         self.pictures.append((data, params))

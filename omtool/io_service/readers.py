@@ -29,12 +29,10 @@ def from_logged_csvs(
 
     Implementation is not lazy, iterators exist only for the convinience.
     """
-    tables = []
-
-    for filename in filenames:
-        tables.append(pandas.read_csv(filename, delimiter=delimiter, index_col=False))
-
-    tables = [table.iterrows() for table in tables]
+    tables = [
+        pandas.read_csv(filename, delimiter=delimiter, index_col=False).iterrows()
+        for filename in filenames
+    ]
 
     for rows in zip(*tables):
         rows = [row for (_, row) in rows]
