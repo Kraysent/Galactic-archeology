@@ -2,6 +2,7 @@ output_file: !env "{WORKING_DIR}/test.fits"
 overwrite: True
 
 logging:
+  level: debug
   filename: !env "{WORKING_DIR}/test_json_log.txt"
 
 objects:

@@ -76,18 +76,26 @@ def integrate(config: IntegrationConfig):
             (
                 logger.info()
                 .string("id", log.logger_id)
-                .float("timestamp", integrator.timestamp.value_in(units.Myr))
-                .float("x", particle.x.value_in(units.kpc))
-                .float("y", particle.y.value_in(units.kpc))
-                .float("z", particle.z.value_in(units.kpc))
-                .float("vx", particle.vx.value_in(units.kms))
-                .float("vy", particle.vy.value_in(units.kms))
-                .float("vz", particle.vz.value_in(units.kms))
-            ).send()
+                .measured_float(
+                    "timestamp", integrator.timestamp.value_in(units.Myr), "Myr", decimals=3
+                )
+                .measured_float("x", particle.x.value_in(units.kpc), "kpc")
+                .measured_float("y", particle.y.value_in(units.kpc), "kpc")
+                .measured_float("z", particle.z.value_in(units.kpc), "kpc")
+                .measured_float("vx", particle.vx.value_in(units.kms), "kms")
+                .measured_float("vy", particle.vy.value_in(units.kms), "kms")
+                .measured_float("vz", particle.vz.value_in(units.kms), "kms")
+                .send()
+            )
 
-        logger.info().string("id", "integration_timing").float(
-            "timestamp", integrator.timestamp.value_in(units.Myr)
-        ).send()
+        (
+            logger.info()
+            .string("id", "integration_timing")
+            .measured_float(
+                "timestamp", integrator.timestamp.value_in(units.Myr), "Myr", decimals=3
+            )
+            .send()
+        )
 
     logger.info().msg("Integration started")
     i = 0

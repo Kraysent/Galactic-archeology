@@ -5,6 +5,7 @@ files and export them into single file.
 from pathlib import Path
 from typing import Callable, Dict
 
+from amuse.lab import units
 from zlog import logger
 
 from omtool.core.configs import CreationConfig, Object, Type
@@ -46,7 +47,14 @@ def create(config: CreationConfig):
             curr_snapshot.particles = curr_snapshot.particles[:: int(c)]
             curr_snapshot.particles.mass *= c
 
-        logger.info().int("n", len(curr_snapshot.particles)).msg("Add particles")
+        (
+            logger.info()
+            .int("n", len(curr_snapshot.particles))
+            .measured_float(
+                "total_mass", curr_snapshot.particles.total_mass().value_in(units.MSun), "MSun"
+            )
+            .msg("Add particles")
+        )
         builder.add_snapshot(curr_snapshot)
 
     for body in config.objects:

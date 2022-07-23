@@ -14,4 +14,5 @@ integrator:
     eps: !q [0.2, kpc]
 
 logging:
+  level: debug
   filename: !env "{WORKING_DIR}/test_json_log.txt"

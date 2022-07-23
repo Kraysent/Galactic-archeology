@@ -21,6 +21,7 @@ integrator:
 
 # You can specify filename where JSON logs would be saved
 logging:
+  level: debug
   filename: !env "{WORKING_DIR}/test_json_log.txt"
 
 # List of files and points to log to file.

@@ -5,6 +5,7 @@ overwrite: True
 
 # You can specify list of logging handlers
 logging:
+  level: debug
   filename: !env "{WORKING_DIR}/test_json_log.txt"
 
 # list of objects; they can be either read from csv files or given directly using masses and positions.
