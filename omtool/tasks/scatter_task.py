@@ -1,7 +1,3 @@
-"""
-Task that computes arbitrary expression against another arbitrary expression and
-plots the points in the corresponding way.
-"""
 from amuse.lab import ScalarQuantity
 from py_expression_eval import Parser
 
@@ -16,9 +12,13 @@ from omtool.core.datamodel import (
 
 
 class ScatterTask(AbstractTask):
-    """
-    Task that computes arbitrary expression against another arbitrary expression and
-    plots the points in the corresponding way.
+    """Task that computes a given number of arbitrary expressions
+
+    :param expressions: dictionary that describes expressions and their names
+    :type expressions: dict[str, str]
+
+    :param units: dictionary that describes units corresponding to each expression and their names
+    :type units: dict[str, ScalarQuantity]
     """
 
     def __init__(
@@ -37,14 +37,10 @@ class ScatterTask(AbstractTask):
     def run(self, snapshot: Snapshot) -> DataType:
         particles = snapshot.particles
 
-        # move to actions_before
+        # TODO: move to actions_before
         if self.filter_barion:
             particles = filter_barion_particles(snapshot)
 
         params = get_parameters(particles)
 
-        res = {}
-        for id, expr in self.expressions.items():
-            res[id] = expr.evaluate(params) / self.units[id]
-
-        return res
+        return {id: expr.evaluate(params) / self.units[id] for id, expr in self.expressions.items()}

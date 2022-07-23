@@ -38,7 +38,7 @@ class DensityProfileTask(AbstractTask):
         number_of_chunks = (len(radii) // self.resolution) * self.resolution
 
         radii = radii[0 : number_of_chunks : self.resolution]
-        masses = masses[0:number_of_chunks].reshape(shape=(-1, self.resolution)).sum(axis=1)[1:]
+        masses = masses[:number_of_chunks].reshape(shape=(-1, self.resolution)).sum(axis=1)[1:]
         volume = 4 / 3 * np.pi * (radii[1:] ** 3 - radii[:-1] ** 3)
         densities = masses / volume
         radii = radii[1:]

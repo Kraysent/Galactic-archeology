@@ -45,6 +45,6 @@ class VelocityProfileTask(AbstractTask):
 
         number_of_chunks = (len(radii) // self.resolution) * self.resolution
         radii = radii[0 : number_of_chunks : self.resolution]
-        velocities = velocities[0:number_of_chunks].reshape((-1, self.resolution)).mean(axis=1)
+        velocities = velocities[:number_of_chunks].reshape((-1, self.resolution)).mean(axis=1)
 
         return {"radii": radii / self.r_unit, "velocity": velocities / self.v_unit}

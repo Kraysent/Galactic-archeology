@@ -38,7 +38,7 @@ class MassProfileTask(AbstractTask):
         number_of_chunks = (len(radii) // self.resolution) * self.resolution
 
         radii = radii[0 : number_of_chunks : self.resolution]
-        masses = masses[0:number_of_chunks].reshape((-1, self.resolution)).sum(axis=1)
+        masses = masses[:number_of_chunks].reshape((-1, self.resolution)).sum(axis=1)
         masses = np.cumsum(masses)
 
         return {"radii": radii / self.r_unit, "masses": masses / self.m_unit}

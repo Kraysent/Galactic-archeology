@@ -36,7 +36,7 @@ class TimeEvolutionTask(AbstractTask):
     ):
         parser = Parser()
 
-        if expr == "":
+        if not expr:
             raise RuntimeError("Expression was empty.")
 
         self.expr = parser.parse(expr)

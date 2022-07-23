@@ -37,7 +37,7 @@ class PotentialTask(AbstractTask):
         number_of_chunks = (len(radii) // self.resolution) * self.resolution
 
         radii = radii[0 : number_of_chunks : self.resolution]
-        potentials = potentials[0:number_of_chunks].reshape((-1, self.resolution)).mean(axis=1)
+        potentials = potentials[:number_of_chunks].reshape((-1, self.resolution)).mean(axis=1)
 
         if self.pot_unit is None:
             self.pot_unit = potentials.mean()
