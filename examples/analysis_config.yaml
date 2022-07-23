@@ -103,6 +103,7 @@ tasks:
     actions_before:
       - type: slice
         part: *host_slice
+      - type: barion_filter
     actions_after:
       - type: visualizer
         id: zy_plane
@@ -116,6 +117,7 @@ tasks:
     actions_before:
       - type: slice
         part: *sat_slice
+      - type: barion_filter
     actions_after:
       - type: visualizer
         id: zy_plane
@@ -162,6 +164,7 @@ tasks:
     actions_before:
       - type: slice
         part: *host_slice
+      - type: barion_filter
     actions_after:
       - type: visualizer
         id: xy_plane
@@ -175,6 +178,7 @@ tasks:
     actions_before:
       - type: slice
         part: *sat_slice
+      - type: barion_filter
     actions_after:
       - type: visualizer
         id: xy_plane
@@ -266,7 +270,7 @@ tasks:
         id: bound_mass_data
 
   - name: DistanceTask
-    args: 
+    args:
       start: potential
       start_slice: !slice [0, 1000001]
       end: potential

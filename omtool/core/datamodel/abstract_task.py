@@ -27,15 +27,6 @@ def get_parameters(particles: Particles) -> dict:
     }
 
 
-def filter_barion_particles(snapshot: Snapshot):
-    """
-    Filters out non-barion particles from the snapshot.
-    """
-    barion_filter = np.array(snapshot.particles.is_barion, dtype=bool)
-
-    return snapshot.particles[barion_filter]
-
-
 class AbstractTask(ABC):
     """
     Base class for the tasks that operate on snapshots.

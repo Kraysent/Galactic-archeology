@@ -6,7 +6,6 @@ from omtool.core.datamodel.abstract_task import (
     AbstractTimeTask,
     DataType,
     Snapshot,
-    filter_barion_particles,
     get_parameters,
 )
 from omtool.core.datamodel.handler_task import HandlerTask

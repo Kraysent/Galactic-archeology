@@ -26,7 +26,7 @@ class TestScatterTask(unittest.TestCase):
     def test_run(self):
         exprs = {"x": "x", "y": "y"}
         u = {"x": 1 | units.kpc, "y": 1 | units.kpc}
-        task = ScatterTask(exprs, u, filter_barion=False)
+        task = ScatterTask(exprs, u)
 
         actual = task.run(self._generate_snapshot())
 
@@ -37,7 +37,7 @@ class TestScatterTask(unittest.TestCase):
     def test_empty_particle_set(self):
         exprs = {"x": "x", "y": "y"}
         u = {"x": 1 | units.kpc, "y": 1 | units.kpc}
-        task = ScatterTask(exprs, u, filter_barion=False)
+        task = ScatterTask(exprs, u)
 
         snapshot = Snapshot()
         snapshot.particles.position = np.array([]) | units.kpc
@@ -50,18 +50,18 @@ class TestScatterTask(unittest.TestCase):
     def test_expressions_without_vars(self):
         exprs = {"x": "1", "y": "1"}
         u = {"x": 1, "y": 1}
-        task = ScatterTask(exprs, u, False)
+        task = ScatterTask(exprs, u)
 
         actual = task.run(self._generate_snapshot())
 
         self.assertTrue(actual["x"] == 1) and (actual["y"] == 1)
 
     def test_empty_expressions(self):
-        self.assertRaises(Exception, ScatterTask, {"x": "", "y": ""}, {"x": 1, "y": 1}, False)
+        self.assertRaises(Exception, ScatterTask, {"x": "", "y": ""}, {"x": 1, "y": 1})
 
     def test_incompatible_units(self):
         exprs = {"x": "x + vx", "y": "y"}
         u = {"x": 1 | units.kms, "y": 1 | units.kms}
-        task = ScatterTask(exprs, u, False)
+        task = ScatterTask(exprs, u)
 
         self.assertRaises(IncompatibleUnitsException, task.run, self._generate_snapshot())

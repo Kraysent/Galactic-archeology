@@ -5,7 +5,6 @@ from omtool.core.datamodel import (
     AbstractTask,
     DataType,
     Snapshot,
-    filter_barion_particles,
     get_parameters,
     profiler,
 )
@@ -25,22 +24,14 @@ class ScatterTask(AbstractTask):
         self,
         expressions: dict[str, str],
         units: dict[str, ScalarQuantity],
-        filter_barion: bool = True,
     ):
         parser = Parser()
 
         self.expressions = {id: parser.parse(expr) for id, expr in expressions.items()}
         self.units = units
-        self.filter_barion = filter_barion
 
     @profiler("Scatter task")
     def run(self, snapshot: Snapshot) -> DataType:
-        particles = snapshot.particles
-
-        # TODO: move to actions_before
-        if self.filter_barion:
-            particles = filter_barion_particles(snapshot)
-
-        params = get_parameters(particles)
+        params = get_parameters(snapshot.particles)
 
         return {id: expr.evaluate(params) / self.units[id] for id, expr in self.expressions.items()}

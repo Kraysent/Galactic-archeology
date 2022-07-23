@@ -3,13 +3,7 @@ Task that computes radial velocity distribution.
 """
 from amuse.lab import ScalarQuantity, units
 
-from omtool.core.datamodel import (
-    AbstractTask,
-    DataType,
-    Snapshot,
-    filter_barion_particles,
-    profiler,
-)
+from omtool.core.datamodel import AbstractTask, DataType, Snapshot, profiler
 from omtool.core.utils import math, particle_centers
 
 
@@ -37,7 +31,7 @@ class VelocityProfileTask(AbstractTask):
         center = self.center_func(snapshot.particles)
         center_vel = self.center_vel_func(snapshot.particles)
 
-        particles = filter_barion_particles(snapshot)
+        particles = snapshot.particles
 
         radii = math.get_lengths(particles.position - center)
         velocities = math.get_lengths(particles.velocity - center_vel)

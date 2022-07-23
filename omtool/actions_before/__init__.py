@@ -1,1 +1,2 @@
+from omtool.actions_before.barion_filter_action import barion_filter_action
 from omtool.actions_before.slice_action import slice_action

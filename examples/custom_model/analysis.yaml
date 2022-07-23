@@ -95,6 +95,7 @@ tasks:
     actions_before:
       - type: slice
         part: *host_slice
+      - type: barion_filter
     actions_after:
       - type: visualizer
         id: zy_plane
@@ -107,6 +108,7 @@ tasks:
     actions_before:
       - type: slice
         part: *sat_slice
+      - type: barion_filter
     actions_after:
       - type: visualizer
         id: zy_plane
@@ -126,6 +128,7 @@ tasks:
     actions_before:
       - type: slice
         part: *host_slice
+      - type: barion_filter
     actions_after:
       - type: visualizer
         id: xy_plane
@@ -138,6 +141,7 @@ tasks:
     actions_before:
       - type: slice
         part: *sat_slice
+      - type: barion_filter
     actions_after:
       - type: visualizer
         id: xy_plane

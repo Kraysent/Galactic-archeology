@@ -10,7 +10,7 @@ from zlog import logger
 
 from omtool import io_service, visualizer
 from omtool.actions_after import VisualizerAction, fit_action, logger_action
-from omtool.actions_before import slice_action
+from omtool.actions_before import barion_filter_action, slice_action
 from omtool.core.configs import AnalysisConfig
 from omtool.core.datamodel import HandlerTask, Snapshot, profiler
 from omtool.core.utils import initialize_logger
@@ -34,6 +34,7 @@ def analize(config: AnalysisConfig):
 
     actions_before: Dict[str, Callable] = {}
     actions_before["slice"] = slice_action
+    actions_before["barion_filter"] = barion_filter_action
 
     tasks: List[HandlerTask] = []
 
