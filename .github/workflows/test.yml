@@ -45,3 +45,7 @@ jobs:
         run: find . -name '*.py' | xargs wc -l
       - name: Number of YAML lines
         run: find . -name '*.yaml' | xargs wc -l
+      - name: Project tree
+        run: |
+          sudo apt-get install tree
+          tree
