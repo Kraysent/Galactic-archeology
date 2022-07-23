@@ -5,10 +5,12 @@ files and export them into single file.
 from pathlib import Path
 from typing import Callable, Dict
 
-from omtool import json_logger as logger
+from zlog import logger
+
 from omtool.core.configs import CreationConfig, Object, Type
 from omtool.core.creation import SnapshotBuilder, SnapshotCreator
 from omtool.core.datamodel import Snapshot, profiler
+from omtool.core.utils import initialize_logger
 
 
 def create(config: CreationConfig):
@@ -16,7 +18,7 @@ def create(config: CreationConfig):
     Creation mode for the OMTool. Used to create and load models from
     files and export them into single file.
     """
-    logger.initialize(config.logging)
+    initialize_logger(**config.logging)
     builder = SnapshotBuilder()
 
     if not config.overwrite:
@@ -44,9 +46,8 @@ def create(config: CreationConfig):
             curr_snapshot.particles = curr_snapshot.particles[:: int(c)]
             curr_snapshot.particles.mass *= c
 
-        logger.info(f"Adding snapshot of {len(curr_snapshot.particles)} particles.")
+        logger.info().int("n", len(curr_snapshot.particles)).msg("Add particles")
         builder.add_snapshot(curr_snapshot)
-        logger.info("Snapshot added.")
 
     for body in config.objects:
         loop_creation_stage(body)

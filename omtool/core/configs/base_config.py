@@ -1,15 +1,14 @@
 import json
 from dataclasses import dataclass
+from typing import Any
 
 from marshmallow import EXCLUDE, Schema, fields
 from marshmallow_jsonschema import JSONSchema
 
-import omtool.json_logger as logger
-
 
 @dataclass
 class BaseConfig:
-    logging: logger.Config
+    logging: dict[str, Any]
 
 
 class BaseSchema(Schema):
@@ -17,9 +16,7 @@ class BaseSchema(Schema):
         additional_properties = True
         unknown = EXCLUDE
 
-    logging = fields.Nested(
-        logger.LoggerConfigSchema, description="This field describes logging configuration."
-    )
+    logging = fields.Dict(fields.Str, description="This field describes logging configuration.")
 
     def dump_json(self, filename: str, title: str, description: str = "", **kwargs):
         output = JSONSchema().dump(self)

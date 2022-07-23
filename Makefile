@@ -21,7 +21,10 @@ fix-isort:
 fix-black:
 	black --line-length 100 .
 
-fix: fix-isort fix-black
+generate-schemas:
+	$(PYTHON) main.py generate-schema
+
+fix: fix-isort fix-black generate-schemas
 
 
 update-schemas:

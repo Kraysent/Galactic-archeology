@@ -1,16 +1,13 @@
-"""
-Entry point of the program.
-"""
 import argparse
 import atexit
 import sys
 
 import yaml
+from zlog import logger
 
 from analysis import analize
 from creator import create
 from integration import integrate
-from omtool import json_logger as logger
 from omtool.core.configs import (
     AnalysisConfigSchema,
     CreationConfigSchema,
@@ -39,7 +36,7 @@ def main():
         res = task_profiler.dump_times()
 
         for key, val in res.items():
-            logger.info(f"{key} worked {val:.02f} seconds on average")
+            logger.info().string("stage", key).float("t", val).msg("Timing")
 
     match args.mode:
         case "create":
@@ -58,9 +55,15 @@ def main():
 
             analize(AnalysisConfigSchema().load(data))
         case "generate-schema":
-            CreationConfigSchema().dump_schema("schemas/creation_schema.json", indent=2)
-            IntegrationConfigSchema().dump_schema("schemas/integration_schema.json", indent=2)
-            AnalysisConfigSchema().dump_schema("schemas/analysis_schema.json", indent=2)
+            CreationConfigSchema().dump_schema(
+                "schemas/creation_schema.json", indent=2, sort_keys=True
+            )
+            IntegrationConfigSchema().dump_schema(
+                "schemas/integration_schema.json", indent=2, sort_keys=True
+            )
+            AnalysisConfigSchema().dump_schema(
+                "schemas/analysis_schema.json", indent=2, sort_keys=True
+            )
 
 
 if __name__ == "__main__":

@@ -7,14 +7,14 @@ from pathlib import Path
 from typing import Callable, Dict
 
 from amuse.lab import units
+from zlog import logger
 
-from omtool import io_service
-from omtool import json_logger as logger
-from omtool import visualizer
+from omtool import io_service, visualizer
 from omtool.actions_after import VisualizerAction, logger_action
 from omtool.core.configs import IntegrationConfig
 from omtool.core.datamodel import HandlerTask, Snapshot, profiler
 from omtool.core.integrators import get_integrator
+from omtool.core.utils import initialize_logger
 
 
 def integrate(config: IntegrationConfig):
@@ -22,7 +22,7 @@ def integrate(config: IntegrationConfig):
     Integration mode for the OMTool. Used to integrate existing model
     from the file and write it to another file.
     """
-    logger.initialize(config.logging)
+    initialize_logger(**config.logging)
     actions_after: Dict[str, Callable] = {}
     actions_after["logging"] = logger_action
 
@@ -44,14 +44,14 @@ def integrate(config: IntegrationConfig):
             action_name = action_params.pop("type", None)
 
             if action_name is None:
-                logger.error(
+                logger.error().msg(
                     f"action_before type {action_name} of the task "
                     f"{type(curr_task.task)} is not specified, skipping."
                 )
                 continue
 
             if action_name not in actions_before:
-                logger.error(
+                logger.error().msg(
                     f"action_before type {action_name} of the task "
                     f"{type(curr_task.task)} is unknown, skipping."
                 )
@@ -66,14 +66,14 @@ def integrate(config: IntegrationConfig):
             handler_name = handler_params.pop("type", None)
 
             if handler_name is None:
-                logger.error(
+                logger.error().msg(
                     f"Handler type {handler_name} of the task "
                     f"{type(curr_task.task)} is not specified, skipping."
                 )
                 continue
 
             if handler_name not in actions_after:
-                logger.error(
+                logger.error().msg(
                     f"Handler type {handler_name} of the task "
                     f"{type(curr_task.task)} is unknown, skipping."
                 )
@@ -126,26 +126,23 @@ def integrate(config: IntegrationConfig):
 
         for log in config.logs:
             particle = integrator.get_particle(log.point_id)
-            logger.info(
-                message_type=log.logger_id,
-                payload={
-                    "timestamp": integrator.timestamp.value_in(units.Myr),
-                    "x": particle.x.value_in(units.kpc),
-                    "y": particle.y.value_in(units.kpc),
-                    "z": particle.z.value_in(units.kpc),
-                    "vx": particle.vx.value_in(units.kms),
-                    "vy": particle.vy.value_in(units.kms),
-                    "vz": particle.vz.value_in(units.kms),
-                    "m": particle.mass.value_in(units.MSun),
-                },
+            (
+                logger.info()
+                .string("id", log.logger_id)
+                .float("timestamp", integrator.timestamp.value_in(units.Myr))
+                .float("x", particle.x.value_in(units.kpc))
+                .float("y", particle.y.value_in(units.kpc))
+                .float("z", particle.z.value_in(units.kpc))
+                .float("vx", particle.vx.value_in(units.kpc))
+                .float("vy", particle.vy.value_in(units.kpc))
+                .float("vz", particle.vz.value_in(units.kpc))
             )
 
-        logger.info(
-            message_type="integration_timing",
-            payload={"timestamp": integrator.timestamp.value_in(units.Myr)},
-        )
+        logger.info().string("id", "integration_timing").float(
+            "timestamp", integrator.timestamp.value_in(units.Myr)
+        ).send()
 
-    logger.info("Integration started")
+    logger.info().msg("Integration started")
     i = 0
 
     while integrator.timestamp < config.model_time:

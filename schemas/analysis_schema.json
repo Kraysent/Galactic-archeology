@@ -1,159 +1,96 @@
 {
+  "$ref": "#/definitions/AnalysisConfigSchema",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "definitions": {
+    "AnalysisConfigSchema": {
+      "additionalProperties": true,
+      "properties": {
+        "input_file": {
+          "$ref": "#/definitions/IOConfigSchema",
+          "description": "Parameters of input file: its format and path.",
+          "type": "object"
+        },
+        "logging": {
+          "additionalProperties": {},
+          "description": "This field describes logging configuration.",
+          "title": "logging",
+          "type": "object"
+        },
+        "tasks": {
+          "description": "This field describes list of tasks. Each task is a class that has run(...) method that processes Snapshot and returns some data.",
+          "items": {
+            "$ref": "#/definitions/TasksConfigSchema",
+            "type": "object"
+          },
+          "title": "tasks",
+          "type": "array"
+        },
+        "visualizer": {
+          "$ref": "#/definitions/VisualizerConfigSchema",
+          "description": "Visualizer is responsible for the matplotlib's plots, their layout and format of the data. This fields describes layout; format of the data is specified inside tasks.",
+          "type": "object"
+        }
+      },
+      "required": [
+        "input_file"
+      ],
+      "type": "object"
+    },
     "IOConfigSchema": {
+      "additionalProperties": false,
       "properties": {
         "filenames": {
-          "title": "filenames",
-          "type": "array",
           "description": "List of filenames. In case of csv file they will be stacked together, in case of fits only the first one will be taken and the rest will be ignored.",
           "items": {
             "title": "filenames",
             "type": "string"
-          }
+          },
+          "title": "filenames",
+          "type": "array"
         },
         "format": {
+          "description": "Format of the input file. Can be 'csv' or 'fits'.",
           "title": "format",
-          "type": "string",
-          "description": "Format of the input file. Can be 'csv' or 'fits'."
+          "type": "string"
         }
       },
-      "type": "object",
       "required": [
         "filenames",
         "format"
       ],
-      "additionalProperties": false
-    },
-    "LoggerConfigSchema": {
-      "properties": {
-        "datefmt": {
-          "title": "datefmt",
-          "type": "string",
-          "description": "Simple strftime() format of the date."
-        },
-        "filename": {
-          "title": "filename",
-          "type": "string",
-          "description": "Filename where the logs would be duplicated. If left empty, logs would be passed into stdout."
-        }
-      },
-      "type": "object",
-      "additionalProperties": false
-    },
-    "TasksConfigSchema": {
-      "properties": {
-        "actions_after": {
-          "title": "actions_after",
-          "type": "array",
-          "description": "List of actions that would run some function on every single result of the task.",
-          "items": {
-            "title": "actions_after",
-            "type": "object",
-            "additionalProperties": {}
-          }
-        },
-        "actions_before": {
-          "title": "actions_before",
-          "type": "array",
-          "description": "List of actions that would run some function on a given snapshot before running the task.",
-          "items": {
-            "title": "actions_before",
-            "type": "object",
-            "additionalProperties": {}
-          }
-        },
-        "args": {
-          "title": "args",
-          "type": "object",
-          "description": "Arguments to the constructor of the task.",
-          "additionalProperties": {}
-        },
-        "name": {
-          "title": "name",
-          "type": "string",
-          "description": "Name of the task."
-        }
-      },
-      "type": "object",
-      "required": [
-        "name"
-      ],
-      "additionalProperties": false
-    },
-    "VisualizerConfigSchema": {
-      "properties": {
-        "figsize": {
-          "title": "figsize",
-          "type": "array",
-          "description": "Figure size in inches.",
-          "items": {
-            "title": "figsize",
-            "type": "integer"
-          }
-        },
-        "output_dir": {
-          "title": "output_dir",
-          "type": "string",
-          "description": "Output directiry where the images would be saved."
-        },
-        "panels": {
-          "title": "panels",
-          "type": "array",
-          "description": "List of panels, their layouts and properties.",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/PanelSchema"
-          }
-        },
-        "pic_filename": {
-          "title": "pic_filename",
-          "type": "string",
-          "description": "Pictures will be saved in output_dir with this filename. {i} is iteration number."
-        },
-        "title": {
-          "title": "title",
-          "type": "string",
-          "description": "Title template. Use {time} to get time in Myr. One can use standart python formatters to format number of digits, rounding, etc."
-        }
-      },
-      "type": "object",
-      "required": [
-        "output_dir",
-        "panels"
-      ],
-      "additionalProperties": false
+      "type": "object"
     },
     "PanelSchema": {
+      "additionalProperties": false,
       "properties": {
         "coords": {
-          "title": "coords",
-          "type": "array",
           "description": "Position and size of the graph in form of [x, y, width, height]. Coordinates are counted from the left bottom of the picture.",
           "items": {
+            "format": "float",
             "title": "coords",
-            "type": "number",
-            "format": "float"
-          }
+            "type": "number"
+          },
+          "title": "coords",
+          "type": "array"
         },
         "id": {
+          "description": "Id of the panel. Should be unique.",
           "title": "id",
-          "type": "string",
-          "description": "Id of the panel. Should be unique."
+          "type": "string"
         },
         "params": {
-          "type": "object",
           "$ref": "#/definitions/PlotParametersSchema",
-          "description": "Parameters of the graph box. They should be given the same names as ones in matplotlib.pyplot (and proper values) as most of them are just passed along to it."
+          "description": "Parameters of the graph box. They should be given the same names as ones in matplotlib.pyplot (and proper values) as most of them are just passed along to it.",
+          "type": "object"
         }
       },
-      "type": "object",
       "required": [
         "id"
       ],
-      "additionalProperties": false
+      "type": "object"
     },
     "PlotParametersSchema": {
+      "additionalProperties": false,
       "properties": {
         "basex": {
           "title": "basex",
@@ -180,92 +117,140 @@
           "type": "string"
         },
         "xlim": {
-          "title": "xlim",
-          "type": "array",
           "items": {
+            "format": "float",
             "title": "xlim",
-            "type": "number",
-            "format": "float"
-          }
+            "type": "number"
+          },
+          "title": "xlim",
+          "type": "array"
         },
         "xscale": {
           "title": "xscale",
           "type": "string"
         },
         "xticks": {
-          "title": "xticks",
-          "type": "array",
           "items": {
+            "format": "float",
             "title": "xticks",
-            "type": "number",
-            "format": "float"
-          }
+            "type": "number"
+          },
+          "title": "xticks",
+          "type": "array"
         },
         "ylabel": {
           "title": "ylabel",
           "type": "string"
         },
         "ylim": {
-          "title": "ylim",
-          "type": "array",
           "items": {
+            "format": "float",
             "title": "ylim",
-            "type": "number",
-            "format": "float"
-          }
+            "type": "number"
+          },
+          "title": "ylim",
+          "type": "array"
         },
         "yscale": {
           "title": "yscale",
           "type": "string"
         },
         "yticks": {
-          "title": "yticks",
-          "type": "array",
           "items": {
+            "format": "float",
             "title": "yticks",
-            "type": "number",
-            "format": "float"
-          }
+            "type": "number"
+          },
+          "title": "yticks",
+          "type": "array"
         }
       },
-      "type": "object",
-      "additionalProperties": false
+      "type": "object"
     },
-    "AnalysisConfigSchema": {
+    "TasksConfigSchema": {
+      "additionalProperties": false,
       "properties": {
-        "input_file": {
-          "type": "object",
-          "$ref": "#/definitions/IOConfigSchema",
-          "description": "Parameters of input file: its format and path."
-        },
-        "logging": {
-          "type": "object",
-          "$ref": "#/definitions/LoggerConfigSchema",
-          "description": "This field describes logging configuration."
-        },
-        "tasks": {
-          "title": "tasks",
-          "type": "array",
-          "description": "This field describes list of tasks. Each task is a class that has run(...) method that processes Snapshot and returns some data.",
+        "actions_after": {
+          "description": "List of actions that would run some function on every single result of the task.",
           "items": {
-            "type": "object",
-            "$ref": "#/definitions/TasksConfigSchema"
-          }
+            "additionalProperties": {},
+            "title": "actions_after",
+            "type": "object"
+          },
+          "title": "actions_after",
+          "type": "array"
         },
-        "visualizer": {
-          "type": "object",
-          "$ref": "#/definitions/VisualizerConfigSchema",
-          "description": "Visualizer is responsible for the matplotlib's plots, their layout and format of the data. This fields describes layout; format of the data is specified inside tasks."
+        "actions_before": {
+          "description": "List of actions that would run some function on a given snapshot before running the task.",
+          "items": {
+            "additionalProperties": {},
+            "title": "actions_before",
+            "type": "object"
+          },
+          "title": "actions_before",
+          "type": "array"
+        },
+        "args": {
+          "additionalProperties": {},
+          "description": "Arguments to the constructor of the task.",
+          "title": "args",
+          "type": "object"
+        },
+        "name": {
+          "description": "Name of the task.",
+          "title": "name",
+          "type": "string"
         }
       },
-      "type": "object",
       "required": [
-        "input_file"
+        "name"
       ],
-      "additionalProperties": true
+      "type": "object"
+    },
+    "VisualizerConfigSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "figsize": {
+          "description": "Figure size in inches.",
+          "items": {
+            "title": "figsize",
+            "type": "integer"
+          },
+          "title": "figsize",
+          "type": "array"
+        },
+        "output_dir": {
+          "description": "Output directiry where the images would be saved.",
+          "title": "output_dir",
+          "type": "string"
+        },
+        "panels": {
+          "description": "List of panels, their layouts and properties.",
+          "items": {
+            "$ref": "#/definitions/PanelSchema",
+            "type": "object"
+          },
+          "title": "panels",
+          "type": "array"
+        },
+        "pic_filename": {
+          "description": "Pictures will be saved in output_dir with this filename. {i} is iteration number.",
+          "title": "pic_filename",
+          "type": "string"
+        },
+        "title": {
+          "description": "Title template. Use {time} to get time in Myr. One can use standart python formatters to format number of digits, rounding, etc.",
+          "title": "title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "output_dir",
+        "panels"
+      ],
+      "type": "object"
     }
   },
-  "$ref": "#/definitions/AnalysisConfigSchema",
-  "title": "Analysis config schema",
-  "description": "Schema for analysis configuration file for OMTool."
+  "description": "Schema for analysis configuration file for OMTool.",
+  "title": "Analysis config schema"
 }

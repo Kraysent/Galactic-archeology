@@ -1,6 +1,5 @@
 import numpy as np
-
-import omtool.json_logger as logger
+from zlog import logger
 
 
 def logger_action(
@@ -9,15 +8,14 @@ def logger_action(
     """
     Handler that logs ndarrays to the INFO level.
     """
-    payload = {}
+    event = logger.info().string("id", id)
 
-    if print_last:
-        for key, val in data.items():
-            payload[key] = val.tolist()[-1]
-    else:
-        for key, val in data.items():
-            payload[key] = val.tolist()
+    for key, val in data.items():
+        if print_last:
+            event = event.float(key, val[-1])
+        else:
+            event = event.list(key, val.tolist())
 
-    logger.info(message_type=id, payload=payload)
+    event.send()
 
     return data

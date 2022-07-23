@@ -2,8 +2,8 @@ from typing import Callable
 
 import numpy as np
 from amuse.lab import Particles, VectorQuantity, units
+from zlog import logger
 
-from omtool import json_logger as logger
 from omtool.core.utils import pyfalcon_analizer
 
 
@@ -55,7 +55,7 @@ def get(func_name: str) -> Callable[[Particles], VectorQuantity]:
     names = {"mass": center_of_mass, "origin": at_origin, "potential": potential_center}
 
     if func_name not in names:
-        logger.warning(f'Unknown center name "{func_name}", falling back to center of mass.')
+        logger.warn(f'Unknown center name "{func_name}", falling back to center of mass.')
         func_name = "mass"
 
     return names[func_name]
@@ -69,7 +69,7 @@ def get_velocity(func_name: str) -> Callable[[Particles], VectorQuantity]:
     }
 
     if func_name not in names:
-        logger.warning(
+        logger.warn(
             f'Unknown center velocity name "{func_name}", falling back to center of mass velocity.'
         )
         func_name = "mass"

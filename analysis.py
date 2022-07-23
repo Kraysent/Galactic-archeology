@@ -6,14 +6,14 @@ import time
 from typing import Callable, Dict, List
 
 from amuse.lab import ScalarQuantity, units
+from zlog import logger
 
-from omtool import io_service
-from omtool import json_logger as logger
-from omtool import visualizer
+from omtool import io_service, visualizer
 from omtool.actions_after import VisualizerAction, fit_action, logger_action
 from omtool.actions_before import slice_action
 from omtool.core.configs import AnalysisConfig
 from omtool.core.datamodel import HandlerTask, Snapshot, profiler
+from omtool.core.utils import initialize_logger
 
 
 def analize(config: AnalysisConfig):
@@ -21,7 +21,7 @@ def analize(config: AnalysisConfig):
     Analysis mode for the OMTool. It is used for the data
     analysis of existing models and the export of their parameters.
     """
-    logger.initialize(config.logging)
+    initialize_logger(**config.logging)
     actions_after: Dict[str, Callable] = {}
     actions_after["logging"] = logger_action
     actions_after["fit"] = fit_action
@@ -44,14 +44,14 @@ def analize(config: AnalysisConfig):
             action_name = action_params.pop("type", None)
 
             if action_name is None:
-                logger.error(
+                logger.error().msg(
                     f"action_before type {action_name} of the task "
                     f"{type(curr_task.task)} is not specified, skipping."
                 )
                 continue
 
             if action_name not in actions_before:
-                logger.error(
+                logger.error().msg(
                     f"action_before type {action_name} of the task "
                     f"{type(curr_task.task)} is unknown, skipping."
                 )
@@ -66,14 +66,14 @@ def analize(config: AnalysisConfig):
             handler_name = handler_params.pop("type", None)
 
             if handler_name is None:
-                logger.error(
+                logger.error().msg(
                     f"Handler type {handler_name} of the task "
                     f"{type(curr_task.task)} is not specified, skipping."
                 )
                 continue
 
             if handler_name not in actions_after:
-                logger.error(
+                logger.error().msg(
                     f"Handler type {handler_name} of the task "
                     f"{type(curr_task.task)} is unknown, skipping."
                 )
@@ -96,7 +96,7 @@ def analize(config: AnalysisConfig):
         if visualizer_service is not None:
             visualizer_service.save({"i": iteration, "time": timestamp.value_in(units.Myr)})
 
-    logger.info("Analysis started")
+    logger.info().msg("Analysis started")
 
     input_service = io_service.InputService(config.input_file)
     snapshots = input_service.get_snapshot_generator()
@@ -110,12 +110,12 @@ def analize(config: AnalysisConfig):
         loop_saving_stage(i, snapshot.timestamp)
         end = time.time()
 
-        logger.info(
-            message_type="time_info",
-            payload={
-                "i": f"{i:03d}",
-                "timestamp_Myr": f"{snapshot.timestamp.value_in(units.Myr):.01f}",
-                "computation_time_s": f"{start_save - start_comp:.01f}",
-                "saving_time_s": f"{end - start_save:.01f}",
-            },
+        (
+            logger.info()
+            .string("id", "time_data")
+            .int("i", i)
+            .float("timestamp_Myr", snapshot.timestamp.value_in(units.Myr))
+            .float("computation_time_s", start_save - start_comp)
+            .float("saving_time_s", end - start_save)
+            .send()
         )
