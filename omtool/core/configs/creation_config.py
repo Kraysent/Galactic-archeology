@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
+from pathlib import Path
 from typing import Any, Optional
 
 from amuse.lab import VectorQuantity, units
@@ -90,6 +91,11 @@ class CreationConfigSchema(BaseSchema):
 
     @post_load
     def make(self, data: dict, **kwargs):
+        if not data["overwrite"] and Path(data["output_file"]).is_file():
+            raise FileExistsError(
+                f'Output file ({data["output_file"]}) exists and "overwrite" '
+                "option in integration config file is false (default)"
+            )
         return CreationConfig(**data)
 
     def dump_schema(self, filename: str, **kwargs):
@@ -97,5 +103,5 @@ class CreationConfigSchema(BaseSchema):
             filename,
             "Creation config schema",
             "Schema for creation configuration file for OMTool.",
-            **kwargs
+            **kwargs,
         )

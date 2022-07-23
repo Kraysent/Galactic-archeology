@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any, Optional
 
 from amuse.lab import ScalarQuantity
@@ -104,6 +105,12 @@ class IntegrationConfigSchema(BaseSchema):
 
     @post_load
     def make(self, data: dict, **kwargs):
+        if not data["overwrite"] and Path(data["output_file"]).is_file():
+            raise FileExistsError(
+                f'Output file ({data["output_file"]}) exists and "overwrite" '
+                "option in integration config file is false (default)"
+            )
+
         return IntegrationConfig(**data)
 
     def dump_schema(self, filename: str, **kwargs):
@@ -111,5 +118,5 @@ class IntegrationConfigSchema(BaseSchema):
             filename,
             "Integration config schema",
             "Schema for integration configuration file for OMTool.",
-            **kwargs
+            **kwargs,
         )

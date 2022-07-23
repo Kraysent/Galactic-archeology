@@ -2,6 +2,7 @@
 Creation module for OMTool. Used to create and load models from
 files and export them into single file.
 """
+import os
 from pathlib import Path
 from typing import Callable, Dict
 
@@ -22,12 +23,8 @@ def create(config: CreationConfig):
     initialize_logger(**config.logging)
     builder = SnapshotBuilder()
 
-    if not config.overwrite:
-        if Path(config.output_file).is_file():
-            raise Exception(
-                f'Output file ({config.output_file}) exists and "overwrite" '
-                "option in creation config file is false (default)"
-            )
+    if Path(config.output_file).is_file():
+        os.remove(config.output_file)
 
     @profiler("Creation")
     def loop_creation_stage(body: Object):

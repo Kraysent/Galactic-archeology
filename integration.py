@@ -32,16 +32,8 @@ def integrate(config: IntegrationConfig):
     actions_before = initialize_actions_before()
     tasks = initialize_tasks(config.tasks, actions_before, actions_after)
 
-    # TODO: move this logic to config schemas
-    if config.overwrite:
-        if Path(config.output_file).is_file():
-            os.remove(config.output_file)
-    else:
-        if Path(config.output_file).is_file():
-            raise Exception(
-                f'Output file ({config.output_file}) exists and "overwrite" '
-                "option in integration config file is false (default)"
-            )
+    if Path(config.output_file).is_file():
+        os.remove(config.output_file)
 
     input_service = io_service.InputService(config.input_file)
     integrator = get_integrator(
