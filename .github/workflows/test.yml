@@ -21,7 +21,7 @@ jobs:
           python3 -m pip install amuse-framework
       - name: Install project deps
         run: |
-          python3 -m pip install marshmallow marshmallow_jsonschema marshmallow_enum matplotlib pandas pyyaml argparse astropy py_expression_eval
+          python3 -m pip install marshmallow marshmallow_jsonschema marshmallow_enum matplotlib pandas pyyaml argparse astropy py_expression_eval pyzerolog
           git clone https://github.com/GalacticDynamics-Oxford/pyfalcon.git
           cd pyfalcon && python3 setup.py install
       - name: Install check utils
