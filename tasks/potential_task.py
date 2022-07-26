@@ -1,15 +1,15 @@
 """
-Task that computes radial velocity distribution.
+Task that computes radial distribution of the potential.
 """
 from amuse.lab import ScalarQuantity, units
 
 from omtool.core.datamodel import AbstractTask, DataType, Snapshot, profiler
-from omtool.core.utils import math, particle_centers
+from omtool.core.utils import math, particle_centers, pyfalcon_analizer
 
 
-class VelocityProfileTask(AbstractTask):
+class PotentialTask(AbstractTask):
     """
-    Task that computes radial velocity distribution.
+    Task that computes radial distribution of the potential.
     """
 
     def __init__(
@@ -17,28 +17,32 @@ class VelocityProfileTask(AbstractTask):
         center_type: str = "mass",
         resolution: int = 1000,
         r_unit: ScalarQuantity = 1 | units.kpc,
-        v_unit: ScalarQuantity = 1 | units.kms,
+        pot_unit: ScalarQuantity = None,
     ) -> None:
         super().__init__()
         self.center_func = particle_centers.get(center_type)
-        self.center_vel_func = particle_centers.get_velocity(center_type)
         self.resolution = resolution
         self.r_unit = r_unit
-        self.v_unit = v_unit
+        self.pot_unit = pot_unit
 
-    @profiler("Velocity profile task")
+    @profiler("Potential task")
     def run(self, snapshot: Snapshot) -> DataType:
         center = self.center_func(snapshot.particles)
-        center_vel = self.center_vel_func(snapshot.particles)
-
         particles = snapshot.particles
 
         radii = math.get_lengths(particles.position - center)
-        velocities = math.get_lengths(particles.velocity - center_vel)
-        radii, velocities = math.sort_with(radii, velocities)
+        potentials = pyfalcon_analizer.get_potentials(snapshot.particles, 0.2 | units.kpc)
+        radii, potentials = math.sort_with(radii, potentials)
 
         number_of_chunks = (len(radii) // self.resolution) * self.resolution
-        radii = radii[0 : number_of_chunks : self.resolution]
-        velocities = velocities[:number_of_chunks].reshape((-1, self.resolution)).mean(axis=1)
 
-        return {"radii": radii / self.r_unit, "velocity": velocities / self.v_unit}
+        radii = radii[0 : number_of_chunks : self.resolution]
+        potentials = potentials[:number_of_chunks].reshape((-1, self.resolution)).mean(axis=1)
+
+        if self.pot_unit is None:
+            self.pot_unit = potentials.mean()
+
+        return {"radii": radii / self.r_unit, "potential": potentials / self.pot_unit}
+
+
+task = PotentialTask

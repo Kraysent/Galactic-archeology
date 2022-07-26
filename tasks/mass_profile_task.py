@@ -42,3 +42,6 @@ class MassProfileTask(AbstractTask):
         masses = np.cumsum(masses)
 
         return {"radii": radii / self.r_unit, "masses": masses / self.m_unit}
+
+
+task = MassProfileTask

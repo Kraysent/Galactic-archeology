@@ -63,3 +63,6 @@ class TimeEvolutionTask(AbstractTask):
             self.values.append(value)
 
         return {"times": self.times / self.time_unit, "values": self.values / self.value_unit}
+
+
+task = TimeEvolutionTask

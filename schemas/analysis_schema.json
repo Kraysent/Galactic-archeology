@@ -5,6 +5,15 @@
     "AnalysisConfigSchema": {
       "additionalProperties": true,
       "properties": {
+        "imports": {
+          "description": "This field lists tasks that would be used in this simulation.",
+          "items": {
+            "title": "imports",
+            "type": "string"
+          },
+          "title": "imports",
+          "type": "array"
+        },
         "input_file": {
           "$ref": "#/definitions/IOConfigSchema",
           "description": "Parameters of input file: its format and path.",

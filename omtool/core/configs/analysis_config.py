@@ -3,7 +3,8 @@ from typing import Optional
 
 from marshmallow import fields, post_load
 
-from omtool import io_service, tasks, visualizer
+from omtool import io_service, visualizer
+from omtool.core import tasks
 from omtool.core.configs.base_config import BaseConfig, BaseSchema
 
 

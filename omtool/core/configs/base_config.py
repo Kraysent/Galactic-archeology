@@ -9,6 +9,7 @@ from marshmallow_jsonschema import JSONSchema
 @dataclass
 class BaseConfig:
     logging: dict[str, Any]
+    imports: list[str]
 
 
 class BaseSchema(Schema):
@@ -16,7 +17,14 @@ class BaseSchema(Schema):
         additional_properties = True
         unknown = EXCLUDE
 
-    logging = fields.Dict(fields.Str, description="This field describes logging configuration.")
+    logging = fields.Dict(
+        fields.Str, description="This field describes logging configuration.", load_default={}
+    )
+    imports = fields.List(
+        fields.Str,
+        description="This field lists tasks that would be used in this simulation.",
+        load_default=["tasks/*"],
+    )
 
     def dump_json(self, filename: str, title: str, description: str = "", **kwargs):
         output = JSONSchema().dump(self)

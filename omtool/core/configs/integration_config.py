@@ -5,7 +5,8 @@ from typing import Any, Optional
 from amuse.lab import ScalarQuantity
 from marshmallow import Schema, fields, post_load
 
-from omtool import io_service, tasks, visualizer
+from omtool import io_service, visualizer
+from omtool.core import tasks
 from omtool.core.configs.base_config import BaseConfig, BaseSchema
 
 

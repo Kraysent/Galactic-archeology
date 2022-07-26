@@ -44,3 +44,6 @@ class DensityProfileTask(AbstractTask):
         radii = radii[1:]
 
         return {"radii": radii / self.r_unit, "densities": densities / self.dens_unit}
+
+
+task = DensityProfileTask

@@ -13,8 +13,8 @@ from omtool.actions_after import initialize_actions_after
 from omtool.actions_before import initialize_actions_before
 from omtool.core.configs import AnalysisConfig
 from omtool.core.datamodel import Snapshot, profiler
+from omtool.core.tasks import initialize_tasks
 from omtool.core.utils import initialize_logger
-from omtool.tasks import initialize_tasks
 
 
 def analize(config: AnalysisConfig):
@@ -28,7 +28,7 @@ def analize(config: AnalysisConfig):
     )
     actions_after: dict[str, Callable] = initialize_actions_after(visualizer_service)
     actions_before = initialize_actions_before()
-    tasks = initialize_tasks(config.tasks, actions_before, actions_after)
+    tasks = initialize_tasks(config.imports, config.tasks, actions_before, actions_after)
 
     @profiler("Analysis stage")
     def loop_analysis_stage(snapshot: Snapshot):

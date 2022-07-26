@@ -1,23 +1,20 @@
+import glob
+import importlib
+import pathlib
+import sys
 from dataclasses import dataclass
-from typing import Callable
+from typing import Callable, Type
 
 from marshmallow import Schema, fields, post_load
 from zlog import logger
 
 from omtool.core.datamodel import AbstractTask, HandlerTask
-from omtool.tasks.bound_mass_task import BoundMassTask
-from omtool.tasks.density_profile_task import DensityProfileTask
-from omtool.tasks.distance_task import DistanceTask
-from omtool.tasks.mass_profile_task import MassProfileTask
-from omtool.tasks.potential_task import PotentialTask
-from omtool.tasks.scatter_task import ScatterTask
-from omtool.tasks.time_evolution_task import TimeEvolutionTask
-from omtool.tasks.velocity_profile_task import VelocityProfileTask
 
 
 @dataclass
 class TasksConfig:
-    name: AbstractTask
+    name: str
+    args: dict
     actions_before: list[dict]
     actions_after: list[dict]
 
@@ -42,37 +39,77 @@ class TasksConfigSchema(Schema):
 
     @post_load
     def make(self, data: dict, **kwargs):
-        data["name"] = get_task(data["name"], data.pop("args"))
         return TasksConfig(**data)
 
 
-def get_task(task_name: str, args: dict) -> AbstractTask:
-    """
-    Creates instance of the specific task with arguments that were provided in args dict.
-    """
-    task_map = {
-        "ScatterTask": ScatterTask,
-        "TimeEvolutionTask": TimeEvolutionTask,
-        "DistanceTask": DistanceTask,
-        "VelocityProfileTask": VelocityProfileTask,
-        "MassProfileTask": MassProfileTask,
-        "DensityProfileTask": DensityProfileTask,
-        "PotentialTask": PotentialTask,
-        "BoundMassTask": BoundMassTask,
+@dataclass
+class Task:
+    name: str
+    task: Type
+
+
+def get_task(tasks: list[Task], task_name: str, args: dict) -> AbstractTask | None:
+    selected_tasks = [t.task for t in tasks if t.name == task_name]
+
+    if not selected_tasks:
+        return None
+
+    return selected_tasks[0](**args)
+
+
+def load_task(filename: str) -> Task:
+    path = pathlib.Path(filename)
+
+    sys.path.append(str(path.parent))
+    task_module = importlib.import_module(path.stem)
+
+    res = {
+        "task": task_module.task,
+        "name": task_module.task_name
+        if hasattr(task_module, "task_name")
+        else task_module.task.__name__,
     }
 
-    return task_map[task_name](**args)
+    return Task(**res)
+
+
+def load_tasks(imports: list[str]) -> list[Task]:
+    filenames = []
+
+    for imp in imports:
+        filenames.extend(glob.glob(imp))
+
+    tasks = []
+    for filename in filenames:
+        task = load_task(filename)
+        tasks.append(task)
+        logger.debug().string("name", task.name).string("from", filename).msg("imported task")
+
+    return tasks
 
 
 def initialize_tasks(
+    imports: list[str],
     configs: list[TasksConfig],
     actions_before: dict[str, Callable],
     actions_after: dict[str, Callable],
 ) -> list[HandlerTask]:
+    imported_tasks = load_tasks(imports)
     tasks: list[HandlerTask] = []
 
     for config in configs:
-        curr_task = HandlerTask(config.name)
+        task = get_task(imported_tasks, config.name, config.args)
+
+        if task is None:
+            (
+                logger.warn()
+                .string("error", "task not found")
+                .string("name", config.name)
+                .msg("skipping")
+            )
+            continue
+
+        curr_task = HandlerTask(task)
 
         for action_params in config.actions_before:
             action_name = action_params.pop("type", None)
@@ -100,16 +137,20 @@ def initialize_tasks(
             handler_name = handler_params.pop("type", None)
 
             if handler_name is None:
-                logger.error().msg(
-                    f"Handler type {handler_name} of the task "
-                    f"{type(curr_task.task)} is not specified, skipping."
+                (
+                    logger.error().msg(
+                        f"Handler type {handler_name} of the task "
+                        f"{type(curr_task.task)} is not specified, skipping."
+                    )
                 )
                 continue
 
             if handler_name not in actions_after:
-                logger.error().msg(
-                    f"Handler type {handler_name} of the task "
-                    f"{type(curr_task.task)} is unknown, skipping."
+                (
+                    logger.error().msg(
+                        f"Handler type {handler_name} of the task "
+                        f"{type(curr_task.task)} is unknown, skipping."
+                    )
                 )
                 continue
 
@@ -119,6 +160,6 @@ def initialize_tasks(
             curr_task.actions_after.append(handler)
 
         tasks.append(curr_task)
-        logger.debug().string("task", type(curr_task.task).__name__).msg("Init")
+        logger.debug().string("name", config.name).msg("initialized task")
 
     return tasks

@@ -62,3 +62,6 @@ class DistanceTask(AbstractTimeTask):
         result = self._as_tuple()
 
         return {"times": result[0], "dist": result[1]}
+
+
+task = DistanceTask

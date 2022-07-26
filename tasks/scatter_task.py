@@ -35,3 +35,6 @@ class ScatterTask(AbstractTask):
         params = get_parameters(snapshot.particles)
 
         return {id: expr.evaluate(params) / self.units[id] for id, expr in self.expressions.items()}
+
+
+task = ScatterTask

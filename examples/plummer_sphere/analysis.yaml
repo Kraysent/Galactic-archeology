@@ -5,6 +5,9 @@ object2_slice: &object2_slice
   - 100001
   - 180000
 
+imports:
+  - "tasks/scatter_task.py"
+
 input_file:
   format: fits
   filenames:

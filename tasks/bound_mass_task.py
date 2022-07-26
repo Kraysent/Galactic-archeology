@@ -58,3 +58,6 @@ class BoundMassTask(AbstractTimeTask):
         result = self._as_tuple()
 
         return {"times": result[0], "bound_mass": result[1]}
+
+
+task = BoundMassTask

@@ -15,8 +15,8 @@ from omtool.actions_before import initialize_actions_before
 from omtool.core.configs import IntegrationConfig
 from omtool.core.datamodel import Snapshot, profiler
 from omtool.core.integrators import get_integrator
+from omtool.core.tasks import initialize_tasks
 from omtool.core.utils import initialize_logger
-from omtool.tasks import initialize_tasks
 
 
 def integrate(config: IntegrationConfig):
@@ -30,7 +30,7 @@ def integrate(config: IntegrationConfig):
     )
     actions_after: dict[str, Callable] = initialize_actions_after(visualizer_service)
     actions_before = initialize_actions_before()
-    tasks = initialize_tasks(config.tasks, actions_before, actions_after)
+    tasks = initialize_tasks(config.imports, config.tasks, actions_before, actions_after)
 
     if Path(config.output_file).is_file():
         os.remove(config.output_file)
