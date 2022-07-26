@@ -23,14 +23,14 @@ class LogParams:
 
 @dataclass
 class IntegrationConfig(BaseConfig):
-    input_file: io_service.Config
+    input_file: io_service.IOServiceConfig
     output_file: str
     overwrite: bool
     model_time: ScalarQuantity
     integrator: Integrator
     snapshot_interval: int
-    visualizer: Optional[visualizer.Config]
-    tasks: list[tasks.Config]
+    visualizer: Optional[visualizer.VisualizerConfig]
+    tasks: list[tasks.TasksConfig]
     logs: list[LogParams]
 
 

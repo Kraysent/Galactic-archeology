@@ -7,7 +7,7 @@ from typing import Iterator, Tuple
 from amuse.lab import Particles, ScalarQuantity
 
 from omtool.io_service import readers
-from omtool.io_service.config import Config
+from omtool.io_service.config import IOServiceConfig
 
 
 class InputService:
@@ -16,7 +16,7 @@ class InputService:
     types of files.
     """
 
-    def __init__(self, config: Config) -> None:
+    def __init__(self, config: IOServiceConfig) -> None:
         self.config = config
 
     def get_snapshot_generator(self) -> Iterator[Tuple[Particles, ScalarQuantity]]:

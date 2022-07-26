@@ -5,7 +5,7 @@ from marshmallow import Schema, fields, post_load
 
 
 @dataclass
-class Config:
+class IOServiceConfig:
     format: str
     filenames: List[str]
 
@@ -23,4 +23,4 @@ class IOConfigSchema(Schema):
 
     @post_load
     def make(self, data: dict, **kwargs):
-        return Config(**data)
+        return IOServiceConfig(**data)

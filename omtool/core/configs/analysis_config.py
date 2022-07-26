@@ -9,9 +9,9 @@ from omtool.core.configs.base_config import BaseConfig, BaseSchema
 
 @dataclass
 class AnalysisConfig(BaseConfig):
-    input_file: io_service.Config
-    visualizer: Optional[visualizer.Config]
-    tasks: list[tasks.Config]
+    input_file: io_service.IOServiceConfig
+    visualizer: Optional[visualizer.VisualizerConfig]
+    tasks: list[tasks.TasksConfig]
 
 
 class AnalysisConfigSchema(BaseSchema):

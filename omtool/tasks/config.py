@@ -16,7 +16,7 @@ from omtool.tasks.velocity_profile_task import VelocityProfileTask
 
 
 @dataclass
-class Config:
+class TasksConfig:
     name: AbstractTask
     actions_before: list[dict]
     actions_after: list[dict]
@@ -43,7 +43,7 @@ class TasksConfigSchema(Schema):
     @post_load
     def make(self, data: dict, **kwargs):
         data["name"] = get_task(data["name"], data.pop("args"))
-        return Config(**data)
+        return TasksConfig(**data)
 
 
 def get_task(task_name: str, args: dict) -> AbstractTask:
@@ -65,7 +65,9 @@ def get_task(task_name: str, args: dict) -> AbstractTask:
 
 
 def initialize_tasks(
-    configs: list[Config], actions_before: dict[str, Callable], actions_after: dict[str, Callable]
+    configs: list[TasksConfig],
+    actions_before: dict[str, Callable],
+    actions_after: dict[str, Callable],
 ) -> list[HandlerTask]:
     tasks: list[HandlerTask] = []
 

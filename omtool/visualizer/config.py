@@ -29,7 +29,7 @@ class PanelConfig:
 
 
 @dataclass
-class Config:
+class VisualizerConfig:
     output_dir: str
     title: str
     figsize: Tuple[int, ...]
@@ -99,4 +99,4 @@ class VisualizerConfigSchema(Schema):
 
     @post_load
     def make(self, data, **kwargs):
-        return Config(**data)
+        return VisualizerConfig(**data)

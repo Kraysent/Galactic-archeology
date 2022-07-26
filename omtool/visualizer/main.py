@@ -2,7 +2,7 @@ from typing import Optional
 
 import numpy as np
 
-from omtool.visualizer.config import Config
+from omtool.visualizer.config import VisualizerConfig
 from omtool.visualizer.draw_parameters import DrawParameters
 from omtool.visualizer.visualizer import Visualizer
 
@@ -12,7 +12,7 @@ class VisualizerService:
     Service that is responsible for saving images.
     """
 
-    def __init__(self, config: Config):
+    def __init__(self, config: VisualizerConfig):
         self.visualizer = Visualizer()
         self.visualizer.set_figsize(*config.figsize)
         self.title_template = config.title

@@ -2,7 +2,7 @@
 Module that describes all of the tasks.
 """
 from omtool.tasks.bound_mass_task import BoundMassTask
-from omtool.tasks.config import Config, TasksConfigSchema, initialize_tasks
+from omtool.tasks.config import TasksConfig, TasksConfigSchema, initialize_tasks
 from omtool.tasks.density_profile_task import DensityProfileTask
 from omtool.tasks.distance_task import DistanceTask
 from omtool.tasks.mass_profile_task import MassProfileTask
