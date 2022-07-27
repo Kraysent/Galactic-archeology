@@ -18,7 +18,6 @@ input_file:
 logging:
   level: debug
   filename: !env "{WORKING_DIR}/test_json_log.txt"
-  datefmt: "%Y-%m-%d %H:%M:%S"
 
 visualizer:
   output_dir: !env "{WORKING_DIR}/analysis"
@@ -86,46 +85,15 @@ visualizer:
 
 tasks:
   - name: ScatterTask
-    args: &z_args
-      expressions:
-        x: "z"
-        y: "y"
-      units:
-        x: !q [1, kpc]
-        y: !q [1, kpc]
-    actions_before:
-      - type: slice
-        part: *host_slice
-      - type: barion_filter
-    actions_after:
-      - type: visualizer
-        id: zy_plane
-        is_density_plot: True
-        resolution: 700
-        extent: [-45, 45, -40, 40]
-        channel: *host_clr
-  - name: ScatterTask
-    args: *z_args
-    actions_before:
-      - type: slice
-        part: *sat_slice
-      - type: barion_filter
-    actions_after:
-      - type: visualizer
-        id: zy_plane
-        is_density_plot: True
-        resolution: 700
-        extent: [-45, 45, -40, 40]
-        channel: *sat_clr
-
-  - name: ScatterTask
-    args: &x_args
+    args: &args
       expressions:
         x: "x"
         y: "y"
+        z: "z"
       units:
         x: !q [1, kpc]
         y: !q [1, kpc]
+        z: !q [1, kpc]
     actions_before:
       - type: slice
         part: *host_slice
@@ -137,8 +105,18 @@ tasks:
         resolution: 700
         extent: [-45, 45, -40, 40]
         channel: *host_clr
+        x: x
+        y: y
+      - type: visualizer
+        id: zy_plane
+        is_density_plot: True
+        resolution: 700
+        extent: [-45, 45, -40, 40]
+        channel: *host_clr
+        x: z
+        y: y
   - name: ScatterTask
-    args: *x_args
+    args: *args
     actions_before:
       - type: slice
         part: *sat_slice
@@ -150,6 +128,16 @@ tasks:
         resolution: 700
         extent: [-45, 45, -40, 40]
         channel: *sat_clr
+        x: x
+        y: y
+      - type: visualizer
+        id: zy_plane
+        is_density_plot: True
+        resolution: 700
+        extent: [-45, 45, -40, 40]
+        channel: *sat_clr
+        x: z
+        y: y
 
   - name: PotentialTask
     args:

@@ -39,47 +39,16 @@ visualizer:
 
 tasks:
   - name: ScatterTask
-    args: &z_args
-      expressions:
-        x: "z"
-        y: "y"
-        m: "m"
-      units:
-        x: !q [1, kpc]
-        y: !q [1, kpc]
-        m: !q [1, MSun]
-    actions_before:
-      - type: slice
-        part: *object1_slice
-    actions_after:
-      - type: visualizer
-        id: zy_plane
-        is_density_plot: True
-        resolution: 700
-        extent: [-45, 45, -40, 40]
-        channel: b
-  - name: ScatterTask
-    args: *z_args
-    actions_before:
-      - type: slice
-        part: *object2_slice
-    actions_after:
-      - type: visualizer
-        id: zy_plane
-        is_density_plot: True
-        resolution: 700
-        extent: [-45, 45, -40, 40]
-        channel: r
-
-  - name: ScatterTask
-    args: &x_args
+    args: &args
       expressions:
         x: "x"
         y: "y"
+        z: "z"
         m: "m"
       units:
         x: !q [1, kpc]
         y: !q [1, kpc]
+        z: !q [1, kpc]
         m: !q [1, MSun]
     actions_before:
       - type: slice
@@ -91,8 +60,19 @@ tasks:
         resolution: 700
         extent: [-45, 45, -40, 40]
         channel: b
+        x: x
+        y: y
+      - type: visualizer
+        id: zy_plane
+        is_density_plot: True
+        resolution: 700
+        extent: [-45, 45, -40, 40]
+        channel: b
+        x: z
+        y: y
+
   - name: ScatterTask
-    args: *x_args
+    args: *args
     actions_before:
       - type: slice
         part: *object2_slice
@@ -103,3 +83,13 @@ tasks:
         resolution: 700
         extent: [-45, 45, -40, 40]
         channel: r
+        x: x
+        y: y
+      - type: visualizer
+        id: zy_plane
+        is_density_plot: True
+        resolution: 700
+        extent: [-45, 45, -40, 40]
+        channel: r
+        x: z
+        y: y

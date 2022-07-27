@@ -92,90 +92,44 @@ visualizer:
 # list of tasks. Each one describes arguments to its constructor and list of actions.
 tasks:
   - name: ScatterTask
-    args: &z_args
-      expressions:
-        x: "z"
-        y: "y"
-        m: "m"
-      units:
-        x: !q [1, kpc]
-        y: !q [1, kpc]
-        m: !q [1, MSun]
-    actions_before:
-      - type: slice
-        part: *host_slice
-      - type: barion_filter
-    actions_after:
-      - type: visualizer
-        id: zy_plane
-        is_density_plot: True
-        resolution: 700
-        extent: [-45, 45, -40, 40]
-        channel: *host_clr
-        weights: m
-  - name: ScatterTask
-    args: *z_args
-    actions_before:
-      - type: slice
-        part: *sat_slice
-      - type: barion_filter
-    actions_after:
-      - type: visualizer
-        id: zy_plane
-        is_density_plot: True
-        resolution: 700
-        extent: [-45, 45, -40, 40]
-        channel: *sat_clr
-        weights: m
-  - name: ScatterTask
-    args: *z_args
-    actions_before:
-      - type: slice
-        id: 0
-    actions_after:
-      - type: visualizer
-        id: zy_plane
-        linestyle: solid
-        color: *host_clr
-        marker: o
-        markersize: 5
-  - name: ScatterTask
-    args: *z_args
-    actions_before:
-      - type: slice
-        id: 1000001
-    actions_after:
-      - type: visualizer
-        id: zy_plane
-        linestyle: solid
-        color: *sat_clr
-        marker: o
-        markersize: 5
-
-  - name: ScatterTask
-    args: &x_args
+    args: &args
       expressions:
         x: "x"
         y: "y"
+        z: "z"
         m: "m"
       units:
         x: !q [1, kpc]
         y: !q [1, kpc]
+        z: !q [1, kpc]
         m: !q [1, MSun]
     actions_before:
       - type: slice
         part: *host_slice
       - type: barion_filter
     actions_after:
+      # you can plot one result several times in different projections
       - type: visualizer
         id: xy_plane
         is_density_plot: True
         resolution: 700
         extent: [-45, 45, -40, 40]
         channel: *host_clr
+        x: x
+        y: y
         weights: m
+      - type: visualizer
+        id: zy_plane
+        is_density_plot: True
+        resolution: 700
+        extent: [-45, 45, -40, 40]
+        channel: *host_clr
+        x: z
+        y: y
+        weights: m
+
   - name: ScatterTask
-    args: *x_args
+    args: *args
     actions_before:
       - type: slice
         part: *sat_slice
@@ -187,9 +141,21 @@ tasks:
         resolution: 700
         extent: [-45, 45, -40, 40]
         channel: *sat_clr
+        x: x
+        y: y
         weights: m
+      - type: visualizer
+        id: zy_plane
+        is_density_plot: True
+        resolution: 700
+        extent: [-45, 45, -40, 40]
+        channel: *sat_clr
+        x: z
+        y: y
+        weights: m
+
   - name: ScatterTask
-    args: *x_args
+    args: *args
     actions_before:
       - type: slice
         id: 0
@@ -200,8 +166,19 @@ tasks:
         color: *host_clr
         marker: o
         markersize: 5
+        x: x
+        y: y
+      - type: visualizer
+        id: zy_plane
+        linestyle: solid
+        color: *host_clr
+        marker: o
+        markersize: 5
+        x: z
+        y: y
+
   - name: ScatterTask
-    args: *x_args
+    args: *args
     actions_before:
       - type: slice
         id: 1000001
@@ -212,6 +189,16 @@ tasks:
         color: *sat_clr
         marker: o
         markersize: 5
+        x: x
+        y: y
+      - type: visualizer
+        id: zy_plane
+        linestyle: solid
+        color: *sat_clr
+        marker: o
+        markersize: 5
+        x: z
+        y: y
 
   - name: PotentialTask
     args:
