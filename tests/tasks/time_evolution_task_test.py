@@ -5,7 +5,7 @@ from amuse.lab import Particles, units
 from amuse.units.core import IncompatibleUnitsException
 
 from omtool.core.datamodel import Snapshot
-from tasks.time_evolution_task import TimeEvolutionTask
+from tools.tasks.time_evolution_task import TimeEvolutionTask
 
 
 class TestTimeEvolutionTask(unittest.TestCase):

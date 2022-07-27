@@ -5,7 +5,7 @@ from amuse.lab import Particles, units
 from amuse.units.core import IncompatibleUnitsException
 
 from omtool.core.datamodel import Snapshot
-from tasks.scatter_task import ScatterTask
+from tools.tasks.scatter_task import ScatterTask
 
 
 class TestScatterTask(unittest.TestCase):

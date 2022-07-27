@@ -23,7 +23,7 @@ class BaseSchema(Schema):
     imports = fields.List(
         fields.Str,
         description="This field lists tasks that would be used in this simulation.",
-        load_default=["tasks/*"],
+        load_default=["tools/tasks/*"],
     )
 
     def dump_json(self, filename: str, title: str, description: str = "", **kwargs):
