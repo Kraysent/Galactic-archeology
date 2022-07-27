@@ -11,8 +11,9 @@ sat_color: &sat_clr r
 all_color: &all_clr y
 
 imports:
-  - "tasks/scatter_task.py"
-  - "tasks/density_profile_task.py"
+  tasks:
+    - "tools/tasks/scatter_task.py"
+    - "tools/tasks/density_profile_task.py"
 
 logging:
   level: debug

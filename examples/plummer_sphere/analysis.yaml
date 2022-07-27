@@ -6,7 +6,8 @@ object2_slice: &object2_slice
   - 180000
 
 imports:
-  - "tasks/scatter_task.py"
+  tasks:
+    - "tools/tasks/scatter_task.py"
 
 input_file:
   format: fits

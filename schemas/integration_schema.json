@@ -26,17 +26,37 @@
       ],
       "type": "object"
     },
+    "ImportsSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "models": {
+          "description": "This field lists models that would be used to create snapshot.",
+          "items": {
+            "title": "models",
+            "type": "string"
+          },
+          "title": "models",
+          "type": "array"
+        },
+        "tasks": {
+          "description": "This field lists tasks that would be used in this simulation.",
+          "items": {
+            "title": "tasks",
+            "type": "string"
+          },
+          "title": "tasks",
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
     "IntegrationConfigSchema": {
       "additionalProperties": true,
       "properties": {
         "imports": {
-          "description": "This field lists tasks that would be used in this simulation.",
-          "items": {
-            "title": "imports",
-            "type": "string"
-          },
-          "title": "imports",
-          "type": "array"
+          "$ref": "#/definitions/ImportsSchema",
+          "description": "This field lists imports for various actions.",
+          "type": "object"
         },
         "input_file": {
           "$ref": "#/definitions/IOConfigSchema",

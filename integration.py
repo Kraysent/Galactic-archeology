@@ -30,7 +30,7 @@ def integrate(config: IntegrationConfig):
     )
     actions_after: dict[str, Callable] = initialize_actions_after(visualizer_service)
     actions_before = initialize_actions_before()
-    tasks = initialize_tasks(config.imports, config.tasks, actions_before, actions_after)
+    tasks = initialize_tasks(config.imports.tasks, config.tasks, actions_before, actions_after)
 
     if Path(config.output_file).is_file():
         os.remove(config.output_file)

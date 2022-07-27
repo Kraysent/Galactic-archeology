@@ -6,14 +6,14 @@ logging:
   filename: !env "{WORKING_DIR}/test_json_log.txt"
 
 objects:
-  - type: csv
+  - name: csv
     args:
       delimiter: " "
       path: !env "{DATA_DIR}/host.csv"
     position: !q [[0, 0, 0], kpc]
     velocity: !q [[0, 0, 0], kms]
     downsample_to: 100000
-  - type: csv
+  - name: csv
     args:
       delimiter: " "
       path: !env "{DATA_DIR}/sat.csv"

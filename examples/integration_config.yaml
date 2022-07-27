@@ -12,9 +12,6 @@ model_time: !q [1.e+4, Myr]
 # interval between to consecutive snapshots to write to output file
 snapshot_interval: 2
 
-# if integration does not require tasks one can specify not to import them
-imports: []
-
 # Algorithm which would perform integration and its constructor arguments.
 integrator:
   name: pyfalcon

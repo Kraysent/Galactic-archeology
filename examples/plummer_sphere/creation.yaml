@@ -5,14 +5,14 @@ logging:
   filename: !env "{WORKING_DIR}/test_json_log.txt"
 
 objects:
-  - type: plummer_sphere
+  - name: plummer_sphere
     args:
       number_of_particles: 100000
       mass: !q [1.e+11, MSun]
       radius: !q [10, kpc]
     position: !q [[0, 0, 0], kpc]
     velocity: !q [[0, 0, 0], kms]
-  - type: plummer_sphere
+  - name: plummer_sphere
     args:
       number_of_particles: 50000
       mass: !q [5.e+10, MSun]

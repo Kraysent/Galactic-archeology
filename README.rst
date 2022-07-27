@@ -11,7 +11,7 @@ It requires following packages to work:
 
 .. code-block:: bash
 
-   pip install marshmallow marshmallow_jsonschema marshmallow_enum matplotlib pandas pyyaml argparse astropy py_expression_eval amuse-framework
+   pip install marshmallow marshmallow_jsonschema matplotlib pandas pyyaml argparse astropy py_expression_eval amuse-framework
 
 You also need to install `pyfalcon <https://github.com/GalacticDynamics-Oxford/pyfalcon>`_ module which makes integration possible.
 

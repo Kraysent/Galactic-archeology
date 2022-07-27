@@ -1,6 +1,7 @@
 """
 Miscellaneous object and function declarations used across the OMTool
 """
+from omtool.core.datamodel.abstract_model import AbstractModel
 from omtool.core.datamodel.abstract_task import (
     AbstractTask,
     AbstractTimeTask,
