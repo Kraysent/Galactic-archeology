@@ -10,6 +10,7 @@ from marshmallow_jsonschema import JSONSchema
 class Imports:
     tasks: list[str]
     models: list[str]
+    integrators: list[str]
 
 
 @dataclass
@@ -29,6 +30,11 @@ class ImportsSchema(Schema):
         description="This field lists models that would be used to create snapshot.",
         load_default=["tools/models/*"],
     )
+    integrators = fields.List(
+        fields.Str,
+        description="This field lists integrators that would be used to model snapshot.",
+        load_default=["tools/integrators/*"],
+    )
 
     @post_load
     def make(self, data: dict, **kwargs):
@@ -46,7 +52,7 @@ class BaseSchema(Schema):
     imports = fields.Nested(
         ImportsSchema,
         description="This field lists imports for various actions.",
-        load_default=Imports(["tools/tasks/*"], ["tools/models/*"]),
+        load_default=Imports(["tools/tasks/*"], ["tools/models/*"], ["tools/integrators/*"]),
     )
 
     def dump_json(self, filename: str, title: str, description: str = "", **kwargs):

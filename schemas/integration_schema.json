@@ -29,6 +29,15 @@
     "ImportsSchema": {
       "additionalProperties": false,
       "properties": {
+        "integrators": {
+          "description": "This field lists integrators that would be used to model snapshot.",
+          "items": {
+            "title": "integrators",
+            "type": "string"
+          },
+          "title": "integrators",
+          "type": "array"
+        },
         "models": {
           "description": "This field lists models that would be used to create snapshot.",
           "items": {

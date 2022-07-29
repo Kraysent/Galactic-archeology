@@ -3,5 +3,4 @@ from omtool.core.configs.creation_config import CreationConfig, CreationConfigSc
 from omtool.core.configs.integration_config import (
     IntegrationConfig,
     IntegrationConfigSchema,
-    Integrator,
 )

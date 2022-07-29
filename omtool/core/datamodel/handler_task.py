@@ -5,7 +5,8 @@ from typing import Callable, List
 
 import numpy as np
 
-from omtool.core.datamodel import AbstractTask, Snapshot
+from omtool.core.datamodel.abstract_task import AbstractTask
+from omtool.core.datamodel.snapshot import Snapshot
 
 DataType = dict[str, np.ndarray]
 

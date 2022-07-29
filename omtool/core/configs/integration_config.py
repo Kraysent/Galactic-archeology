@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Optional
+from typing import Optional
 
 from amuse.lab import ScalarQuantity
 from marshmallow import Schema, fields, post_load
@@ -8,12 +8,7 @@ from marshmallow import Schema, fields, post_load
 from omtool import io_service, visualizer
 from omtool.core import tasks
 from omtool.core.configs.base_config import BaseConfig, BaseSchema
-
-
-@dataclass
-class Integrator:
-    name: str
-    args: dict[str, Any]
+from omtool.core.integrators import IntegratorConfig, IntegratorSchema
 
 
 @dataclass
@@ -28,24 +23,11 @@ class IntegrationConfig(BaseConfig):
     output_file: str
     overwrite: bool
     model_time: ScalarQuantity
-    integrator: Integrator
+    integrator: IntegratorConfig
     snapshot_interval: int
     visualizer: Optional[visualizer.VisualizerConfig]
     tasks: list[tasks.TasksConfig]
     logs: list[LogParams]
-
-
-class IntegratorSchema(Schema):
-    name = fields.Str(required=True, description="Name of the integrator.")
-    args = fields.Dict(
-        fields.Str(),
-        required=True,
-        description="Arguments that would be passed into the constructur of the integrator.",
-    )
-
-    @post_load
-    def make(self, data, **kwargs):
-        return Integrator(**data)
 
 
 class LogParamsSchema(Schema):
