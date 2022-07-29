@@ -6,8 +6,19 @@ check-isort:
 check-flake8:
 	$(PYTHON) -m flake8 --max-line-length=100 --ignore=E203 --per-file-ignores="__init__.py:F401" .
 
-check-mypy:
-	$(PYTHON) -m mypy --python-version 3.10 --ignore-missing-imports .
+check-omtool-mypy:
+	$(PYTHON) -m mypy omtool --python-version 3.10 --ignore-missing-imports
+
+check-cli-mypy:
+	$(PYTHON) -m mypy cli --python-version 3.10 --ignore-missing-imports
+
+check-tools-mypy:
+	$(PYTHON) -m mypy tools --python-version 3.10 --ignore-missing-imports
+
+check-tests-mypy:
+	$(PYTHON) -m mypy tests --python-version 3.10 --ignore-missing-imports
+
+check-mypy: check-omtool-mypy check-tools-mypy check-cli-mypy check-tests-mypy
 
 test:
 	$(PYTHON) -m unittest -v tests.tasks
@@ -22,13 +33,9 @@ fix-black:
 	black --line-length 100 .
 
 generate-schemas:
-	$(PYTHON) main.py generate-schema
+	$(PYTHON) cli/main.py generate-schema
 
 fix: fix-isort fix-black generate-schemas
-
-
-update-schemas:
-	$(PYTHON) main.py generate-schemas
 
 
 build-pip:

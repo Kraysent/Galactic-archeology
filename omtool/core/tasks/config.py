@@ -5,7 +5,6 @@ import sys
 from dataclasses import dataclass
 from typing import Callable, Type
 
-from marshmallow import Schema, fields, post_load
 from zlog import logger
 
 from omtool.core.datamodel import AbstractTask, HandlerTask
@@ -17,29 +16,6 @@ class TasksConfig:
     args: dict
     actions_before: list[dict]
     actions_after: list[dict]
-
-
-class TasksConfigSchema(Schema):
-    name = fields.Raw(required=True, description="Name of the task.")
-    actions_before = fields.List(
-        fields.Dict(fields.Str()),
-        load_default=[],
-        description="List of actions that would run some function on a given snapshot "
-        "before running the task.",
-    )
-    actions_after = fields.List(
-        fields.Dict(fields.Str()),
-        load_default=[],
-        description="List of actions that would run some function on every single result "
-        "of the task.",
-    )
-    args = fields.Dict(
-        fields.Str(), load_default={}, description="Arguments to the constructor of the task."
-    )
-
-    @post_load
-    def make(self, data: dict, **kwargs):
-        return TasksConfig(**data)
 
 
 @dataclass

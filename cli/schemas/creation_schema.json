@@ -18,7 +18,7 @@
         },
         "objects": {
           "items": {
-            "$ref": "#/definitions/ModelsSchema",
+            "$ref": "#/definitions/ModelSchema",
             "description": "This field list of objects. Each object is either a body or a model. Models can be loaded from *.csv in specific format or generated based on some function.",
             "type": "object"
           },
@@ -74,7 +74,7 @@
       },
       "type": "object"
     },
-    "ModelsSchema": {
+    "ModelSchema": {
       "additionalProperties": false,
       "properties": {
         "args": {

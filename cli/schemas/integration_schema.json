@@ -115,7 +115,7 @@
         "tasks": {
           "description": "This field describes list of tasks. Each task is a class that has run(...) method that processes Snapshot and returns some data.",
           "items": {
-            "$ref": "#/definitions/TasksConfigSchema",
+            "$ref": "#/definitions/TaskConfigSchema",
             "type": "object"
           },
           "title": "tasks",
@@ -283,7 +283,7 @@
       },
       "type": "object"
     },
-    "TasksConfigSchema": {
+    "TaskConfigSchema": {
       "additionalProperties": false,
       "properties": {
         "actions_after": {

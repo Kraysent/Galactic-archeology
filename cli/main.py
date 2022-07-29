@@ -3,18 +3,16 @@ import atexit
 import sys
 
 import yaml
-from zlog import logger
-
-from analysis import analize
-from creator import create
-from integration import integrate
-from omtool.core.configs import (
+from python_schemas import (
     AnalysisConfigSchema,
     CreationConfigSchema,
     IntegrationConfigSchema,
 )
+from zlog import logger
+
+from omtool import analize, create, integrate
 from omtool.core.datamodel import task_profiler
-from omtool.core.utils.config_utils import yaml_loader
+from omtool.core.utils import yaml_loader
 
 
 def main():
@@ -61,13 +59,13 @@ def main():
             analize(AnalysisConfigSchema().load(data))
         case "generate-schema":
             CreationConfigSchema().dump_schema(
-                "schemas/creation_schema.json", indent=2, sort_keys=True
+                "cli/schemas/creation_schema.json", indent=2, sort_keys=True
             )
             IntegrationConfigSchema().dump_schema(
-                "schemas/integration_schema.json", indent=2, sort_keys=True
+                "cli/schemas/integration_schema.json", indent=2, sort_keys=True
             )
             AnalysisConfigSchema().dump_schema(
-                "schemas/analysis_schema.json", indent=2, sort_keys=True
+                "cli/schemas/analysis_schema.json", indent=2, sort_keys=True
             )
 
 
