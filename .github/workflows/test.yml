@@ -9,7 +9,9 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: "3.10"
-      - name: Install AMUSE with deps
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install AMUSE deps
         run: |
           sudo apt-get install build-essential gfortran python3-dev \
           libopenmpi-dev openmpi-bin \
@@ -18,16 +20,13 @@ jobs:
           libhdf5-serial-dev hdf5-tools \
           libblas-dev liblapack-dev git
           python3 -m pip install mpi4py h5py numpy docutils wheel
-          python3 -m pip install amuse-framework
       - name: Install project deps
         run: |
-          python3 -m pip install marshmallow marshmallow_jsonschema matplotlib pandas pyyaml argparse astropy py_expression_eval pyzerolog
+          python3 -m pip install poetry
+          poetry install --extras "tasks"
+          poetry shell
           git clone https://github.com/GalacticDynamics-Oxford/pyfalcon.git
           cd pyfalcon && python3 setup.py install
-      - name: Install check utils
-        run: python3 -m pip install types-pyyaml flake8 isort mypy black
-      - name: Checkout code
-        uses: actions/checkout@v3
       - name: Run tests
         run: make test
       - name: Run isort
@@ -41,9 +40,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Number of python code lines
+      - name: Python files
         run: find . -name '*.py' | xargs wc -l
-      - name: Number of YAML lines
+      - name: YAML files
         run: find . -name '*.yaml' | xargs wc -l
+      - name: JSON files
+        run: find . -name '*.json' | xargs wc -l
       - name: Project tree
         run: tree
