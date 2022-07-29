@@ -51,5 +51,5 @@ build-docs-pdf:
 clean:
 	$(PYTHON) -Bc "import pathlib; [p.unlink() for p in pathlib.Path('.').rglob('*.py[co]')]"
 	$(PYTHON) -Bc "import pathlib; [p.rmdir() for p in pathlib.Path('.').rglob('__pycache__')]"
-	rm -rf __pycache__ build *.egg-info .mypy_cache
+	rm -rf __pycache__ build *.egg-info .mypy_cache dist
 	cd docs && make clean

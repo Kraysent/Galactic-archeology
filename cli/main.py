@@ -3,6 +3,7 @@ import atexit
 import sys
 
 import yaml
+from config_utils import yaml_loader
 from python_schemas import (
     AnalysisConfigSchema,
     CreationConfigSchema,
@@ -12,7 +13,6 @@ from zlog import logger
 
 from omtool import analize, create, integrate
 from omtool.core.datamodel import task_profiler
-from omtool.core.utils import yaml_loader
 
 
 def main():
