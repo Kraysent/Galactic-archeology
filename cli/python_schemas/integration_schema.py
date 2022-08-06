@@ -1,10 +1,10 @@
 from pathlib import Path
 
 from marshmallow import Schema, fields, post_load
-from python_schemas.base_schema import BaseSchema
-from python_schemas.integrator_schema import IntegratorSchema
-from python_schemas.tasks_schema import TaskConfigSchema
 
+from cli.python_schemas.base_schema import BaseSchema
+from cli.python_schemas.integrator_schema import IntegratorSchema
+from cli.python_schemas.tasks_schema import TaskConfigSchema
 from omtool import io_service, visualizer
 from omtool.core.configs import IntegrationConfig, LogParams
 

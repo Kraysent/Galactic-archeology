@@ -7,7 +7,8 @@ from typing import Callable, Type
 
 from zlog import logger
 
-from omtool.core.datamodel import AbstractTask, HandlerTask
+from omtool.core.datamodel import AbstractTask
+from omtool.core.tasks.handler_task import HandlerTask
 
 
 @dataclass
@@ -27,10 +28,7 @@ class Task:
 def get_task(tasks: list[Task], task_name: str, args: dict) -> AbstractTask | None:
     selected_tasks = [t.task for t in tasks if t.name == task_name]
 
-    if not selected_tasks:
-        return None
-
-    return selected_tasks[0](**args)
+    return selected_tasks[0](**args) if selected_tasks else None
 
 
 def load_task(filename: str) -> Task:

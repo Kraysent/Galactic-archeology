@@ -1,3 +1,3 @@
-from python_schemas.analysis_schema import AnalysisConfigSchema
-from python_schemas.creation_schema import CreationConfigSchema
-from python_schemas.integration_schema import IntegrationConfigSchema
+from cli.python_schemas.analysis_schema import AnalysisConfigSchema
+from cli.python_schemas.creation_schema import CreationConfigSchema
+from cli.python_schemas.integration_schema import IntegrationConfigSchema

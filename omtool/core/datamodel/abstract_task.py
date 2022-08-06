@@ -32,6 +32,9 @@ class AbstractTask(ABC):
     Base class for the tasks that operate on snapshots.
     """
 
+    def __init__(self):
+        super().__init__()
+
     @abstractmethod
     def run(self, snapshot: Snapshot) -> DataType:
         """

@@ -33,7 +33,7 @@ fix-black:
 	black --line-length 100 .
 
 generate-schemas:
-	$(PYTHON) cli/main.py generate-schema
+	$(PYTHON) main.py generate-schema
 
 fix: fix-isort fix-black generate-schemas
 

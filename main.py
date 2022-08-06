@@ -3,14 +3,14 @@ import atexit
 import sys
 
 import yaml
-from config_utils import yaml_loader
-from python_schemas import (
+from zlog import logger
+
+from cli.config_utils import yaml_loader
+from cli.python_schemas import (
     AnalysisConfigSchema,
     CreationConfigSchema,
     IntegrationConfigSchema,
 )
-from zlog import logger
-
 from omtool import analize, create, integrate
 from omtool.core.datamodel import task_profiler
 

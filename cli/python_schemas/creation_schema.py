@@ -1,9 +1,9 @@
 from pathlib import Path
 
 from marshmallow import fields, post_load
-from python_schemas.base_schema import BaseSchema
-from python_schemas.models_schema import ModelSchema
 
+from cli.python_schemas.base_schema import BaseSchema
+from cli.python_schemas.models_schema import ModelSchema
 from omtool.core.configs import CreationConfig
 
 
