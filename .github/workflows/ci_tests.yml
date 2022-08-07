@@ -40,7 +40,9 @@ jobs:
       - name: Build pip package
         run: make build-pip
       - name: Build docs
-        run: make build-docs-html
+        run: |
+          sudo apt-get install python3-sphinx
+          make build-docs-html
   project-statistics:
     runs-on: ubuntu-latest
     steps:
