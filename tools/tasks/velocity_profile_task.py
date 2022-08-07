@@ -1,12 +1,11 @@
-"""
-Task that computes radial velocity distribution.
-"""
 from amuse.lab import ScalarQuantity, units
 
 from omtool.core.datamodel import AbstractTask, DataType, Snapshot, profiler
+from omtool.core.tasks import register_task
 from omtool.core.utils import math, particle_centers
 
 
+@register_task(name="VelocityProfileTask")
 class VelocityProfileTask(AbstractTask):
     """
     Task that computes radial velocity distribution.
@@ -42,6 +41,3 @@ class VelocityProfileTask(AbstractTask):
         velocities = velocities[:number_of_chunks].reshape((-1, self.resolution)).mean(axis=1)
 
         return {"radii": radii / self.r_unit, "velocity": velocities / self.v_unit}
-
-
-task = VelocityProfileTask

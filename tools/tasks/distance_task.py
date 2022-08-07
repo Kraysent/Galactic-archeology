@@ -4,9 +4,11 @@ Task that computes distance between point and some specified position.
 from amuse.lab import ScalarQuantity, units
 
 from omtool.core.datamodel import AbstractTimeTask, DataType, Snapshot, profiler
+from omtool.core.tasks.plugin import register_task
 from omtool.core.utils import particle_centers
 
 
+@register_task(name="DistanceTask")
 class DistanceTask(AbstractTimeTask):
     """
     Task that computes distance between point and some specified position.

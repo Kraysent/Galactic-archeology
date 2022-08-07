@@ -10,7 +10,6 @@ example of the file:
 import numpy as np
 from amuse.lab import Particles, ScalarQuantity, units
 from lxml import etree
-from zlog import logger
 
 from omtool.core.datamodel import AbstractModel, Snapshot
 
@@ -38,20 +37,16 @@ class TSFModel(AbstractModel):
         params_node = snapshot_node.find("Parameters")
         n_obj = int(params_node.find("Nobj").text)
 
-        logger.debug().int("n", n_obj).msg("loaded objects number")
-
         particles_node = snapshot_node.find("Particles")
         positions = particles_node.find("Position").text
         positions = np.fromstring(positions, dtype=float, sep=" ")
         if len(positions) % 3 != 0:
-            logger.warn().msg("no positions read from file")
             positions = np.array([])
         positions = positions.reshape((-1, 3))
 
         velocities = particles_node.find("Velocity").text
         velocities = np.fromstring(velocities, dtype=float, sep=" ")
         if len(velocities) % 3 != 0:
-            logger.warn().msg("no velocities read from file")
             velocities = np.array([])
         velocities = velocities.reshape((-1, 3))
 

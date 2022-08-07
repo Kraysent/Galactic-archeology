@@ -4,6 +4,7 @@ Task that computes bound mass of the system.
 from amuse.lab import ScalarQuantity, units
 
 from omtool.core.datamodel import AbstractTimeTask, DataType, Snapshot, profiler
+from omtool.core.tasks import register_task
 from omtool.core.utils import math, pyfalcon_analizer
 
 
@@ -15,6 +16,7 @@ def _get_bound_particles(particles):
     return particles[full_specific_energies < (0 | units.J / units.MSun)]
 
 
+@register_task(name="BoundMassTask")
 class BoundMassTask(AbstractTimeTask):
     """
     Task that computes bound mass of the system.
@@ -58,6 +60,3 @@ class BoundMassTask(AbstractTimeTask):
         result = self._as_tuple()
 
         return {"times": result[0], "bound_mass": result[1]}
-
-
-task = BoundMassTask

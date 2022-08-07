@@ -9,6 +9,7 @@ from zlog import logger
 
 from omtool.core.datamodel import AbstractTask
 from omtool.core.tasks.handler_task import HandlerTask
+from omtool.core.tasks.plugin import TASKS
 
 
 @dataclass
@@ -25,41 +26,20 @@ class Task:
     task: Type
 
 
-def get_task(tasks: list[Task], task_name: str, args: dict) -> AbstractTask | None:
-    selected_tasks = [t.task for t in tasks if t.name == task_name]
-
-    return selected_tasks[0](**args) if selected_tasks else None
+def get_task(task_name: str, args: dict) -> AbstractTask | None:
+    return TASKS[task_name](**args) if task_name in TASKS else None
 
 
-def load_task(filename: str) -> Task:
-    path = pathlib.Path(filename)
-
-    sys.path.append(str(path.parent))
-    task_module = importlib.import_module(path.stem)
-
-    res = {
-        "task": task_module.task,
-        "name": task_module.task_name
-        if hasattr(task_module, "task_name")
-        else task_module.task.__name__,
-    }
-
-    return Task(**res)
-
-
-def load_tasks(imports: list[str]) -> list[Task]:
+def import_tasks(imports: list[str]):
     filenames = []
 
     for imp in imports:
         filenames.extend(glob.glob(imp))
 
-    tasks = []
     for filename in filenames:
-        task = load_task(filename)
-        tasks.append(task)
-        logger.debug().string("name", task.name).string("from", filename).msg("imported task")
-
-    return tasks
+        path = pathlib.Path(filename)
+        sys.path.append(str(path.parent))
+        importlib.import_module(path.stem)
 
 
 def initialize_tasks(
@@ -68,11 +48,11 @@ def initialize_tasks(
     actions_before: dict[str, Callable],
     actions_after: dict[str, Callable],
 ) -> list[HandlerTask]:
-    imported_tasks = load_tasks(imports)
+    import_tasks(imports)
     tasks: list[HandlerTask] = []
 
     for config in configs:
-        task = get_task(imported_tasks, config.name, config.args)
+        task = get_task(config.name, config.args)
 
         if task is None:
             (

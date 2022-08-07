@@ -14,8 +14,10 @@ from omtool.core.datamodel import (
     get_parameters,
     profiler,
 )
+from omtool.core.tasks import register_task
 
 
+@register_task(name="TimeEvolutionTask")
 class TimeEvolutionTask(AbstractTask):
     """
     Task that computes evolution of arbitrary expression over time.
@@ -63,6 +65,3 @@ class TimeEvolutionTask(AbstractTask):
             self.values.append(value)
 
         return {"times": self.times / self.time_unit, "values": self.values / self.value_unit}
-
-
-task = TimeEvolutionTask

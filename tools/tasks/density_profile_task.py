@@ -5,9 +5,11 @@ import numpy as np
 from amuse.lab import ScalarQuantity, units
 
 from omtool.core.datamodel import AbstractTask, DataType, Snapshot, profiler
+from omtool.core.tasks import register_task
 from omtool.core.utils import math, particle_centers
 
 
+@register_task(name="DensityProfileTask")
 class DensityProfileTask(AbstractTask):
     """
     Task that computes radial distribution of density.
@@ -44,6 +46,3 @@ class DensityProfileTask(AbstractTask):
         radii = radii[1:]
 
         return {"radii": radii / self.r_unit, "densities": densities / self.dens_unit}
-
-
-task = DensityProfileTask

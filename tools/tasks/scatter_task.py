@@ -8,8 +8,10 @@ from omtool.core.datamodel import (
     get_parameters,
     profiler,
 )
+from omtool.core.tasks import register_task
 
 
+@register_task(name="ScatterTask")
 class ScatterTask(AbstractTask):
     """Task that computes a given number of arbitrary expressions
 
@@ -35,6 +37,3 @@ class ScatterTask(AbstractTask):
         params = get_parameters(snapshot.particles)
 
         return {id: expr.evaluate(params) / self.units[id] for id, expr in self.expressions.items()}
-
-
-task = ScatterTask

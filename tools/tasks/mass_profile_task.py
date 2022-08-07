@@ -5,9 +5,11 @@ import numpy as np
 from amuse.lab import ScalarQuantity, units
 
 from omtool.core.datamodel import AbstractTask, DataType, Snapshot, profiler
+from omtool.core.tasks.plugin import register_task
 from omtool.core.utils import math, particle_centers
 
 
+@register_task(name="MassProfileTask")
 class MassProfileTask(AbstractTask):
     """
     Task that computes radial distribution of cumulative mass.
@@ -42,6 +44,3 @@ class MassProfileTask(AbstractTask):
         masses = np.cumsum(masses)
 
         return {"radii": radii / self.r_unit, "masses": masses / self.m_unit}
-
-
-task = MassProfileTask

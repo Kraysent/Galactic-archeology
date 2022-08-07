@@ -4,9 +4,11 @@ Task that computes radial distribution of the potential.
 from amuse.lab import ScalarQuantity, units
 
 from omtool.core.datamodel import AbstractTask, DataType, Snapshot, profiler
+from omtool.core.tasks import register_task
 from omtool.core.utils import math, particle_centers, pyfalcon_analizer
 
 
+@register_task(name="PotentialTask")
 class PotentialTask(AbstractTask):
     """
     Task that computes radial distribution of the potential.
