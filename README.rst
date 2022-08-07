@@ -13,13 +13,19 @@ Installation:
 
 Prerequisites
 ###############
-It requires following packages to work:
+Core functionality can be acieved with following modules:
 
 .. code-block:: bash
 
-   pip install marshmallow marshmallow_jsonschema matplotlib pandas pyyaml argparse astropy py_expression_eval amuse-framework
+   pip install marshmallow marshmallow_jsonschema matplotlib pandas pyyaml argparse astropy amuse-framework
 
 You also need to install `pyfalcon <https://github.com/GalacticDynamics-Oxford/pyfalcon>`__ module which makes integration possible.
+
+Additional tasks and models might require:
+
+.. code-block:: bash
+
+   pip install lxml py_expression_eval
 
 You might also need:
 
