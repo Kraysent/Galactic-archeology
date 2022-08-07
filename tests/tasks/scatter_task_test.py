@@ -1,27 +1,22 @@
-import unittest
-
 import numpy as np
 from amuse.lab import Particles, units
 from amuse.units.core import IncompatibleUnitsException
 
 from omtool.core.datamodel import Snapshot
+from omtool.core.utils import BaseTestCase
 from tools.tasks.scatter_task import ScatterTask
 
 
-class TestScatterTask(unittest.TestCase):
+class TestScatterTask(BaseTestCase):
     def _generate_snapshot(self):
         particles = Particles(2)
-
         particles[0].position = [0, 0, 0] | units.kpc
         particles[0].velocity = [0, 0, 0] | units.kms
-        particles[0].mass = 1 | units.MSun
         particles[1].position = [1, 1, 1] | units.kpc
         particles[1].velocity = [1, 1, 1] | units.kms
-        particles[1].mass = 1 | units.MSun
+        particles.mass = [1, 1] | units.MSun
 
-        snapshot = Snapshot(particles)
-
-        return snapshot
+        return Snapshot(particles)
 
     def test_run(self):
         exprs = {"x": "x", "y": "y"}
@@ -30,9 +25,8 @@ class TestScatterTask(unittest.TestCase):
 
         actual = task.run(self._generate_snapshot())
 
-        self.assertTrue(
-            (actual["x"] == np.array([0, 1])).all() and (actual["y"] == np.array([0, 1])).all()
-        )
+        self.assertNdarraysEqual(actual["x"], np.array([0, 1]))
+        self.assertNdarraysEqual(actual["y"], np.array([0, 1]))
 
     def test_empty_particle_set(self):
         exprs = {"x": "x", "y": "y"}
@@ -45,7 +39,8 @@ class TestScatterTask(unittest.TestCase):
         snapshot.particles.mass = np.array([]) | units.MSun
         actual = task.run(snapshot)
 
-        self.assertTrue((actual["x"] == np.array([])).all() and (actual["y"] == np.array([])).all())
+        self.assertNdarraysEqual(actual["x"], np.array([]))
+        self.assertNdarraysEqual(actual["y"], np.array([]))
 
     def test_expressions_without_vars(self):
         exprs = {"x": "1", "y": "1"}
@@ -54,7 +49,8 @@ class TestScatterTask(unittest.TestCase):
 
         actual = task.run(self._generate_snapshot())
 
-        self.assertTrue(actual["x"] == 1) and (actual["y"] == 1)
+        self.assertEqual(actual["x"], 1)
+        self.assertEqual(actual["y"], 1)
 
     def test_empty_expressions(self):
         self.assertRaises(Exception, ScatterTask, {"x": "", "y": ""}, {"x": 1, "y": 1})
