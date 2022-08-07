@@ -1,7 +1,3 @@
-import glob
-import importlib
-import pathlib
-import sys
 from dataclasses import dataclass
 from typing import Any, Optional
 
@@ -10,6 +6,7 @@ from zlog import logger
 
 from omtool.core.datamodel import AbstractModel, Snapshot
 from omtool.core.models.plugin import MODELS
+from omtool.core.utils import import_modules
 
 
 @dataclass
@@ -25,20 +22,8 @@ def get_model(model_name: str, args: dict) -> AbstractModel | None:
     return MODELS[model_name](**args) if model_name in MODELS else None
 
 
-def import_models(imports: list[str]):
-    filenames = []
-
-    for imp in imports:
-        filenames.extend(glob.glob(imp))
-
-    for filename in filenames:
-        path = pathlib.Path(filename)
-        sys.path.append(str(path.parent))
-        importlib.import_module(path.stem)
-
-
 def initialize_models(imports: list[str], configs: list[ModelConfig]) -> list[Snapshot]:
-    import_models(imports)
+    import_modules(imports)
     models: list[Snapshot] = []
 
     for config in configs:

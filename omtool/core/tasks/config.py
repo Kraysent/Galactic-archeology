@@ -1,7 +1,3 @@
-import glob
-import importlib
-import pathlib
-import sys
 from dataclasses import dataclass
 from typing import Callable
 
@@ -10,6 +6,7 @@ from zlog import logger
 from omtool.core.datamodel import AbstractTask
 from omtool.core.tasks.handler_task import HandlerTask
 from omtool.core.tasks.plugin import TASKS
+from omtool.core.utils import import_modules
 
 
 @dataclass
@@ -24,25 +21,13 @@ def get_task(task_name: str, args: dict) -> AbstractTask | None:
     return TASKS[task_name](**args) if task_name in TASKS else None
 
 
-def import_tasks(imports: list[str]):
-    filenames = []
-
-    for imp in imports:
-        filenames.extend(glob.glob(imp))
-
-    for filename in filenames:
-        path = pathlib.Path(filename)
-        sys.path.append(str(path.parent))
-        importlib.import_module(path.stem)
-
-
 def initialize_tasks(
     imports: list[str],
     configs: list[TasksConfig],
     actions_before: dict[str, Callable],
     actions_after: dict[str, Callable],
 ) -> list[HandlerTask]:
-    import_tasks(imports)
+    import_modules(imports)
     tasks: list[HandlerTask] = []
 
     for config in configs:
