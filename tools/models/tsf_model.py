@@ -12,8 +12,10 @@ from amuse.lab import Particles, ScalarQuantity, units
 from lxml import etree
 
 from omtool.core.datamodel import AbstractModel, Snapshot
+from omtool.core.models.plugin import register_model
 
 
+@register_model(name="tsf_model")
 class TSFModel(AbstractModel):
     def __init__(
         self,
@@ -61,7 +63,3 @@ class TSFModel(AbstractModel):
         particles.mass = masses * self.mass_unit
 
         return Snapshot(particles)
-
-
-model = TSFModel
-model_name = "tsf_model"

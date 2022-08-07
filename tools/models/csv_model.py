@@ -3,8 +3,10 @@ import pandas
 from amuse.lab import Particles, units
 
 from omtool.core.datamodel import AbstractModel, Snapshot
+from omtool.core.models.plugin import register_model
 
 
+@register_model(name="csv")
 class CSVModel(AbstractModel):
     def __init__(self, path: str, delimiter: str):
         self.path = path
@@ -28,7 +30,3 @@ class CSVModel(AbstractModel):
         particles.is_barion = table["barion"]
 
         return Snapshot(particles, 0 | units.Myr)
-
-
-model = CSVModel
-model_name = "csv"

@@ -14,8 +14,7 @@ def register_task(name: str):
 
     def wrapper_register_task(task_class: Type[AbstractTask]):
         logger.debug().string("name", name).msg("imported task")
-        task = task_class
-        TASKS[name] = task
-        return task
+        TASKS[name] = task_class
+        return task_class
 
     return wrapper_register_task

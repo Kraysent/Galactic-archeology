@@ -9,6 +9,7 @@ from amuse.lab import VectorQuantity, units
 from zlog import logger
 
 from omtool.core.datamodel import AbstractModel, Snapshot
+from omtool.core.models.plugin import MODELS
 
 
 @dataclass
@@ -26,49 +27,28 @@ class Model:
     model: Type
 
 
-def get_model(models: list[Model], model_name: str, args: dict) -> AbstractModel | None:
-    selected_models = [m.model for m in models if m.name == model_name]
-
-    return selected_models[0](**args) if selected_models else None
+def get_model(model_name: str, args: dict) -> AbstractModel | None:
+    return MODELS[model_name](**args) if model_name in MODELS else None
 
 
-def load_model(filename: str) -> Model:
-    path = pathlib.Path(filename)
-
-    sys.path.append(str(path.parent))
-    model_module = importlib.import_module(path.stem)
-
-    res = {
-        "model": model_module.model,
-        "name": model_module.model_name
-        if hasattr(model_module, "model_name")
-        else model_module.model.__name__,
-    }
-
-    return Model(**res)
-
-
-def load_models(imports: list[str]) -> list[Model]:
+def import_models(imports: list[str]):
     filenames = []
 
     for imp in imports:
         filenames.extend(glob.glob(imp))
 
-    models = []
     for filename in filenames:
-        model = load_model(filename)
-        models.append(model)
-        logger.debug().string("name", model.name).string("from", filename).msg("imported model")
-
-    return models
+        path = pathlib.Path(filename)
+        sys.path.append(str(path.parent))
+        importlib.import_module(path.stem)
 
 
 def initialize_models(imports: list[str], configs: list[ModelConfig]) -> list[Snapshot]:
-    imported_models = load_models(imports)
+    import_models(imports)
     models: list[Snapshot] = []
 
     for config in configs:
-        model = get_model(imported_models, config.name, config.args)
+        model = get_model(config.name, config.args)
 
         if model is None:
             (
