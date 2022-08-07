@@ -41,7 +41,7 @@ jobs:
         run: make build-pip
       - name: Build docs
         run: |
-          sudo apt-get install python3-sphinx
+          pip install sphynx
           pip install sphinx_pdj_theme
           make build-docs-html
   project-statistics:
