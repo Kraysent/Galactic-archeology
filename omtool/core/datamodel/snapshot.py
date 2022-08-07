@@ -62,6 +62,9 @@ class Snapshot:
         cols = []
 
         for (key, val) in Snapshot.fields.items():
+            if not hasattr(self.particles, key):
+                continue
+
             array = getattr(self.particles, key)
             fmt = "L"
 

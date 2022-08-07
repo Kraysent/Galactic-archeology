@@ -14,7 +14,7 @@ class ModelSchema(Schema):
         description="Arguments that would be passed to to constructor of a given model.",
     )
     position = fields.Raw(
-        load_default=VectorQuantity([0, 0, 0], units.kms),
+        load_default=VectorQuantity([0, 0, 0], units.kpc),
         type="array",
         description="Initial offset of the whole model. If there is more than one particle, "
         "it would be applied to each particle.",

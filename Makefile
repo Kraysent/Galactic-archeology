@@ -21,7 +21,7 @@ check-tests-mypy:
 check-mypy: check-omtool-mypy check-tools-mypy check-cli-mypy check-tests-mypy
 
 test:
-	$(PYTHON) -m unittest -v tests.tasks
+	$(PYTHON) -m unittest -v tests
 
 check: check-isort check-flake8 check-mypy test
 

@@ -29,10 +29,7 @@ class Model:
 def get_model(models: list[Model], model_name: str, args: dict) -> AbstractModel | None:
     selected_models = [m.model for m in models if m.name == model_name]
 
-    if not selected_models:
-        return None
-
-    return selected_models[0](**args)
+    return selected_models[0](**args) if selected_models else None
 
 
 def load_model(filename: str) -> Model:
