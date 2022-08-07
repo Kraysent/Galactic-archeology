@@ -1,14 +1,13 @@
-"""
-Wrapper for pyfalcon module that connects it with AMUSE particle sets.
-"""
 import pyfalcon
 from amuse.datamodel.particles import Particles
 from amuse.lab import units
 from amuse.units.quantities import ScalarQuantity
 
 from omtool.core.datamodel import AbstractIntegrator, Snapshot
+from omtool.core.integrators import register_integrator
 
 
+@register_integrator(name="pyfalcon")
 class PyfalconIntegrator(AbstractIntegrator):
     """
     Wrapper for pyfalcon module that connects it with AMUSE particle sets.
@@ -61,7 +60,3 @@ class PyfalconIntegrator(AbstractIntegrator):
         new_snapshot.timestamp = time | self.units_dict["T"]
 
         return new_snapshot
-
-
-integrator = PyfalconIntegrator
-integrator_name = "pyfalcon"

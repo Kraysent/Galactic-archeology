@@ -3,7 +3,7 @@ import importlib
 import pathlib
 import sys
 from dataclasses import dataclass
-from typing import Callable, Type
+from typing import Callable
 
 from zlog import logger
 
@@ -18,12 +18,6 @@ class TasksConfig:
     args: dict
     actions_before: list[dict]
     actions_after: list[dict]
-
-
-@dataclass
-class Task:
-    name: str
-    task: Type
 
 
 def get_task(task_name: str, args: dict) -> AbstractTask | None:

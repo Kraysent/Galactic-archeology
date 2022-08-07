@@ -3,7 +3,7 @@ import importlib
 import pathlib
 import sys
 from dataclasses import dataclass
-from typing import Any, Optional, Type
+from typing import Any, Optional
 
 from amuse.lab import VectorQuantity, units
 from zlog import logger
@@ -19,12 +19,6 @@ class ModelConfig:
     position: VectorQuantity
     velocity: VectorQuantity
     downsample_to: Optional[int]
-
-
-@dataclass
-class Model:
-    name: str
-    model: Type
 
 
 def get_model(model_name: str, args: dict) -> AbstractModel | None:

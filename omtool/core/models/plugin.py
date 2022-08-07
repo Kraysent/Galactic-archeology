@@ -9,7 +9,7 @@ MODELS = {}
 
 def register_model(name: str):
     if name in MODELS:
-        logger.error().string("name", name).msg("name conflict when importing task")
+        logger.error().string("name", name).msg("name conflict when importing model")
         return
 
     def wrapper_register_model(model_class: Type[AbstractModel]):
