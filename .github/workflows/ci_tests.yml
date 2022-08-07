@@ -39,11 +39,11 @@ jobs:
         run: make check-mypy
       - name: Build pip package
         run: make build-pip
-      - name: Build docs
-        run: |
-          pip install sphynx
-          pip install sphinx_pdj_theme
-          make build-docs-html
+      # - name: Build docs
+      #   run: |
+      #     pip install sphynx
+      #     pip install sphinx_pdj_theme
+      #     make build-docs-html
   project-statistics:
     runs-on: ubuntu-latest
     steps:
