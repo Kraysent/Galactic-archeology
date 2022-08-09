@@ -1,7 +1,3 @@
-"""
-Analysis module for OMTool. It is used for the data
-analysis of existing models and the export of their parameters.
-"""
 import time
 from typing import Callable
 

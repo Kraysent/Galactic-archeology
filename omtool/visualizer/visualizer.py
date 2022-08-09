@@ -26,7 +26,7 @@ class Visualizer:
         self.figure.set_size_inches(width, height)
 
     def add_axes(self, panel_config: PanelConfig):
-        axes = self.figure.add_axes(panel_config.coords)
+        axes: Axes = self.figure.add_axes(panel_config.coords)
         self.axes_ids[panel_config.id] = len(self.figure.axes) - 1
 
         params = panel_config.params
@@ -79,10 +79,12 @@ class Visualizer:
             "linestyle": params.linestyle,
         }
 
-        if params.label is None:
-            axes.plot(x, y, **plot_kwargs)
-        else:
-            axes.plot(x, y, label=params.label, **plot_kwargs)
+        if params.label is not None:
+            plot_kwargs["label"] = params.label
+
+        axes.plot(x, y, **plot_kwargs)
+
+        if params.label is not None:
             axes.legend()
 
     def _get_hist(
@@ -141,7 +143,16 @@ class Visualizer:
                 aspect="auto",
             )
 
-    def save(self, filename: str, dpi: int = 120):
+    def _save_image(self, filename: str, dpi: int):
+        self.figure.savefig(filename, dpi=dpi, bbox_inches="tight")
+
+    def _save_pickle(self, filename: str):
+        import pickle
+
+        with open(filename, "wb") as f:
+            pickle.dump(self.figure, f)
+
+    def save(self, pic_filename: str, pickle_filename: Optional[str] = None, dpi: int = 120):
         images: Dict[str, Dict[str, np.ndarray]] = {}
         imparams = {}
 
@@ -157,7 +168,7 @@ class Visualizer:
                     None if params.weights is None else data[params.weights],
                 )
 
-                if not (params.id in images.keys()):
+                if params.id not in images:
                     images[params.id] = {
                         "r": np.zeros(hist.shape),
                         "g": np.zeros(hist.shape),
@@ -169,7 +180,10 @@ class Visualizer:
 
         self._draw_images(list(images.items()), imparams, 0.85)
 
-        self.figure.savefig(filename, dpi=dpi, bbox_inches="tight")
+        self._save_image(pic_filename, dpi)
+
+        if pickle_filename is not None:
+            self._save_pickle(pickle_filename)
 
         def clear(axes: Axes):
             while len(axes.artists) != 0:

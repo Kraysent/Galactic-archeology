@@ -28,6 +28,7 @@ logging:
 visualizer:
   output_dir: !env "{WORKING_DIR}/analysis"
   title: "Time: {time:07.01f} Myr"
+  pickle_filename: "pickle-{i:03}.pickle"
   figsize: [20, 11]
   pic_filename: "img-{i:03d}.png"
   panels:

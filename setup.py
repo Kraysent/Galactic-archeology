@@ -2,8 +2,8 @@ from distutils.core import setup
 
 setup(
     name="omtool",
-    version="0.2.0",
-    author="Kraysent",
+    version="0.3.0",
+    author="Artyom Zaporozhets",
     url="https://github.com/Kraysent/OMTool",
     description="Package and program that models N-Body problem in galactic evolution application.",
     long_description=open("README.rst").read(),
@@ -24,4 +24,5 @@ setup(
         "omtool.io_service",
         "omtool.visualizer",
     ],
+    test_suite="tests",
 )

@@ -258,7 +258,7 @@
           "type": "array"
         },
         "output_dir": {
-          "description": "Output directiry where the images would be saved.",
+          "description": "Output directory where the images would be saved.",
           "title": "output_dir",
           "type": "string"
         },
@@ -275,6 +275,14 @@
           "description": "Pictures will be saved in output_dir with this filename. {i} is iteration number.",
           "title": "pic_filename",
           "type": "string"
+        },
+        "pickle_filename": {
+          "description": "Pickle files will be saved in output_dir with this filename. {i} is iteration number.",
+          "title": "pickle_filename",
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "title": {
           "description": "Title template. Use {time} to get time in Myr. One can use standart python formatters to format number of digits, rounding, etc.",

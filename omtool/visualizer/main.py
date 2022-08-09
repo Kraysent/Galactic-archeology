@@ -1,4 +1,5 @@
-from typing import Optional
+import pathlib
+from typing import Any, Optional
 
 import numpy as np
 
@@ -16,7 +17,11 @@ class VisualizerService:
         self.visualizer = Visualizer()
         self.visualizer.set_figsize(*config.figsize)
         self.title_template = config.title
-        self.pic_filename_template = f"{config.output_dir}/{config.pic_filename}"
+        self.pic_filename_template = str(pathlib.Path(config.output_dir, config.pic_filename))
+        if config.pickle_filename is not None:
+            self.pickle_filename_template = str(
+                pathlib.Path(config.output_dir, config.pickle_filename)
+            )
 
         for panel in config.panels:
             self.visualizer.add_axes(panel)
@@ -35,4 +40,10 @@ class VisualizerService:
         Save current plot to file from config.
         """
         self.visualizer.set_title(self.title_template.format(**iteration_dict))
-        self.visualizer.save(self.pic_filename_template.format(**iteration_dict))
+
+        save_args: list[Any] = [self.pic_filename_template.format(**iteration_dict)]
+
+        if hasattr(self, "pickle_filename_template"):
+            save_args.append(self.pickle_filename_template.format(**iteration_dict))
+
+        self.visualizer.save(*save_args)

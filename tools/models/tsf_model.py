@@ -15,7 +15,7 @@ from omtool.core.datamodel import AbstractModel, Snapshot
 from omtool.core.models.plugin import register_model
 
 
-@register_model(name="tsf_model")
+@register_model(name="tsf")
 class TSFModel(AbstractModel):
     def __init__(
         self,

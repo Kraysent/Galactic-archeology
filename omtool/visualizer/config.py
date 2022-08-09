@@ -34,6 +34,7 @@ class VisualizerConfig:
     title: str
     figsize: Tuple[int, ...]
     pic_filename: str
+    pickle_filename: Optional[str]
     panels: List[PanelConfig]
 
 
@@ -78,7 +79,7 @@ class PanelSchema(Schema):
 
 class VisualizerConfigSchema(Schema):
     output_dir = fields.Str(
-        required=True, description="Output directiry where the images would be saved."
+        required=True, description="Output directory where the images would be saved."
     )
     title = fields.Str(
         load_default="",
@@ -89,6 +90,11 @@ class VisualizerConfigSchema(Schema):
     pic_filename = fields.Str(
         load_default="img-{i:03d}.png",
         description="Pictures will be saved in output_dir with this filename. "
+        "{i} is iteration number.",
+    )
+    pickle_filename = fields.Str(
+        load_default=None,
+        description="Pickle files will be saved in output_dir with this filename. "
         "{i} is iteration number.",
     )
     panels = fields.List(
