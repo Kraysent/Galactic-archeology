@@ -32,19 +32,18 @@ jobs:
         run: make test
       - name: Run plummer sphere creation
         env:
-          WORKING_DIR: test-plummer
+          WORKING_DIR: /home/runner/test-plummer
         run: |
           sudo mkdir $WORKING_DIR
-          sudo python3 main.py create examples/plummer_sphere/creation.yaml
+          python3 main.py create examples/plummer_sphere/creation.yaml
       - name: Run plummer sphere integration
         env:
-          WORKING_DIR: test-plummer
+          WORKING_DIR: /home/runner/test-plummer
         run: |
-          sudo python3 main.py integrate examples/plummer_sphere/integration.yaml
+          python3 main.py integrate examples/plummer_sphere/integration.yaml
       - name: Run plummer sphere analysis
         env:
-          WORKING_DIR: test-plummer
+          WORKING_DIR: /home/runner/test-plummer
         run: |
           sudo mkdir $WORKING_DIR/analysis
-          sudo chmod +rw $WORKING_DIR/analysis
-          sudo python3 main.py analize examples/plummer_sphere/analysis.yaml
+          python3 main.py analize examples/plummer_sphere/analysis.yaml
