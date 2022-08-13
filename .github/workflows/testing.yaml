@@ -38,15 +38,15 @@ jobs:
           WORKING_DIR: /home/runner/test-plummer
         run: |
           sudo mkdir $WORKING_DIR
-          WORKING_DIR=$WORKING_DIR sudo $PYTHONBIN main.py create examples/plummer_sphere/creation.yaml
+          sudo WORKING_DIR=$WORKING_DIR $PYTHONBIN main.py create examples/plummer_sphere/creation.yaml
       - name: Run plummer sphere integration
         env:
           WORKING_DIR: /home/runner/test-plummer
         run: |
-          WORKING_DIR=$WORKING_DIR sudo $PYTHONBIN main.py integrate examples/plummer_sphere/integration.yaml
+          sudo WORKING_DIR=$WORKING_DIR $PYTHONBIN main.py integrate examples/plummer_sphere/integration.yaml
       - name: Run plummer sphere analysis
         env:
           WORKING_DIR: /home/runner/test-plummer
         run: |
           sudo mkdir $WORKING_DIR/analysis
-          WORKING_DIR=$WORKING_DIR sudo $PYTHONBIN main.py analize examples/plummer_sphere/analysis.yaml
+          sudo WORKING_DIR=$WORKING_DIR $PYTHONBIN main.py analize examples/plummer_sphere/analysis.yaml
