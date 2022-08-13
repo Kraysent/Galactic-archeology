@@ -69,7 +69,10 @@ def from_fits(filename: str) -> Iterator[Tuple[Particles, ScalarQuantity]]:
             if val is not None:
                 setattr(particles, key, table.data[key] | val)
             else:
-                data = np.array(table.data[key], dtype=np.float64)
+                try:
+                    data = np.array(table.data[key], dtype=np.float64)
+                except KeyError:
+                    continue
                 setattr(particles, key, data)
 
         yield particles, timestamp
