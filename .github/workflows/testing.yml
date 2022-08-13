@@ -35,6 +35,7 @@ jobs:
           WORKING_DIR: /test-plummer
         run: |
           sudo mkdir $WORKING_DIR
+          sudo chmod +rw $WORKING_DIR
           python3 main.py create examples/plummer_sphere/creation.yaml
       - name: Run plummer sphere integration
         env:
@@ -45,4 +46,5 @@ jobs:
           WORKING_DIR: /test-plummer
         run: |
           sudo mkdir $WORKING_DIR/analysis
+          sudo chmod +rw $WORKING_DIR/analysis
           python3 main.py analize examples/plummer_sphere/analysis.yaml
