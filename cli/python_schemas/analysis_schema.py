@@ -2,7 +2,8 @@ from marshmallow import fields, post_load
 
 from cli.python_schemas.base_schema import BaseSchema
 from cli.python_schemas.tasks_schema import TaskConfigSchema
-from omtool import io_service, visualizer
+from cli.python_schemas.visualizer_schema import VisualizerConfigSchema
+from omtool import io_service
 from omtool.core.configs import AnalysisConfig
 
 
@@ -13,7 +14,7 @@ class AnalysisConfigSchema(BaseSchema):
         description="Parameters of input file: its format and path.",
     )
     visualizer = fields.Nested(
-        visualizer.VisualizerConfigSchema,
+        VisualizerConfigSchema,
         load_default=None,
         description="Visualizer is responsible for the matplotlib's plots, their layout and format "
         "of the data. This fields describes layout; format of the data is specified inside tasks.",
