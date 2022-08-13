@@ -4,7 +4,7 @@ input_file:
     - !env "{WORKING_DIR}/test.fits"
 output_file: !env "{WORKING_DIR}/test_out.fits"
 overwrite: True
-model_time: !q [1.e+4, Myr]
+model_time: !q [30, Myr]
 snapshot_interval: 2
 
 integrator:

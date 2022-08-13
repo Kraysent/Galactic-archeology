@@ -1,9 +1,9 @@
-name: Building (ubuntu)
+name: Building
 on:
   - push
 
 jobs:
-  build:
+  build-ubuntu:
     runs-on: ubuntu-latest
     steps:
       - name: Install python
@@ -27,7 +27,7 @@ jobs:
         run: |
           python3 -m pip install lxml py_expression_eval
       - name: Build pip package
-        run: make build-pip
+        run: python3  -m pip install . --upgrade
       # - name: Build docs
       #   run: |
       #     pip install sphynx

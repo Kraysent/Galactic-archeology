@@ -1,9 +1,9 @@
-name: Testing (ubuntu)
+name: Testing
 on:
   - push
 
 jobs:
-  test:
+  test-ubuntu:
     runs-on: ubuntu-latest
     steps:
       - name: Install python
@@ -30,3 +30,19 @@ jobs:
         uses: actions/checkout@v3
       - name: Run tests
         run: make test
+      - name: Run plummer sphere creation
+        env:
+          WORKING_DIR: /test-plummer/
+        run: |
+          mkdir /test-plummer
+          python3 main.py create examples/plummer_sphere/creation.yaml
+      - name: Run plummer sphere integration
+        env:
+          WORKING_DIR: /test-plummer/
+        run: python3 main.py integrate examples/plummer_sphere/integration.yaml
+      - name: Run plummer sphere analysis
+        env:
+          WORKING_DIR: /test-plummer/
+        run: |
+          mkdir /test-plummer/analysis
+          python3 main.py analize examples/plummer_sphere/analysis.yaml
