@@ -5,6 +5,8 @@ on:
 jobs:
   test-ubuntu:
     runs-on: ubuntu-latest
+    env:
+      PYTHONBIN: /opt/hostedtoolcache/Python/3.10.6/x64/bin/python3
     steps:
       - name: Install python
         uses: actions/setup-python@v4
@@ -19,14 +21,14 @@ jobs:
           libgmp3-dev libmpfr6 libmpfr-dev \
           libhdf5-serial-dev hdf5-tools \
           libblas-dev liblapack-dev git
-          python3 -m pip install mpi4py h5py numpy docutils wheel
-          python3 -m pip install amuse-framework
-          python3 -m pip install marshmallow marshmallow_jsonschema matplotlib pandas pyyaml argparse astropy pyzerolog
+          $PYTHONBIN -m pip install mpi4py h5py numpy docutils wheel
+          $PYTHONBIN -m pip install amuse-framework
+          $PYTHONBIN -m pip install marshmallow marshmallow_jsonschema matplotlib pandas pyyaml argparse astropy pyzerolog
           git clone https://github.com/GalacticDynamics-Oxford/pyfalcon.git
-          cd pyfalcon && python3 setup.py install
+          cd pyfalcon && $PYTHONBIN setup.py install
       - name: Install tools deps
         run: |
-          python3 -m pip install lxml py_expression_eval
+          $PYTHONBIN -m pip install lxml py_expression_eval
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Run tests
@@ -36,15 +38,15 @@ jobs:
           WORKING_DIR: /home/runner/test-plummer
         run: |
           sudo mkdir $WORKING_DIR
-          python3 main.py create examples/plummer_sphere/creation.yaml
+          sudo $PYTHONBIN main.py create examples/plummer_sphere/creation.yaml
       - name: Run plummer sphere integration
         env:
           WORKING_DIR: /home/runner/test-plummer
         run: |
-          python3 main.py integrate examples/plummer_sphere/integration.yaml
+          sudo $PYTHONBIN main.py integrate examples/plummer_sphere/integration.yaml
       - name: Run plummer sphere analysis
         env:
           WORKING_DIR: /home/runner/test-plummer
         run: |
           sudo mkdir $WORKING_DIR/analysis
-          python3 main.py analize examples/plummer_sphere/analysis.yaml
+          sudo $PYTHONBIN main.py analize examples/plummer_sphere/analysis.yaml
