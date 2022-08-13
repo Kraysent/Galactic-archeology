@@ -26,6 +26,8 @@ jobs:
       - name: Install tools deps
         run: |
           python3 -m pip install lxml py_expression_eval
+      - name: Checkout code
+        uses: actions/checkout@v3
       - name: Build pip package
         run: python3  -m pip install . --upgrade
       # - name: Build docs
