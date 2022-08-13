@@ -23,11 +23,13 @@ class TSFModel(AbstractModel):
         dist_unit: ScalarQuantity = 1 | units.kpc,
         vel_unit: ScalarQuantity = 1 | units.kms,
         mass_unit: ScalarQuantity = 232500 | units.MSun,
+        barion_fraction: float | None = None,
     ) -> None:
         self.filename = filename
         self.dist_unit = dist_unit
         self.vel_unit = vel_unit
         self.mass_unit = mass_unit
+        self.barion_fraction = barion_fraction
 
     def run(self) -> Snapshot:
         with open(self.filename, "r") as f:
@@ -61,5 +63,11 @@ class TSFModel(AbstractModel):
         particles.position = positions * self.dist_unit
         particles.velocity = velocities * self.vel_unit
         particles.mass = masses * self.mass_unit
+
+        if self.barion_fraction is not None:
+            is_barion = np.ndarray((len(particles),))
+            is_barion[: int(len(particles) * self.barion_fraction)] = True
+            is_barion[int(len(particles) * self.barion_fraction) :] = False
+            particles.is_barion = is_barion
 
         return Snapshot(particles)
