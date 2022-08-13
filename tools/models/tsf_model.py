@@ -65,7 +65,7 @@ class TSFModel(AbstractModel):
         particles.mass = masses * self.mass_unit
 
         if self.barion_fraction is not None:
-            is_barion = np.ndarray((len(particles),))
+            is_barion: np.ndarray = np.ndarray((len(particles),))
             is_barion[: int(len(particles) * self.barion_fraction)] = True
             is_barion[int(len(particles) * self.barion_fraction) :] = False
             particles.is_barion = is_barion
