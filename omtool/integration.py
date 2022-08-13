@@ -1,7 +1,3 @@
-"""
-Integration module for OMTool. Used to integrate existing model
-from the file and write it to another file.
-"""
 import os
 from pathlib import Path
 from typing import Callable
@@ -33,7 +29,7 @@ def integrate(config: IntegrationConfig):
     tasks = initialize_tasks(config.imports.tasks, config.tasks, actions_before, actions_after)
     integrator = initialize_integrator(config.imports.integrators, config.integrator)
 
-    if Path(config.output_file).is_file():
+    if config.output_file != "" and Path(config.output_file).is_file():
         os.remove(config.output_file)
 
     @profiler("Integration stage")
@@ -52,7 +48,7 @@ def integrate(config: IntegrationConfig):
 
     @profiler("Saving to file stage")
     def loop_saving_stage(iteration: int, snapshot: Snapshot):
-        if iteration % config.snapshot_interval == 0:
+        if config.output_file != "" and iteration % config.snapshot_interval == 0:
             snapshot.to_fits(config.output_file, append=True)
 
         for log in config.logs:

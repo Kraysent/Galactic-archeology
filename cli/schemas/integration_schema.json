@@ -130,8 +130,7 @@
       "required": [
         "input_file",
         "integrator",
-        "model_time",
-        "output_file"
+        "model_time"
       ],
       "type": "object"
     },

@@ -13,7 +13,7 @@ Installation:
 
 Prerequisites
 ###############
-Core functionality can be acieved with following modules:
+Core functionality can be achieved with following modules:
 
 .. code-block:: bash
 

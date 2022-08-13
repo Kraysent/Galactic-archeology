@@ -25,7 +25,7 @@ class IntegrationConfigSchema(BaseSchema):
         description="Parameters of input file: its format and path.",
     )
     output_file = fields.Str(
-        required=True, description="Path to file where output model would be saved."
+        load_default="", description="Path to file where output model would be saved."
     )
     overwrite = fields.Bool(
         load_default=False,
