@@ -35,16 +35,16 @@ jobs:
           WORKING_DIR: test-plummer
         run: |
           sudo mkdir $WORKING_DIR
-          sudo chmod +rw $WORKING_DIR
-          python3 main.py create examples/plummer_sphere/creation.yaml
+          sudo python3 main.py create examples/plummer_sphere/creation.yaml
       - name: Run plummer sphere integration
         env:
           WORKING_DIR: test-plummer
-        run: python3 main.py integrate examples/plummer_sphere/integration.yaml
+        run: |
+          sudo python3 main.py integrate examples/plummer_sphere/integration.yaml
       - name: Run plummer sphere analysis
         env:
           WORKING_DIR: test-plummer
         run: |
           sudo mkdir $WORKING_DIR/analysis
           sudo chmod +rw $WORKING_DIR/analysis
-          python3 main.py analize examples/plummer_sphere/analysis.yaml
+          sudo python3 main.py analize examples/plummer_sphere/analysis.yaml
