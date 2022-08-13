@@ -1,7 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, Optional, Tuple
-
-import matplotlib as mpl
+from typing import Optional
 
 
 @dataclass
@@ -13,9 +11,7 @@ class DrawParameters:
     marker: str = "o"
     is_density_plot: bool = False
     resolution: int = 100
-    extent: Tuple[int, int, int, int] = (0, 100, 0, 100)
-    cmap: str = "ocean_r"
-    cmapnorm: Any = mpl.colors.LogNorm()
+    extent: tuple[int, int, int, int] = (0, 100, 0, 100)
     label: Optional[str] = None
     channel: str = "b"
     x: str = "x"
