@@ -12,7 +12,15 @@ from omtool.core.utils import math, particle_centers
 @register_task(name="DensityProfileTask")
 class DensityProfileTask(AbstractTask):
     """
-    Task that computes radial distribution of density.
+    Task that computes radial distribution of density. Algorithm: take the center and then
+    draw a bunch of concentric sphere slices (number depends on `resolution`). Count cumulitive
+    mass in each sphere slice and divide it by the volume of it.
+
+    Args:
+    * `r_unit` (`ScalarQuantity`): unit of the radius for the output.
+    * `dens_unit` (`ScalarQuantity`): unit of the density for the output.
+    * `center_type` (`str`): id of the center type, e.g. center of mass of center of potential.
+    * `resolution` (`int`): number of slices between nearest and farthest particle to the center.
     """
 
     def __init__(

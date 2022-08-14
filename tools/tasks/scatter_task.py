@@ -13,13 +13,24 @@ from omtool.core.tasks import register_task
 
 @register_task(name="ScatterTask")
 class ScatterTask(AbstractTask):
-    """Task that computes a given number of arbitrary expressions
+    """
+    Task that computes a given number of arbitrary expressions.
 
-    :param expressions: dictionary that describes expressions and their names
-    :type expressions: dict[str, str]
+    Args:
+    * `expressions` (`dict[str, str]`): dictionary of the expressions. Each entry is an id of
+    expression and the expression itself. Each term in expressions must have compatible units (in
+    other words, expression should make physical sense). For example, `x + y` is a valid expression
+    and `x + vx` is not.
+    * `units` (`dict[str, ScalarQuantity]`): dictionary of units for the output. It must have the
+    same keys as `expressions` and have compatible units.
 
-    :param units: dictionary that describes units corresponding to each expression and their names
-    :type units: dict[str, ScalarQuantity]
+    Examples:
+    * This expression will count radius and velocity of every particle.
+
+    >>> ScatterTask(
+    >>>    {'r': 'x^2 + y^2 + z^2', 'v': 'vx^2 + vy^2 + vz^2'},
+    >>>    {'r': 1 | units.kpc, 'v': 1 | units.kms}
+    >>> ).run(snapshot)
     """
 
     def __init__(

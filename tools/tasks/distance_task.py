@@ -11,7 +11,17 @@ from omtool.core.utils import particle_centers
 @register_task(name="DistanceTask")
 class DistanceTask(AbstractTimeTask):
     """
-    Task that computes distance between point and some specified position.
+    Task that computes distance between two points or centers.
+
+    Args:
+    * `time_unit` (`ScalarQuantity`): unit of the time for the output.
+    * `dist_unit` (`ScalarQuantity`): unit of the distance for the output.
+    * `start` (`int` | `str`): either index of the first particle or the id of the center.
+    * `start_slice` (`slice`): if `start` is the center id, this is the slice over which this
+    center is counted.
+    * `end` (`int` | `str`): either index of the second particle or the id of the center.
+    * `end_slice` (`slice`): if `end` is the center id, this is the slice over which this
+    center is counted.
     """
 
     def __init__(

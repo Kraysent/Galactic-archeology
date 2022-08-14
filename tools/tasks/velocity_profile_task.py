@@ -8,7 +8,15 @@ from omtool.core.utils import math, particle_centers
 @register_task(name="VelocityProfileTask")
 class VelocityProfileTask(AbstractTask):
     """
-    Task that computes radial velocity distribution.
+    Task that computes radial velocity distribution. Algorithm: take the center and then
+    draw a bunch of concentric sphere slices (number depends on `resolution`). For each slice
+    compute average velocity module of the particles inside.
+
+    Args:
+    * `r_unit` (`ScalarQuantity`): unit of the radius for the output.
+    * `v_unit` (`ScalarQuantity`): unit of the velocity for the output.
+    * `center_type` (`str`): id of the center type, e.g. center of mass of center of potential.
+    * `resolution` (`int`): number of slices between nearest and farthest particle to the center.
     """
 
     def __init__(

@@ -21,6 +21,18 @@ from omtool.core.tasks import register_task
 class TimeEvolutionTask(AbstractTask):
     """
     Task that computes evolution of arbitrary expression over time.
+
+    Args:
+    * `expr` (`str`): expression to track over time. It should make physical sense. For example,
+    `x + y` is a valid expression and `x + vx` is not.
+    * `value_unit` (`ScalarQuantity`): unit of the expression. Should be compatible with the latter.
+    * `time_unit` (`ScalarQuantity`): unit of the time for the output.
+    * `function` (`str`): aggregation function id, e.g. `mean` or `sum`.
+
+    Example:
+    * This would compute total kinetic energy over time.
+
+    >>> TimeEvolutionTask("(vx^2 + vy^2 + vz^2) * m / 2", units.J, function="sum").run(snapshot)
     """
 
     functions: dict[str, Callable[[VectorQuantity], ScalarQuantity]] = {

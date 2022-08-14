@@ -1,6 +1,3 @@
-"""
-Task that computes bound mass of the system.
-"""
 from amuse.lab import ScalarQuantity, units
 
 from omtool.core.datamodel import AbstractTimeTask, DataType, Snapshot, profiler
@@ -19,7 +16,20 @@ def _get_bound_particles(particles):
 @register_task(name="BoundMassTask")
 class BoundMassTask(AbstractTimeTask):
     """
-    Task that computes bound mass of the system.
+    Task that computes bound mass of the system. The algorithm is as follows: count potential
+    energy for each particle of the snapshot, exclude particles with positive full energy, repeat.
+    Do this until number of iterations is less than `number_of_iterations` or change in particle
+    number is less than `change_threshold`
+
+    Args:
+    * `time_unit` (`ScalarQuantity`): unit of the time for the output.
+    * `mass_unit` (`ScalarQuantity`): unit of the mass for the output.
+    * `number_of_iterations` (`int`): see description above.
+    * `change_threshold` (`float`): see description above.
+
+    This task might be useful in cases like the following: merger of two galaxies is investigated,
+    the task is to find out when the satellite is fully disrupted (e.g. bound mass is less than
+    certain fraction).
     """
 
     def __init__(

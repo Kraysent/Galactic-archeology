@@ -12,7 +12,15 @@ from omtool.core.utils import math, particle_centers
 @register_task(name="MassProfileTask")
 class MassProfileTask(AbstractTask):
     """
-    Task that computes radial distribution of cumulative mass.
+    Task that computes radial distribution of cumulative mass. Algorithm: take the center and then
+    draw a bunch of concentric spheres (number depends on `resolution`). Count cumulitive
+    mass in each sphere.
+
+    Args:
+    * `r_unit` (`ScalarQuantity`): unit of the radius for the output.
+    * `m_unit` (`ScalarQuantity`): unit of the mass for the output.
+    * `center_type` (`str`): id of the center type, e.g. center of mass of center of potential.
+    * `resolution` (`int`): number of slices between nearest and farthest particle to the center.
     """
 
     def __init__(
