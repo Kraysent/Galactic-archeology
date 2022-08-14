@@ -21,6 +21,10 @@ class PotentialTask(AbstractTask):
     * `pot_unit` (`ScalarQuantity`): unit of the potential for the output.
     * `center_type` (`str`): id of the center type, e.g. center of mass of center of potential.
     * `resolution` (`int`): number of slices between nearest and farthest particle to the center.
+
+    Returns:
+    * `radii`: list of radii of the sphere slices.
+    * `potential`: list of potentials for each slice.
     """
 
     def __init__(

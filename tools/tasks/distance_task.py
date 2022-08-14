@@ -22,6 +22,10 @@ class DistanceTask(AbstractTimeTask):
     * `end` (`int` | `str`): either index of the second particle or the id of the center.
     * `end_slice` (`slice`): if `end` is the center id, this is the slice over which this
     center is counted.
+
+    Returns:
+    * `times`: list of timestamps of snapshots.
+    * `dist`: list of distances over time.
     """
 
     def __init__(

@@ -24,6 +24,8 @@ class ScatterTask(AbstractTask):
     * `units` (`dict[str, ScalarQuantity]`): dictionary of units for the output. It must have the
     same keys as `expressions` and have compatible units.
 
+    Returns: dictionary with the same keys as `expressions` input and counted values.
+
     Examples:
     * This expression will count radius and velocity of every particle.
 

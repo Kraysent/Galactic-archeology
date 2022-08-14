@@ -17,6 +17,10 @@ class VelocityProfileTask(AbstractTask):
     * `v_unit` (`ScalarQuantity`): unit of the velocity for the output.
     * `center_type` (`str`): id of the center type, e.g. center of mass of center of potential.
     * `resolution` (`int`): number of slices between nearest and farthest particle to the center.
+
+    Returns:
+    * `radii`: list of radii of the sphere slices.
+    * `velocity`: list of velocity modules for each slice.
     """
 
     def __init__(

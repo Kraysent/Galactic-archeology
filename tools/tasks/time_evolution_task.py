@@ -29,6 +29,10 @@ class TimeEvolutionTask(AbstractTask):
     * `time_unit` (`ScalarQuantity`): unit of the time for the output.
     * `function` (`str`): aggregation function id, e.g. `mean` or `sum`.
 
+    Returns:
+    * `times`: list of timestamps of snapshots.
+    * `values`: results of the `expr` expression.
+
     Example:
     * This would compute total kinetic energy over time.
 

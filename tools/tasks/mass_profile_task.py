@@ -21,6 +21,10 @@ class MassProfileTask(AbstractTask):
     * `m_unit` (`ScalarQuantity`): unit of the mass for the output.
     * `center_type` (`str`): id of the center type, e.g. center of mass of center of potential.
     * `resolution` (`int`): number of slices between nearest and farthest particle to the center.
+
+    Returns:
+    * `radii`: list of radii of the spheres.
+    * `masses`: list of masses for each sphere.
     """
 
     def __init__(

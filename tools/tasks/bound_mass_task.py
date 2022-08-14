@@ -27,6 +27,10 @@ class BoundMassTask(AbstractTimeTask):
     * `number_of_iterations` (`int`): see description above.
     * `change_threshold` (`float`): see description above.
 
+    Returns:
+    * `times`: list of timestamps of snapshots.
+    * `bound_mass`: bound mass values.
+
     This task might be useful in cases like the following: merger of two galaxies is investigated,
     the task is to find out when the satellite is fully disrupted (e.g. bound mass is less than
     certain fraction).
