@@ -1,9 +1,8 @@
-object1_slice: &object1_slice
-  - 0
-  - 100000
-object2_slice: &object2_slice
-  - 100001
-  - 180000
+object1_parts: &object1_parts
+  - [0, 0.66666666]
+
+object2_parts: &object2_parts
+  - [0.66666666, 1]
 
 imports:
   tasks:
@@ -53,7 +52,7 @@ tasks:
         m: !q [1, MSun]
     actions_before:
       - type: slice
-        part: *object1_slice
+        parts: *object1_parts
     actions_after:
       - type: visualizer
         id: xy_plane
@@ -76,7 +75,7 @@ tasks:
     args: *args
     actions_before:
       - type: slice
-        part: *object2_slice
+        parts: *object2_parts
     actions_after:
       - type: visualizer
         id: xy_plane
