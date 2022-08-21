@@ -8,18 +8,7 @@ from amuse.units.core import named_unit
 
 
 def str_to_unit(name: str) -> named_unit:
-    """
-    Converts string representation of the unit into named_unit object
-    """
-    unit_names = ["Myr", "kpc", "kms", "MSun", "J"]
-    actual_units = [units.Myr, units.kpc, units.kms, units.MSun, units.J]
-
-    index = unit_names.index(name) if name in unit_names else None
-
-    if index is None:
-        raise RuntimeError(f"{str} is unsupported unit name.")
-
-    return actual_units[index]
+    return getattr(units, name)
 
 
 def unit_cartesian_constructor(
@@ -102,14 +91,3 @@ def yaml_loader() -> Type[yaml.SafeLoader]:
     loader.add_constructor("!slice", slice_constructor)
 
     return loader
-
-
-def required_get(data: dict, field: str):
-    """
-    Tries to obtain the field from the dictionary and throws the
-    error in case it was not found.
-    """
-    try:
-        return data[field]
-    except KeyError as ex:
-        raise ValueError(f"no required key {field} found") from ex
