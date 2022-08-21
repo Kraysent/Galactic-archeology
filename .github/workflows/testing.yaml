@@ -12,7 +12,8 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: "3.10"
-      - run: which python3
+      - name: Checkout code
+        uses: actions/checkout@v3
       - name: Install core project deps
         run: |
           sudo apt-get install build-essential gfortran python3-dev \
@@ -21,16 +22,9 @@ jobs:
           libgmp3-dev libmpfr6 libmpfr-dev \
           libhdf5-serial-dev hdf5-tools \
           libblas-dev liblapack-dev git
-          $PYTHONBIN -m pip install mpi4py h5py numpy docutils wheel
-          $PYTHONBIN -m pip install amuse-framework
-          $PYTHONBIN -m pip install marshmallow marshmallow_jsonschema matplotlib pandas pyyaml argparse astropy pyzerolog
+          $PYTHONBIN -m pip install -r requirements.txt
           git clone https://github.com/GalacticDynamics-Oxford/pyfalcon.git
           cd pyfalcon && $PYTHONBIN setup.py install
-      - name: Install tools deps
-        run: |
-          $PYTHONBIN -m pip install lxml py_expression_eval
-      - name: Checkout code
-        uses: actions/checkout@v3
       - name: Run tests
         run: make test
       - name: Run plummer sphere creation
