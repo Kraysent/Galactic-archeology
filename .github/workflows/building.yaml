@@ -29,9 +29,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Build pip package
-        run: python3  -m pip install . --upgrade
-      # - name: Build docs
-      #   run: |
-      #     pip install sphynx
-      #     pip install sphinx_pdj_theme
-      #     make build-docs-html
+        run: | 
+          python3  -m pip install . --upgrade
+          python setup.py sdist
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          path: dist/*
+
