@@ -10,6 +10,7 @@ def slice_action(
     snapshot: Snapshot,
     parts: list[tuple[float, float]] | None = None,
     part: list[int] | None = None,
+    ids: list[int] | None = None,
     id: int | None = None,
 ) -> Snapshot:
     slices: list[tuple[int, int]] = []
@@ -31,7 +32,12 @@ def slice_action(
 
         slices.append((part[0], part[1]))
 
+    ids = ids or []
+
     if id is not None:
+        ids.append(id)
+
+    for id in ids:
         if id >= len(snapshot.particles) or id < 0:
             logger.warn().int("id", id).msg("particle id outside of boundaries")
 

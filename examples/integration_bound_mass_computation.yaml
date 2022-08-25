@@ -27,7 +27,7 @@ logging:
 # You can also specify visualizer similar to analysis step.
 tasks:
   - name: ScatterTask
-    args: &logging_args
+    args:
       expressions: { x: x, y: y, z: z, vx: vx, vy: vy, vz: vz, m: m }
       units:
         x: !q [1, kpc]
@@ -39,20 +39,10 @@ tasks:
         m: !q [1, MSun]
     actions_before:
       - type: slice
-        id: 0
+        ids: [0, 1000001]
     actions_after:
       - type: logging
-        print_last: true
-        id: host_bh_params
-  - name: ScatterTask
-    args: *logging_args
-    actions_before:
-      - type: slice
-        id: 1000001
-    actions_after:
-      - type: logging
-        print_last: true
-        id: sat_bh_params
+        id: bh_params
   - name: BoundMassTask
     args:
       number_of_iterations: 5

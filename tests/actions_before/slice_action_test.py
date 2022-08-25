@@ -69,3 +69,20 @@ class TestSliceAction(BaseTestCase):
         expected = Snapshot(Particles(), snapshot.timestamp)
 
         self.assertSnapshotsEqual(actual, expected, test_kinematics=False)
+
+    def test_ids_valid(self):
+        snapshot = self._generate_snapshot()
+        actual = slice_action(snapshot, ids=[5, 10, 15])
+        expected = Snapshot(Particles(), snapshot.timestamp)
+        expected.particles.add_particle(snapshot.particles[5])
+        expected.particles.add_particle(snapshot.particles[10])
+        expected.particles.add_particle(snapshot.particles[15])
+
+        self.assertSnapshotsEqual(actual, expected, test_kinematics=False)
+
+    def test_ids_empty_list(self):
+        snapshot = self._generate_snapshot()
+        actual = slice_action(snapshot, ids=[])
+        expected = Snapshot(Particles(), snapshot.timestamp)
+
+        self.assertSnapshotsEqual(actual, expected, test_kinematics=False)

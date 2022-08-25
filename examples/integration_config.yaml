@@ -27,9 +27,9 @@ logging:
 # you can specify the list of tasks. For example, for logging
 tasks:
   - name: ScatterTask
-    args: &logging_args
+    args:
       expressions: { x: x, y: y, z: z, vx: vx, vy: vy, vz: vz, m: m }
-      units: 
+      units:
         x: !q [1, kpc]
         y: !q [1, kpc]
         z: !q [1, kpc]
@@ -39,17 +39,7 @@ tasks:
         m: !q [1, MSun]
     actions_before:
       - type: slice
-        id: 0
+        ids: [0, 1000001]
     actions_after:
       - type: logging
-        print_last: true
-        id: host_bh_params
-  - name: ScatterTask
-    args: *logging_args
-    actions_before:
-      - type: slice
-        id: 1000001
-    actions_after:
-      - type: logging
-        print_last: true
-        id: sat_bh_params
+        id: bh_params
