@@ -3,7 +3,7 @@ from typing import Any
 
 from zlog import logger
 
-from omtool.core.datamodel import AbstractIntegrator
+from omtool.core.integrators.abstract_integrator import AbstractIntegrator
 from omtool.core.integrators.plugin import INTEGRATORS
 from omtool.core.utils import import_modules
 

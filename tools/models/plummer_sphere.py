@@ -1,8 +1,8 @@
 from amuse.ic.plummer import new_plummer_sphere
 from amuse.lab import ScalarQuantity, nbody_system, units
 
-from omtool.core.datamodel import AbstractModel, Snapshot
-from omtool.core.models import register_model
+from omtool.core.datamodel import Snapshot
+from omtool.core.models import AbstractModel, register_model
 
 
 @register_model(name="plummer_sphere")

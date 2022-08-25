@@ -2,7 +2,7 @@ from typing import Type
 
 from zlog import logger
 
-from omtool.core.datamodel import AbstractTask
+from omtool.core.tasks.abstract_task import AbstractTask
 
 TASKS = {}
 

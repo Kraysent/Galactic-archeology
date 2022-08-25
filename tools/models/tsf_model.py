@@ -11,8 +11,8 @@ import numpy as np
 from amuse.lab import Particles, ScalarQuantity, units
 from lxml import etree
 
-from omtool.core.datamodel import AbstractModel, Snapshot
-from omtool.core.models.plugin import register_model
+from omtool.core.datamodel import Snapshot
+from omtool.core.models import AbstractModel, register_model
 
 
 @register_model(name="tsf")

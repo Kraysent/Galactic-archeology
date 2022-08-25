@@ -4,7 +4,7 @@ from typing import Any, Optional
 from amuse.lab import VectorQuantity, units
 from zlog import logger
 
-from omtool.core.datamodel import AbstractModel, Snapshot
+from omtool.core.models.abstract_model import AbstractModel, Snapshot
 from omtool.core.models.plugin import MODELS
 from omtool.core.utils import import_modules
 

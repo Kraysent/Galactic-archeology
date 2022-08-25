@@ -3,8 +3,8 @@ import pyfalcon
 from amuse.datamodel.particles import Particles
 from amuse.lab import ScalarQuantity, units
 
-from omtool.core.datamodel import AbstractIntegrator, Snapshot
-from omtool.core.integrators import register_integrator
+from omtool.core.datamodel import Snapshot
+from omtool.core.integrators import AbstractIntegrator, register_integrator
 
 attr_unit_dict: dict[str, ScalarQuantity | None] = {
     "position": units.kpc,

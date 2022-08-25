@@ -2,7 +2,7 @@ from typing import Type
 
 from zlog import logger
 
-from omtool.core.datamodel import AbstractIntegrator
+from omtool.core.integrators.abstract_integrator import AbstractIntegrator
 
 INTEGRATORS = {}
 

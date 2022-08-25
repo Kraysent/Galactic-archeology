@@ -1,7 +1,7 @@
 from amuse.lab import ScalarQuantity, units
 
-from omtool.core.datamodel import AbstractTimeTask, DataType, Snapshot, profiler
-from omtool.core.tasks import register_task
+from omtool.core.datamodel import Snapshot, profiler
+from omtool.core.tasks import AbstractTimeTask, DataType, register_task
 from omtool.core.utils import math, pyfalcon_analizer
 
 

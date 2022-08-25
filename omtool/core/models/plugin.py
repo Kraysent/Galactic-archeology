@@ -2,7 +2,7 @@ from typing import Type
 
 from zlog import logger
 
-from omtool.core.datamodel import AbstractModel
+from omtool.core.models.abstract_model import AbstractModel
 
 MODELS = {}
 

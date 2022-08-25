@@ -3,7 +3,7 @@ from typing import Callable
 
 from zlog import logger
 
-from omtool.core.datamodel import AbstractTask
+from omtool.core.tasks.abstract_task import AbstractTask
 from omtool.core.tasks.handler_task import HandlerTask
 from omtool.core.tasks.plugin import TASKS
 from omtool.core.utils import import_modules

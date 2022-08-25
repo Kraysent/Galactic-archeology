@@ -1,7 +1,7 @@
 from amuse.lab import ScalarQuantity
 
-from omtool.core.datamodel import AbstractIntegrator, Snapshot
-from omtool.core.integrators import register_integrator
+from omtool.core.datamodel import Snapshot
+from omtool.core.integrators import AbstractIntegrator, register_integrator
 
 
 @register_integrator(name="dummy")

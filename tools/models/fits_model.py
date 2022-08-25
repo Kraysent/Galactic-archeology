@@ -1,5 +1,5 @@
-from omtool.core.datamodel import AbstractModel, Snapshot
-from omtool.core.models import register_model
+from omtool.core.datamodel import Snapshot
+from omtool.core.models import AbstractModel, register_model
 from omtool.io_service import from_fits
 
 

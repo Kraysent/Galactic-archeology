@@ -2,8 +2,8 @@ import numpy as np
 import pandas
 from amuse.lab import Particles, units
 
-from omtool.core.datamodel import AbstractModel, Snapshot
-from omtool.core.models.plugin import register_model
+from omtool.core.datamodel import Snapshot
+from omtool.core.models import AbstractModel, register_model
 
 
 @register_model(name="csv")

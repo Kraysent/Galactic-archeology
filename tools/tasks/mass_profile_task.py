@@ -4,8 +4,8 @@ Task that computes radial distribution of cumulative mass.
 import numpy as np
 from amuse.lab import ScalarQuantity, units
 
-from omtool.core.datamodel import AbstractTask, DataType, Snapshot, profiler
-from omtool.core.tasks.plugin import register_task
+from omtool.core.datamodel import Snapshot, profiler
+from omtool.core.tasks import AbstractTask, DataType, register_task
 from omtool.core.utils import math, particle_centers
 
 
