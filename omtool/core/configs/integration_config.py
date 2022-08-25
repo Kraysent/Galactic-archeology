@@ -25,4 +25,3 @@ class IntegrationConfig(BaseConfig):
     snapshot_interval: int
     visualizer: Optional[visualizer.VisualizerConfig]
     tasks: list[tasks.TasksConfig]
-    logs: list[LogParams]

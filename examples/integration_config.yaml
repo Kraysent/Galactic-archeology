@@ -24,9 +24,32 @@ logging:
   level: debug
   filename: !env "{WORKING_DIR}/test_json_log.txt"
 
-# List of files and points to log to file.
-logs:
-  - point_id: 0
-    logger_id: host_params
-  - point_id: 1000001
-    logger_id: satellite_params
+# you can specify the list of tasks. For example, for logging
+tasks:
+  - name: ScatterTask
+    args: &logging_args
+      expressions: { x: x, y: y, z: z, vx: vx, vy: vy, vz: vz, m: m }
+      units: 
+        x: !q [1, kpc]
+        y: !q [1, kpc]
+        z: !q [1, kpc]
+        vx: !q [1, kms]
+        vy: !q [1, kms]
+        vz: !q [1, kms]
+        m: !q [1, MSun]
+    actions_before:
+      - type: slice
+        id: 0
+    actions_after:
+      - type: logging
+        print_last: true
+        id: host_bh_params
+  - name: ScatterTask
+    args: *logging_args
+    actions_before:
+      - type: slice
+        id: 1000001
+    actions_after:
+      - type: logging
+        print_last: true
+        id: sat_bh_params

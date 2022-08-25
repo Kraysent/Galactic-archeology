@@ -83,15 +83,6 @@
           "title": "logging",
           "type": "object"
         },
-        "logs": {
-          "description": "List of particles which parameters would be written to log file.",
-          "items": {
-            "$ref": "#/definitions/LogParamsSchema",
-            "type": "object"
-          },
-          "title": "logs",
-          "type": "array"
-        },
         "model_time": {
           "description": "Time until which model would be integrated. In future custom conditition is planned to be applied.",
           "title": "model_time",
@@ -152,26 +143,6 @@
       "required": [
         "args",
         "name"
-      ],
-      "type": "object"
-    },
-    "LogParamsSchema": {
-      "additionalProperties": false,
-      "properties": {
-        "logger_id": {
-          "description": "ID of logger.",
-          "title": "logger_id",
-          "type": "string"
-        },
-        "point_id": {
-          "description": "ID of particle from the model.",
-          "title": "point_id",
-          "type": "integer"
-        }
-      },
-      "required": [
-        "logger_id",
-        "point_id"
       ],
       "type": "object"
     },

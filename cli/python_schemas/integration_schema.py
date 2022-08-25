@@ -1,22 +1,13 @@
 from pathlib import Path
 
-from marshmallow import Schema, fields, post_load
+from marshmallow import fields, post_load
 
 from cli.python_schemas.base_schema import BaseSchema
 from cli.python_schemas.integrator_schema import IntegratorSchema
 from cli.python_schemas.tasks_schema import TaskConfigSchema
 from cli.python_schemas.visualizer_schema import VisualizerConfigSchema
 from omtool import io_service
-from omtool.core.configs import IntegrationConfig, LogParams
-
-
-class LogParamsSchema(Schema):
-    point_id = fields.Int(required=True, description="ID of particle from the model.")
-    logger_id = fields.Str(required=True, description="ID of logger.")
-
-    @post_load
-    def make(self, data, **kwargs):
-        return LogParams(**data)
+from omtool.core.configs import IntegrationConfig
 
 
 class IntegrationConfigSchema(BaseSchema):
@@ -59,11 +50,6 @@ class IntegrationConfigSchema(BaseSchema):
         load_default=[],
         description="This field describes list of tasks. Each task is a class that has run(...) "
         "method that processes Snapshot and returns some data.",
-    )
-    logs = fields.List(
-        fields.Nested(LogParamsSchema),
-        load_default=[],
-        description="List of particles which parameters would be written to log file.",
     )
 
     @post_load

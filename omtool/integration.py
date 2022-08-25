@@ -51,23 +51,6 @@ def integrate(config: IntegrationConfig):
         if config.output_file != "" and iteration % config.snapshot_interval == 0:
             snapshot.to_fits(config.output_file, append=True)
 
-        for log in config.logs:
-            particle = snapshot.particles[log.point_id]
-            (
-                logger.info()
-                .string("id", log.logger_id)
-                .measured_float(
-                    "timestamp", snapshot.timestamp.value_in(units.Myr), "Myr", decimals=3
-                )
-                .measured_float("x", particle.x.value_in(units.kpc), "kpc")
-                .measured_float("y", particle.y.value_in(units.kpc), "kpc")
-                .measured_float("z", particle.z.value_in(units.kpc), "kpc")
-                .measured_float("vx", particle.vx.value_in(units.kms), "kms")
-                .measured_float("vy", particle.vy.value_in(units.kms), "kms")
-                .measured_float("vz", particle.vz.value_in(units.kms), "kms")
-                .send()
-            )
-
         (
             logger.info()
             .string("id", "integration_timing")
