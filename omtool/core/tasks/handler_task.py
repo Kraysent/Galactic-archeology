@@ -1,11 +1,7 @@
 from typing import Callable
 
-import numpy as np
-
 from omtool.core.datamodel.snapshot import Snapshot
-from omtool.core.tasks.abstract_task import AbstractTask
-
-DataType = dict[str, np.ndarray]
+from omtool.core.tasks.abstract_task import AbstractTask, DataType
 
 
 class HandlerTask:

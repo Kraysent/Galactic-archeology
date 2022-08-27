@@ -1,2 +1,3 @@
+from tests.tasks.distance_task_test import TestDistanceTask
 from tests.tasks.scatter_task_test import TestScatterTask
 from tests.tasks.time_evolution_task_test import TestTimeEvolutionTask

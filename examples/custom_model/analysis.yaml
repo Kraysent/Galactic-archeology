@@ -154,42 +154,39 @@ tasks:
         y: y
 
   - name: PotentialTask
-    args:
-      center_type: potential
+    inputs:
+      center: host_potential_center.position
     actions_before:
       - type: slice
-        part: *host_slice
+        parts: [[0, 0.666666]]
     actions_after:
       - type: visualizer
         id: potential_dist_plane
         linestyle: None
-        markersize: 1
         color: *host_clr
         label: host
         x: radii
         y: potential
   - name: PotentialTask
-    args:
-      center_type: potential
+    inputs:
+      center: sat_potential_center.position
     actions_before:
       - type: slice
-        part: *sat_slice
+        parts: [[0.666666, 1]]
     actions_after:
       - type: visualizer
         id: potential_dist_plane
-        markersize: 1
         linestyle: None
         color: *sat_clr
         label: satellite
         x: radii
         y: potential
   - name: PotentialTask
-    args:
-      center_type: potential
+    inputs:
+      center: total_potential_center.position
     actions_after:
       - type: visualizer
         id: potential_dist_plane
-        markersize: 1
         linestyle: None
         color: *all_clr
         label: all

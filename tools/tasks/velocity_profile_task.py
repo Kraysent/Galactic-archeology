@@ -15,8 +15,12 @@ class VelocityProfileTask(AbstractTask):
     Args:
     * `r_unit` (`ScalarQuantity`): unit of the radius for the output.
     * `v_unit` (`ScalarQuantity`): unit of the velocity for the output.
-    * `center_type` (`str`): id of the center type, e.g. center of mass of center of potential.
     * `resolution` (`int`): number of slices between nearest and farthest particle to the center.
+
+    Dynamic args:
+    * `center` (`VectorQuantity`): position of the center of profile. Center of mass by default.
+    * `center_vel` (`VectorQuantity`): velocity of the center of profile.
+    Center of mass velocity by default.
 
     Returns:
     * `radii`: list of radii of the sphere slices.
@@ -25,14 +29,11 @@ class VelocityProfileTask(AbstractTask):
 
     def __init__(
         self,
-        center_type: str = "mass",
         resolution: int = 1000,
         r_unit: ScalarQuantity = 1 | units.kpc,
         v_unit: ScalarQuantity = 1 | units.kms,
     ) -> None:
         super().__init__()
-        self.center_func = particle_centers.get(center_type)
-        self.center_vel_func = particle_centers.get_velocity(center_type)
         self.resolution = resolution
         self.r_unit = r_unit
         self.v_unit = v_unit
@@ -45,9 +46,9 @@ class VelocityProfileTask(AbstractTask):
         center_vel: VectorQuantity | None = None,
     ) -> DataType:
         if center is None:
-            center = self.center_func(snapshot.particles)
+            center = particle_centers.center_of_mass(snapshot.particles)
         if center_vel is None:
-            center_vel = self.center_vel_func(snapshot.particles)
+            center_vel = particle_centers.center_of_mass_velocity(snapshot.particles)
 
         particles = snapshot.particles
 

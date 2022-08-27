@@ -19,8 +19,10 @@ class PotentialTask(AbstractTask):
     Args:
     * `r_unit` (`ScalarQuantity`): unit of the radius for the output.
     * `pot_unit` (`ScalarQuantity`): unit of the potential for the output.
-    * `center_type` (`str`): id of the center type, e.g. center of mass of center of potential.
     * `resolution` (`int`): number of slices between nearest and farthest particle to the center.
+
+    Dynamic args:
+    * `center` (`VectorQuantity`): position of the center of profile. Center of mass by default.
 
     Returns:
     * `radii`: list of radii of the sphere slices.
@@ -29,27 +31,25 @@ class PotentialTask(AbstractTask):
 
     def __init__(
         self,
-        center_type: str = "mass",
         resolution: int = 1000,
         r_unit: ScalarQuantity = 1 | units.kpc,
         pot_unit: ScalarQuantity = None,
     ) -> None:
         super().__init__()
-        self.center_func = particle_centers.get(center_type)
         self.resolution = resolution
         self.r_unit = r_unit
         self.pot_unit = pot_unit
 
-    @profiler("Potential task")
+    @profiler("Potential profile task")
     def run(
         self,
         snapshot: Snapshot,
         center: VectorQuantity | None = None,
     ) -> DataType:
-        if center is None:
-            center = self.center_func(snapshot.particles)
-
         particles = snapshot.particles
+
+        if center is None:
+            center = particle_centers.center_of_mass(particles)
 
         radii = math.get_lengths(particles.position - center)
         potentials = pyfalcon_analizer.get_potentials(snapshot.particles, 0.2 | units.kpc)

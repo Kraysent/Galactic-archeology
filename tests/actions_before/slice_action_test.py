@@ -1,4 +1,4 @@
-from amuse.lab import Particles, units
+from amuse.lab import Particles
 
 from omtool.actions_before import slice_action
 from omtool.core.datamodel import Snapshot
@@ -6,11 +6,6 @@ from omtool.core.utils import BaseTestCase
 
 
 class TestSliceAction(BaseTestCase):
-    def _generate_snapshot(self, N: int = 100) -> Snapshot:
-        snapshot = Snapshot(Particles(N))
-        snapshot.particles.mass = [10 * x + 1 for x in range(N)] | units.MSun
-        return snapshot
-
     def test_parts_one_slice(self):
         snapshot = self._generate_snapshot()
         actual = slice_action(snapshot, parts=[(0, 0.1)])

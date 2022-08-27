@@ -2,7 +2,7 @@
 Task that computes radial distribution of cumulative mass.
 """
 import numpy as np
-from amuse.lab import ScalarQuantity, units
+from amuse.lab import ScalarQuantity, VectorQuantity, units
 
 from omtool.core.datamodel import Snapshot, profiler
 from omtool.core.tasks import AbstractTask, DataType, register_task
@@ -19,8 +19,10 @@ class MassProfileTask(AbstractTask):
     Args:
     * `r_unit` (`ScalarQuantity`): unit of the radius for the output.
     * `m_unit` (`ScalarQuantity`): unit of the mass for the output.
-    * `center_type` (`str`): id of the center type, e.g. center of mass of center of potential.
     * `resolution` (`int`): number of slices between nearest and farthest particle to the center.
+
+    Dynamic args:
+    * `center` (`VectorQuantity`): position of the center of profile. Center of mass by default.
 
     Returns:
     * `radii`: list of radii of the spheres.
@@ -29,21 +31,25 @@ class MassProfileTask(AbstractTask):
 
     def __init__(
         self,
-        center_type: str = "mass",
         resolution: int = 1000,
         r_unit: ScalarQuantity = 1 | units.kpc,
         m_unit: ScalarQuantity = 1 | units.MSun,
     ) -> None:
         super().__init__()
-        self.center_func = particle_centers.get(center_type)
         self.resolution = resolution
         self.r_unit = r_unit
         self.m_unit = m_unit
 
     @profiler("Mass profile task")
-    def run(self, snapshot: Snapshot) -> DataType:
+    def run(
+        self,
+        snapshot: Snapshot,
+        center: VectorQuantity | None = None,
+    ) -> DataType:
         particles = snapshot.particles
-        center = self.center_func(particles)
+
+        if center is None:
+            center = particle_centers.center_of_mass(particles)
 
         radii = math.get_lengths(particles.position - center)
         masses = particles.mass

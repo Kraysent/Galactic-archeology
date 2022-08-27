@@ -1,6 +1,7 @@
 import unittest
 
 import numpy as np
+from amuse.lab import Particles, units
 from zlog import logger
 
 from omtool.core.datamodel import Snapshot
@@ -31,3 +32,8 @@ class BaseTestCase(unittest.TestCase):
         self.assertNdarraysEqual(first.particles.mass, second.particles.mass)
 
         self.assertEqual(first.timestamp, second.timestamp)
+
+    def _generate_snapshot(self, N: int = 100) -> Snapshot:
+        snapshot = Snapshot(Particles(N))
+        snapshot.particles.mass = [10 * x + 1 for x in range(N)] | units.MSun
+        return snapshot
