@@ -11,7 +11,7 @@ from omtool.actions_before import initialize_actions_before
 from omtool.core.configs import IntegrationConfig
 from omtool.core.datamodel import Snapshot, profiler
 from omtool.core.integrators import initialize_integrator
-from omtool.core.tasks import initialize_tasks
+from omtool.core.tasks import DataType, initialize_tasks
 from omtool.core.utils import initialize_logger
 
 
@@ -37,14 +37,11 @@ def integrate(config: IntegrationConfig):
         return integrator.leapfrog(snapshot)
 
     @profiler("Analysis stage")
-    def loop_analysis_stage(iteration: int, snapshot: Snapshot):
-        for vtask in tasks:
-            vtask.run(snapshot)
+    def loop_analysis_stage(snapshot: Snapshot):
+        outputs: dict[str, DataType] = {}
 
-        if visualizer_service is not None:
-            visualizer_service.save(
-                {"i": iteration, "time": snapshot.timestamp.value_in(units.Myr)}
-            )
+        for id, task in tasks.items():
+            outputs[id] = task.run(snapshot, outputs)
 
     @profiler("Saving to file stage")
     def loop_saving_stage(iteration: int, snapshot: Snapshot):
@@ -58,6 +55,11 @@ def integrate(config: IntegrationConfig):
             .send()
         )
 
+        if visualizer_service is not None:
+            visualizer_service.save(
+                {"i": iteration, "time": snapshot.timestamp.value_in(units.Myr)}
+            )
+
     input_service = io_service.InputService(config.input_file)
     generator = input_service.get_snapshot_generator()
     snapshot = Snapshot(*next(generator))
@@ -66,7 +68,7 @@ def integrate(config: IntegrationConfig):
 
     while snapshot.timestamp < config.model_time:
         snapshot = loop_integration_stage(snapshot)
-        loop_analysis_stage(i, snapshot)
+        loop_analysis_stage(snapshot)
         loop_saving_stage(i, snapshot)
 
         i += 1

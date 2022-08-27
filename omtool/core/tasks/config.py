@@ -13,6 +13,8 @@ from omtool.core.utils import import_modules
 class TasksConfig:
     name: str
     args: dict
+    id: str
+    inputs: dict[str, str]
     actions_before: list[dict]
     actions_after: list[dict]
 
@@ -26,11 +28,11 @@ def initialize_tasks(
     configs: list[TasksConfig],
     actions_before: dict[str, Callable],
     actions_after: dict[str, Callable],
-) -> list[HandlerTask]:
+) -> dict[str, HandlerTask]:
     import_modules(imports)
-    tasks: list[HandlerTask] = []
+    tasks: dict[str, HandlerTask] = {}
 
-    for config in configs:
+    for i, config in enumerate(configs):
         task = get_task(config.name, config.args)
 
         if task is None:
@@ -43,6 +45,7 @@ def initialize_tasks(
             continue
 
         curr_task = HandlerTask(task)
+        curr_task.inputs = config.inputs
 
         for action_params in config.actions_before:
             action_name = action_params.pop("type", None)
@@ -92,7 +95,10 @@ def initialize_tasks(
 
             curr_task.actions_after.append(handler)
 
-        tasks.append(curr_task)
+        if config.id == "":
+            config.id = f"task_{i}"
+
+        tasks[config.id] = curr_task
         logger.debug().string("name", config.name).msg("initialized task")
 
     return tasks

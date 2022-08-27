@@ -36,7 +36,7 @@ class AbstractTask(ABC):
         super().__init__()
 
     @abstractmethod
-    def run(self, snapshot: Snapshot) -> DataType:
+    def run(self, snapshot: Snapshot, **kwargs) -> DataType:
         """
         Runs the task on given snapshot.
         """

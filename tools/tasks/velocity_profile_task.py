@@ -1,4 +1,4 @@
-from amuse.lab import ScalarQuantity, units
+from amuse.lab import ScalarQuantity, VectorQuantity, units
 
 from omtool.core.datamodel import Snapshot, profiler
 from omtool.core.tasks import AbstractTask, DataType, register_task
@@ -38,9 +38,16 @@ class VelocityProfileTask(AbstractTask):
         self.v_unit = v_unit
 
     @profiler("Velocity profile task")
-    def run(self, snapshot: Snapshot) -> DataType:
-        center = self.center_func(snapshot.particles)
-        center_vel = self.center_vel_func(snapshot.particles)
+    def run(
+        self,
+        snapshot: Snapshot,
+        center: VectorQuantity | None = None,
+        center_vel: VectorQuantity | None = None,
+    ) -> DataType:
+        if center is None:
+            center = self.center_func(snapshot.particles)
+        if center_vel is None:
+            center_vel = self.center_vel_func(snapshot.particles)
 
         particles = snapshot.particles
 

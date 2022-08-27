@@ -2,7 +2,7 @@
 Task that computes radial distribution of density.
 """
 import numpy as np
-from amuse.lab import ScalarQuantity, units
+from amuse.lab import ScalarQuantity, VectorQuantity, units
 
 from omtool.core.datamodel import Snapshot, profiler
 from omtool.core.tasks import AbstractTask, DataType, register_task
@@ -41,9 +41,14 @@ class DensityProfileTask(AbstractTask):
         self.dens_unit = dens_unit
 
     @profiler("Density profile task")
-    def run(self, snapshot: Snapshot) -> DataType:
+    def run(
+        self,
+        snapshot: Snapshot,
+        center: VectorQuantity | None = None,
+    ) -> DataType:
         particles = snapshot.particles
-        center = self.center_func(particles)
+        if center is None:
+            center = self.center_func(particles)
 
         radii = math.get_lengths(particles.position - center)
         masses = particles.mass

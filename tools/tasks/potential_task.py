@@ -1,7 +1,7 @@
 """
 Task that computes radial distribution of the potential.
 """
-from amuse.lab import ScalarQuantity, units
+from amuse.lab import ScalarQuantity, VectorQuantity, units
 
 from omtool.core.datamodel import Snapshot, profiler
 from omtool.core.tasks import AbstractTask, DataType, register_task
@@ -41,8 +41,14 @@ class PotentialTask(AbstractTask):
         self.pot_unit = pot_unit
 
     @profiler("Potential task")
-    def run(self, snapshot: Snapshot) -> DataType:
-        center = self.center_func(snapshot.particles)
+    def run(
+        self,
+        snapshot: Snapshot,
+        center: VectorQuantity | None = None,
+    ) -> DataType:
+        if center is None:
+            center = self.center_func(snapshot.particles)
+
         particles = snapshot.particles
 
         radii = math.get_lengths(particles.position - center)

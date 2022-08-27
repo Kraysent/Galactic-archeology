@@ -9,7 +9,7 @@ from omtool.actions_after import initialize_actions_after
 from omtool.actions_before import initialize_actions_before
 from omtool.core.configs import AnalysisConfig
 from omtool.core.datamodel import Snapshot, profiler
-from omtool.core.tasks import initialize_tasks
+from omtool.core.tasks import DataType, initialize_tasks
 from omtool.core.utils import initialize_logger
 
 
@@ -28,8 +28,10 @@ def analize(config: AnalysisConfig):
 
     @profiler("Analysis stage")
     def loop_analysis_stage(snapshot: Snapshot):
-        for vtask in tasks:
-            vtask.run(snapshot)
+        outputs: dict[str, DataType] = {}
+
+        for id, task in tasks.items():
+            outputs[id] = task.run(snapshot, outputs)
 
     @profiler("Saving stage")
     def loop_saving_stage(iteration: int, timestamp: ScalarQuantity):

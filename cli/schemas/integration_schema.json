@@ -282,6 +282,20 @@
           "title": "args",
           "type": "object"
         },
+        "id": {
+          "description": "Textual identificator of task instance.",
+          "title": "id",
+          "type": "string"
+        },
+        "inputs": {
+          "additionalProperties": {
+            "title": "inputs",
+            "type": "string"
+          },
+          "description": "Dictionary of dynamic parameters of the task.",
+          "title": "inputs",
+          "type": "object"
+        },
         "name": {
           "description": "Name of the task.",
           "title": "name",

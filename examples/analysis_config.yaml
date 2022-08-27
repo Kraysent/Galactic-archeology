@@ -92,6 +92,19 @@ visualizer:
 
 # list of tasks. Each one describes arguments to its constructor and list of actions.
 tasks:
+  - name: PotentialCenterTask
+    id: host_potential_center
+    actions_before:
+      - type: slice
+        parts: [[0, 0.666666]]
+  - name: PotentialCenterTask
+    id: sat_potential_center
+    actions_before:
+      - type: slice
+        parts: [[0.666666, 1]]
+  - name: PotentialCenterTask
+    id: total_potential_center
+
   - name: ScatterTask
     args: &args
       expressions:
@@ -128,7 +141,6 @@ tasks:
         x: z
         y: y
         weights: m
-
   - name: ScatterTask
     args: *args
     actions_before:
@@ -154,7 +166,6 @@ tasks:
         x: z
         y: y
         weights: m
-
   - name: ScatterTask
     args: *args
     actions_before:
@@ -177,7 +188,6 @@ tasks:
         markersize: 5
         x: z
         y: y
-
   - name: ScatterTask
     args: *args
     actions_before:
@@ -202,11 +212,11 @@ tasks:
         y: y
 
   - name: PotentialTask
-    args:
-      center_type: potential
+    inputs:
+      center: host_potential_center.position
     actions_before:
       - type: slice
-        part: *host_slice
+        parts: [[0, 0.666666]]
     actions_after:
       - type: visualizer
         id: potential_dist_plane
@@ -216,11 +226,11 @@ tasks:
         x: radii
         y: potential
   - name: PotentialTask
-    args:
-      center_type: potential
+    inputs:
+      center: sat_potential_center.position
     actions_before:
       - type: slice
-        part: *sat_slice
+        parts: [[0.666666, 1]]
     actions_after:
       - type: visualizer
         id: potential_dist_plane
@@ -230,8 +240,8 @@ tasks:
         x: radii
         y: potential
   - name: PotentialTask
-    args:
-      center_type: potential
+    inputs:
+      center: total_potential_center.position
     actions_after:
       - type: visualizer
         id: potential_dist_plane
@@ -259,11 +269,9 @@ tasks:
         id: bound_mass_data
 
   - name: DistanceTask
-    args:
-      start: potential
-      start_slice: !slice [0, 1000001]
-      end: potential
-      end_slice: !slice [1000001, 1500001]
+    inputs:
+      start: host_potential_center.position
+      end: sat_potential_center.position
     actions_after:
       - type: visualizer
         id: separation_evolution_panel
@@ -273,8 +281,9 @@ tasks:
         y: dist
 
   - name: VelocityProfileTask
-    args:
-      center_type: potential
+    inputs:
+      center: host_potential_center.position
+      center_vel: host_potential_center.velocity
     actions_before:
       - type: slice
         part: *host_slice
@@ -288,8 +297,9 @@ tasks:
         x: radii
         y: velocity
   - name: VelocityProfileTask
-    args:
-      center_type: potential
+    inputs:
+      center: sat_potential_center.position
+      center_vel: sat_potential_center.velocity
     actions_before:
       - type: slice
         part: *sat_slice
@@ -303,8 +313,9 @@ tasks:
         x: radii
         y: velocity
   - name: VelocityProfileTask
-    args:
-      center_type: potential
+    inputs:
+      center: total_potential_center.position
+      center_vel: total_potential_center.velocity
     actions_after:
       - type: visualizer
         id: velocity_profile_panel
@@ -316,8 +327,8 @@ tasks:
         y: velocity
 
   - name: DensityProfileTask
-    args:
-      center_type: potential
+    inputs:
+      center: host_potential_center.position
     actions_before:
       - type: slice
         part: *host_slice
@@ -331,8 +342,8 @@ tasks:
         x: radii
         y: densities
   - name: DensityProfileTask
-    args:
-      center_type: potential
+    inputs:
+      center: sat_potential_center.position
     actions_before:
       - type: slice
         part: *sat_slice
@@ -346,8 +357,8 @@ tasks:
         x: radii
         y: densities
   - name: DensityProfileTask
-    args:
-      center_type: potential
+    inputs:
+      center: total_potential_center.position
     actions_after:
       - type: visualizer
         id: density_profile_panel

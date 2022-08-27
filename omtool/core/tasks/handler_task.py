@@ -1,7 +1,4 @@
-"""
-Struct that holds abstract_task, its part and actions.
-"""
-from typing import Callable, List
+from typing import Callable
 
 import numpy as np
 
@@ -13,30 +10,41 @@ DataType = dict[str, np.ndarray]
 
 class HandlerTask:
     """
-    Struct that holds abstract_task, its part and actions.
+    Struct that holds abstract_task and its actions.
     """
 
     def __init__(
         self,
         task: AbstractTask,
-        actions_before: List[Callable[[Snapshot], Snapshot]] = None,
-        actions_after: List[Callable[[DataType], DataType]] = None,
+        inputs: dict[str, str] = None,
+        actions_before: list[Callable[[Snapshot], Snapshot]] = None,
+        actions_after: list[Callable[[DataType], DataType]] = None,
     ):
+        inputs = inputs or {}
         actions_before = actions_before or []
         actions_after = actions_after or []
 
         self.task = task
+        self.inputs = inputs
         self.actions_before = actions_before
         self.actions_after = actions_after
 
-    def run(self, snapshot: Snapshot):
+    def run(self, snapshot: Snapshot, previous_outputs: dict[str, DataType]) -> DataType:
         """
         Run actions before, launch task, run actions after.
         """
-        for action in self.actions_before:
-            snapshot = action(snapshot)
+        for action_before in self.actions_before:
+            snapshot = action_before(snapshot)
 
-        data = self.task.run(snapshot)
+        kwargs = {}
 
-        for handler in self.actions_after:
-            data = handler(data)
+        for key, path in self.inputs.items():
+            task_id, value_id = path.split(".")
+            kwargs[key] = previous_outputs[task_id][value_id]
+
+        data = self.task.run(snapshot, **kwargs)
+
+        for action_after in self.actions_after:
+            data = action_after(data)
+
+        return data
