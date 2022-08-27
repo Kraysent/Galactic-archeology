@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Any, Optional
 
+import numpy as np
 from amuse.lab import VectorQuantity, units
 from zlog import logger
 
@@ -44,7 +45,8 @@ def initialize_models(imports: list[str], configs: list[ModelConfig]) -> list[Sn
 
         if config.downsample_to is not None:
             c = len(snapshot.particles) / config.downsample_to
-            snapshot.particles = snapshot.particles[:: int(c)]
+            subset_indices = np.random.choice(len(snapshot.particles), config.downsample_to)
+            snapshot.particles = snapshot.particles[subset_indices]
             snapshot.particles.mass *= c
 
         models.append(snapshot)
