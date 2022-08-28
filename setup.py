@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name="omtool",
-    version="0.3.0",
+    version="0.4.0",
     author="Artyom Zaporozhets",
     url="https://github.com/Kraysent/OMTool",
     description="Package and program that models N-Body problem in galactic evolution application.",
@@ -14,7 +14,6 @@ setup(
         "omtool.core",
         "omtool.core.datamodel",
         "omtool.core.configs",
-        "omtool.core.creation",
         "omtool.core.utils",
         "omtool.core.integrators",
         "omtool.core.models",

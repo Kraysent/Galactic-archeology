@@ -6,8 +6,7 @@ import os
 from pathlib import Path
 
 from omtool.core.configs import CreationConfig
-from omtool.core.creation import SnapshotBuilder
-from omtool.core.models import initialize_models
+from omtool.core.models import SnapshotBuilder, initialize_models
 from omtool.core.utils import initialize_logger
 
 
