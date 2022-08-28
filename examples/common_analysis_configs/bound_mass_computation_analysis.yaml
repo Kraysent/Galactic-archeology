@@ -13,7 +13,7 @@ tasks:
       number_of_iterations: 5
     actions_before:
       - type: slice
-        part: [1000001, 1500002]
+        parts: [[0.666666, 1]]
     actions_after:
       - type: logging
         print_last: True

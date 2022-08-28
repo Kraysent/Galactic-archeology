@@ -1,30 +1,30 @@
-# you can use YAML anchors to substitute some values that repeat several times over the YAML.
+# You can use YAML anchors to substitute some values that repeat several times over the file.
 # About YAML anchors: https://support.atlassian.com/bitbucket-cloud/docs/yaml-anchors/
-host_slice: &host_slice
-  - 0
-  - 1000001
+host: &host
+  type: slice
+  parts: [[0, 0.666666]]
 host_color: &host_clr b
 
-sat_slice: &sat_slice
-  - 1000001
-  - 1500001
+satellite: &satellite
+  type: slice
+  parts: [[0.666666, 1]]
 sat_color: &sat_clr r
 
 all_color: &all_clr y
 
-# file with a set of snapshots
+# File with a set of snapshots.
 input_file:
   format: fits
   filenames:
     - !env "{WORKING_DIR}/test_out.fits"
 
-# You can specify filename where JSON logs would be saved
+# You can specify filename where JSON logs would be saved.
 logging:
   level: debug
   filename: !env "{WORKING_DIR}/test_json_log.txt"
   datefmt: "%Y-%m-%d %H:%M:%S"
 
-# visualizer service configuration. It specifies list of panels
+# Visualizer module configuration. It specifies list of panels.
 visualizer:
   output_dir: !env "{WORKING_DIR}/analysis"
   title: "Time: {time:07.01f} Myr"
@@ -90,18 +90,16 @@ visualizer:
         ylabel: '$\rho$, MSun / kpc ** 3'
         grid: True
 
-# list of tasks. Each one describes arguments to its constructor and list of actions.
+# List of tasks. Each one describes arguments to its constructor and list of actions.
 tasks:
   - name: PotentialCenterTask
     id: host_potential_center
     actions_before:
-      - type: slice
-        parts: [[0, 0.666666]]
+      - *host
   - name: PotentialCenterTask
     id: sat_potential_center
     actions_before:
-      - type: slice
-        parts: [[0.666666, 1]]
+      - *satellite
   - name: PotentialCenterTask
     id: total_potential_center
 
@@ -118,11 +116,10 @@ tasks:
         z: !q [1, kpc]
         m: !q [1, MSun]
     actions_before:
-      - type: slice
-        part: *host_slice
+      - *host
       - type: barion_filter
     actions_after:
-      # you can plot one result several times in different projections
+      # You can plot one result several times in different projections.
       - type: visualizer
         id: xy_plane
         is_density_plot: True
@@ -144,8 +141,7 @@ tasks:
   - name: ScatterTask
     args: *args
     actions_before:
-      - type: slice
-        part: *sat_slice
+      - *satellite
       - type: barion_filter
     actions_after:
       - type: visualizer
@@ -215,8 +211,7 @@ tasks:
     inputs:
       center: host_potential_center.position
     actions_before:
-      - type: slice
-        parts: [[0, 0.666666]]
+      - *host
     actions_after:
       - type: visualizer
         id: potential_dist_plane
@@ -229,8 +224,7 @@ tasks:
     inputs:
       center: sat_potential_center.position
     actions_before:
-      - type: slice
-        parts: [[0.666666, 1]]
+      - *satellite
     actions_after:
       - type: visualizer
         id: potential_dist_plane
@@ -255,8 +249,7 @@ tasks:
     args:
       number_of_iterations: 5
     actions_before:
-      - type: slice
-        part: *sat_slice
+      - *satellite
     actions_after:
       - type: visualizer
         id: bound_mass_evolution_plane
@@ -285,8 +278,7 @@ tasks:
       center: host_potential_center.position
       center_vel: host_potential_center.velocity
     actions_before:
-      - type: slice
-        part: *host_slice
+      - *host
     actions_after:
       - type: visualizer
         id: velocity_profile_panel
@@ -301,8 +293,7 @@ tasks:
       center: sat_potential_center.position
       center_vel: sat_potential_center.velocity
     actions_before:
-      - type: slice
-        part: *sat_slice
+      - *satellite
     actions_after:
       - type: visualizer
         id: velocity_profile_panel
@@ -330,8 +321,7 @@ tasks:
     inputs:
       center: host_potential_center.position
     actions_before:
-      - type: slice
-        part: *host_slice
+      - *host
     actions_after:
       - type: visualizer
         id: density_profile_panel
@@ -345,8 +335,7 @@ tasks:
     inputs:
       center: sat_potential_center.position
     actions_before:
-      - type: slice
-        part: *sat_slice
+      - *satellite
     actions_after:
       - type: visualizer
         id: density_profile_panel

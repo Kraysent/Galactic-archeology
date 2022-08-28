@@ -1,11 +1,11 @@
-host_slice: &host_slice
-  - 0
-  - 1000001
+host: &host
+  type: slice
+  parts: [[0, 0.66666]]
 host_color: &host_clr b
 
-sat_slice: &sat_slice
-  - 1000001
-  - 1500002
+satellite: &satellite
+  type: slice
+  parts: [[0.66666, 1]]
 sat_color: &sat_clr r
 
 all_color: &all_clr y
@@ -31,7 +31,7 @@ visualizer:
         xlim: [0, 40]
         ylim: [0, 1.e+9]
         xlabel: "$r$, kpc"
-        ylabel: '$\varphi$, portions of average, center - cm'
+        ylabel: '$\rho$, portions of average, center - cm'
         grid: True
     - id: potential_cm_density_profile_panel
       coords: [0, 0, 1, 0.47]
@@ -39,15 +39,26 @@ visualizer:
         xlim: [0, 40]
         ylim: [0, 1.e+9]
         xlabel: "$r$, kpc"
-        ylabel: '$\varphi$, portions of average, center - potential'
+        ylabel: '$\rho$, portions of average, center - potential'
         grid: True
 
 tasks:
-  - name: DensityProfileTask
-    args: {}
+  - name: CenterTask
+    id: host_cm
     actions_before:
-      - type: slice
-        part: *host_slice
+      - *host
+  - name: CenterTask
+    id: sat_cm
+    actions_before:
+      - *satellite
+  - name: CenterTask
+    id: total_cm
+
+  - name: DensityProfileTask
+    inputs:
+      center: host_cm.position
+    actions_before:
+      - *host
     actions_after:
       - type: visualizer
         id: cm_density_profile_panel
@@ -57,14 +68,11 @@ tasks:
         label: host
         x: radii
         y: densities
-      - type: logging
-        print_last: true
-        id: density_profile
   - name: DensityProfileTask
-    args: {}
+    inputs:
+      center: sat_cm.position
     actions_before:
-      - type: slice
-        part: *sat_slice
+      - *satellite
     actions_after:
       - type: visualizer
         id: cm_density_profile_panel
@@ -75,7 +83,8 @@ tasks:
         x: radii
         y: densities
   - name: DensityProfileTask
-    args: {}
+    inputs:
+      center: total_cm.position
     actions_after:
       - type: visualizer
         id: cm_density_profile_panel
@@ -86,12 +95,28 @@ tasks:
         x: radii
         y: densities
 
-  - name: DensityProfileTask
+  - name: CenterTask
     args:
       center_type: potential
+    id: host_pot_center
     actions_before:
-      - type: slice
-        part: *host_slice
+      - *host
+  - name: CenterTask
+    args:
+      center_type: potential
+    id: sat_pot_center
+    actions_before:
+      - *satellite
+  - name: CenterTask
+    args:
+      center_type: potential
+    id: total_pot_center
+
+  - name: DensityProfileTask
+    inputs:
+      center: host_pot_center.position
+    actions_before:
+      - *host
     actions_after:
       - type: visualizer
         id: potential_cm_density_profile_panel
@@ -102,11 +127,10 @@ tasks:
         x: radii
         y: densities
   - name: DensityProfileTask
-    args:
-      center_type: potential
+    inputs:
+      center: sat_pot_center.position
     actions_before:
-      - type: slice
-        part: *sat_slice
+      - *satellite
     actions_after:
       - type: visualizer
         id: potential_cm_density_profile_panel
@@ -117,8 +141,8 @@ tasks:
         x: radii
         y: densities
   - name: DensityProfileTask
-    args:
-      center_type: potential
+    inputs:
+      center: total_pot_center.position
     actions_after:
       - type: visualizer
         id: potential_cm_density_profile_panel

@@ -1,11 +1,11 @@
-host_slice: &host_slice
-  - 0
-  - 1000001
+host: &host
+  type: slice
+  parts: [[0, 0.66666]]
 host_color: &host_clr b
 
-sat_slice: &sat_slice
-  - 1000001
-  - 1500002
+satellite: &satellite
+  type: slice
+  parts: [[0, 0.66666]]
 sat_color: &sat_clr r
 
 all_color: &all_clr y
@@ -14,6 +14,7 @@ imports:
   tasks:
     - "tools/tasks/scatter_task.py"
     - "tools/tasks/density_profile_task.py"
+    - "tools/tasks/potential_center_task.py"
 
 logging:
   level: debug
@@ -59,8 +60,7 @@ tasks:
         y: !q [1, kpc]
         m: !q [1, MSun]
     actions_before:
-      - type: slice
-        part: *host_slice
+      - *host
     actions_after:
       - type: visualizer
         id: xy_panel
@@ -72,8 +72,7 @@ tasks:
   - name: ScatterTask
     args: *x_args
     actions_before:
-      - type: slice
-        part: *sat_slice
+      - *satellite
     actions_after:
       - type: visualizer
         id: xy_panel
@@ -82,44 +81,24 @@ tasks:
         extent: [-60, 60, -24, 24]
         channel: *sat_clr
         weights: m
-  - name: ScatterTask
-    args: *x_args
+
+  - name: PotentialCenterTask
+    id: host_potential_center
     actions_before:
-      - type: slice
-        id: 0
-    actions_after:
-      - type: visualizer
-        id: xy_panel
-        linestyle: solid
-        color: *host_clr
-        marker: o
-        markersize: 5
-        weights: m
-  - name: ScatterTask
-    args: *x_args
+      - *host
+  - name: PotentialCenterTask
+    id: sat_potential_center
     actions_before:
-      - type: slice
-        id: 1000001
-    actions_after:
-      - type: visualizer
-        id: xy_panel
-        linestyle: solid
-        color: *sat_clr
-        marker: o
-        markersize: 5
-        weights: m
+      - *satellite
+  - name: PotentialCenterTask
+    id: total_potential_center
 
   - name: DensityProfileTask
-    args:
-      center_type: potential
+    inputs:
+      center: host_potential_center.position
     actions_before:
-      - type: slice
-        part: *host_slice
+      - *host
     actions_after:
-      - type: fit
-        degree: 1
-        x: radii
-        y: densities
       - type: visualizer
         id: density_profile_panel
         markersize: 0.5
@@ -129,16 +108,11 @@ tasks:
         x: radii
         y: densities
   - name: DensityProfileTask
-    args:
-      center_type: potential
+    inputs:
+      center: sat_potential_center.position
     actions_before:
-      - type: slice
-        part: *sat_slice
+      - *satellite
     actions_after:
-      - type: fit
-        degree: 1
-        x: radii
-        y: densities
       - type: visualizer
         id: density_profile_panel
         markersize: 0.5
@@ -148,13 +122,9 @@ tasks:
         x: radii
         y: densities
   - name: DensityProfileTask
-    args:
-      center_type: potential
+    inputs:
+      center: total_potential_center.position
     actions_after:
-      - type: fit
-        degree: 1
-        x: radii
-        y: densities
       - type: visualizer
         id: density_profile_panel
         markersize: 0.5
