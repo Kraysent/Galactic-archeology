@@ -48,29 +48,34 @@ jobs:
         env:
           WORKING_DIR: /home/runner/test-plummer
         run: |
+          sudo rm -rf $WORKING_DIR/analysis
           sudo mkdir $WORKING_DIR/analysis
           sudo WORKING_DIR=$WORKING_DIR $PYTHONBIN main.py analize examples/common_analysis_configs/spatial_analysis.yaml
       - name: Run plummer sphere analysis (xy+density)
         env:
           WORKING_DIR: /home/runner/test-plummer
         run: |
+          sudo rm -rf $WORKING_DIR/analysis
           sudo mkdir $WORKING_DIR/analysis
           sudo WORKING_DIR=$WORKING_DIR $PYTHONBIN main.py analize examples/common_analysis_configs/density_xy_analysis.yaml
       - name: Run plummer sphere analysis (density+potential+velocity)
         env:
           WORKING_DIR: /home/runner/test-plummer
         run: |
+          sudo rm -rf $WORKING_DIR/analysis 
           sudo mkdir $WORKING_DIR/analysis
           sudo WORKING_DIR=$WORKING_DIR $PYTHONBIN main.py analize examples/common_analysis_configs/density_potential_velocity_analysis.yaml
       - name: Run plummer sphere analysis (cm_density+potential_density)
         env:
           WORKING_DIR: /home/runner/test-plummer
         run: |
+          sudo rm -rf $WORKING_DIR/analysis
           sudo mkdir $WORKING_DIR/analysis
           sudo WORKING_DIR=$WORKING_DIR $PYTHONBIN main.py analize examples/common_analysis_configs/cm-density_potcm-density_analysis.yaml
       - name: Run plummer sphere analysis (bound mass computation)
         env:
           WORKING_DIR: /home/runner/test-plummer
         run: |
+          sudo rm -rf $WORKING_DIR/analysis
           sudo mkdir $WORKING_DIR/analysis
           sudo WORKING_DIR=$WORKING_DIR $PYTHONBIN main.py analize examples/common_analysis_configs/bound_mass_computation_analysis.yaml
