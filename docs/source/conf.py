@@ -1,15 +1,14 @@
 from typing import List
 
-import sphinx_pdj_theme
+import sphinx_rtd_theme
 
 # -- Project information -----------------------------------------------------
 
 project = "OMTool"
-copyright = "2022, Kraysent"
-author = "Kraysent"
+copyright = "2022, Artyom Zaporozhets"
+author = "Artyom Zaporozhets"
 
-# The full version, including alpha/beta/rc tags
-release = "0.1.0"
+release = "0.4.0"
 
 # -- General configuration ---------------------------------------------------
 
@@ -21,8 +20,7 @@ exclude_patterns: List[str] = []
 
 # -- Options for HTML output -------------------------------------------------
 
-html_theme = "sphinx_pdj_theme"
-htm_theme_path = [sphinx_pdj_theme.get_html_theme_path()]
-html_theme_options = {"style": "darker"}
+html_theme = 'sphinx_rtd_theme'
+htm_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 html_static_path = ["_static"]
