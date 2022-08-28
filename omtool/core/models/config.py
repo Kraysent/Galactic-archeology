@@ -45,7 +45,9 @@ def initialize_models(imports: list[str], configs: list[ModelConfig]) -> list[Sn
 
         if config.downsample_to is not None:
             c = len(snapshot.particles) / config.downsample_to
-            subset_indices = np.random.choice(len(snapshot.particles), config.downsample_to)
+            subset_indices = np.random.choice(
+                len(snapshot.particles), config.downsample_to, replace=False
+            )
             snapshot.particles = snapshot.particles[subset_indices]
             snapshot.particles.mass *= c
 
