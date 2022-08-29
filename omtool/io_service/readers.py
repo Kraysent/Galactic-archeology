@@ -1,6 +1,7 @@
 """
 Functions to read different types of files and load them into snapshots.
 """
+import gc
 from typing import Iterator, List, Tuple
 
 import numpy as np
@@ -41,7 +42,7 @@ def from_logged_csvs(
 
         for row in rows:
             particle = Particle()
-            # probably need to use fields dict
+            # TODO: probably need to use fields dict
             particle.position = [row["x"], row["y"], row["z"]] | units.kpc
             particle.velocity = [row["vx"], row["vy"], row["vz"]] | units.kms
             particle.mass = row["m"] | units.MSun
@@ -56,13 +57,21 @@ def from_fits(filename: str) -> Iterator[Tuple[Particles, ScalarQuantity]]:
     """
     Loads snapshots from the FITS file where each HDU stores binary table with one timestamp.
     """
-    hdul = fits.open(filename, memmap=True)
+    hdul = fits.open(filename, memmap=False)
 
-    for frame in range(len(hdul) - 1):
-        table: BinTableHDU = hdul[frame + 1]
+    first = True
+
+    table: BinTableHDU
+    for table in hdul:
+        if first:
+            # skipping first HDU; it is required by the FITS specification.
+            first = False
+            continue
+
         number_of_particles = len(table.data[list(fields.keys())[0]])
 
         timestamp = table.header["TIME"] | units.Myr
+        # TODO: read units from TIME_UNIT if this entry exists, if not, use Myr
         particles = Particles(number_of_particles)
 
         for (key, val) in fields.items():
@@ -76,6 +85,11 @@ def from_fits(filename: str) -> Iterator[Tuple[Particles, ScalarQuantity]]:
                 setattr(particles, key, data)
 
         yield particles, timestamp
+        del particles
+        del table
+        gc.collect()
+
+    hdul.close()
 
 
 def fits_file_info(filename: str) -> int:
