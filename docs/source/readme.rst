@@ -31,7 +31,7 @@ You might also need these modules in case you want to run tests and linters:
 
 .. code-block:: bash
 
-   pip install flake8 isort mypy black types-pyyaml
+   pip install isort mypy black types-pyyaml
 
 Usage
 ###############
