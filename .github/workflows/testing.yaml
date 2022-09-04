@@ -24,10 +24,10 @@ jobs:
           libblas-dev liblapack-dev git
           $PYTHONBIN -m pip install -r requirements.txt
           git clone https://github.com/GalacticDynamics-Oxford/pyfalcon.git
-          cd pyfalcon && $PYTHONBIN setup.py install
-          rm -rf pyfalcon
+          cd pyfalcon && $PYTHONBIN setup.py install && cd .. && rm -rf pyfalcon
       - name: Run tests
-        run: make test
+        run: |
+          make test
       - name: Run plummer sphere creation
         env:
           WORKING_DIR: /home/runner/test-plummer

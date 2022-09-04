@@ -7,7 +7,7 @@ Basics
 
 Creation mode is the first one you might encounter. Its logic is simple: take a bunch of files and particle parameteres and create output file with all of them. 
 
-Basic creation configuration file can be found `here <https://github.com/Kraysent/OMTool/blob/main/examples/creation_config.yaml>`__. It looks like this:
+Basic creation configuration file can be found `here <https://github.com/Kraysent/OMTool/blob/main/examples/full_model/creation_config.yaml>`__. It looks like this:
 
 .. code-block:: yaml
 

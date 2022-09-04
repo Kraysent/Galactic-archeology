@@ -11,3 +11,4 @@ OMT (Open Modeling Tool) is used to numerically solve and visualize N-body probl
    
    readme
    creation
+   development

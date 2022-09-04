@@ -43,7 +43,7 @@ Program has three modes: creation, integration and analysis. The semantical diff
 
 Creation
 ==============
-This module is responsible for initialization of snapshots. You can create `configuration YAML file <https://github.com/Kraysent/OMTool/blob/main/examples/creation_config.yaml>`__ which describes list of objects in the snapshot.
+This module is responsible for initialization of snapshots. You can create `configuration YAML file <https://github.com/Kraysent/OMTool/blob/main/examples/full_model/creation_config.yaml>`__ which describes list of objects in the snapshot.
 
 The output is single FITS file which has two HDUs: empty primary one (it is required by FITS standard) and binary table with positions, velocities and masses of each particle in the system. It also stores timestamp T = 0 in the header. 
 
@@ -55,7 +55,7 @@ You can start it with
 
 Integration
 ==============
-This module is responsible for actual integration of the model from previous module. It operates similarly: you create `configuration file <https://github.com/Kraysent/OMTool/blob/main/examples/integration_config.yaml>`__ with all the data necessary. Next step is to launch 
+This module is responsible for actual integration of the model from previous module. It operates similarly: you create `configuration file <https://github.com/Kraysent/OMTool/blob/main/examples/full_model/integration_config.yaml>`__ with all the data necessary. Next step is to launch 
 
 .. code-block:: bash
 
@@ -66,7 +66,7 @@ It will print some info into console and gradually produce output FITS file. Eac
 Analysis
 ==============
 
-This module is responsible for the visualization of file with snapshots (for example, one from previous module). As always, you should create `configuration file <https://github.com/Kraysent/OMTool/blob/main/examples/analysis_config.yaml>`__. The biggest part of it is description of matplotlib's plots layout. Launch command:
+This module is responsible for the visualization of file with snapshots (for example, one from previous module). As always, you should create `configuration file <https://github.com/Kraysent/OMTool/blob/main/examples/full_model/analysis_config.yaml>`__. The biggest part of it is description of matplotlib's plots layout. Launch command:
 
 .. code-block:: bash
 
@@ -74,6 +74,6 @@ This module is responsible for the visualization of file with snapshots (for exa
 
 If done right it should produce a lot of pictures (the same amount as number of timestamps in the input file) similar to this one: 
 
-.. image:: docs/source/images/image.png
+.. image:: images/image.png
 
 **This program is under heavy development so some things (or all of them) might work not as expected or not work at all.**
