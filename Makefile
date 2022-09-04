@@ -1,4 +1,5 @@
 PYTHON := python3
+.PHONY: clean fix check
 
 clean:
 	$(PYTHON) -Bc "import pathlib; [p.unlink() for p in pathlib.Path('.').rglob('*.py[co]')]"
@@ -33,7 +34,7 @@ check-mypy:
 	$(PYTHON) -m mypy . --config-file pyproject.toml
 
 test:
-	$(PYTHON) -m unittest -v tests
+	$(PYTHON) -m unittest -v $$(find . -name "*_test.py")
 
 check: check-isort check-black check-mypy test
 
