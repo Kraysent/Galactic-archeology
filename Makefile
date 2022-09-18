@@ -31,16 +31,16 @@ check-black:
 	$(PYTHON) -m black . --config pyproject.toml --check
 
 check-omtool-mypy:
-	$(PYTHON) -m mypy omtool --python-version 3.10 --ignore-missing-imports
+	$(PYTHON) -m mypy omtool --config-file pyproject.toml
 
 check-cli-mypy:
-	$(PYTHON) -m mypy cli --python-version 3.10 --ignore-missing-imports
+	$(PYTHON) -m mypy cli --config-file pyproject.toml
 
 check-tools-mypy:
-	$(PYTHON) -m mypy tools --python-version 3.10 --ignore-missing-imports
+	$(PYTHON) -m mypy tools --config-file pyproject.toml
 
 check-tests-mypy:
-	$(PYTHON) -m mypy tests --python-version 3.10 --ignore-missing-imports
+	$(PYTHON) -m mypy tests --config-file pyproject.toml
 
 check-mypy: check-omtool-mypy check-tools-mypy check-cli-mypy check-tests-mypy
 

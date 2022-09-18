@@ -24,5 +24,4 @@ setup(
         "omtool.visualizer",
     ],
     test_suite="tests",
-    scripts=["main"],
 )

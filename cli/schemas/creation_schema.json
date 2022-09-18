@@ -101,6 +101,11 @@
           "title": "position",
           "type": "array"
         },
+        "rotation": {
+          "$ref": "#/definitions/RotationSchema",
+          "description": "Rotation parameters of the model.",
+          "type": "object"
+        },
         "velocity": {
           "description": "Initial velocity of the whole model. If there is more than one particle, it would be applied to each particle.",
           "title": "velocity",
@@ -109,6 +114,27 @@
       },
       "required": [
         "name"
+      ],
+      "type": "object"
+    },
+    "RotationSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "angle": {
+          "description": "Angle on which to rotate the model around given axis",
+          "format": "float",
+          "title": "angle",
+          "type": "number"
+        },
+        "axis": {
+          "description": "Axis around which to rotate the model. Can be x, y, or z",
+          "title": "axis",
+          "type": "string"
+        }
+      },
+      "required": [
+        "angle",
+        "axis"
       ],
       "type": "object"
     }

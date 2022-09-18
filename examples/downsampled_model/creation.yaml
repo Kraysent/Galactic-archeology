@@ -13,6 +13,9 @@ objects:
     position: !q [[0, 0, 0], kpc]
     velocity: !q [[0, 0, 0], kms]
     downsample_to: 100000
+    rotation:
+      angle: 0.52
+      axis: y
   - name: csv
     args:
       delimiter: " "
@@ -20,3 +23,6 @@ objects:
     position: !qs [[50, 0, 1.57], kpc]
     velocity: !q [[0, 50, 0], kms]
     downsample_to: 50000
+    rotation:
+      angle: 0.52
+      axis: y
