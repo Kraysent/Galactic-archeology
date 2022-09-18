@@ -28,7 +28,7 @@ jobs:
           libblas-dev liblapack-dev git
           python3 -m pip install -r requirements.txt
           git clone https://github.com/GalacticDynamics-Oxford/pyfalcon.git
-          cd pyfalcon && $PYTHONBIN setup.py install
+          cd pyfalcon && python3 setup.py install
       - name: Run mypy
         run: |
           rm -rf pyfalcon
