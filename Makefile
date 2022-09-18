@@ -30,8 +30,19 @@ check-isort:
 check-black:
 	$(PYTHON) -m black . --config pyproject.toml --check
 
-check-mypy: 
-	$(PYTHON) -m mypy . --config-file pyproject.toml
+check-omtool-mypy:
+	$(PYTHON) -m mypy omtool --python-version 3.10 --ignore-missing-imports
+
+check-cli-mypy:
+	$(PYTHON) -m mypy cli --python-version 3.10 --ignore-missing-imports
+
+check-tools-mypy:
+	$(PYTHON) -m mypy tools --python-version 3.10 --ignore-missing-imports
+
+check-tests-mypy:
+	$(PYTHON) -m mypy tests --python-version 3.10 --ignore-missing-imports
+
+check-mypy: check-omtool-mypy check-tools-mypy check-cli-mypy check-tests-mypy
 
 test:
 	$(PYTHON) -m unittest -v $$(find . -name "*_test.py")

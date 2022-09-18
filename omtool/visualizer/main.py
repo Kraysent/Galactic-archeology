@@ -17,6 +17,7 @@ class VisualizerService:
         self.visualizer = Visualizer()
         self.visualizer.set_figsize(*config.figsize)
         self.title_template = config.title
+        pathlib.Path(config.output_dir).mkdir(parents=False, exist_ok=True)
         self.pic_filename_template = str(pathlib.Path(config.output_dir, config.pic_filename))
         if config.pickle_filename is not None:
             self.pickle_filename_template = str(
