@@ -1,12 +1,12 @@
 from amuse.lab import ScalarQuantity, units
 
 from omtool.core.datamodel import Snapshot, profiler
-from omtool.core.tasks import AbstractTask, DataType, register_task
-from omtool.core.utils import particle_centers
+from omtool.core.tasks import DataType, register_task
+from tools.tasks.center_task import CenterTask
 
 
 @register_task(name="PotentialCenterTask")
-class PotentialCenterTask(AbstractTask):
+class PotentialCenterTask(CenterTask):
     """
     Task that computes center of the particle system as a center of mass of certain fraction of
     particles with a smallest gravitational potential.
@@ -22,16 +22,8 @@ class PotentialCenterTask(AbstractTask):
     """
 
     def __init__(self, eps: ScalarQuantity = 0.2 | units.kpc, top_fraction: float = 0.01):
-        self.eps = eps
-        self.top_fraction = top_fraction
+        super().__init__(center_type="potential", eps=eps, top_fraction=top_fraction)
 
     @profiler("Potential center task")
     def run(self, snapshot: Snapshot) -> DataType:
-        position = particle_centers.potential_center(
-            snapshot.particles, self.eps, self.top_fraction
-        )
-        velocity = particle_centers.potential_center_velocity(
-            snapshot.particles, self.eps, self.top_fraction
-        )
-
-        return {"position": position, "velocity": velocity}
+        return super().run(snapshot)

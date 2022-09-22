@@ -1,10 +1,9 @@
-import numpy as np
 from zlog import logger
 
+from omtool.core.tasks import DataType
 
-def logger_action(
-    data: dict[str, np.ndarray], id: str = "msg", print_last: bool = False
-) -> dict[str, np.ndarray]:
+
+def logger_action(data: DataType, id: str = "msg", print_last: bool = False) -> DataType:
     """
     Handler that logs ndarrays to the INFO level.
     """

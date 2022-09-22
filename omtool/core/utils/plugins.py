@@ -16,6 +16,7 @@ def import_modules(imports: list[str], has_globs: bool = True):
         imports = filenames
 
     for filename in imports:
+        logger.debug().string("filename", filename).msg("discovering")
         path = pathlib.Path(filename)
         sys.path.append(str(path.parent))
 

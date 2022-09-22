@@ -2,14 +2,14 @@
 Abstract tasks' classes. Import this if you want to create your own task.
 """
 from abc import ABC, abstractmethod
-from typing import List, Tuple
+from typing import Any, List, Tuple
 
 import numpy as np
 from amuse.lab import Particles, ScalarQuantity, units
 
 from omtool.core.datamodel.snapshot import Snapshot
 
-DataType = dict[str, np.ndarray]
+DataType = dict[str, Any]
 
 
 def get_parameters(particles: Particles) -> dict:

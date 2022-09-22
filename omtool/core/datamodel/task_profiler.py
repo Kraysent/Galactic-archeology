@@ -1,10 +1,6 @@
 """
 Description of the profiler decorator and accompanying methods.
 """
-# pylint: disable=invalid-name,global-statement
-# Since profiler is decorator, pylint does not understand
-# the naming convention for it.
-# Also profiler is singleton so it needs global statement.
 import time
 from collections import namedtuple
 from typing import Any, Dict, Optional

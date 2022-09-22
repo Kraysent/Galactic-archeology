@@ -1,6 +1,6 @@
 import numpy as np
 
-DataType = dict[str, np.ndarray]
+from omtool.core.tasks import DataType
 
 
 def fit_polynomial(data: DataType, degree: int, x: str, y: str) -> DataType:
