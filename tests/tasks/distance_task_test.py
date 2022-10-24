@@ -16,7 +16,7 @@ class TestDistanceTask(BaseTestCase):
 
         self.assertEqual(len(actual), len(expected))
 
-        for key, _ in expected.items():
+        for key in expected:
             self.assertNdarraysEqual(actual[key], expected[key])
 
     def test_three_iterations(self):
@@ -33,5 +33,5 @@ class TestDistanceTask(BaseTestCase):
 
         self.assertEqual(len(actual), len(expected))
 
-        for key, _ in expected.items():
+        for key in expected:
             self.assertNdarraysEqual(actual[key], expected[key])
