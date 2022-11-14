@@ -30,7 +30,7 @@ visualizer:
   title: "Time: {time:07.01f} Myr"
   pickle_filename: "pickle-{i:03}.pickle"
   figsize: [20, 11]
-  pic_filename: "img-{i:03d}.png"
+  pic_filename: "img-{i:03d}.pdf"
   panels:
     - id: zy_plane
       coords: [0, 0.35, 0.35, 0.6]
@@ -92,16 +92,22 @@ visualizer:
 
 # List of tasks. Each one describes arguments to its constructor and list of actions.
 tasks:
-  - name: PotentialCenterTask
+  - name: CenterTask
     id: host_potential_center
+    args:
+      center_type: potential
     actions_before:
       - *host
-  - name: PotentialCenterTask
+  - name: CenterTask
     id: sat_potential_center
+    args:
+      center_type: potential
     actions_before:
       - *satellite
-  - name: PotentialCenterTask
+  - name: CenterTask
     id: total_potential_center
+    args:
+      center_type: potential
 
   - name: ScatterTask
     args: &args

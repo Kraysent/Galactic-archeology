@@ -8,6 +8,13 @@ sat_slice: &sat_slice
   parts: [[0.666666, 1]]
 sat_color: &sat_clr r
 
+commons:
+  plot_params: &plot_params
+    is_density_plot: True
+    resolution: 700
+    extent: [-45, 45, -40, 40]
+    y: y
+
 input_file:
   format: fits
   filenames:
@@ -16,8 +23,8 @@ input_file:
 visualizer:
   output_dir: !env "{WORKING_DIR}/analysis"
   title: ""
-  figsize: [20, 10]
-  pic_filename: "img-{i:03d}.png"
+  figsize: [11, 7]
+  pic_filename: "img-{i:03d}.pdf"
   panels:
     - id: zy_plane
       coords: [0, 0.6, 0.6, 1]
@@ -44,34 +51,25 @@ tasks:
         x: "x"
         y: "y"
         z: "z"
-        m: "m"
       units:
         x: !q [1, kpc]
         y: !q [1, kpc]
         z: !q [1, kpc]
-        m: !q [1, MSun]
     actions_before:
       - *host_slice
       - type: barion_filter
     actions_after:
       - type: visualizer
+        <<: *plot_params
         id: xy_plane
-        is_density_plot: True
-        resolution: 700
-        extent: [-45, 45, -40, 40]
         channel: *host_clr
         x: x
-        y: y
-        weights: m
+        label: "host"
       - type: visualizer
+        <<: *plot_params
         id: zy_plane
-        is_density_plot: True
-        resolution: 700
-        extent: [-45, 45, -40, 40]
         channel: *host_clr
         x: z
-        y: y
-        weights: m
 
   - name: ScatterTask
     args: *args
@@ -80,20 +78,13 @@ tasks:
       - type: barion_filter
     actions_after:
       - type: visualizer
+        <<: *plot_params
         id: xy_plane
-        is_density_plot: True
-        resolution: 700
-        extent: [-45, 45, -40, 40]
         channel: *sat_clr
         x: x
-        y: y
-        weights: m
+        label: "satellite"
       - type: visualizer
+        <<: *plot_params
         id: zy_plane
-        is_density_plot: True
-        resolution: 700
-        extent: [-45, 45, -40, 40]
         channel: *sat_clr
         x: z
-        y: y
-        weights: m

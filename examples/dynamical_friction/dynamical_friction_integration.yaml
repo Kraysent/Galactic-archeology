@@ -1,0 +1,73 @@
+input_file:
+  format: fits
+  filenames:
+    - !env "{WORKING_DIR}/test.fits"
+output_file: !env "{WORKING_DIR}/test_out.fits"
+overwrite: True
+model_time: !q [1.e+4, Myr]
+snapshot_interval: 1
+
+integrator:
+  name: pyfalcon
+  args:
+    kmax: 9
+    eps: !q [0.2, kpc]
+
+logging:
+  level: debug
+  filename: !env "{WORKING_DIR}/test_json_log.txt"
+
+visualizer:
+  output_dir: !env "{WORKING_DIR}/analysis"
+  title: ""
+  figsize: [20, 10]
+  pic_filename: "img-{i:03d}.png"
+  panels:
+    - id: xy_plane
+      coords: [0, 1, 1, 1]
+      params:
+        xlim: [-0.7, 0.7]
+        ylim: [-0.7, 0.7]
+        yticks: []
+        xticks: []
+
+tasks:
+  - name: ScatterTask
+    args:
+      expressions:
+        x: "x"
+        y: "y"
+        z: "z"
+      units:
+        x: !q [1, kpc]
+        y: !q [1, kpc]
+        z: !q [1, kpc]
+    actions_after:
+      - type: visualizer
+        id: xy_plane
+        x: x
+        y: y
+        markersize: 2
+        color: r
+  - name: ScatterTask
+    args:
+      expressions:
+        x: "x"
+        y: "y"
+        z: "z"
+      units:
+        x: !q [1, kpc]
+        y: !q [1, kpc]
+        z: !q [1, kpc]
+    actions_before:
+      - type: slice
+        id: 0
+    actions_after:
+      - type: visualizer
+        id: xy_plane
+        x: x
+        y: y
+        markersize: 20
+        linestyle: solid
+        marker: o
+        color: b
