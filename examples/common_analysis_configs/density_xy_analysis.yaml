@@ -14,7 +14,7 @@ imports:
   tasks:
     - "tools/tasks/scatter_task.py"
     - "tools/tasks/density_profile_task.py"
-    - "tools/tasks/potential_center_task.py"
+    - "tools/tasks/center_task.py"
 
 logging:
   level: debug
