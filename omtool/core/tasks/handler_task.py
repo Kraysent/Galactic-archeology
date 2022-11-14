@@ -12,9 +12,9 @@ class HandlerTask:
     def __init__(
         self,
         task: AbstractTask,
-        inputs: dict[str, str] = None,
-        actions_before: list[Callable[[Snapshot], Snapshot]] = None,
-        actions_after: list[Callable[[DataType], DataType]] = None,
+        inputs: dict[str, str] | None = None,
+        actions_before: list[Callable[[Snapshot], Snapshot]] | None = None,
+        actions_after: list[Callable[[DataType], DataType]] | None = None,
     ):
         inputs = inputs or {}
         actions_before = actions_before or []

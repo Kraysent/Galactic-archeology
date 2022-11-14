@@ -47,16 +47,22 @@ visualizer:
         grid: True
 
 tasks:
-  - name: PotentialCenterTask
+  - name: CenterTask
     id: host_potential_center
+    args:
+      center_type: potential
     actions_before:
       - *host
-  - name: PotentialCenterTask
+  - name: CenterTask
     id: sat_potential_center
+    args:
+      center_type: potential
     actions_before:
       - *satellite
-  - name: PotentialCenterTask
+  - name: CenterTask
     id: total_potential_center
+    args:
+      center_type: potential
 
   - name: DensityProfileTask
     inputs:

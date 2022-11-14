@@ -8,7 +8,7 @@ from omtool.actions_after.visualizer_action import VisualizerAction
 
 
 def initialize_actions_after(
-    vis_service: visualizer.VisualizerService = None,
+    vis_service: visualizer.VisualizerService | None = None,
 ) -> dict[str, Callable]:
     actions_after: dict[str, Callable] = {
         "logging": logger_action,

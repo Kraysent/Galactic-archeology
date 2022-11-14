@@ -19,7 +19,7 @@ class ScalarQuantityField(Field):
 
 
 def logger_action(
-    data: DataType, id: str = "msg", print_last: bool = False, fields: list = None
+    data: DataType, id: str = "msg", print_last: bool = False, fields: list | None = None
 ) -> DataType:
     """
     Handler that logs fields to the INFO level.
