@@ -1,5 +1,6 @@
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
+import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.axes import Axes
@@ -125,11 +126,13 @@ class Visualizer:
 
     def _draw_images(
         self,
-        lst: List[Tuple[str, Dict[str, np.ndarray]]],
-        params: Dict[str, DrawParameters],
+        images: dict[str, dict[str, np.ndarray]],
+        params: dict[str, DrawParameters],
         background_color=1,
     ):
-        for (axes_id, channels) in lst:
+        patches = []
+
+        for (axes_id, channels) in images.items():
             for i in ("r", "g", "b"):
                 channels[i] = self._scale_array(channels[i], 0, 1)
 
@@ -141,6 +144,10 @@ class Visualizer:
                 extent=params[axes_id].extent,
                 interpolation="nearest",
                 aspect="auto",
+            )
+
+            patches.append(
+                mpatches.Patch(color=params[axes_id].channel, label=params[axes_id].label)
             )
 
     def _save_image(self, filename: str, dpi: int):
@@ -155,6 +162,7 @@ class Visualizer:
     def save(self, pic_filename: str, pickle_filename: Optional[str] = None, dpi: int = 120):
         images: Dict[str, Dict[str, np.ndarray]] = {}
         imparams = {}
+        patches_map: dict[str, list[mpatches.Patch]] = {}
 
         for (data, params) in self.pictures:
             if not params.is_density_plot:
@@ -178,7 +186,18 @@ class Visualizer:
                 images[params.id][params.channel] += hist
                 imparams[params.id] = params
 
-        self._draw_images(list(images.items()), imparams, 0.85)
+                if params.label is not None:
+                    if params.id not in patches_map:
+                        patches_map[params.id] = []
+
+                    patches_map[params.id].append(
+                        mpatches.Patch(color=params.channel, label=params.label)
+                    )
+
+        self._draw_images(images, imparams, 0.85)
+
+        for axes_id, patches in patches_map.items():
+            self.get_axes(axes_id).legend(handles=patches, loc="upper left")
 
         self._save_image(pic_filename, dpi)
 

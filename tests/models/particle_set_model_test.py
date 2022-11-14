@@ -23,4 +23,3 @@ class TestParticleSet(BaseTestCase):
         actual = model.run()
 
         self.assertTrue((actual.particles.mass == 10 | units.MSun).all())
-
