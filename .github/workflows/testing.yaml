@@ -6,7 +6,7 @@ jobs:
   test-ubuntu:
     runs-on: ubuntu-latest
     env:
-      PYTHONBIN: /opt/hostedtoolcache/Python/3.10.6/x64/bin/python3
+      PYTHONBIN: /opt/hostedtoolcache/Python/3.10.8/x64/bin/python3
     steps:
       - name: Install python
         uses: actions/setup-python@v4
