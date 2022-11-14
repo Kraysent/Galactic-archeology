@@ -12,7 +12,7 @@ def str_to_unit(name: str) -> named_unit:
 
 
 def unit_cartesian_constructor(
-    loader: yaml.SafeLoader, node: yaml.nodes.Node
+    loader: yaml.SafeLoader, node: yaml.nodes.SequenceNode
 ) -> ScalarQuantity | VectorQuantity:
     """
     Processes the !q tag
@@ -29,7 +29,7 @@ def unit_cartesian_constructor(
 
 
 def unit_spherical_constructor(
-    loader: yaml.SafeLoader, node: yaml.nodes.Node
+    loader: yaml.SafeLoader, node: yaml.nodes.SequenceNode
 ) -> ScalarQuantity | VectorQuantity:
     """
     Processes the !qs tag
@@ -66,7 +66,7 @@ def env_constructor(loader: yaml.SafeLoader, node: yaml.nodes.ScalarNode) -> str
     return data.format(**os.environ)
 
 
-def slice_constructor(loader: yaml.SafeLoader, node: yaml.nodes.ScalarNode) -> slice:
+def slice_constructor(loader: yaml.SafeLoader, node: yaml.nodes.SequenceNode) -> slice:
     """
     Processes the !slice tag
     """
