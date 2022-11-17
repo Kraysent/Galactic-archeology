@@ -51,7 +51,7 @@ You can start it with
 
 .. code-block:: bash
 
-   cd cli && python main.py create /path/to/config/file.yaml
+   python main.py create /path/to/config/file.yaml
 
 Integration
 ==============
@@ -59,7 +59,7 @@ This module is responsible for actual integration of the model from previous mod
 
 .. code-block:: bash
 
-   cd cli && python main.py integrate /path/to/config/file.yaml
+   python main.py integrate /path/to/config/file.yaml
 
 It will print some info into console and gradually produce output FITS file. Each HDU of this file would contain timestamp in the ``TIME`` header and table with fields ``[x, y, z, vx, vy, vz, m]``. Be aware that depending on number of particles it can take quite a lot of disk space.
 
@@ -70,7 +70,7 @@ This module is responsible for the visualization of file with snapshots (for exa
 
 .. code-block:: bash
 
-   cd cli && python main.py analize /path/to/config/file.yaml
+   python main.py analize /path/to/config/file.yaml
 
 If done right it should produce a lot of pictures (the same amount as number of timestamps in the input file) similar to this one: 
 
