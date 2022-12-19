@@ -102,7 +102,7 @@
       "additionalProperties": false,
       "properties": {
         "coords": {
-          "description": "Position and size of the graph in form of [x, y, width, height]. Coordinates are counted from the left bottom of the picture.",
+          "description": "Position and size of the graph in form of [left, bottom, width, height]. Coordinates are counted from the left bottom of the picture.",
           "items": {
             "format": "float",
             "title": "coords",
@@ -285,10 +285,21 @@
           "title": "panels",
           "type": "array"
         },
+        "pdf_name": {
+          "description": "Name of the pdf file to save all snapshot pictures to.",
+          "title": "pdf_name",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "pic_filename": {
           "description": "Pictures will be saved in output_dir with this filename. {i} is iteration number.",
           "title": "pic_filename",
-          "type": "string"
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "pickle_filename": {
           "description": "Pickle files will be saved in output_dir with this filename. {i} is iteration number.",

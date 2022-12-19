@@ -4,6 +4,7 @@ import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.axes import Axes
+from PyPDF2 import PdfMerger
 
 from omtool.visualizer.config import PanelConfig
 from omtool.visualizer.draw_parameters import DrawParameters
@@ -23,8 +24,9 @@ class Visualizer:
     def set_title(self, title: str):
         self.figure.suptitle(title)
 
-    def set_figsize(self, width: float, height: float):
-        self.figure.set_size_inches(width, height)
+    def set_figsize(self, width: int, height: int):
+        px = 1 / plt.rcParams["figure.dpi"]
+        self.figure.set_size_inches(width * px, height * px)
 
     def add_axes(self, panel_config: PanelConfig):
         axes: Axes = self.figure.add_axes(panel_config.coords)
@@ -128,7 +130,7 @@ class Visualizer:
         self,
         images: dict[str, dict[str, np.ndarray]],
         params: dict[str, DrawParameters],
-        background_color=1,
+        background_color: float = 1,
     ):
         patches = []
 
@@ -150,16 +152,20 @@ class Visualizer:
                 mpatches.Patch(color=params[axes_id].channel, label=params[axes_id].label)
             )
 
-    def _save_image(self, filename: str, dpi: int):
-        self.figure.savefig(filename, dpi=dpi, bbox_inches="tight")
-
     def _save_pickle(self, filename: str):
         import pickle
 
         with open(filename, "wb") as f:
             pickle.dump(self.figure, f)
 
-    def save(self, pic_filename: str, pickle_filename: Optional[str] = None, dpi: int = 120):
+    def save(
+        self,
+        pic_filename: Optional[str] = None,
+        pickle_filename: Optional[str] = None,
+        dpi: int = 120,
+        pdf_object: Optional[PdfMerger] = None,
+        pdf_tmp_path: Optional[str] = None,
+    ):
         images: Dict[str, Dict[str, np.ndarray]] = {}
         imparams = {}
         patches_map: dict[str, list[mpatches.Patch]] = {}
@@ -199,10 +205,15 @@ class Visualizer:
         for axes_id, patches in patches_map.items():
             self.get_axes(axes_id).legend(handles=patches, loc="upper left")
 
-        self._save_image(pic_filename, dpi)
+        if pic_filename is not None:
+            self.figure.savefig(pic_filename, bbox_inches="tight")
 
         if pickle_filename is not None:
             self._save_pickle(pickle_filename)
+
+        if pdf_object is not None and pdf_tmp_path is not None:
+            self.figure.savefig(pdf_tmp_path)
+            pdf_object.append(pdf_tmp_path)
 
         def clear(axes: Axes):
             while len(axes.artists) != 0:

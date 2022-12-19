@@ -28,7 +28,7 @@ class PanelSchema(Schema):
     coords = fields.List(
         fields.Float(),
         load_default=(0, 1, 1, 1),
-        description="Position and size of the graph in form of [x, y, width, height]. "
+        description="Position and size of the graph in form of [left, bottom, width, height]. "
         "Coordinates are counted from the left bottom of the picture.",
     )
     params = fields.Nested(
@@ -53,7 +53,7 @@ class VisualizerConfigSchema(Schema):
     )
     figsize = fields.List(fields.Int(), load_default=(16, 9), description="Figure size in inches.")
     pic_filename = fields.Str(
-        load_default="img-{i:03d}.png",
+        load_default=None,
         description="Pictures will be saved in output_dir with this filename. "
         "{i} is iteration number.",
     )
@@ -66,6 +66,10 @@ class VisualizerConfigSchema(Schema):
         fields.Nested(PanelSchema),
         required=True,
         description="List of panels, their layouts and properties.",
+    )
+    pdf_name = fields.Str(
+        load_default=None,
+        description="Name of the pdf file to save all snapshot pictures to.",
     )
 
     @post_load

@@ -1,9 +1,9 @@
 host_slice: &host_slice
-  - [[0, 0.666666]]
+  - [0, 0.666666]
 host_color: &host_clr b
 
 sat_slice: &sat_slice
-  - [[0.666666, 1]]
+  - [0.666666, 1]
 sat_color: &sat_clr r
 
 all_color: &all_clr y
@@ -20,8 +20,7 @@ logging:
 visualizer:
   output_dir: !env "{WORKING_DIR}/analysis"
   title: "Time: {time:07.01f} Myr"
-  # pickle_filename: "pickle-{i:03}.pickle"
-  figsize: [20, 11]
+  figsize: [1600, 900]
   pic_filename: "img-{i:03d}.pdf"
   panels:
     - id: zy_plane
@@ -42,7 +41,7 @@ visualizer:
         yticks: []
         xticks: [0, 10]
     - id: potential_dist_plane
-      coords: [0.72, 0.66, 0.14, 0.3]
+      coords: [0.72, 0.66, 0.24, 0.3]
       params:
         xlim: [0, 50]
         ylim: [0, 3]
@@ -114,7 +113,7 @@ tasks:
         z: !q [1, kpc]
     actions_before:
       - type: slice
-        part: *host_slice
+        parts: *host_slice
       - type: barion_filter
     actions_after:
       - type: visualizer
@@ -137,7 +136,7 @@ tasks:
     args: *args
     actions_before:
       - type: slice
-        part: *sat_slice
+        parts: *sat_slice
       - type: barion_filter
     actions_after:
       - type: visualizer
@@ -202,7 +201,7 @@ tasks:
       number_of_iterations: 5
     actions_before:
       - type: slice
-        part: *sat_slice
+        parts: *sat_slice
     actions_after:
       - type: visualizer
         id: bound_mass_evolution_plane
@@ -229,7 +228,7 @@ tasks:
       center_vel: host_potential_center.velocity
     actions_before:
       - type: slice
-        part: *host_slice
+        parts: *host_slice
     actions_after:
       - type: visualizer
         id: velocity_profile_panel
@@ -245,7 +244,7 @@ tasks:
       center_vel: sat_potential_center.velocity
     actions_before:
       - type: slice
-        part: *sat_slice
+        parts: *sat_slice
     actions_after:
       - type: visualizer
         id: velocity_profile_panel
@@ -274,7 +273,7 @@ tasks:
       center: host_potential_center.position
     actions_before:
       - type: slice
-        part: *host_slice
+        parts: *host_slice
     actions_after:
       - type: visualizer
         id: density_profile_panel
@@ -289,7 +288,7 @@ tasks:
       center: sat_potential_center.position
     actions_before:
       - type: slice
-        part: *sat_slice
+        parts: *sat_slice
     actions_after:
       - type: visualizer
         id: density_profile_panel
