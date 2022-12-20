@@ -56,7 +56,7 @@ def main():
             with open(args.inputparams[0], "r", encoding="utf-8") as stream:
                 data = yaml.load(stream, Loader=yaml_loader())
 
-            integrate(IntegrationConfigSchema().load(data))
+            integrate(IntegrationConfigSchema().load(data), close_funcs)
         case "analize":
             with open(args.inputparams[0], "r", encoding="utf-8") as stream:
                 data = yaml.load(stream, Loader=yaml_loader())

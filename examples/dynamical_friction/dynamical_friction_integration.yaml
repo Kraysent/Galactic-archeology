@@ -20,8 +20,9 @@ logging:
 visualizer:
   output_dir: !env "{WORKING_DIR}/analysis"
   title: ""
-  figsize: [20, 10]
+  figsize: [1600, 900]
   pic_filename: "img-{i:03d}.png"
+  pdf_name: "result.pdf"
   panels:
     - id: xy_plane
       coords: [0, 1, 1, 1]

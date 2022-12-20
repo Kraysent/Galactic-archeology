@@ -212,7 +212,7 @@ class Visualizer:
             self._save_pickle(pickle_filename)
 
         if pdf_object is not None and pdf_tmp_path is not None:
-            self.figure.savefig(pdf_tmp_path)
+            self.figure.savefig(pdf_tmp_path, bbox_inches="tight")
             pdf_object.append(pdf_tmp_path)
 
         def clear(axes: Axes):
