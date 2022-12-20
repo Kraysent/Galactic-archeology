@@ -15,7 +15,7 @@ from omtool.core.tasks import DataType, initialize_tasks
 from omtool.core.utils import initialize_logger
 
 
-def integrate(config: IntegrationConfig):
+def integrate(config: IntegrationConfig, close_funcs: list[Callable[[], None]]):
     """
     Integration mode for the OMTool. Used to integrate existing model
     from the file and write it to another file.
@@ -24,6 +24,10 @@ def integrate(config: IntegrationConfig):
     visualizer_service = (
         visualizer.VisualizerService(config.visualizer) if config.visualizer is not None else None
     )
+
+    if visualizer_service is not None:
+        close_funcs.append(visualizer_service.close)
+
     actions_after: dict[str, Callable] = initialize_actions_after(visualizer_service)
     actions_before = initialize_actions_before()
     tasks = initialize_tasks(config.imports.tasks, config.tasks, actions_before, actions_after)

@@ -13,7 +13,7 @@ from omtool.core.tasks import DataType, initialize_tasks
 from omtool.core.utils import initialize_logger
 
 
-def analize(config: AnalysisConfig):
+def analize(config: AnalysisConfig, close_funcs: list[Callable[[], None]]):
     """
     Analysis mode for the OMTool. It is used for the data
     analysis of existing models and the export of their parameters.
@@ -22,6 +22,10 @@ def analize(config: AnalysisConfig):
     visualizer_service = (
         visualizer.VisualizerService(config.visualizer) if config.visualizer is not None else None
     )
+
+    if visualizer_service is not None:
+        close_funcs.append(visualizer_service.close)
+
     actions_after: dict[str, Callable] = initialize_actions_after(visualizer_service)
     actions_before = initialize_actions_before()
     tasks = initialize_tasks(config.imports.tasks, config.tasks, actions_before, actions_after)

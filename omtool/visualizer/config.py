@@ -34,3 +34,4 @@ class VisualizerConfig:
     pic_filename: str
     pickle_filename: Optional[str]
     panels: List[PanelConfig]
+    pdf_name: Optional[str]

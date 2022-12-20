@@ -5,8 +5,6 @@ on:
 jobs:
   test-ubuntu:
     runs-on: ubuntu-latest
-    env:
-      PYTHONBIN: /opt/hostedtoolcache/Python/3.10.8/x64/bin/python3
     steps:
       - name: Install python
         uses: actions/setup-python@v4
@@ -16,15 +14,15 @@ jobs:
         uses: actions/checkout@v3
       - name: Install core project deps
         run: |
-          sudo apt-get install build-essential gfortran python3-dev \
+          sudo apt-get install build-essential gfortran \
           libopenmpi-dev openmpi-bin \
           libgsl-dev cmake libfftw3-3 libfftw3-dev \
           libgmp3-dev libmpfr6 libmpfr-dev \
           libhdf5-serial-dev hdf5-tools \
           libblas-dev liblapack-dev git
-          $PYTHONBIN -m pip install -r requirements.txt
+          python3 -m pip install -r requirements.txt
           git clone https://github.com/GalacticDynamics-Oxford/pyfalcon.git
-          cd pyfalcon && $PYTHONBIN setup.py install
+          cd pyfalcon && python3 setup.py install
       - name: Run tests
         run: |
           make test
@@ -33,50 +31,50 @@ jobs:
           WORKING_DIR: /home/runner/test-plummer
         run: |
           sudo mkdir $WORKING_DIR
-          sudo WORKING_DIR=$WORKING_DIR $PYTHONBIN main.py create examples/plummer_sphere/creation.yaml
+          sudo WORKING_DIR=$WORKING_DIR python3 main.py create examples/plummer_sphere/creation.yaml
       - name: Run plummer sphere integration
         env:
           WORKING_DIR: /home/runner/test-plummer
         run: |
-          sudo WORKING_DIR=$WORKING_DIR $PYTHONBIN main.py integrate examples/plummer_sphere/integration.yaml
+          sudo WORKING_DIR=$WORKING_DIR python3 main.py integrate examples/plummer_sphere/integration.yaml
       - name: Run plummer sphere analysis
         env:
           WORKING_DIR: /home/runner/test-plummer
         run: |
           sudo mkdir $WORKING_DIR/analysis
-          sudo WORKING_DIR=$WORKING_DIR $PYTHONBIN main.py analize examples/plummer_sphere/analysis.yaml
+          sudo WORKING_DIR=$WORKING_DIR python3 main.py analize examples/plummer_sphere/analysis.yaml
       - name: Run plummer sphere analysis (spatial)
         env:
           WORKING_DIR: /home/runner/test-plummer
         run: |
           sudo rm -rf $WORKING_DIR/analysis
           sudo mkdir $WORKING_DIR/analysis
-          sudo WORKING_DIR=$WORKING_DIR $PYTHONBIN main.py analize examples/common_analysis_configs/spatial_analysis.yaml
+          sudo WORKING_DIR=$WORKING_DIR python3 main.py analize examples/common_analysis_configs/spatial_analysis.yaml
       - name: Run plummer sphere analysis (xy+density)
         env:
           WORKING_DIR: /home/runner/test-plummer
         run: |
           sudo rm -rf $WORKING_DIR/analysis
           sudo mkdir $WORKING_DIR/analysis
-          sudo WORKING_DIR=$WORKING_DIR $PYTHONBIN main.py analize examples/common_analysis_configs/density_xy_analysis.yaml
+          sudo WORKING_DIR=$WORKING_DIR python3 main.py analize examples/common_analysis_configs/density_xy_analysis.yaml
       - name: Run plummer sphere analysis (density+potential+velocity)
         env:
           WORKING_DIR: /home/runner/test-plummer
         run: |
           sudo rm -rf $WORKING_DIR/analysis 
           sudo mkdir $WORKING_DIR/analysis
-          sudo WORKING_DIR=$WORKING_DIR $PYTHONBIN main.py analize examples/common_analysis_configs/density_potential_velocity_analysis.yaml
+          sudo WORKING_DIR=$WORKING_DIR python3 main.py analize examples/common_analysis_configs/density_potential_velocity_analysis.yaml
       - name: Run plummer sphere analysis (cm_density+potential_density)
         env:
           WORKING_DIR: /home/runner/test-plummer
         run: |
           sudo rm -rf $WORKING_DIR/analysis
           sudo mkdir $WORKING_DIR/analysis
-          sudo WORKING_DIR=$WORKING_DIR $PYTHONBIN main.py analize examples/common_analysis_configs/cm-density_potcm-density_analysis.yaml
+          sudo WORKING_DIR=$WORKING_DIR python3 main.py analize examples/common_analysis_configs/cm-density_potcm-density_analysis.yaml
       - name: Run plummer sphere analysis (bound mass computation)
         env:
           WORKING_DIR: /home/runner/test-plummer
         run: |
           sudo rm -rf $WORKING_DIR/analysis
           sudo mkdir $WORKING_DIR/analysis
-          sudo WORKING_DIR=$WORKING_DIR $PYTHONBIN main.py analize examples/common_analysis_configs/bound_mass_computation_analysis.yaml
+          sudo WORKING_DIR=$WORKING_DIR python3 main.py analize examples/common_analysis_configs/bound_mass_computation_analysis.yaml

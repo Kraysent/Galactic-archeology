@@ -3,6 +3,7 @@
 import argparse
 import atexit
 import sys
+from typing import Callable
 
 import yaml
 from zlog import logger
@@ -15,6 +16,8 @@ from cli.python_schemas import (
 )
 from omtool import analize, create, integrate
 from omtool.core.datamodel import task_profiler
+
+close_funcs: list[Callable[[], None]] = []
 
 
 def main():
@@ -53,12 +56,12 @@ def main():
             with open(args.inputparams[0], "r", encoding="utf-8") as stream:
                 data = yaml.load(stream, Loader=yaml_loader())
 
-            integrate(IntegrationConfigSchema().load(data))
+            integrate(IntegrationConfigSchema().load(data), close_funcs)
         case "analize":
             with open(args.inputparams[0], "r", encoding="utf-8") as stream:
                 data = yaml.load(stream, Loader=yaml_loader())
 
-            analize(AnalysisConfigSchema().load(data))
+            analize(AnalysisConfigSchema().load(data), close_funcs)
         case "generate-schema":
             CreationConfigSchema().dump_schema(
                 "cli/schemas/creation_schema.json", indent=2, sort_keys=True
@@ -76,3 +79,6 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
         sys.exit(0)
+    finally:
+        for func in close_funcs:
+            func()

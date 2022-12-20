@@ -23,23 +23,3 @@ integrator:
 logging:
   level: debug
   filename: !env "{WORKING_DIR}/test_json_log.txt"
-
-# you can specify the list of tasks. For example, for logging
-tasks:
-  - name: ScatterTask
-    args:
-      expressions: { x: x, y: y, z: z, vx: vx, vy: vy, vz: vz, m: m }
-      units:
-        x: !q [1, kpc]
-        y: !q [1, kpc]
-        z: !q [1, kpc]
-        vx: !q [1, kms]
-        vy: !q [1, kms]
-        vz: !q [1, kms]
-        m: !q [1, MSun]
-    actions_before:
-      - type: slice
-        ids: [0, 1000001]
-    actions_after:
-      - type: logging
-        id: bh_params
