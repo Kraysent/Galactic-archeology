@@ -24,7 +24,7 @@ class ModelConfig:
     position: VectorQuantity
     velocity: VectorQuantity
     downsample_to: Optional[int]
-    rotation: RotationConfig
+    rotation: Optional[RotationConfig]
 
 
 def get_model(model_name: str, args: dict) -> AbstractModel | None:

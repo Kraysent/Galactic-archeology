@@ -53,19 +53,26 @@ def from_logged_csvs(
         yield particles, rows[0]["T"] | units.Myr
 
 
-def from_fits(filename: str) -> Iterator[Tuple[Particles, ScalarQuantity]]:
+def from_fits(
+    filename: str,
+    snapshot_index: int | None = None,
+    limit: int | None = None,
+) -> Iterator[Tuple[Particles, ScalarQuantity]]:
     """
     Loads snapshots from the FITS file where each HDU stores binary table with one timestamp.
+
+    Supports condition on snapshot number and limit.
     """
     hdul = fits.open(filename, memmap=False)
 
-    first = True
+    i = 0
+    number = 0
 
     table: BinTableHDU
     for table in hdul:
-        if first:
-            # skipping first HDU; it is required by the FITS specification.
-            first = False
+        # skipping first HDU; it is required by the FITS specification.
+        if i == 0:
+            i += 1
             continue
 
         number_of_particles = len(table.data[list(fields.keys())[0]])
@@ -84,10 +91,18 @@ def from_fits(filename: str) -> Iterator[Tuple[Particles, ScalarQuantity]]:
                     continue
                 setattr(particles, key, data)
 
-        yield particles, timestamp
-        del particles
-        del table
-        gc.collect()
+        if (snapshot_index is not None and i == snapshot_index) or snapshot_index is None:
+            number += 1
+            yield particles, timestamp
+            del particles
+            del table
+            gc.collect()
+
+            if limit is not None:
+                if number >= limit:
+                    break
+
+        i += 1
 
     hdul.close()
 
