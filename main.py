@@ -14,7 +14,7 @@ from cli.python_schemas import (
     CreationConfigSchema,
     IntegrationConfigSchema,
 )
-from omtool import analize, create, integrate
+from omtool import analize, create, export_csv, integrate
 from omtool.core.datamodel import task_profiler
 
 close_funcs: list[Callable[[], None]] = []
@@ -25,7 +25,7 @@ def main():
     parser.add_argument(
         "mode",
         help="Mode of the program to run",
-        choices=["create", "integrate", "analize", "generate-schema"],
+        choices=["create", "integrate", "analize", "generate-schema", "export-csv"],
     )
     parser.add_argument(
         "inputparams",
@@ -72,6 +72,9 @@ def main():
             AnalysisConfigSchema().dump_schema(
                 "cli/schemas/analysis_schema.json", indent=2, sort_keys=True
             )
+
+        case "export-csv":
+            export_csv(args.inputparams[0], args.inputparams[1], int(args.inputparams[2]))
 
 
 if __name__ == "__main__":

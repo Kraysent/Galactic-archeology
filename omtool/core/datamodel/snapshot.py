@@ -1,6 +1,7 @@
 """
 Struct that holds together particle set and timestamp that it describes.
 """
+import pandas as pd
 from amuse.datamodel.particles import Particles
 from amuse.lab import units
 from amuse.units.quantities import ScalarQuantity
@@ -86,3 +87,19 @@ class Snapshot:
                 hdu.writeto(filename, overwrite=True)
         else:
             hdu.writeto(filename, overwrite=True)
+
+    def to_csv(self, filename: str):
+        df = pd.DataFrame(columns=Snapshot.fields.keys())
+
+        for key, val in Snapshot.fields.items():
+            if not hasattr(self.particles, key):
+                continue
+
+            array = getattr(self.particles, key)
+
+            if val is not None:
+                array = array.value_in(val)
+
+            df[key] = array
+
+        df.to_csv(filename)
