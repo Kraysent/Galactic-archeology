@@ -1,6 +1,6 @@
+from omtool.core import datamodel
 from omtool.core.datamodel import Snapshot
 from omtool.core.models import AbstractModel, register_model
-from omtool.io_service import from_fits
 
 
 @register_model(name="fits")
@@ -10,11 +10,11 @@ class FITSModel(AbstractModel):
         self.snapshot_number = snapshot_number
 
     def run(self) -> Snapshot:
-        it = from_fits(self.filename)
+        it = datamodel.from_fits(self.filename)
 
         i = 0
-        for (i, snapshot_tuple) in enumerate(it):
+        for (i, snapshot) in enumerate(it):
             if i == self.snapshot_number:
-                return Snapshot(*snapshot_tuple)
+                return snapshot
 
         raise ValueError("Model not found")

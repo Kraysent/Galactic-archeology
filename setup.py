@@ -20,7 +20,6 @@ setup(
         "omtool.core.tasks",
         "omtool.actions_before",
         "omtool.actions_after",
-        "omtool.io_service",
         "omtool.visualizer",
     ],
     test_suite="tests",

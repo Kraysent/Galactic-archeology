@@ -3,9 +3,10 @@ from typing import Optional
 
 from amuse.lab import ScalarQuantity
 
-from omtool import io_service, visualizer
+from omtool import visualizer
 from omtool.core import tasks
 from omtool.core.configs.base_config import BaseConfig
+from omtool.core.configs.input_config import InputConfig
 from omtool.core.integrators import IntegratorConfig
 
 
@@ -17,7 +18,7 @@ class LogParams:
 
 @dataclass
 class IntegrationConfig(BaseConfig):
-    input_file: io_service.IOServiceConfig
+    input_file: InputConfig
     output_file: str
     overwrite: bool
     model_time: ScalarQuantity

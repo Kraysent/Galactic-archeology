@@ -11,7 +11,7 @@
           "type": "object"
         },
         "input_file": {
-          "$ref": "#/definitions/IOConfigSchema",
+          "$ref": "#/definitions/InputConfigSchema",
           "description": "Parameters of input file: its format and path.",
           "type": "object"
         },
@@ -38,30 +38,6 @@
       },
       "required": [
         "input_file"
-      ],
-      "type": "object"
-    },
-    "IOConfigSchema": {
-      "additionalProperties": false,
-      "properties": {
-        "filenames": {
-          "description": "List of filenames. In case of csv file they will be stacked together, in case of fits only the first one will be taken and the rest will be ignored.",
-          "items": {
-            "title": "filenames",
-            "type": "string"
-          },
-          "title": "filenames",
-          "type": "array"
-        },
-        "format": {
-          "description": "Format of the input file. Can be 'csv' or 'fits'.",
-          "title": "format",
-          "type": "string"
-        }
-      },
-      "required": [
-        "filenames",
-        "format"
       ],
       "type": "object"
     },
@@ -96,6 +72,30 @@
           "type": "array"
         }
       },
+      "type": "object"
+    },
+    "InputConfigSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "filenames": {
+          "description": "List of filenames. In case of csv file they will be stacked together, in case of fits only the first one will be taken and the rest will be ignored.",
+          "items": {
+            "title": "filenames",
+            "type": "string"
+          },
+          "title": "filenames",
+          "type": "array"
+        },
+        "format": {
+          "description": "Format of the input file. Can be 'csv' or 'fits'.",
+          "title": "format",
+          "type": "string"
+        }
+      },
+      "required": [
+        "filenames",
+        "format"
+      ],
       "type": "object"
     },
     "PanelSchema": {

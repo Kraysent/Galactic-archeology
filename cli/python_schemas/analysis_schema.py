@@ -1,15 +1,15 @@
 from marshmallow import fields, post_load
 
 from cli.python_schemas.base_schema import BaseSchema
+from cli.python_schemas.input_config_schema import InputConfigSchema
 from cli.python_schemas.tasks_schema import TaskConfigSchema
 from cli.python_schemas.visualizer_schema import VisualizerConfigSchema
-from omtool import io_service
 from omtool.core.configs import AnalysisConfig
 
 
 class AnalysisConfigSchema(BaseSchema):
     input_file = fields.Nested(
-        io_service.IOConfigSchema,
+        InputConfigSchema,
         required=True,
         description="Parameters of input file: its format and path.",
     )

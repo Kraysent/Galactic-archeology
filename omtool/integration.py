@@ -5,7 +5,7 @@ from typing import Callable
 from amuse.lab import units
 from zlog import logger
 
-from omtool import io_service, visualizer
+from omtool import visualizer
 from omtool.actions_after import initialize_actions_after
 from omtool.actions_before import initialize_actions_before
 from omtool.core.configs import IntegrationConfig
@@ -13,6 +13,7 @@ from omtool.core.datamodel import Snapshot, profiler
 from omtool.core.integrators import initialize_integrator
 from omtool.core.tasks import DataType, initialize_tasks
 from omtool.core.utils import initialize_logger
+from omtool.misc import initialize_input_snapshot
 
 
 def integrate(config: IntegrationConfig, close_funcs: list[Callable[[], None]]):
@@ -64,9 +65,8 @@ def integrate(config: IntegrationConfig, close_funcs: list[Callable[[], None]]):
                 {"i": iteration, "time": snapshot.timestamp.value_in(units.Myr)}
             )
 
-    input_service = io_service.InputService(config.input_file)
-    generator = input_service.get_snapshot_generator()
-    snapshot = Snapshot(*next(generator))
+    generator = initialize_input_snapshot(config.input_file)
+    snapshot = next(generator)
     logger.info().msg("Integration started")
     i = 0
 

@@ -1,16 +1,9 @@
-from dataclasses import dataclass
-from typing import List
-
 from marshmallow import Schema, fields, post_load
 
-
-@dataclass
-class IOServiceConfig:
-    format: str
-    filenames: List[str]
+from omtool.core.configs import InputConfig
 
 
-class IOConfigSchema(Schema):
+class InputConfigSchema(Schema):
     format = fields.Str(
         required=True, description="Format of the input file. Can be 'csv' or 'fits'."
     )
@@ -23,4 +16,4 @@ class IOConfigSchema(Schema):
 
     @post_load
     def make(self, data: dict, **kwargs):
-        return IOServiceConfig(**data)
+        return InputConfig(**data)

@@ -4,13 +4,14 @@ from typing import Callable
 from amuse.lab import ScalarQuantity, units
 from zlog import logger
 
-from omtool import io_service, visualizer
+from omtool import visualizer
 from omtool.actions_after import initialize_actions_after
 from omtool.actions_before import initialize_actions_before
 from omtool.core.configs import AnalysisConfig
 from omtool.core.datamodel import Snapshot, profiler
 from omtool.core.tasks import DataType, initialize_tasks
 from omtool.core.utils import initialize_logger
+from omtool.misc import initialize_input_snapshot
 
 
 def analize(config: AnalysisConfig, close_funcs: list[Callable[[], None]]):
@@ -44,12 +45,9 @@ def analize(config: AnalysisConfig, close_funcs: list[Callable[[], None]]):
 
     logger.info().msg("Analysis started")
 
-    input_service = io_service.InputService(config.input_file)
-    snapshots = input_service.get_snapshot_generator()
+    snapshots = initialize_input_snapshot(config.input_file)
 
-    for (i, snapshot_tuple) in enumerate(snapshots):
-        # convert iterator element to actual snapshot object
-        snapshot = Snapshot(*snapshot_tuple)
+    for (i, snapshot) in enumerate(snapshots):
         start_comp = time.time()
         loop_analysis_stage(snapshot)
         start_save = time.time()

@@ -7,22 +7,22 @@ from amuse.lab import units
 from amuse.units.quantities import ScalarQuantity
 from astropy.io import fits
 
+fields = {
+    "x": units.kpc,
+    "y": units.kpc,
+    "z": units.kpc,
+    "vx": units.kms,
+    "vy": units.kms,
+    "vz": units.kms,
+    "mass": units.MSun,
+    "is_barion": None,
+}
+
 
 class Snapshot:
     """
     Struct that holds together particle set and timestamp that it describes.
     """
-
-    fields = {
-        "x": units.kpc,
-        "y": units.kpc,
-        "z": units.kpc,
-        "vx": units.kms,
-        "vy": units.kms,
-        "vz": units.kms,
-        "mass": units.MSun,
-        "is_barion": None,
-    }
 
     def __init__(
         self,
@@ -45,7 +45,7 @@ class Snapshot:
 
         return Snapshot(particles, self.timestamp)
 
-    def add(self, other: "Snapshot", ignore_timestamp=False):
+    def add(self, other: "Snapshot", ignore_timestamp: bool = False):
         """
         Adds other snapshot to this one. If ignore_timestamps is False,
         does not change timestamp. Otherwise RuntimeError would be thrown if
@@ -62,7 +62,7 @@ class Snapshot:
         """
         cols = []
 
-        for (key, val) in Snapshot.fields.items():
+        for (key, val) in fields.items():
             if not hasattr(self.particles, key):
                 continue
 
@@ -89,9 +89,9 @@ class Snapshot:
             hdu.writeto(filename, overwrite=True)
 
     def to_csv(self, filename: str):
-        df = pd.DataFrame(columns=Snapshot.fields.keys())
+        df = pd.DataFrame(columns=fields.keys())
 
-        for key, val in Snapshot.fields.items():
+        for key, val in fields.items():
             if not hasattr(self.particles, key):
                 continue
 
