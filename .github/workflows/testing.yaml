@@ -6,10 +6,11 @@ jobs:
   test-ubuntu:
     runs-on: ubuntu-latest
     steps:
-      - name: Install python
-        uses: actions/setup-python@v4
+      - name: Setup Conda
+        uses: conda-incubator/setup-miniconda@v2
         with:
-          python-version: "3.10"
+          activate-environment: omtool
+          python-version: 3.10
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Install core project deps
@@ -20,7 +21,7 @@ jobs:
           libgmp3-dev libmpfr6 libmpfr-dev \
           libhdf5-serial-dev hdf5-tools \
           libblas-dev liblapack-dev git
-          python3 -m pip install -r requirements.txt
+          conda install --file requirements-conda.txt
           git clone https://github.com/GalacticDynamics-Oxford/pyfalcon.git
           cd pyfalcon && python3 setup.py install
       - name: Run tests
