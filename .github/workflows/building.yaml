@@ -10,7 +10,7 @@ jobs:
         uses: conda-incubator/setup-miniconda@v2
         with:
           activate-environment: omtool
-          python-version: 3.10
+          python-version: "3.10"
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Install core project deps
