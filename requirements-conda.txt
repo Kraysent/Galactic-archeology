@@ -92,7 +92,6 @@ pyflakes=2.4.0=pyhd3eb1b0_0
 pyparsing=3.0.9=py310hca03da5_0
 pypdf2=2.10.5=py310hca03da5_0
 pytest=7.2.0=pypi_0
-python=3.10.8=hc0d8a6c_1
 python-dateutil=2.8.2=pyhd3eb1b0_0
 pytz=2022.1=py310hca03da5_0
 pyyaml=6.0=py310h80987f9_1
