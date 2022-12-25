@@ -60,3 +60,8 @@ build-docs-html:
 
 build-docs-pdf:
 	cd docs && make latexpdf
+
+build-docker:
+	docker buildx build --platform linux/amd64 --load -t omtool package
+	docker tag omtool kraysent/omtool:$(git rev-parse --short main)
+	docker tag kraysent/omtool:$(git rev-parse --short main) kraysent/omtool:latest

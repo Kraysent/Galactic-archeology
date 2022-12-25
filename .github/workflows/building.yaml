@@ -5,28 +5,14 @@ on:
 jobs:
   build-ubuntu:
     runs-on: ubuntu-latest
+    container: "kraysent/omtool:latest"
     steps:
-      - name: Install python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.10"
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Install core project deps
-        run: |
-          sudo apt-get install build-essential gfortran python3-dev \
-          libopenmpi-dev openmpi-bin \
-          libgsl-dev cmake libfftw3-3 libfftw3-dev \
-          libgmp3-dev libmpfr6 libmpfr-dev \
-          libhdf5-serial-dev hdf5-tools \
-          libblas-dev liblapack-dev git
-          python3 -m pip install -r requirements.txt
-          git clone https://github.com/GalacticDynamics-Oxford/pyfalcon.git
-          cd pyfalcon && python3 setup.py install
       - name: Build pip package
         run: |
           python3  -m pip install . --upgrade
-          python setup.py sdist
+          python3 setup.py sdist
       - name: Upload build artifacts
         uses: actions/upload-artifact@v3
         with:
