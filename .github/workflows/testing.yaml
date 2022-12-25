@@ -20,7 +20,7 @@ jobs:
           libgmp3-dev libmpfr6 libmpfr-dev \
           libhdf5-serial-dev hdf5-tools \
           libblas-dev liblapack-dev git
-          python -m pip install -r requirements.txt
+          python -m pip install -r package/requirements.txt
           git clone https://github.com/GalacticDynamics-Oxford/pyfalcon.git
           cd pyfalcon && python setup.py install
       - name: Run tests
