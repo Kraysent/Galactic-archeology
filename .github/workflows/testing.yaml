@@ -5,24 +5,10 @@ on:
 jobs:
   test-ubuntu:
     runs-on: ubuntu-latest
+    container: "kraysent/omtool:latest"
     steps:
-      - name: Install python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.10"
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Install core project deps
-        run: |
-          sudo apt-get install build-essential gfortran \
-          libopenmpi-dev openmpi-bin \
-          libgsl-dev cmake libfftw3-3 libfftw3-dev \
-          libgmp3-dev libmpfr6 libmpfr-dev \
-          libhdf5-serial-dev hdf5-tools \
-          libblas-dev liblapack-dev git
-          python -m pip install -r package/requirements.txt
-          git clone https://github.com/GalacticDynamics-Oxford/pyfalcon.git
-          cd pyfalcon && python setup.py install
       - name: Run tests
         run: |
           make test
