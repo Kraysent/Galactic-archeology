@@ -14,8 +14,26 @@ class BaseTestCase(unittest.TestCase):
     def assertNdarraysEqual(self, first: np.ndarray, second: np.ndarray):
         np.testing.assert_array_equal(first, second)
 
+    def assertAmuseParticlesEqual(self, first: Particles, second: Particles):
+        self.assertEqual(len(first), len(second))
+
+        if len(first) == 0:
+            return
+
+        self.assertNdarraysEqual(first.x, second.x)
+        self.assertNdarraysEqual(first.y, second.y)
+        self.assertNdarraysEqual(first.z, second.z)
+
+        self.assertNdarraysEqual(first.vx, second.vx)
+        self.assertNdarraysEqual(first.vy, second.vy)
+        self.assertNdarraysEqual(first.vz, second.vz)
+
+        self.assertNdarraysEqual(first.mass, second.mass)
+
     def assertSnapshotsEqual(self, first: Snapshot, second: Snapshot, test_kinematics: bool = True):
         self.assertEqual(len(first.particles), len(second.particles))
+
+        self.assertEqual(first.timestamp, second.timestamp)
 
         if len(first.particles) == 0:
             return
@@ -30,8 +48,6 @@ class BaseTestCase(unittest.TestCase):
             self.assertNdarraysEqual(first.particles.vz, second.particles.vz)
 
         self.assertNdarraysEqual(first.particles.mass, second.particles.mass)
-
-        self.assertEqual(first.timestamp, second.timestamp)
 
     def _generate_snapshot(self, N: int = 100) -> Snapshot:
         snapshot = Snapshot(Particles(N))

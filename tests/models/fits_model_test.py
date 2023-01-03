@@ -1,7 +1,6 @@
-from typing import Iterator
 from unittest.mock import patch
 
-from amuse.lab import Particles, ScalarQuantity, units
+from amuse.lab import Particles, units
 
 from omtool.core.datamodel import Snapshot
 from omtool.core.utils import BaseTestCase
