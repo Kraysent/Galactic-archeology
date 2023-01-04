@@ -6,8 +6,8 @@ setup(
     author="Artyom Zaporozhets",
     url="https://github.com/Kraysent/OMTool",
     description="Package and program that models N-Body problem in galactic evolution application.",
-    long_description=open("README.rst").read(),
-    long_description_content_type="text/x-rst",
+    long_description=open("README.md").read(),
+    long_description_content_type="text/x-markdown",
     license="Apache-2.0",
     packages=[
         "omtool",
