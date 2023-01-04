@@ -30,7 +30,7 @@ This project has [automated testing](https://www.atlassian.com/continuous-delive
 
 ### Dockerfile
 
-Since Github Actions work as a container (kinda like virtual machine) that runs specific commands, it is faster to prepare container with all of the dependencies already installed and only run commands themself. This is exactly what Dockerfile does: prepare container which can be installed and then pushed to docker repository ([Docker Hub](https://hub.docker.com/)). Then Github Actions download this image and run all of the tests inside it. Dockerfile is located [here](https://github.com/Kraysent/OMTool/blob/main/Makefile).
+Since Github Actions work as a container (kinda like virtual machine) that runs specific commands, it is faster to prepare container with all of the dependencies already installed and only run commands themself. This is exactly what Dockerfile does: prepare container which can be installed and then pushed to docker repository ([Docker Hub](https://hub.docker.com/)). Then Github Actions download this image and run all of the tests inside it. Dockerfile is located [here](https://github.com/Kraysent/OMTool/blob/main/package/Dockerfile).
 
 ### Tests
 
