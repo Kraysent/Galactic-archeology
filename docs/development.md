@@ -35,7 +35,10 @@ Since Github Actions work as a container (kinda like virtual machine) that runs 
 ### Tests
 
 There are 4 types of tests: 
+
 * **Building**: check if pip package can be built and upload result of the build into artefacts.
 * **Linting**: check if all of the codestyle is correct across all of the files.
 * **Statistics**: not really a check, just spits out some statistics about the project.
 * **Testing**: Run all of the tests with `unittest`.
+
+Also there is action for documentation building but it is handled by ReadTheDocs.

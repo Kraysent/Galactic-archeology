@@ -1,3 +1,33 @@
 site_name: OMTool
+repo_url: https://github.com/Kraysent/OMTool
+repo_name: Kraysent/OMTool
+plugins:
+  - git-revision-date-localized:
+      type: timeago
 theme:
   name: material
+  icon:
+    repo: fontawesome/brands/github
+    view: material/eye
+    edit: material/pencil
+  features:
+    - navigation.instant
+    - navigation.indexes
+    - navigation.top
+    - content.action.view
+    - content.action.edit
+  palette:
+    - scheme: slate
+      media: "(prefers-color-scheme: dark)"
+      primary: black
+      accent: blue
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
+    - scheme: default
+      media: "(prefers-color-scheme: light)"
+      primary: black
+      accent: blue
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to automatic mode

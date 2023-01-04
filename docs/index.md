@@ -1,4 +1,4 @@
-# Open Modeling Tool
+# Getting started
 
 ## Description
 OMTool (Open Modeling Tool) is used to numerically solve and visualize N-body problem with huge number of particles. Primary application is galactic evolution. 

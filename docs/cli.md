@@ -12,7 +12,7 @@ omtool create <path>
 
 ### Description
 
-Implements model creation functionality. All it does is calling of `create()` function with configuration loaded from YAML configuration file. For longer description see [its documentation](creation.rst).
+Implements model creation functionality. All it does is calling of `create()` function with configuration loaded from YAML configuration file. For longer description see [its documentation](creation.md).
 
 ## `integrate`
 
