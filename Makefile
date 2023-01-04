@@ -55,11 +55,11 @@ check: check-isort check-black check-mypy test
 build-pip:
 	$(PYTHON) -m pip install . --upgrade
 
-build-docs-html:
-	cd docs && make html
+build-docs:
+	mkdocs build
 
-build-docs-pdf:
-	cd docs && make latexpdf
+serve-docs: build-docs
+	mkdocs serve
 
 build-docker:
 	docker buildx build --platform linux/amd64 --load -t omtool package
