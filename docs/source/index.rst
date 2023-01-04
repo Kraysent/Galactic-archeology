@@ -10,5 +10,6 @@ OMT (Open Modeling Tool) is used to numerically solve and visualize N-body probl
    :maxdepth: 2
    
    readme
+   cli
    creation
    development
