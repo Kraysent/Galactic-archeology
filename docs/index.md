@@ -54,8 +54,6 @@ python main.py create /path/to/config/file.yaml
 
 This module is responsible for actual integration of the model from previous module. It operates similarly: you create [configuration file](https://github.com/Kraysent/OMTool/blob/main/examples/full_model/integration_config.yaml) with all the data necessary. Next step is to launch 
 
-.. code-block:: bash
-
 ```bash
 python main.py integrate /path/to/config/file.yaml
 ```
