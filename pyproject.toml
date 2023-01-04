@@ -4,7 +4,7 @@ version = "0.4.0"
 description = "Package and program that models N-Body problem in galactic evolution application."
 authors = ["Artyom Zaporozhets <kraysent@gmail.com>"]
 license = "Apache-2.0"
-readme = "README.rst"
+readme = "README.md"
 repository = "https://github.com/Kraysent/OMTool"
 documentation = "https://omtool.readthedocs.io/en/latest/"
 
