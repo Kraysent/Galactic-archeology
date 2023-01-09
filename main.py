@@ -4,18 +4,18 @@ import atexit
 import sys
 from typing import Callable
 
+import click
 import yaml
 from zlog import logger
 
+import omtool
 from cli.config_utils import yaml_loader
 from cli.python_schemas import (
     AnalysisConfigSchema,
     CreationConfigSchema,
     IntegrationConfigSchema,
 )
-import omtool
 from omtool.core.datamodel import task_profiler
-import click
 
 close_funcs: list[Callable[[], None]] = []
 
