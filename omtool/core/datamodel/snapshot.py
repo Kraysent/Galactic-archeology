@@ -1,6 +1,8 @@
 """
 Struct that holds together particle set and timestamp that it describes.
 """
+
+import contextlib
 import pandas as pd
 from amuse.datamodel.particles import Particles
 from amuse.lab import units
@@ -8,13 +10,16 @@ from amuse.units.quantities import ScalarQuantity
 from astropy.io import fits
 
 fields = {
-    "x": units.kpc,
-    "y": units.kpc,
-    "z": units.kpc,
-    "vx": units.kms,
-    "vy": units.kms,
-    "vz": units.kms,
-    "mass": units.MSun,
+    "x": 1 | units.kpc,
+    "y": 1 | units.kpc,
+    "z": 1 | units.kpc,
+    "vx": 1 | units.kms,
+    "vy": 1 | units.kms,
+    "vz": 1 | units.kms,
+    "mass": 1 | units.MSun,
+}
+
+optional_fields = {
     "is_barion": None,
 }
 
@@ -29,8 +34,49 @@ class Snapshot:
         particles: Particles = Particles(),
         timestamp: ScalarQuantity = 0 | units.Myr,
     ):
-        self.particles = particles
+        self._particles_df = pd.DataFrame(columns=fields.keys())
+
+        for field, unit in fields.items():
+            if unit is None:
+                self._particles_df[field] = getattr(particles, field)
+            else:
+                self._particles_df[field] = getattr(particles, field) / unit
+
+        for field, unit in optional_fields.items():
+            with contextlib.suppress(AttributeError):
+                if unit is None:
+                    self._particles_df[field] = getattr(particles, field)
+                else:
+                    self._particles_df[field] = getattr(particles, field) / unit
+
+        self._particles = particles
         self.timestamp = timestamp
+
+    def get_amuse_particles(self) -> Particles:
+        particles = Particles(len(self._particles_df))
+
+        for column in self._particles_df.columns:
+            unit = fields[column]
+            if unit is None:
+                setattr(particles, column, self._particles_df[column])
+            else:
+                setattr(particles, column, self._particles_df[column] * unit)
+
+        return particles
+
+    @property
+    def particles(self) -> Particles:
+        """
+        Returns AMUSE Particles object.
+        """
+        return self._particles
+
+    @particles.setter
+    def particles(self, particles: Particles):
+        """
+        Deprecated. Sets particles from AMUSE Particles object. Exists only for backwards compatibility.
+        """
+        self._particles = particles
 
     def __getitem__(self, value) -> "Snapshot":
         return Snapshot(self.particles[value], self.timestamp)
@@ -62,7 +108,7 @@ class Snapshot:
         """
         cols = []
 
-        for (key, val) in fields.items():
+        for (key, val) in fields.items() + optional_fields.items():
             if not hasattr(self.particles, key):
                 continue
 
@@ -91,15 +137,15 @@ class Snapshot:
     def to_csv(self, filename: str):
         df = pd.DataFrame(columns=fields.keys())
 
-        for key, val in fields.items():
+        for key, val in fields.items() + optional_fields.items():
             if not hasattr(self.particles, key):
                 continue
 
             array = getattr(self.particles, key)
 
-            if val is not None:
-                array = array.value_in(val)
+            if val is None:
+                val = 1
 
-            df[key] = array
+            df[key] = array / val
 
         df.to_csv(filename)
